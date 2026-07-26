@@ -1049,52 +1049,52 @@ function createAnalysis(data){
   let analizHavuzu = [];
   let notHavuzu = [];
 
-  // İLK SINAV (TEK SINAV) DURUMU
+  // İLK SINAV (TEK SINAV) DURUMLARI
   if (data.length === 1) {
     if (sonNet >= 15) {
       analizHavuzu = [
-        "🟢 İlk deneme sınavı sonuçlarına göre üst düzey kavrama düzeyi ve yüksek başarı oranı tespit edilmiştir[cite: 1].",
-        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir[cite: 1].",
-        "🟢 İlk sınav performansında görülen yüksek net, akademik potansiyelin üst seviyede olduğunu kanıtlamaktadır[cite: 1].",
-        "🟢 Temel kazanımların kusursuz bir şekilde öğrenildiği, ilk deneme verilerinden net bir şekilde anlaşılmaktadır[cite: 1].",
-        "🟢 Başlangıç sınavında elde edilen bu yüksek başarı, hedeflenen zirve için güçlü bir referans oluşturmaktadır[cite: 1]."
+        "🟢 İlk deneme sınavı sonuçlarına göre üst düzey kavrama düzeyi ve yüksek başarı oranı tespit edilmiştir.",
+        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir.",
+        "🟢 İlk sınav performansında görülen yüksek net, akademik potansiyelin üst seviyede olduğunu kanıtlamaktadır.",
+        "🟢 Temel kazanımların kusursuz bir şekilde öğrenildiği, ilk deneme verilerinden net bir şekilde anlaşılmaktadır.",
+        "🟢 Başlangıç sınavında elde edilen bu yüksek başarı, hedeflenen zirve için güçlü bir referans oluşturmaktadır."
       ];
       notHavuzu = [
-        "Matematikle arandaki bu güzel bağ ilk sınavdan kendini belli etti, aynen böyle devam![cite: 1]",
-        "İlk sınavdan tozuttun ortalığı, nazar değmesin harika bir başlangıç yaptın![cite: 1]",
-        "Bu ne hız böyle! İlk denemeden standardı çok yukarı koydun, tebrikler.[cite: 1]",
-        "İlk denemeden bu muazzam neti görmek harika, bu ivmeyi asla kaybetmeyelim.[cite: 1]",
-        "İlk sınavdan harika bir sinyal aldık, bu potansiyeli sonuna kadar kullanacağız.[cite: 1]"
+        "Matematikle arandaki bu güzel bağ ilk sınavdan kendini belli etti, aynen böyle devam!",
+        "İlk sınavdan tozuttun ortalığı, nazar değmesin harika bir başlangıç yaptın!",
+        "Bu ne hız böyle! İlk denemeden standardı çok yukarı koydun, tebrikler.",
+        "İlk denemeden bu muazzam neti görmek harika, bu ivmeyi asla kaybetmeyelim.",
+        "İlk sınavdan harika bir sinyal aldık, bu potansiyeli sonuna kadar kullanacağız."
       ];
     } else if (sonNet >= 8) {
       analizHavuzu = [
-        "🟢 İlk sınav sonuçlarına göre ortalama üstü ve dengeli bir matematik başlangıcı yapılmıştır[cite: 1].",
-        "🟢 Öğrencinin temel matematik kazanımlarını büyük ölçüde edindiği, orta-üst düzey bir başlangıç yaptığı tespit edilmiştir[cite: 1].",
-        "🟢 İlk deneme verileri, kazanımların büyük kısmının kavrandığını ancak ufak geliştirmelere açık olduğunu göstermektedir[cite: 1].",
-        "🟢 Sınav performansının kararlı ve güven veren bir temel üzerine kurulduğu istatistiki olarak görülmektedir[cite: 1].",
-        "🟢 İlk sınav ortalaması, hedeflenen başarı seviyesine ulaşmak için elverişli bir zemin sunmaktadır[cite: 1]."
+        "🟢 İlk sınav sonuçlarına göre ortalama üstü ve dengeli bir matematik başlangıcı yapılmıştır.",
+        "🟢 Öğrencinin temel matematik kazanımlarını büyük ölçüde edindiği, orta-üst düzey bir başlangıç yaptığı tespit edilmiştir.",
+        "🟢 İlk deneme verileri, kazanımların büyük kısmının kavrandığını ancak ufak geliştirmelere açık olduğunu göstermektedir.",
+        "🟢 Sınav performansının kararlı ve güven veren bir temel üzerine kurulduğu istatistiki olarak görülmektedir.",
+        "🟢 İlk sınav ortalaması, hedeflenen başarı seviyesine ulaşmak için elverişli bir zemin sunmaktadır."
       ];
       notHavuzu = [
-        "İstikrarlı ve sağlam adımlarla ilerliyorsun, yolun açık olsun.[cite: 1]",
-        "Acelemiz yok, böyle sindire sindire gitmek en sağlamı.[cite: 1]",
-        "Temelimiz gayet iyi kuruldu, şimdi bunun üzerine çok daha rahat çıkabiliriz.[cite: 1]",
-        "Fena değil, güzel bir başlangıç yaptık; ufak dokunuşlarla bunu uçururuz.[cite: 1]",
-        "Gayet dengeli bir giriş oldu, bu istikrarı korursak sırtımız yere gelmez.[cite: 1]"
+        "İstikrarlı ve sağlam adımlarla ilerliyorsun, yolun açık olsun.",
+        "Acelemiz yok, böyle sindire sindire gitmek en sağlamı.",
+        "Temelimiz gayet iyi kuruldu, şimdi bunun üzerine çok daha rahat çıkabiliriz.",
+        "Fena değil, güzel bir başlangıç yaptık; ufak dokunuşlarla bunu uçururuz.",
+        "Gayet dengeli bir giriş oldu, bu istikrarı korursak sırtımız yere gelmez."
       ];
     } else {
       analizHavuzu = [
-        "🟠 İlk sınav verilerine göre temel kavram eksiklikleri ve dikkat edilmesi gereken gelişim alanları saptanmıştır[cite: 1].",
-        "🟠 Net verileri, soru çözüm pratiğinin ve konu tekrarının artırılması gerektiğini objektif olarak ortaya koymaktadır[cite: 1].",
-        "🟠 İlk deneme sonuçları, temel formüller ve konu temelleri üzerinde daha fazla durulması gerekliliğini göstermektedir[cite: 1].",
-        "🟠 Performans analizi, öğrencinin potansiyelini açığa çıkarmak için ek çalışma stratejilerine ihtiyaç duyduğunu belirtmektedir[cite: 1].",
-        "🟠 İlk sınav verilerindeki eksikler, düzenli bir çalışma planıyla kısa sürede kapatılabilecek niteliktedir[cite: 1]."
+        "🟢 İlk sınav verilerine göre temel kavram eksiklikleri ve dikkat edilmesi gereken gelişim alanları saptanmıştır.",
+        "🟢 Net verileri, soru çözüm pratiğinin ve konu tekrarının artırılması gerektiğini objektif olarak ortaya koymaktadır.",
+        "🟢 İlk deneme sonuçları, temel formüller ve konu temelleri üzerinde daha fazla durulması gerekliliğini göstermektedir.",
+        "🟢 Performans analizi, öğrencinin potansiyelini açığa çıkarmak için ek çalışma stratejilerine ihtiyaç duyduğunu belirtmektedir.",
+        "🟢 İlk sınav verilerindeki eksikler, düzenli bir çalışma planıyla kısa sürede kapatılabilecek niteliktedir."
       ];
       notHavuzu = [
-        "Ufak bir sarsıntı bu, moral bozmak yok, hemen eski formumuza dönüyoruz.[cite: 1]",
-        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.[cite: 1]",
-        "Hiç canını sıkma, başlangıçlar her zaman zor olabilir. Birlikte çalışarak üstesinden geleceğiz.[cite: 1]",
-        "İlk sınavlar sadece aynadır, nerede eksiğimiz olduğunu gördük. Şimdi tam zamanı, sıvazla kolları![cite: 1]",
-        "Bunu bir başlangıç kabul et, ufak adımlarla o netleri yukarı birlikte tırmandıracağız.[cite: 1]"
+        "Ufak bir sarsıntı bu, moral bozmak yok, hemen eski formumuza dönüyoruz.",
+        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.",
+        "Hiç canını sıkma, başlangıçlar her zaman zor olabilir. Birlikte çalışarak üstesinden geleceğiz.",
+        "İlk sınavlar sadece aynadır, nerede eksiğimiz olduğunu gördük. Şimdi tam zamanı, sıvazla kolları!",
+        "Bunu bir başlangıç kabul et, ufak adımlarla o netleri yukarı birlikte tırmandıracağız."
       ];
     }
   } 
@@ -1106,87 +1106,86 @@ function createAnalysis(data){
 
     if (fark >= 3) {
       analizHavuzu = [
-        "🟢 Zaman içindeki sınav verileri incelendiğinde, matematik netlerinde istikrarlı, sürekli ve güçlü bir ivmelenme gözlemlenmektedir[cite: 1].",
-        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir[cite: 1].",
-        "🟢 Öğrencinin problem çözme becerilerinde ve konu hakimiyetinde net bir artış olduğu istatistiki olarak belgelenmiştir[cite: 1].",
-        "🟢 Sınav serisi boyunca gösterilen net artışı, sistemli çalışmanın meyvelerini vermeye başladığını kanıtlamaktadır[cite: 1].",
-        "🟢 Performans grafiğindeki bu dik tırmanış, öğrencinin konu kalitesini üst basamağa taşıdığını göstermektedir[cite: 1]."
+        "🟢 Zaman içindeki sınav verileri incelendiğinde, matematik netlerinde istikrarlı, sürekli ve güçlü bir ivmelenme gözlemlenmektedir.",
+        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir.",
+        "🟢 Öğrencinin problem çözme becerilerinde ve konu hakimiyetinde net bir artış olduğu istatistiki olarak belgelenmiştir.",
+        "🟢 Sınav serisi boyunca gösterilen net artışı, sistemli çalışmanın meyvelerini vermeye başladığını kanıtlamaktadır.",
+        "🟢 Performans grafiğindeki bu dik tırmanış, öğrencinin konu kalitesini üst basamağa taşıdığını göstermektedir."
       ];
       notHavuzu = [
-        "Soru bankalarına rahmet okutmuşsun resmen. Netler tavan, gurur duydum![cite: 1]",
-        "Çalışmanın hakkını sonuna kadar vermişsin. Bu grafik tablosu harika görünüyor.[cite: 1]",
-        "Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim.[cite: 1]",
-        "İşte bu! Çalışınca nasıl da açılıyor yollar, sakın bu tempoyu düşürme.[cite: 1]",
-        "Helal olsun, emeğinin karşılığını çatır çatır alıyorsun. Aynen böyle devam.[cite: 1]"
+        "Soru bankalarına rahmet okutmuşsun resmen. Netler tavan, gurur duydum!",
+        "Çalışmanın hakkını sonuna kadar vermişsin. Bu grafik tablosu harika görünüyor.",
+        "Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim.",
+        "İşte bu! Çalışınca nasıl da açılıyor yollar, sakın bu tempoyu düşürme.",
+        "Helal olsun, emeğinin karşılığını çatır çatır alıyorsun. Aynen böyle devam."
       ];
     } else if (fark > 0 && fark < 3) {
       analizHavuzu = [
-        "🟢 Sınav serisi boyunca performansta yavaş fakat kararlı ve pozitif yönlü bir gelişim trendi izlenmektedir[cite: 1].",
-        "🟢 Netlerdeki artış eğilimi, öğrencinin çalışma disiplinini düzenli olarak sürdürdüğünü doğrulamaktadır[cite: 1].",
-        "🟢 Sınav verilerindeki kademeli artış, öğrencinin istikrarını koruyarak ilerlediğini göstermektedir[cite: 1].",
-        "🟢 Performans grafiği, sağlam ve emin adımlarla yukarı yönlü bir ivme yakalandığını tescil etmektedir[cite: 1].",
-        "🟢 Düzenli çalışma alışkanlığının netlere olumlu düzeyde yansıdığı istatistiki olarak görülmektedir[cite: 1]."
+        "🟢 Sınav serisi boyunca performansta yavaş fakat kararlı ve pozitif yönlü bir gelişim trendi izlenmektedir.",
+        "🟢 Netlerdeki artış eğilimi, öğrencinin çalışma disiplinini düzenli olarak sürdürdüğünü doğrulamaktadır.",
+        "🟢 Sınav verilerindeki kademeli artış, öğrencinin istikrarını koruyarak ilerlediğini göstermektedir.",
+        "🟢 Performans grafiği, sağlam ve emin adımlarla yukarı yönlü bir ivme yakalandığını tescil etmektedir.",
+        "🟢 Düzenli çalışma alışkanlığının netlere olumlu düzeyde yansıdığı istatistiki olarak görülmektedir."
       ];
       notHavuzu = [
-        "Ufak ufak tırmanıyorsun ama bileğini kimse bükemez bu gidişle.[cite: 1]",
-        "Damlaya damlaya göl olur misali, her denemede bir basamak daha yukarıdasın.[cite: 1]",
-        "Tempon gayet iyi, biraz daha odaklanırsak kim tutar seni.[cite: 1]",
-        "İstikrarlı tırmanış budur işte, her sınav biraz daha iyiye gidiyoruz.[cite: 1]",
-        "Çizgin tertemiz yukarı bakıyor, minik detayları da tamamen hallettik mi tamamdır.[cite: 1]"
+        "Ufak ufak tırmanıyorsun ama bileğini kimse bükemez bu gidişle.",
+        "Damlaya damlaya göl olur misali, her denemede bir basamak daha yukarıdasın.",
+        "Tempon gayet iyi, biraz daha odaklanırsak kim tutar seni.",
+        "İstikrarlı tırmanış budur işte, her sınav biraz daha iyiye gidiyoruz.",
+        "Çizgin tertemiz yukarı bakıyor, minik detayları da tamamen hallettik mi tamamdır."
       ];
     } else if (fark === 0) {
       analizHavuzu = [
-        "🔵 Sınavlar arası net dağılımının benzer düzeyde seyrettiği ve mevcut başarı çizgisinin korunduğu görülmektedir[cite: 1].",
-        "🔵 Performans verileri yatay bir seyir izlemekte olup, öğrencinin potansiyelini tam olarak yansıtabilmesi için ek bir ivmeye ihtiyaç duyduğu anlaşılmaktadır[cite: 1].",
-        "🔵 Matematik netleri genel ortalamada sabit bir çizgi izlemektedir[cite: 1].",
-        "🔵 Sınav istatistikleri, mevcut bilginin korunduğunu ancak yeni bir üst eşiğe henüz geçilmediğini göstermektedir[cite: 1].",
-        "🔵 Çizginin yatay seyri, çalışma temposunda ufak bir çeşitliliğe ihtiyaç duyulduğunu işaret etmektedir[cite: 1]."
+        "🟢 Sınavlar arası net dağılımının benzer düzeyde seyrettiği ve mevcut başarı çizgisinin korunduğu görülmektedir.",
+        "🟢 Performans verileri yatay bir seyir izlemekte olup, öğrencinin potansiyelini tam olarak yansıtabilmesi için ek bir ivmeye ihtiyaç duyduğu anlaşılmaktadır.",
+        "🟢 Matematik netleri genel ortalamada sabit bir çizgi izlemektedir.",
+        "🟢 Sınav istatistikleri, mevcut bilginin korunduğunu ancak yeni bir üst eşiğe henüz geçilmediğini göstermektedir.",
+        "🟢 Çizginin yatay seyri, çalışma temposunda ufak bir çeşitliliğe ihtiyaç duyulduğunu işaret etmektedir."
       ];
       notHavuzu = [
-        "Aynı çizgide kalmak güvenlidir ama başarı biraz risk almayı sever. Farklı soru tiplerine de ağırlık verelim.[cite: 1]",
-        "Durumun fena değil ama bu kadarı sana yetmemeli. Bir sonraki sınavda çıtayı biraz daha yukarı koyalım.[cite: 1]",
-        "Çizgini bozmamak güzel bir temel ama artık üzerine koyma vakti geldi. Daha fazlasını yapabileceğini biliyorum.[cite: 1]",
-        "Güvenli bölgedesin ama seni konfor alanından biraz çıkaralım, potansiyelin bunun çok üzerinde.[cite: 1]",
-        "Aynı yerde saymak gerilemek gibidir güzel çocuk, artık bu çizgiyi kırma zamanı geldi.[cite: 1]"
+        "Aynı çizgide kalmak güvenlidir ama başarı biraz risk almayı sever. Farklı soru tiplerine de ağırlık verelim.",
+        "Durumun fena değil ama bu kadarı sana yetmemeli. Bir sonraki sınavda çıtayı biraz daha yukarı koyalım.",
+        "Çizgini bozmamak güzel bir temel ama artık üzerine koyma vakti geldi. Daha fazlasını yapabileceğini biliyorum.",
+        "Güvenli bölgedesin ama seni konfor alanından biraz çıkaralım, potansiyelin bunun çok üzerinde.",
+        "Aynı yerde saymak gerilemek gibidir güzel çocuk, artık bu çizgiyi kırma zamanı geldi."
       ];
     } else if (fark < 0 && fark >= -2) {
       analizHavuzu = [
-        "🟠 Son dönem sınavlarında, geçici dikkat hatalarından kaynaklanan sınırlı düzeyde bir net kaybı saptanmıştır[cite: 1].",
-        "🟠 Performans eğrisinde küçük çaplı bir dalgalanma yaşandığı, temel konularda büyük bir kopuş olmadığı tespit edilmiştir[cite: 1].",
-        "🟠 Son sınav performansında küçük çaplı bir gerileme tespit edilmiştir[cite: 1].",
-        "🟠 İstatistikler, net düşüşünün kalıcı olmadığını, anlık odaklanma sorunlarından kaynaklanabileceğini göstermektedir[cite: 1].",
-        "🟠 Sınav verilerindeki bu minik esneme, kısa süreli tekrarlarla kolayca telafi edilebilir düzeydedir[cite: 1]."
+        "🟢 Son dönem sınavlarında, geçici dikkat hatalarından kaynaklanan sınırlı düzeyde bir net kaybı saptanmıştır.",
+        "🟢 Performans eğrisinde küçük çaplı bir dalgalanma yaşandığı, temel konularda büyük bir kopuş olmadığı tespit edilmiştir.",
+        "🟢 Son sınav performansında küçük çaplı bir gerileme tespit edilmiştir.",
+        "🟢 İstatistikler, net düşüşünün kalıcı olmadığını, anlık odaklanma sorunlarından kaynaklanabileceğini göstermektedir.",
+        "🟢 Sınav verilerindeki bu minik esneme, kısa süreli tekrarlarla kolayca telafi edilebilir düzeydedir."
       ];
       notHavuzu = [
-        "Ufak bir nazar boncuğu diyelim, kafa biraz başka yerlerdeymiş sanki bu sınavda.[cite: 1]",
-        "Minik bir fren yaptık ama yoldan çıkmadık, hemen toparlarız.[cite: 1]",
-        "Gözünden kaçan minik detaylar olmuş, sonraki sınavda affetmek yok.[cite: 1]",
-        "Olur öyle ufak kazalar, takılıp kalma. Teneffüste yanıma gel, eksikleri beraber kapatalım.[cite: 1]",
-        "Kıvılcım sönmedi, sadece rüzgar aldık. Hemen eski formumuza dönüyoruz![cite: 1]"
+        "Ufak bir nazar boncuğu diyelim, kafa biraz başka yerlerdeymiş sanki bu sınavda.",
+        "Minik bir fren yaptık ama yoldan çıkmadık, hemen toparlarız.",
+        "Gözünden kaçan minik detaylar olmuş, sonraki sınavda affetmek yok.",
+        "Olur öyle ufak kazalar, takılıp kalma. Teneffüste yanıma gel, eksikleri beraber kapatalım.",
+        "Kıvılcım sönmedi, sadece rüzgar aldık. Hemen eski formumuza dönüyoruz!"
       ];
     } else {
       analizHavuzu = [
-        "🟠 Sınav netlerindeki ardışık düşüş eğilimi, konu eksikliklerinin acilen giderilmesi gerektiğini göstermektedir[cite: 1].",
-        "🟠 Performans analizinde belirgin bir gerileme tespit edilmiş olup, çalışma stratejisinin gözden geçirilmesi şarttır[cite: 1].",
-        "🟠 Matematik netlerinde belirgin bir düşüş gözlemlenmektedir[cite: 1].",
-        "🟠 Veriler, soru çözüm hızında veya konu kavramasında ciddi bir tıkanıklık yaşandığını objektif olarak ortaya koymaktadır[cite: 1].",
-        "🟠 Sınav sonuçları, acil bir eylem planı ve birebir takviye yapılması gereken bir sürece girildiğini işaret etmektedir[cite: 1]."
+        "🟢 Sınav netlerindeki ardışık düşüş eğilimi, konu eksikliklerinin acilen giderilmesi gerektiğini göstermektedir.",
+        "🟢 Performans analizinde belirgin bir gerileme tespit edilmiş olup, çalışma stratejisinin gözden geçirilmesi şarttır.",
+        "🟢 Matematik netlerinde belirgin bir düşüş gözlemlenmektedir.",
+        "🟢 Veriler, soru çözüm hızında veya konu kavramasında ciddi bir tıkanıklık yaşandığını objektif olarak ortaya koymaktadır.",
+        "🟢 Sınav sonuçları, acil bir eylem planı ve birebir takviye yapılması gereken bir sürece girildiğini işaret etmektedir."
       ];
       notHavuzu = [
-        "Bu sınav biraz ters köşe yaptı, netler epey aşağı yönlü hareket etti. İlk teneffüs masaya yatırıyoruz bunu.[cite: 1]",
-        "Tren biraz raydan çıktı gibi, acilen duruma el koymalıyız. Can sıkmak yok, birlikte çözeceğiz.[cite: 1]",
-        "Beklenmeyen bir şok yaşadık ama kriz yönetimi bizim işimiz. Sıvazla kolları hallederiz.[cite: 1]",
-        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs bu işi kökten çözeceğiz.[cite: 1]",
-        "Bu sınav bize nerede açık verdiğimizi net gösterdi, hiç dert etme birlikte üstesinden geleceğiz.[cite: 1]"
+        "Bu sınav biraz ters köşe yaptı, netler epey aşağı yönlü hareket etti. İlk teneffüs masaya yatırıyoruz bunu.",
+        "Tren biraz raydan çıktı gibi, acilen duruma el koymalıyız. Can sıkmak yok, birlikte çözeceğiz.",
+        "Beklenmeyen bir şok yaşadık ama kriz yönetimi bizim işimiz. Sıvazla kolları hallederiz.",
+        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs bu işi kökten çözeceğiz.",
+        "Bu sınav bize nerede açık verdiğimizi net gösterdi, hiç dert etme birlikte üstesinden geleceğiz."
       ];
     }
   }
 
-  // Rastgele genişletilmiş metin seçimi
-  let rastgeleIndex = Math.abs(Math.round(sonNet * 7)) % analizHavuzu.length;
+  let analizIndex = Math.abs(Math.round(sonNet * 7)) % analizHavuzu.length;
   let notIndex = Math.abs(Math.round(sonNet * 3)) % notHavuzu.length;
 
-  document.getElementById("analysisArea").innerHTML = analizHavuzu[rastgeleIndex];
+  document.getElementById("analysisArea").innerHTML = analizHavuzu[analizIndex];
   document.getElementById("fatihNote").innerHTML = notHavuzu[notIndex];
 }
 
