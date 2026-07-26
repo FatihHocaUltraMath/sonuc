@@ -1044,72 +1044,106 @@ beginAtZero:true
 
 function createAnalysis(data){
   let netler = data.map(x=>Number(x.net));
-  let ilk = netler[0];
-  let son = netler[netler.length-1];
-  let fark = son - ilk;
   let sonNet = netler[netler.length-1];
 
   let analizListesi = [];
   let notListesi = [];
 
-  if (fark >= 3) {
-    analizListesi = [
-      "🟢 Soru bankalarına rahmet okutmuşsun resmen. Netler tavan, gurur duydum!",[cite: 1]
-      "🟢 Çalışmanın hakkını sonuna kadar vermişsin. Bu grafik tablosu harika görünüyor.",
-      "🟢 Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim."
-    ];
-    notListesi = [
-      "Böyle devam edersen seni tutamayız, nazar değmesin formundasın!",[cite: 1]
-      "İşte bu! Çalışınca nasıl da açılıyor yollar, sakın bu tempoyu düşürme.",[cite: 1]
-      "Helal olsun, emeğinin karşılığını çatır çatır alıyorsun. Aynen böyle devam."[cite: 1]
-    ];
-  } else if (fark > 0 && fark < 3) {
-    analizListesi = [
-      "🟢 Ufak ufak tırmanıyorsun ama bileğini kimse bükemez bu gidişle.",
-      "🟢 Damlaya damlaya göl olur misali, her denemede bir basamak daha yukarıdasın.",
-      "🟢 İstikrarlı ve sağlam adımlarla ilerliyorsun, yolun açık olsun."
-    ];
-    notListesi = [
-      "Acelemiz yok, böyle sindire sindire gitmek en sağlamı.",
-      "Çizgin tertemiz ilerliyor, minik detayları da tamamen halllettik mi tamamdır bu iş.",
-      "Tempon gayet iyi, biraz daha odaklanırsak kim tutar seni."
-    ];
-  } else if (fark === 0) {
-    analizListesi = [
-      "🔵 Notların aynı seviyede kalmış. Güvendesin ama potansiyelinin bir tık gerisindesin.",
-      "🔵 Sınav sonuçların dengeli gidiyor ama bu çizgiyi biraz daha yukarı çekebiliriz.",
-      "🔵 Mevcut durumunu koruyorsun, kötü değil fakat seni daha iddialı yerlerde görmek istiyorum."
-    ];
-    notListesi = [
-      "Aynı çizgide kalmak güvenlidir ama başarı biraz risk almayı sever. Farklı soru tiplerine de ağırlık verelim.",
-      "Durumun fena değil ama bu kadarı sana yetmemeli. Bir sonraki sınavda çıtayı biraz daha yukarı koyalım.",
-      "Çizgini bozmamak güzel bir temel ama artık üzerine koyma vakti geldi. Daha fazlasını yapabileceğini biliyorum."
-    ];
-  } else if (fark < 0 && fark >= -2) {
-    analizListesi = [
-      "🟠 Ufak bir nazar boncuğu diyelim, kafa biraz başka yerlerdeymiş sanki bu sınavda.",
-      "🟠 Minik bir fren yaptık ama yoldan çıkmadık, hemen toparlarız.",
-      "🟠 Dikkat dağınıklığı sezinlemedim değil, küçük hatalar çarpmış seni."
-    ];
-    notListesi = [
-      "Olur öyle ufak kazalar, takılıp kalma. Teneffüste yanıma gel, eksikleri beraber kapatalım.",
-      "Ufak bir sarsıntı bu, moral bozmak yok, hemen eski formumuza dönüyoruz.",
-      "Gözünden kaçan minik detaylar olmuş, sonraki sınavda affetmek yok."
-    ];
+  // Eğer öğrencinin sadece 1 sınavı varsa (ilk giriş/tek kayıt)
+  if (data.length === 1) {
+    if (sonNet >= 15) {
+      analizListesi = [
+        "🟢 İlk sınavdan harika bir başlangıç yapmışsın! Netler tavan, gurur duydum!",
+        "🟢 Sene başından formda başlamışsın, bu netlerteoriyi söktüğünü gösteriyor."
+      ];
+      notListesi = [
+        "Böyle devam edersen seni tutamayız, nazar değmesin formundasın!",
+        "İşte bu başlangıç! Çalışınca nasıl da açılıyor yollar, sakın bu tempoyu düşürme."
+      ];
+    } else if (sonNet >= 8) {
+      analizListesi = [
+        "🟢 Fena bir başlangıç değil, sağlam adımlarla ilk adımı attın.",
+        "🟢 İlk sınav için gayet dengeli bir grafik, üzerine çok rahat koyabiliriz."
+      ];
+      notListesi = [
+        "Acelemiz yok, böyle sindire sindire gitmek en sağlamı.",
+        "Tempon gayet iyi, minik detayları da hallettik mi kim tutar seni."
+      ];
+    } else {
+      analizListesi = [
+        "🟠 İlk sınav biraz düşük geldi ama moral bozmak yok, daha yolun başındayız.",
+        "🟠 İlk denemede ufak bir kaza olsun bu, hemen toparlayacağız."
+      ];
+      notListesi = [
+        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.",
+        "Can sıkmak yok, önemli olan eksikleri görüp ayağa kalkabilmek. Birlikte çözeceğiz."
+      ];
+    }
   } else {
-    analizListesi = [
-      "🟠 Bu sınav biraz ters köşe yaptı, netler epey aşağı yönlü hareket etti.",
-      "🟠 Tren biraz raydan çıktı gibi, acilen duruma el koymalıyız.",
-      "🟠 Beklenmeyen bir şok yaşadık ama kriz yönetimi bizim işimiz."
-    ];
-    notListesi = [
-      "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.",
-      "Can sıkmak yok, önemli olan oradan ders çıkarıp ayağa kalkabilmek. Birlikte çözeceğiz.",
-      "This sınav bize nerede açık verdiğimizi net gösterdi, hiç dert etme sıvazla kolları hallederiz."
-    ];
+    // Birden fazla sınav varsa eskisi gibi farka göre değerlendir
+    let ilk = netler[0];
+    let son = netler[netler.length-1];
+    let fark = son - ilk;
+
+    if (fark >= 3) {
+      analizListesi = [
+        "🟢 Soru bankalarına rahmet okutmuşsun resmen. Netler tavan, gurur duydum!",
+        "🟢 Çalışmanın hakkını sonuna kadar vermişsin. Bu grafik tablosu harika görünüyor.",
+        "🟢 Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim."
+      ];
+      notListesi = [
+        "Böyle devam edersen seni tutamayız, nazar değmesin formundasın!",
+        "İşte bu! Çalışınca nasıl da açılıyor yollar, sakın bu tempoyu düşürme.",
+        "Helal olsun, emeğinin karşılığını çatır çatır alıyorsun. Aynen böyle devam."
+      ];
+    } else if (fark > 0 && fark < 3) {
+      analizListesi = [
+        "🟢 Ufak ufak tırmanıyorsun ama bileğini kimse bükemez bu gidişle.",
+        "🟢 Damlaya damlaya göl olur misali, her denemede bir basamak daha yukarıdasın.",
+        "🟢 İstikrarlı ve sağlam adımlarla ilerliyorsun, yolun açık olsun."
+      ];
+      notListesi = [
+        "Acelemiz yok, böyle sindire sindire gitmek en sağlamı.",
+        "Çizgin tertemiz ilerliyor, minik detayları da tamamen halllettik mi tamamdır bu iş.",
+        "Tempon gayet iyi, biraz daha odaklanırsak kim tutar seni."
+      ];
+    } else if (fark === 0) {
+      analizListesi = [
+        "🔵 Notların aynı seviyede kalmış. Güvendesin ama potansiyelinin bir tık gerisindesin.",
+        "🔵 Sınav sonuçların dengeli gidiyor ama bu çizgiyi biraz daha yukarı çekebiliriz.",
+        "🔵 Mevcut durumunu koruyorsun, kötü değil fakat seni daha iddialı yerlerde görmek istiyorum."
+      ];
+      notListesi = [
+        "Aynı çizgide kalmak güvenlidir ama başarı biraz risk almayı sever. Farklı soru tiplerine de ağırlık verelim.",
+        "Durumun fena değil ama bu kadarı sana yetmemeli. Bir sonraki sınavda çıtayı biraz daha yukarı koyalım.",
+        "Çizgini bozmamak güzel bir temel ama artık üzerine koyma vakti geldi. Daha fazlasını yapabileceğini biliyorum."
+      ];
+    } else if (fark < 0 && fark >= -2) {
+      analizListesi = [
+        "🟠 Ufak bir nazar boncuğu diyelim, kafa biraz başka yerlerdeymiş sanki bu sınavda.",
+        "🟠 Minik bir fren yaptık ama yoldan çıkmadık, hemen toparlarız.",
+        "🟠 Dikkat dağınıklığı sezinlemedim değil, küçük hatalar çarpmış seni."
+      ];
+      notListesi = [
+        "Olur öyle ufak kazalar, takılıp kalma. Teneffüste yanıma gel, eksikleri beraber kapatalım.",
+        "Ufak bir sarsıntı bu, moral bozmak yok, hemen eski formumuza dönüyoruz.",
+        "Gözünden kaçan minik detaylar olmuş, sonraki sınavda affetmek yok."
+      ];
+    } else {
+      analizListesi = [
+        "🟠 Bu sınav biraz ters köşe yaptı, netler epey aşağı yönlü hareket etti.",
+        "🟠 Tren biraz raydan çıktı gibi, acilen duruma el koymalıyız.",
+        "🟠 Beklenmeyen bir şok yaşadık ama kriz yönetimi bizim işimiz."
+      ];
+      notListesi = [
+        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.",
+        "Can sıkmak yok, önemli olan oradan ders çıkarıp ayağa kalkabilmek. Birlikte çözeceğiz.",
+        "Bu sınav bize nerede açık verdiğimizi net gösterdi, hiç dert etme sıvazla kolları hallederiz."
+      ];
+    }
   }
 
-  let index = Math.abs(Math.round(sonNet + fark)) % analizListesi.length;
+  let index = Math.abs(Math.round(sonNet)) % analizListesi.length;
 
   document.getElementById("analysisArea").innerHTML = analizListesi[index];
   document.getElementById("fatihNote").innerHTML = notListesi[index];
