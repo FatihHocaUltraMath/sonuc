@@ -1,408 +1,487 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Öğrenci Karnesi</title>
-  <style>
-    :root {
-      --primary: #5c3882;
-      --primary-light: #f3effa;
-      --card-bg: #ffffff;
-      --text-main: #2d2738;
-      --text-muted: #6e6b7b;
-      --border-color: #eee9f5;
-    }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    body {
-      background-color: #f7f5f9;
-      color: var(--text-main);
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
+<title>FatihHoca_UltraMat.</title>
 
-    .container {
-      width: 100%;
-      max-width: 480px;
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 24px;
-      box-shadow: 0 10px 25px rgba(92, 56, 130, 0.08);
-    }
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    /* Arama Kutusu */
-    .search-box {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 24px;
-      background: var(--primary-light);
-      padding: 16px;
-      border-radius: 16px;
-    }
+<style>
 
-    .search-box input {
-      padding: 12px 16px;
-      border: 1px solid #dcd3e9;
-      border-radius: 10px;
-      outline: none;
-      font-size: 14px;
-    }
+:root{
+  --orange:#F97316;
+  --purple:#8B5CF6;
+  --dark:#3B0764;
+  --text:#334155;
+  --gray:#64748B;
+}
 
-    .search-box button {
-      padding: 12px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
+*{
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
+}
 
-    .search-box button:hover {
-      background: #472a67;
-    }
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+  radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),
+  linear-gradient(145deg,#FFF7ED,#FFFFFF 55%,#F5F3FF);
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  color:var(--text);
+}
 
-    /* Öğrenci Bilgileri */
-    .header-info {
-      margin-bottom: 20px;
-    }
+.container{
+  width:100%;
+  max-width:430px;
+}
 
-    .student-name {
-      font-size: 24px;
-      font-weight: 800;
-      color: var(--primary);
-    }
+.brand{
+  text-align:center;
+  padding:20px 10px 25px;
+}
 
-    .student-sub {
-      color: var(--text-muted);
-      font-size: 14px;
-      margin-top: 4px;
-    }
+.brand h1{
+  margin:0;
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:-1px;
+  color:var(--dark);
+}
 
-    .exam-tag {
-      color: var(--text-muted);
-      font-size: 13px;
-      margin-top: 6px;
-      font-weight: 500;
-    }
+.brand h1 span{
+  color:var(--orange);
+}
 
-    /* Büyük Net Kartı */
-    .main-score-card {
-      background: linear-gradient(135deg, #7952b3 0%, #f06a43 100%);
-      border-radius: 20px;
-      padding: 24px;
-      text-align: center;
-      color: white;
-      margin-bottom: 20px;
-      box-shadow: 0 8px 16px rgba(121, 82, 179, 0.25);
-    }
+.subtitle{
+  margin-top:10px;
+  font-size:18px;
+  font-weight:800;
+  color:#475569;
+}
 
-    .main-score-title {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      opacity: 0.9;
-    }
+.slogan{
+  margin-top:12px;
+  font-size:15px;
+  font-style:italic;
+  color:#64748B;
+}
 
-    .main-score-val {
-      font-size: 54px;
-      font-weight: 900;
-      line-height: 1.1;
-      margin-top: 5px;
-    }
+.card{
+  background:white;
+  border-radius:30px;
+  padding:28px;
+  box-shadow: 0 20px 50px rgba(139,92,246,.15);
+}
 
-    /* Izgara Kartlar (Doğru, Yanlış, Boş, Net) */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
+.hidden{
+  display:none;
+}
 
-    .stat-card {
-      background: #fff8f5;
-      border: 1px solid #ffe8de;
-      border-radius: 16px;
-      padding: 14px;
-      text-align: center;
-    }
+h2{
+  margin-top:0;
+  color:var(--dark);
+  font-size:27px;
+}
 
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
+.description{
+  color:var(--gray);
+  line-height:1.6;
+  font-size:14px;
+}
 
-    .stat-val {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--primary);
-    }
+label{
+  display:block;
+  margin-top:18px;
+  margin-bottom:7px;
+  font-weight:800;
+}
 
-    /* Bölümler */
-    .section-title {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 20px 0 10px 0;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+input{
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid #FED7AA;
+  background:#FFFBF5;
+  font-size:16px;
+}
 
-    .info-card {
-      background: var(--primary-light);
-      border-radius: 14px;
-      padding: 14px;
-      font-size: 14px;
-      color: var(--text-main);
-      line-height: 1.5;
-    }
+input:focus{
+  outline:none;
+  border-color:var(--orange);
+}
 
-    /* Konu Analiz Barları */
-    .topic-item {
-      margin-bottom: 12px;
-    }
+button{
+  width:100%;
+  margin-top:25px;
+  padding:17px;
+  border:none;
+  border-radius:18px;
+  background: linear-gradient(90deg,var(--orange),var(--purple));
+  color:white;
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
+}
 
-    .topic-header {
-      display: flex;
-      justify-content: space-between;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
+button:hover{
+  opacity:.9;
+}
 
-    .bar-bg {
-      height: 8px;
-      background: #e6e0f0;
-      border-radius: 4px;
-      overflow: hidden;
-    }
+.loading{
+  text-align:center;
+  margin-top:15px;
+  color:var(--purple);
+  font-weight:700;
+}
 
-    .bar-fill {
-      height: 100%;
-      background: var(--primary);
-      border-radius: 4px;
-    }
+.student{
+  font-size:24px;
+  font-weight:900;
+  color:var(--dark);
+}
 
-    /* Geçmiş Sınavlar Tablosu */
-    .history-list {
-      background: #faf8fc;
-      border-radius: 14px;
-      padding: 8px 16px;
-    }
+.info{
+  color:#64748B;
+  margin-top:6px;
+}
 
-    .history-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee6f7;
-      font-size: 14px;
-    }
+.scoreCard{
+  margin:25px 0;
+  padding:25px;
+  border-radius:28px;
+  text-align:center;
+  color:white;
+  background: linear-gradient(135deg,var(--purple),var(--orange));
+}
 
-    .history-item:last-child {
-      border-bottom: none;
-    }
+.scoreTitle{
+  font-size:14px;
+  opacity:.9;
+}
 
-    .history-score {
-      font-weight: 700;
-    }
+.score{
+  font-size:60px;
+  font-weight:950;
+}
 
-    #loading {
-      display: none;
-      text-align: center;
-      padding: 20px;
-      color: var(--primary);
-      font-weight: bold;
-    }
-  </style>
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+.stat{
+  background:#FFF7ED;
+  border:1px solid #FED7AA;
+  border-radius:18px;
+  padding:15px;
+  text-align:center;
+}
+
+.stat small{
+  color:#64748B;
+}
+
+.stat strong{
+  display:block;
+  font-size:24px;
+  color:var(--dark);
+  margin-top:5px;
+}
+
+.title{
+  margin-top:25px;
+  margin-bottom:10px;
+  font-weight:900;
+  font-size:18px;
+  color:var(--dark);
+}
+
+.note{
+  background:#F5F3FF;
+  border-radius:16px;
+  padding:17px;
+  line-height:1.6;
+  border-left:5px solid var(--purple);
+}
+
+.chartBox{
+  height:230px;
+  background:#FFF7ED;
+  border-radius:20px;
+  padding:15px;
+  border:1px solid #FED7AA;
+}
+
+.history{
+  background:#FAFAF9;
+  border-radius:18px;
+  padding:15px;
+}
+
+.history div{
+  display:flex;
+  justify-content:space-between;
+  padding:12px 5px;
+  border-bottom:1px solid #E2E8F0;
+}
+
+.footer{
+  text-align:center;
+  margin:25px;
+  font-size:12px;
+  color:#94A3B8;
+}
+
+/* Konu Analizi İlerleme Çubukları */
+.topicItem {
+  margin-bottom: 15px;
+}
+
+.topicTitle {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.progress {
+  width: 100%;
+  height: 12px;
+  background: #E2E8F0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progressBar {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.4s ease-in-out;
+}
+
+</style>
 </head>
+
 <body>
 
-  <div class="container">
-    
-    <!-- Arama Paneli -->
-    <div class="search-box">
-      <input type="text" id="studentName" placeholder="Ad Soyad (Örn: Ali Kaya)">
-      <input type="text" id="studentCode" placeholder="Öğrenci Kodu (Örn: 1234)">
-      <button onclick="karneGetir()">Sonuçları Gör</button>
-    </div>
+<div class="container">
 
-    <div id="loading">Veriler Yükleniyor...</div>
+<div class="brand">
+  <h1>FatihHoca_<span>UltraMat.</span></h1>
+  <div class="subtitle">Matematik Dersi Analiz Platformu</div>
+  <div class="slogan">"Nerede olduğunu gör, nereye ulaşacağını planla."</div>
+</div>
 
-    <!-- Karne İçeriği -->
-    <div id="karneContent" style="display: none;">
-      
-      <div class="header-info">
-        <div class="student-name" id="dispName">-</div>
-        <div class="student-sub" id="dispClass">-</div>
-        <div class="exam-tag" id="dispExam">-</div>
-      </div>
+<div class="card" id="loginCard">
+  <h2>Sonucuna Ulaş</h2>
+  <p class="description">Matematik sınav sonuçlarını ve gelişim analizini görmek için bilgilerini gir.</p>
+  <label>Ad Soyad</label>
+  <input id="studentNameInput" placeholder="Ad Soyad">
+  <label>4 Haneli Kişisel Kod</label>
+  <input id="studentCodeInput" maxlength="4" placeholder="••••">
+  <button onclick="getResult()">SONUÇLARINI GÖR</button>
+  <div id="loading" class="loading hidden">Sonuçlar getiriliyor...</div>
+</div>
 
-      <!-- Üst Kart (SON SINAV NETİ) -->
-      <div class="main-score-card">
-        <div class="main-score-title">SON SINAV NETİ</div>
-        <div class="main-score-val" id="dispMainNet">0</div>
-      </div>
+<div class="card hidden" id="resultCard">
+  <div class="student" id="nameArea"></div>
+  <div class="info" id="classArea"></div>
+  <div class="info" id="examArea"></div>
 
-      <!-- Doğru, Yanlış, Boş, Net -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-label">Doğru</div>
-          <div class="stat-val" id="dispDogru">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Yanlış</div>
-          <div class="stat-val" id="dispYanlis">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Boş</div>
-          <div class="stat-val" id="dispBos">0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">Net</div>
-          <div class="stat-val" id="dispNet">0</div>
-        </div>
-      </div>
-
-      <!-- Matematik Gelişim Analizi -->
-      <div class="section-title">📝 Matematik Gelişim Analizi</div>
-      <div class="info-card" id="dispBasari">
-        Henüz bir değerlendirme yapılmadı.
-      </div>
-
-      <!-- Öğretmen Notu -->
-      <div class="section-title">👨‍🏫 Fatih Hoca'nın Notu</div>
-      <div class="info-card" id="dispNot">
-        Not bulunmuyor.
-      </div>
-
-      <!-- Konu Analizi -->
-      <div class="section-title">📚 Konu Analizi</div>
-      <div class="info-card" id="dispKonular">
-        Konu analizi bulunamadı.
-      </div>
-
-      <!-- Geçmiş Sınavlar -->
-      <div class="section-title">📚 Geçmiş Sınavlarım</div>
-      <div class="history-list" id="dispGecmis">
-        <!-- Geçmiş sınavlar buraya dinamik gelecek -->
-      </div>
-
-    </div>
-
+  <div class="scoreCard">
+    <div class="scoreTitle">SON SINAV PUANI</div>
+    <div class="score" id="scoreArea">-</div>
   </div>
 
-  <script>
-    // APPS SCRIPT WEB APP URL SİNİ BURAYA YAPIŞTIRIN
-    const API_URL = "YOUR_APPS_SCRIPT_WEB_APP_URL"; 
+  <div class="stats">
+    <div class="stat"><small>Doğru</small><strong id="correctArea">-</strong></div>
+    <div class="stat"><small>Yanlış</small><strong id="wrongArea">-</strong></div>
+    <div class="stat"><small>Boş</small><strong id="emptyArea">-</strong></div>
+    <div class="stat"><small>Net</small><strong id="netArea">-</strong></div>
+  </div>
 
-    function tarihFormatla(tarihStr) {
-      if (!tarihStr) return "";
-      try {
-        let d = new Date(tarihStr);
-        if (isNaN(d.getTime())) return tarihStr; // Metin halindeyse doğrudan dön
-        let gun = String(d.getDate()).padStart(2, '0');
-        let ay = String(d.getMonth() + 1).padStart(2, '0');
-        let yil = d.getFullYear();
-        return `${gun}.${ay}.${yil}`;
-      } catch(e) {
-        return tarihStr;
-      }
+  <div class="title">📊 Matematik Gelişimim</div>
+  <div class="chartBox"><canvas id="progressChart"></canvas></div>
+
+  <div class="title">📝 Matematik Gelişim Analizi</div>
+  <div class="note" id="analysisArea">Analiz hazırlanıyor...</div>
+
+  <div class="title">👨‍🏫 Fatih Hoca'nın Notu</div>
+  <div class="note" id="fatihNote">Not hazırlanıyor...</div>
+
+  <div class="title">📚 Konu Analizi</div>
+  <div class="note" id="topicAnalysis">Konu analizi hazırlanıyor...</div>
+
+  <div class="title">📚 Geçmiş Sınavlarım</div>
+  <div class="history" id="historyArea"></div>
+</div>
+
+<div class="footer">© FatihHoca_UltraMat.</div>
+
+</div>
+
+<script>
+const API_URL="https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
+
+async function getResult(){
+  let name = document.getElementById("studentNameInput").value.trim();
+  let code = document.getElementById("studentCodeInput").value.trim();
+
+  if(!name || !code){
+    alert("Lütfen bilgilerinizi giriniz.");
+    return;
+  }
+
+  document.getElementById("loading").classList.remove("hidden");
+
+  try{
+    let url = API_URL + "?isim=" + encodeURIComponent(name) + "&kod=" + encodeURIComponent(code);
+    let response = await fetch(url);
+    let data = await response.json();
+    console.log("Gelen veri:", data);
+
+    if(!data || data.length===0){
+      alert("Sonuç bulunamadı.");
+      return;
     }
 
-    async function karneGetir() {
-      const name = document.getElementById('studentName').value.trim();
-      const code = document.getElementById('studentCode').value.trim();
+    showResult(data);
+  }
+  catch(error){
+    console.log(error);
+    alert("Bağlantı hatası oluştu.");
+  }
 
-      if (!name || !code) {
-        alert("Lütfen hem Ad Soyad hem de Öğrenci Kodunu girin.");
-        return;
-      }
+  document.getElementById("loading").classList.add("hidden");
+}
 
-      document.getElementById('loading').style.display = 'block';
-      document.getElementById('karneContent').style.display = 'none';
+function showResult(data){
+  let last=data[data.length-1];
 
-      try {
-        const response = await fetch(`${API_URL}?isim=${encodeURIComponent(name)}&kod=${encodeURIComponent(code)}`);
-        const data = await response.json();
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("resultCard").classList.remove("hidden");
 
-        document.getElementById('loading').style.display = 'none';
+  document.getElementById("nameArea").innerHTML = last.isim;
+  document.getElementById("classArea").innerHTML = last.sinif + ". Sınıf - " + last.sube + " Şubesi";
+  document.getElementById("examArea").innerHTML = last.sinav + " | " + last.tarih;
+  document.getElementById("scoreArea").innerHTML = last.puan;
+  document.getElementById("correctArea").innerHTML = last.dogru;
+  document.getElementById("wrongArea").innerHTML = last.yanlis;
+  document.getElementById("emptyArea").innerHTML = last.bos;
+  document.getElementById("netArea").innerHTML = last.net;
 
-        if (!data || data.length === 0) {
-          alert("Öğrenci bulunamadı! Lütfen bilgileri kontrol edin.");
-          return;
+  showHistory(data);
+  createChart(data);
+  createAnalysis(data);
+  createTopicAnalysis(last);
+}
+
+function showHistory(data){
+  let html="";
+  data.forEach(x=>{
+    html += `<div><span>${x.sinav}</span><strong>${x.puan}</strong></div>`;
+  });
+  document.getElementById("historyArea").innerHTML = html;
+}
+
+function createChart(data){
+  if(!window.Chart) return;
+
+  let labels = data.map(x=>x.sinav);
+  let values = data.map(x=>Number(x.puan));
+  let ctx = document.getElementById("progressChart").getContext("2d");
+
+  new Chart(ctx,{
+    type:"line",
+    data:{
+      labels:labels,
+      datasets:[{
+        label:"Puan",
+        data:values,
+        borderColor:"#8B5CF6",
+        backgroundColor:"#F97316",
+        borderWidth:4,
+        pointRadius:6,
+        tension:.4
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      scales:{
+        y:{
+          beginAtZero:false,
+          max:100
         }
-
-        // En son sınav verisini al
-        const sonSinav = data[data.length - 1];
-
-        // Ekrana Verileri Bas
-        document.getElementById('dispName').innerText = sonSinav.isim;
-        document.getElementById('dispClass').innerText = `${sonSinav.sinif}. Sınıf - ${sonSinav.sube} Şubesi`;
-        
-        let t = tarihFormatla(sonSinav.tarih);
-        document.getElementById('dispExam').innerText = `${sonSinav.sinav} | ${t}`;
-
-        document.getElementById('dispMainNet').innerText = sonSinav.net;
-        document.getElementById('dispDogru').innerText = sonSinav.dogru;
-        document.getElementById('dispYanlis').innerText = sonSinav.yanlis;
-        document.getElementById('dispBos').innerText = sonSinav.bos;
-        document.getElementById('dispNet').innerText = sonSinav.net;
-
-        document.getElementById('dispBasari').innerText = sonSinav.basari || "Değerlendirme yok.";
-        document.getElementById('dispNot').innerText = sonSinav.not || "Not eklenmemiş.";
-
-        // Konu Analizi Render
-        if (sonSinav.konular && sonSinav.konular.length > 0) {
-          let html = "";
-          sonSinav.konular.forEach(k => {
-            html += `
-              <div class="topic-item">
-                <div class="topic-header">
-                  <span>${k.konu}</span>
-                  <span>%${k.yuzde}</span>
-                </div>
-                <div class="bar-bg">
-                  <div class="bar-fill" style="width: ${k.yuzde}%;"></div>
-                </div>
-              </div>
-            `;
-          });
-          document.getElementById('dispKonular').innerHTML = html;
-        } else {
-          document.getElementById('dispKonular').innerHTML = "Konu analizi bulunamadı.";
-        }
-
-        // Geçmiş Sınavlar Listesi
-        let gecmisHtml = "";
-        data.forEach(s => {
-          gecmisHtml += `
-            <div class="history-item">
-              <span>${s.sinav}</span>
-              <span class="history-score">${s.net} Net</span>
-            </div>
-          `;
-        });
-        document.getElementById('dispGecmis').innerHTML = gecmisHtml;
-
-        document.getElementById('karneContent').style.display = 'block';
-
-      } catch (err) {
-        document.getElementById('loading').style.display = 'none';
-        alert("Veriler çekilirken bir hata oluştu: " + err);
       }
     }
-  </script>
+  });
+}
+
+function createAnalysis(data){
+  let puanlar = data.map(x=>Number(x.puan));
+  let ilk = puanlar[0];
+  let son = puanlar[puanlar.length-1];
+  let fark = son-ilk;
+
+  let analiz="";
+  let not="";
+
+  if(fark>=10){
+    analiz="🟢 Matematik performansında güzel bir yükseliş görülüyor. Düzenli çalışmalarının karşılığını almaya başladığın görülüyor.";
+    not="Başarılı bir gelişim gösteriyorsun. Aynı çalışma düzenini koruyarak daha yüksek hedeflere ulaşabilirsin.";
+  }
+  else if(fark<=-10){
+    analiz="🟠 Son sınavlarda düşüş görülüyor. Yanlışlarını analiz ederek eksik konularını tamamlaman faydalı olacaktır.";
+    not="Eksiklerini belirleyip düzenli tekrarlarla yeniden yükselişe geçebilirsin. Sana güveniyorum.";
+  }
+  else{
+    analiz="🔵 Matematik performansın dengeli ilerliyor. Biraz daha odaklanarak daha üst seviyelere çıkabilirsin.";
+    not="Başarını koruyorsun. Düzenli tekrar ve soru analizi ile daha iyi sonuçlara ulaşabilirsin.";
+  }
+
+  document.getElementById("analysisArea").innerHTML = analiz;
+  document.getElementById("fatihNote").innerHTML = not;
+}
+
+function createTopicAnalysis(data){
+  if(!data.konular || data.konular.length === 0){
+    document.getElementById("topicAnalysis").innerHTML = "Konu analizi bulunamadı.";
+    return;
+  }
+
+  let html="";
+  data.konular.forEach(k=>{
+    let renk="";
+    if(k.yuzde>=85){
+      renk="#16A34A";
+    }
+    else if(k.yuzde>=60){
+      renk="#F59E0B";
+    }
+    else{
+      renk="#DC2626";
+    }
+
+    html+=`
+    <div class="topicItem">
+      <div class="topicTitle">${k.konu} - %${k.yuzde}</div>
+      <div class="progress">
+        <div class="progressBar" style="width:${k.yuzde}%; background:${renk};"></div>
+      </div>
+    </div>
+    `;
+  });
+
+  document.getElementById("topicAnalysis").innerHTML = html;
+}
+</script>
+
 </body>
 </html>
