@@ -12,453 +12,232 @@
 <style>
 
 :root{
-
---orange:#F97316;
---purple:#8B5CF6;
---dark:#3B0764;
---text:#334155;
---gray:#64748B;
-
+  --orange:#F97316;
+  --purple:#8B5CF6;
+  --dark:#3B0764;
+  --text:#334155;
+  --gray:#64748B;
 }
-
 
 *{
-box-sizing:border-box;
-font-family:"Segoe UI",Arial,sans-serif;
+  box-sizing:border-box;
+  font-family:"Segoe UI",Arial,sans-serif;
 }
-
 
 body{
-
-margin:0;
-
-min-height:100vh;
-
-background:
-radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),
-linear-gradient(145deg,#FFF7ED,#FFFFFF 55%,#F5F3FF);
-
-
-display:flex;
-justify-content:center;
-
-padding:20px;
-
-color:var(--text);
-
+  margin:0;
+  min-height:100vh;
+  background:
+  radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),
+  linear-gradient(145deg,#FFF7ED,#FFFFFF 55%,#F5F3FF);
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  color:var(--text);
 }
-
-
 
 .container{
-
-width:100%;
-max-width:430px;
-
+  width:100%;
+  max-width:430px;
 }
-
-
 
 .brand{
-
-text-align:center;
-padding:20px 10px 25px;
-
+  text-align:center;
+  padding:20px 10px 25px;
 }
-
-
 
 .brand h1{
-
-margin:0;
-
-font-size:38px;
-
-font-weight:900;
-
-letter-spacing:-1px;
-
-color:var(--dark);
-
+  margin:0;
+  font-size:38px;
+  font-weight:900;
+  letter-spacing:-1px;
+  color:var(--dark);
 }
-
 
 .brand h1 span{
-
-color:var(--orange);
-
+  color:var(--orange);
 }
-
-
 
 .subtitle{
-
-margin-top:10px;
-
-font-size:18px;
-
-font-weight:800;
-
-color:#475569;
-
+  margin-top:10px;
+  font-size:18px;
+  font-weight:800;
+  color:#475569;
 }
-
-
 
 .slogan{
-
-margin-top:12px;
-
-font-size:15px;
-
-font-style:italic;
-
-color:#64748B;
-
+  margin-top:12px;
+  font-size:15px;
+  font-style:italic;
+  color:#64748B;
 }
-
-
 
 .card{
-
-background:white;
-
-border-radius:30px;
-
-padding:28px;
-
-box-shadow:
-
-0 20px 50px rgba(139,92,246,.15);
-
+  background:white;
+  border-radius:30px;
+  padding:28px;
+  box-shadow: 0 20px 50px rgba(139,92,246,.15);
 }
-
-
 
 .hidden{
-
-display:none;
-
+  display:none;
 }
-
-
 
 h2{
-
-margin-top:0;
-
-color:var(--dark);
-
-font-size:27px;
-
+  margin-top:0;
+  color:var(--dark);
+  font-size:27px;
 }
-
-
 
 .description{
-
-color:var(--gray);
-
-line-height:1.6;
-
-font-size:14px;
-
+  color:var(--gray);
+  line-height:1.6;
+  font-size:14px;
 }
-
-
 
 label{
-
-display:block;
-
-margin-top:18px;
-
-margin-bottom:7px;
-
-font-weight:800;
-
+  display:block;
+  margin-top:18px;
+  margin-bottom:7px;
+  font-weight:800;
 }
-
-
 
 input{
-
-width:100%;
-
-padding:16px;
-
-border-radius:16px;
-
-border:1px solid #FED7AA;
-
-background:#FFFBF5;
-
-font-size:16px;
-
+  width:100%;
+  padding:16px;
+  border-radius:16px;
+  border:1px solid #FED7AA;
+  background:#FFFBF5;
+  font-size:16px;
 }
-
-
 
 input:focus{
-
-outline:none;
-
-border-color:var(--orange);
-
+  outline:none;
+  border-color:var(--orange);
 }
-
-
 
 button{
-
-width:100%;
-
-margin-top:25px;
-
-padding:17px;
-
-border:none;
-
-border-radius:18px;
-
-background:
-
-linear-gradient(90deg,var(--orange),var(--purple));
-
-
-color:white;
-
-font-size:17px;
-
-font-weight:900;
-
-cursor:pointer;
-
+  width:100%;
+  margin-top:25px;
+  padding:17px;
+  border:none;
+  border-radius:18px;
+  background: linear-gradient(90deg,var(--orange),var(--purple));
+  color:white;
+  font-size:17px;
+  font-weight:900;
+  cursor:pointer;
 }
-
-
 
 button:hover{
-
-opacity:.9;
-
+  opacity:.9;
 }
-
-
 
 .loading{
-
-text-align:center;
-
-margin-top:15px;
-
-color:var(--purple);
-
-font-weight:700;
-
+  text-align:center;
+  margin-top:15px;
+  color:var(--purple);
+  font-weight:700;
 }
-
-
-
 
 .student{
-
-font-size:24px;
-
-font-weight:900;
-
-color:var(--dark);
-
+  font-size:24px;
+  font-weight:900;
+  color:var(--dark);
 }
-
-
 
 .info{
-
-color:#64748B;
-
-margin-top:6px;
-
+  color:#64748B;
+  margin-top:6px;
 }
-
-
 
 .scoreCard{
-
-margin:25px 0;
-
-padding:25px;
-
-border-radius:28px;
-
-text-align:center;
-
-color:white;
-
-background:
-
-linear-gradient(135deg,var(--purple),var(--orange));
-
+  margin:25px 0;
+  padding:25px;
+  border-radius:28px;
+  text-align:center;
+  color:white;
+  background: linear-gradient(135deg,var(--purple),var(--orange));
 }
-
-
 
 .scoreTitle{
-
-font-size:14px;
-
-opacity:.9;
-
+  font-size:14px;
+  opacity:.9;
 }
-
-
 
 .score{
-
-font-size:60px;
-
-font-weight:950;
-
+  font-size:60px;
+  font-weight:950;
 }
-
-
 
 .stats{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:12px;
-
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
 }
-
-
 
 .stat{
-
-background:#FFF7ED;
-
-border:1px solid #FED7AA;
-
-border-radius:18px;
-
-padding:15px;
-
-text-align:center;
-
+  background:#FFF7ED;
+  border:1px solid #FED7AA;
+  border-radius:18px;
+  padding:15px;
+  text-align:center;
 }
-
-
 
 .stat small{
-
-color:#64748B;
-
+  color:#64748B;
 }
-
-
 
 .stat strong{
-
-display:block;
-
-font-size:24px;
-
-color:var(--dark);
-
-margin-top:5px;
-
+  display:block;
+  font-size:24px;
+  color:var(--dark);
+  margin-top:5px;
 }
-
-
 
 .title{
-
-margin-top:25px;
-
-margin-bottom:10px;
-
-font-weight:900;
-
-font-size:18px;
-
-color:var(--dark);
-
+  margin-top:25px;
+  margin-bottom:10px;
+  font-weight:900;
+  font-size:18px;
+  color:var(--dark);
 }
-
-
 
 .note{
-
-background:#F5F3FF;
-
-border-radius:16px;
-
-padding:17px;
-
-line-height:1.6;
-
-border-left:5px solid var(--purple);
-
+  background:#F5F3FF;
+  border-radius:16px;
+  padding:17px;
+  line-height:1.6;
+  border-left:5px solid var(--purple);
 }
-
-
 
 .chartBox{
-
-height:230px;
-
-background:#FFF7ED;
-
-border-radius:20px;
-
-padding:15px;
-
-border:1px solid #FED7AA;
-
+  height:230px;
+  background:#FFF7ED;
+  border-radius:20px;
+  padding:15px;
+  border:1px solid #FED7AA;
 }
-
-
 
 .history{
-
-background:#FAFAF9;
-
-border-radius:18px;
-
-padding:15px;
-
+  background:#FAFAF9;
+  border-radius:18px;
+  padding:15px;
 }
-
-
 
 .history div{
-
-display:flex;
-
-justify-content:space-between;
-
-padding:12px 5px;
-
-border-bottom:1px solid #E2E8F0;
-
+  display:flex;
+  justify-content:space-between;
+  padding:12px 5px;
+  border-bottom:1px solid #E2E8F0;
 }
-
-
 
 .footer{
-
-text-align:center;
-
-margin:25px;
-
-font-size:12px;
-
-color:#94A3B8;
-
+  text-align:center;
+  margin:25px;
+  font-size:12px;
+  color:#94A3B8;
 }
-
 
 /* Konu Analizi İlerleme Çubukları */
 .topicItem {
@@ -487,719 +266,222 @@ color:#94A3B8;
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-
 <div class="container">
 
-
 <div class="brand">
-
-
-<h1>
-FatihHoca_<span>UltraMat.</span>
-</h1>
-
-
-<div class="subtitle">
-Matematik Dersi Analiz Platformu
+  <h1>FatihHoca_<span>UltraMat.</span></h1>
+  <div class="subtitle">Matematik Dersi Analiz Platformu</div>
+  <div class="slogan">"Nerede olduğunu gör, nereye ulaşacağını planla."</div>
 </div>
-
-
-<div class="slogan">
-"Nerede olduğunu gör, nereye ulaşacağını planla."
-</div>
-
-
-</div>
-
-
 
 <div class="card" id="loginCard">
-
-
-<h2>
-Sonucuna Ulaş
-</h2>
-
-
-<p class="description">
-
-Matematik sınav sonuçlarını ve gelişim analizini görmek için bilgilerini gir.
-
-</p>
-
-
-<label>
-Ad Soyad
-</label>
-
-<input id="studentNameInput" placeholder="Ad Soyad">
-
-
-<label>
-4 Haneli Kişisel Kod
-</label>
-
-<input id="studentCodeInput" maxlength="4" placeholder="••••">
-
-
-<button onclick="getResult()">
-
-SONUÇLARINI GÖR
-
-</button>
-
-
-<div id="loading" class="loading hidden">
-
-Sonuçlar getiriliyor...
-
+  <h2>Sonucuna Ulaş</h2>
+  <p class="description">Matematik sınav sonuçlarını ve gelişim analizini görmek için bilgilerini gir.</p>
+  <label>Ad Soyad</label>
+  <input id="studentNameInput" placeholder="Ad Soyad">
+  <label>4 Haneli Kişisel Kod</label>
+  <input id="studentCodeInput" maxlength="4" placeholder="••••">
+  <button onclick="getResult()">SONUÇLARINI GÖR</button>
+  <div id="loading" class="loading hidden">Sonuçlar getiriliyor...</div>
 </div>
-
-
-</div>
-
-
 
 <div class="card hidden" id="resultCard">
+  <div class="student" id="nameArea"></div>
+  <div class="info" id="classArea"></div>
+  <div class="info" id="examArea"></div>
 
+  <div class="scoreCard">
+    <div class="scoreTitle">SON SINAV PUANI</div>
+    <div class="score" id="scoreArea">-</div>
+  </div>
 
-<div class="student" id="nameArea"></div>
+  <div class="stats">
+    <div class="stat"><small>Doğru</small><strong id="correctArea">-</strong></div>
+    <div class="stat"><small>Yanlış</small><strong id="wrongArea">-</strong></div>
+    <div class="stat"><small>Boş</small><strong id="emptyArea">-</strong></div>
+    <div class="stat"><small>Net</small><strong id="netArea">-</strong></div>
+  </div>
 
-<div class="info" id="classArea"></div>
+  <div class="title">📊 Matematik Gelişimim</div>
+  <div class="chartBox"><canvas id="progressChart"></canvas></div>
 
-<div class="info" id="examArea"></div>
+  <div class="title">📝 Matematik Gelişim Analizi</div>
+  <div class="note" id="analysisArea">Analiz hazırlanıyor...</div>
 
+  <div class="title">👨‍🏫 Fatih Hoca'nın Notu</div>
+  <div class="note" id="fatihNote">Not hazırlanıyor...</div>
 
-<div class="scoreCard">
+  <div class="title">📚 Konu Analizi</div>
+  <div class="note" id="topicAnalysis">Konu analizi hazırlanıyor...</div>
 
-
-<div class="scoreTitle">
-SON SINAV NETİ
+  <div class="title">📚 Geçmiş Sınavlarım</div>
+  <div class="history" id="historyArea"></div>
 </div>
 
-
-<div class="score" id="scoreArea">
--
-</div>
-
+<div class="footer">© FatihHoca_UltraMat.</div>
 
 </div>
-
-
-<div class="stats">
-
-<div class="stat">
-<small>Doğru</small>
-<strong id="correctArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Yanlış</small>
-<strong id="wrongArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Boş</small>
-<strong id="emptyArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Net</small>
-<strong id="netArea">-</strong>
-</div>
-
-<!-- YAN YANA İKİ ŞIK ÖZEL KART -->
-<div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Sıralama</small>
-  <strong id="rankArea" style="color: #581C87; font-size: 22px; font-weight: 900; margin-top: 4px;">-</strong>
-</div>
-
-<div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Başarı Durumu</small>
-  <strong id="successArea" style="color: #581C87; font-size: 18px; font-weight: 900; margin-top: 6px;">-</strong>
-</div>
-
-</div>
-
-<div class="title">
-📊 Matematik Gelişimim
-</div>
-
-
-<div class="chartBox">
-
-<canvas id="progressChart"></canvas>
-
-</div>
-
-
-
-<div class="title">
-📝 Matematik Gelişim Analizi
-</div>
-
-
-<div class="note" id="analysisArea">
-
-Analiz hazırlanıyor...
-
-</div>
-
-
-
-
-<div class="title">
-👨‍🏫 Fatih Hoca'nın Notu
-</div>
-
-
-<div class="note" id="fatihNote">
-
-Not hazırlanıyor...
-
-</div>
-
-
-<div class="title">
-📚 Konu Analizi
-</div>
-
-<div class="note" id="topicAnalysis">
-
-Konu analizi hazırlanıyor...
-
-</div>
-
-
-<div class="title">
-📚 Geçmiş Sınavlarım
-</div>
-
-
-<div class="history" id="historyArea">
-
-</div>
-
-
-</div>
-
-
-
-<div class="footer">
-
-© FatihHoca_UltraMat.
-
-</div>
-
-
-</div>
-
-
-
 
 <script>
-
-
 const API_URL="https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
 
-
-// Tarih formatlama fonksiyonu
-function tarihFormatla(tarihStr) {
-  if (!tarihStr) return "";
-  try {
-    let d = new Date(tarihStr);
-    if (isNaN(d.getTime())) return tarihStr; 
-    let gun = String(d.getDate()).padStart(2, '0');
-    let ay = String(d.getMonth() + 1).padStart(2, '0');
-    let yil = d.getFullYear();
-    return `${gun}.${ay}.${yil}`;
-  } catch(e) {
-    return tarihStr;
-  }
-}
-
-
 async function getResult(){
+  let name = document.getElementById("studentNameInput").value.trim();
+  let code = document.getElementById("studentCodeInput").value.trim();
 
+  if(!name || !code){
+    alert("Lütfen bilgilerinizi giriniz.");
+    return;
+  }
 
-let name =
-document.getElementById("studentNameInput").value.trim();
+  document.getElementById("loading").classList.remove("hidden");
 
+  try{
+    let url = API_URL + "?isim=" + encodeURIComponent(name) + "&kod=" + encodeURIComponent(code);
+    let response = await fetch(url);
+    let data = await response.json();
+    console.log("Gelen veri:", data);
 
-let code =
-document.getElementById("studentCodeInput").value.trim();
+    if(!data || data.length===0){
+      alert("Sonuç bulunamadı.");
+      return;
+    }
 
+    showResult(data);
+  }
+  catch(error){
+    console.log(error);
+    alert("Bağlantı hatası oluştu.");
+  }
 
-
-if(!name || !code){
-
-alert("Lütfen bilgilerinizi giriniz.");
-
-return;
-
+  document.getElementById("loading").classList.add("hidden");
 }
-
-
-
-document.getElementById("loading")
-.classList.remove("hidden");
-
-
-
-try{
-
-
-let url =
-API_URL+
-"?isim="+encodeURIComponent(name)+
-"&kod="+encodeURIComponent(code);
-
-
-
-let response =
-await fetch(url);
-
-
-
-let data =
-await response.json();
-
-console.log("Gelen veri:", data);
-
-
-
-
-if(!data || data.length===0){
-
-alert("Sonuç bulunamadı.");
-
-return;
-
-}
-
-
-
-showResult(data);
-
-
-
-}
-
-catch(error){
-
-console.log(error);
-
-alert("Bağlantı hatası oluştu.");
-
-}
-
-
-
-document.getElementById("loading")
-.classList.add("hidden");
-
-
-}
-
-
-
-
 
 function showResult(data){
+  let last=data[data.length-1];
 
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("resultCard").classList.remove("hidden");
 
+  document.getElementById("nameArea").innerHTML = last.isim;
+  document.getElementById("classArea").innerHTML = last.sinif + ". Sınıf - " + last.sube + " Şubesi";
+  document.getElementById("examArea").innerHTML = last.sinav + " | " + last.tarih;
+  document.getElementById("scoreArea").innerHTML = last.puan;
+  document.getElementById("correctArea").innerHTML = last.dogru;
+  document.getElementById("wrongArea").innerHTML = last.yanlis;
+  document.getElementById("emptyArea").innerHTML = last.bos;
+  document.getElementById("netArea").innerHTML = last.net;
 
-let last=data[data.length-1];
-
-
-
-document.getElementById("loginCard")
-.classList.add("hidden");
-
-
-
-document.getElementById("resultCard")
-.classList.remove("hidden");
-
-
-
-document.getElementById("nameArea")
-.innerHTML=last.isim;
-
-
-
-document.getElementById("classArea")
-.innerHTML=
-last.sinif+". Sınıf - "+
-last.sube+" Şubesi";
-
-
-let t = tarihFormatla(last.tarih);
-document.getElementById("examArea")
-.innerHTML=
-last.sinav+" | "+t;
-
-
-document.getElementById("scoreArea")
-.innerHTML=last.net;
-
-
-
-document.getElementById("correctArea")
-.innerHTML=last.dogru;
-
-
-
-document.getElementById("wrongArea")
-.innerHTML=last.yanlis;
-
-
-
-document.getElementById("emptyArea")
-.innerHTML=last.bos;
-
-
-
-document.getElementById("netArea")
-.innerHTML=last.net;
-
-
-// Sıralama verisi
-if (last.sira) {
-  document.getElementById("rankArea").innerHTML = last.sira + ".";
-} else {
-  document.getElementById("rankArea").innerHTML = "-";
+  showHistory(data);
+  createChart(data);
+  createAnalysis(data);
+  createTopicAnalysis(last);
 }
-
-// Başarı Durumu verisi
-if (last.basari) {
-  document.getElementById("successArea").innerHTML = last.basari;
-} else {
-  document.getElementById("successArea").innerHTML = "-";
-}
-
-
-
-showHistory(data);
-
-
-createChart(data);
-
-
-createAnalysis(data);
-
-createTopicAnalysis(last);
-
-
-
-}
-
-
-
-
 
 function showHistory(data){
-
-
-let html="";
-
-
-data.forEach(x=>{
-
-
-html +=
-
-`
-
-<div>
-
-<span>${x.sinav}</span>
-
-<strong>${x.net} Net</strong>
-
-</div>
-
-`;
-
-
-});
-
-
-
-document.getElementById("historyArea")
-.innerHTML=html;
-
-
+  let html="";
+  data.forEach(x=>{
+    html += `<div><span>${x.sinav}</span><strong>${x.puan}</strong></div>`;
+  });
+  document.getElementById("historyArea").innerHTML = html;
 }
-
-
-
-
 
 function createChart(data){
+  if(!window.Chart) return;
 
+  let labels = data.map(x=>x.sinav);
+  let values = data.map(x=>Number(x.puan));
+  let ctx = document.getElementById("progressChart").getContext("2d");
 
-
-if(!window.Chart){
-
-return;
-
+  new Chart(ctx,{
+    type:"line",
+    data:{
+      labels:labels,
+      datasets:[{
+        label:"Puan",
+        data:values,
+        borderColor:"#8B5CF6",
+        backgroundColor:"#F97316",
+        borderWidth:4,
+        pointRadius:6,
+        tension:.4
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      scales:{
+        y:{
+          beginAtZero:false,
+          max:100
+        }
+      }
+    }
+  });
 }
-
-
-
-let labels =
-data.map(x=>x.sinav);
-
-
-
-let values =
-data.map(x=>Number(x.net));
-
-
-
-let ctx =
-document
-.getElementById("progressChart")
-.getContext("2d");
-
-
-
-new Chart(ctx,{
-
-type:"line",
-
-
-data:{
-
-
-labels:labels,
-
-
-datasets:[{
-
-label:"Net",
-
-data:values,
-
-
-borderColor:"#8B5CF6",
-
-backgroundColor:"#F97316",
-
-borderWidth:4,
-
-pointRadius:6,
-
-tension:.4
-
-}]
-
-
-},
-
-
-options:{
-
-
-responsive:true,
-
-maintainAspectRatio:false,
-
-
-scales:{
-
-
-y:{
-
-beginAtZero:true
-
-}
-
-
-}
-
-
-}
-
-
-});
-
-
-
-}
-
-
-
-
 
 function createAnalysis(data){
+  let puanlar = data.map(x=>Number(x.puan));
+  let ilk = puanlar[0];
+  let son = puanlar[puanlar.length-1];
+  let fark = son-ilk;
 
+  let analiz="";
+  let not="";
 
-let netler =
-data.map(x=>Number(x.net));
+  if(fark>=10){
+    analiz="🟢 Matematik performansında güzel bir yükseliş görülüyor. Düzenli çalışmalarının karşılığını almaya başladığın görülüyor.";
+    not="Başarılı bir gelişim gösteriyorsun. Aynı çalışma düzenini koruyarak daha yüksek hedeflere ulaşabilirsin.";
+  }
+  else if(fark<=-10){
+    analiz="🟠 Son sınavlarda düşüş görülüyor. Yanlışlarını analiz ederek eksik konularını tamamlaman faydalı olacaktır.";
+    not="Eksiklerini belirleyip düzenli tekrarlarla yeniden yükselişe geçebilirsin. Sana güveniyorum.";
+  }
+  else{
+    analiz="🔵 Matematik performansın dengeli ilerliyor. Biraz daha odaklanarak daha üst seviyelere çıkabilirsin.";
+    not="Başarını koruyorsun. Düzenli tekrar ve soru analizi ile daha iyi sonuçlara ulaşabilirsin.";
+  }
 
-
-
-let ilk =
-netler[0];
-
-
-let son =
-netler[netler.length-1];
-
-
-let fark =
-son-ilk;
-
-
-
-let analiz="";
-
-let not="";
-
-
-
-if(fark>=2){
-
-
-analiz=
-"🟢 Matematik performansında güzel bir yükseliş görülüyor. Düzenli çalışmalarının karşılığını almaya başladığın görülüyor.";
-
-
-not=
-"Başarılı bir gelişim gösteriyorsun. Aynı çalışma düzenini koruyarak daha yüksek hedeflere ulaşabilirsin.";
-
-
-}
-
-else if(fark<=-2){
-
-
-analiz=
-"🟠 Son sınavlarda düşüş görülüyor. Yanlışlarını analiz ederek eksik konularını tamamlaman faydalı olacaktır.";
-
-
-not=
-"Eksiklerini belirleyip düzenli tekrarlarla yeniden yükselişe geçebilirsin. Sana güveniyorum.";
-
-
-}
-
-else{
-
-
-analiz=
-"🔵 Matematik performansın dengeli ilerliyor. Biraz daha odaklanarak daha üst seviyelere çıkabilirsin.";
-
-
-not=
-"Başarını koruyorsun. Düzenli tekrar ve soru analizi ile daha iyi sonuçlara ulaşabilirsin.";
-
-
-}
-
-
-
-document.getElementById("analysisArea")
-.innerHTML=analiz;
-
-
-
-document.getElementById("fatihNote")
-.innerHTML=not;
-
-
-
+  document.getElementById("analysisArea").innerHTML = analiz;
+  document.getElementById("fatihNote").innerHTML = not;
 }
 
 function createTopicAnalysis(data){
+  if(!data.konular || data.konular.length === 0){
+    document.getElementById("topicAnalysis").innerHTML = "Konu analizi bulunamadı.";
+    return;
+  }
 
+  let html="";
+  data.konular.forEach(k=>{
+    let renk="";
+    if(k.yuzde>=85){
+      renk="#16A34A";
+    }
+    else if(k.yuzde>=60){
+      renk="#F59E0B";
+    }
+    else{
+      renk="#DC2626";
+    }
 
-if(!data.konular || data.konular.length === 0){
+    html+=`
+    <div class="topicItem">
+      <div class="topicTitle">${k.konu} - %${k.yuzde}</div>
+      <div class="progress">
+        <div class="progressBar" style="width:${k.yuzde}%; background:${renk};"></div>
+      </div>
+    </div>
+    `;
+  });
 
-document.getElementById("topicAnalysis")
-.innerHTML=
-"Konu analizi bulunamadı.";
-
-return;
-
+  document.getElementById("topicAnalysis").innerHTML = html;
 }
-
-
-let html="";
-
-data.konular.forEach(k=>{
-
-
-let renk="";
-
-
-if(k.yuzde>=85){
-
-renk="#16A34A";
-
-}
-else if(k.yuzde>=60){
-
-renk="#F59E0B";
-
-}
-else{
-
-renk="#DC2626";
-
-}
-
-
-
-html+=`
-
-<div class="topicItem">
-
-<div class="topicTitle">
-${k.konu} - %${k.yuzde}
-</div>
-
-
-<div class="progress">
-
-<div class="progressBar"
-style="
-width:${k.yuzde}%;
-background:${renk};
-">
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-
-document.getElementById("topicAnalysis")
-.innerHTML=html;
-
-
-}
-
-
 </script>
 
-
 </body>
-
 </html>
