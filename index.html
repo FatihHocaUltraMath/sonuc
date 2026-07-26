@@ -311,7 +311,7 @@
       if (!tarihStr) return "";
       try {
         let d = new Date(tarihStr);
-        if (isNaN(d.getTime())) return tarihStr; // Zaten düzgün metinse doğrudan dön
+        if (isNaN(d.getTime())) return tarihStr; // Metin halindeyse doğrudan dön
         let gun = String(d.getDate()).padStart(2, '0');
         let ay = String(d.getMonth() + 1).padStart(2, '0');
         let yil = d.getFullYear();
