@@ -1,490 +1,147 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>FatihHoca_UltraMat.</title>
-
+<title>FatihHoca_UltraMat. - Öğrenci Karnesi</title>
 <style>
-
-:root{
-
---orange:#F97316;
---purple:#8B5CF6;
---dark:#3B0764;
---text:#334155;
---gray:#64748B;
-
+:root {
+  --orange: #F97316;
+  --purple: #8B5CF6;
+  --dark: #3B0764;
+  --text: #334155;
+  --gray: #64748B;
 }
 
-
-*{
-box-sizing:border-box;
-font-family:"Segoe UI",Arial,sans-serif;
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
 }
 
-
-body{
-
-margin:0;
-
-min-height:100vh;
-
-background:
-radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),
-linear-gradient(145deg,#FFF7ED,#FFFFFF 55%,#F5F3FF);
-
-
-display:flex;
-justify-content:center;
-
-padding:20px;
-
-color:var(--text);
-
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: radial-gradient(circle at top left, #FED7AA 0%, transparent 35%), linear-gradient(145deg, #FFF7ED, #FFFFFF 55%, #F5F3FF);
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text);
 }
 
-
-
-.container{
-
-width:100%;
-max-width:430px;
-
-}
-
-
-
-.brand{
-
-text-align:center;
-padding:20px 10px 25px;
-
-}
-
-
-
-.brand h1{
-
-margin:0;
-
-font-size:38px;
-
-font-weight:900;
-
-letter-spacing:-1px;
-
-color:var(--dark);
-
-}
-
-
-.brand h1 span{
-
-color:var(--orange);
-
-}
-
-
-
-.subtitle{
-
-margin-top:10px;
-
-font-size:18px;
-
-font-weight:800;
-
-color:#475569;
-
-}
-
-
-
-.slogan{
-
-margin-top:12px;
-
-font-size:15px;
-
-font-style:italic;
-
-color:#64748B;
-
-}
-
-
-
-.card{
-
-background:white;
-
-border-radius:30px;
-
-padding:28px;
-
-box-shadow:
-
-0 20px 50px rgba(139,92,246,.15);
-
-}
-
-
-
-.hidden{
-
-display:none;
-
-}
-
-
-
-h2{
-
-margin-top:0;
-
-color:var(--dark);
-
-font-size:27px;
-
-}
-
-
-
-.description{
-
-color:var(--gray);
-
-line-height:1.6;
-
-font-size:14px;
-
-}
-
-
-
-label{
-
-display:block;
-
-margin-top:18px;
-
-margin-bottom:7px;
-
-font-weight:800;
-
-}
-
-
-
-input{
-
-width:100%;
-
-padding:16px;
-
-border-radius:16px;
-
-border:1px solid #FED7AA;
-
-background:#FFFBF5;
-
-font-size:16px;
-
-}
-
-
-
-input:focus{
-
-outline:none;
-
-border-color:var(--orange);
-
-}
-
-
-
-button{
-
-width:100%;
-
-margin-top:25px;
-
-padding:17px;
-
-border:none;
-
-border-radius:18px;
-
-background:
-
-linear-gradient(90deg,var(--orange),var(--purple));
-
-
-color:white;
-
-font-size:17px;
-
-font-weight:900;
-
-cursor:pointer;
-
-}
-
-
-
-button:hover{
-
-opacity:.9;
-
-}
-
-
-
-.loading{
-
-text-align:center;
-
-margin-top:15px;
-
-color:var(--purple);
-
-font-weight:700;
-
-}
-
-
-
-
-.student{
-
-font-size:24px;
-
-font-weight:900;
-
-color:var(--dark);
-
-}
-
-
-
-.info{
-
-color:#64748B;
-
-margin-top:6px;
-
-}
-
-
-
-.scoreCard{
-
-margin:25px 0;
-
-padding:25px;
-
-border-radius:28px;
-
-text-align:center;
-
-color:white;
-
-background:
-
-linear-gradient(135deg,var(--purple),var(--orange));
-
-}
-
-
-
-.scoreTitle{
-
-font-size:14px;
-
-opacity:.9;
-
-}
-
-
-
-.score{
-
-font-size:60px;
-
-font-weight:950;
-
-}
-
-
-
-.stats{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:12px;
-
-}
-
-
-
-.stat{
-
-background:#FFF7ED;
-
-border:1px solid #FED7AA;
-
-border-radius:18px;
-
-padding:15px;
-
-text-align:center;
-
-}
-
-
-
-.stat small{
-
-color:#64748B;
-
-}
-
-
-
-.stat strong{
-
-display:block;
-
-font-size:24px;
-
-color:var(--dark);
-
-margin-top:5px;
-
-}
-
-
-
-.title{
-
-margin-top:25px;
-
-margin-bottom:10px;
-
-font-weight:900;
-
-font-size:18px;
-
-color:var(--dark);
-
-}
-
-
-
-.note{
-
-background:#F5F3FF;
-
-border-radius:16px;
-
-padding:17px;
-
-line-height:1.6;
-
-border-left:5px solid var(--purple);
-
-}
-
-
-
-.chartBox{
-
-height:230px;
-
-background:#FFF7ED;
-
-border-radius:20px;
-
-padding:15px;
-
-border:1px solid #FED7AA;
-
-}
-
-
-
-.history{
-
-background:#FAFAF9;
-
-border-radius:18px;
-
-padding:15px;
-
-}
-
-
-
-.history div{
-
-display:flex;
-
-justify-content:space-between;
-
-padding:12px 5px;
-
-border-bottom:1px solid #E2E8F0;
-
-}
-
-
-
-.footer{
-
-text-align:center;
-
-margin:25px;
-
-font-size:12px;
-
-color:#94A3B8;
-
-}
-
-
-/* Konu Analizi İlerleme Çubukları */
-.topicItem {
-  margin-bottom: 15px;
-}
-
-.topicTitle {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--dark);
-  margin-bottom: 6px;
-}
-
-.progress {
+.container {
   width: 100%;
-  height: 12px;
-  background: #E2E8F0;
-  border-radius: 10px;
-  overflow: hidden;
+  max-width: 430px;
 }
 
-.progressBar {
-  height: 100%;
-  border-radius: 10px;
-  transition: width 0.4s ease-in-out;
+.brand {
+  text-align: center;
+  padding: 20px 10px 25px;
 }
 
-/* Soru Bazlı Çeldirici Analizi Tablosu */
+.brand h1 {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--dark);
+}
+
+.brand h1 span {
+  color: var(--orange);
+}
+
+.subtitle {
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: #475569;
+}
+
+.slogan {
+  margin-top: 12px;
+  font-size: 15px;
+  font-style: italic;
+  color: #64748B;
+}
+
+.card {
+  background: white;
+  border-radius: 30px;
+  padding: 28px;
+  box-shadow: 0 20px 50px rgba(139,92,246,.15);
+}
+
+.student {
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--dark);
+}
+
+.info {
+  color: #64748B;
+  margin-top: 6px;
+}
+
+.scoreCard {
+  margin: 25px 0;
+  padding: 25px;
+  border-radius: 28px;
+  text-align: center;
+  color: white;
+  background: linear-gradient(135deg, var(--purple), var(--orange));
+}
+
+.scoreTitle {
+  font-size: 14px;
+  opacity: .9;
+}
+
+.score {
+  font-size: 60px;
+  font-weight: 950;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat {
+  background: #FFF7ED;
+  border: 1px solid #FED7AA;
+  border-radius: 18px;
+  padding: 15px;
+  text-align: center;
+}
+
+.stat small {
+  color: #64748B;
+}
+
+.stat strong {
+  display: block;
+  font-size: 24px;
+  color: var(--dark);
+  margin-top: 5px;
+}
+
+.title {
+  margin-top: 25px;
+  margin-bottom: 10px;
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--dark);
+}
+
+.note {
+  background: #F5F3FF;
+  border-radius: 16px;
+  padding: 17px;
+  line-height: 1.6;
+  border-left: 5px solid var(--purple);
+}
+
 .distractorTable {
   width: 100%;
   border-collapse: collapse;
@@ -532,900 +189,152 @@ color:#94A3B8;
   font-size: 12px;
 }
 
-.badge-empty {
-  background: #F1F5F9;
-  color: #475569;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-weight: 700;
+.footer {
+  text-align: center;
+  margin: 25px;
   font-size: 12px;
+  color: #94A3B8;
 }
-
 </style>
-
 </head>
-
-
 <body>
 
-
 <div class="container">
-
-
-<div class="brand">
-
-
-<h1>
-FatihHoca_<span>UltraMat.</span>
-</h1>
-
-
-<div class="subtitle">
-Matematik Dersi Analiz Platformu
-</div>
-
-
-<div class="slogan">
-"Nerede olduğunu gör, nereye ulaşacağını planla."
-</div>
-
-
-</div>
-
-
-
-<div class="card" id="loginCard">
-
-
-<h2>
-Sonucuna Ulaş
-</h2>
-
-
-<p class="description">
-
-Matematik sınav sonuçlarını ve gelişim analizini görmek için bilgilerini gir.
-
-</p>
-
-
-<label>
-Ad Soyad
-</label>
-
-<input id="studentNameInput" placeholder="Ad Soyad">
-
-
-<label>
-4 Haneli Kişisel Kod
-</label>
-
-<input id="studentCodeInput" maxlength="4" placeholder="••••">
-
-
-<button onclick="getResult()">
-
-SONUÇLARINI GÖR
-
-</button>
-
-
-<div id="loading" class="loading hidden">
-
-Sonuçlar getiriliyor...
-
-</div>
-
-
-</div>
-
-
-
-<div class="card hidden" id="resultCard">
-
-
-<div class="student" id="nameArea"></div>
-
-<div class="info" id="classArea"></div>
-
-<div class="info" id="examArea"></div>
-
-
-<div class="scoreCard">
-
-
-<div class="scoreTitle">
-SON SINAV NETİ
-</div>
-
-
-<div class="score" id="scoreArea">
--
-</div>
-
-
-</div>
-
-
-<div class="stats">
-
-<div class="stat">
-<small>Doğru</small>
-<strong id="correctArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Yanlış</small>
-<strong id="wrongArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Boş</small>
-<strong id="emptyArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Net</small>
-<strong id="netArea">-</strong>
-</div>
-
-<!-- YAN YANA İKİ ŞIK ÖZEL KART -->
-<div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Sıralama</small>
-  <strong id="rankArea" style="color: #581C87; font-size: 22px; font-weight: 900; margin-top: 4px;">-</strong>
-</div>
-
-<div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Başarı Durumu</small>
-  <strong id="successArea" style="color: #581C87; font-size: 18px; font-weight: 900; margin-top: 6px;">-</strong>
-</div>
-
-<!-- ALTTA ORTALI ÜÇÜNCÜ ÖZEL KART (TOPLAM KATILIM) -->
-<div class="stat" style="grid-column: span 2; background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px; text-align: center;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Toplam Katılım</small>
-  <strong id="participationArea" style="color: #581C87; font-size: 20px; font-weight: 900; margin-top: 4px;">-</strong>
-</div>
-
-</div>
-
-<div class="title">
-📊 Matematik Gelişimim
-</div>
-
-
-<div class="chartBox">
-
-<canvas id="progressChart"></canvas>
-
-</div>
-
-
-
-<div class="title">
-📝 Matematik Gelişim Analizi
-</div>
-
-
-<div class="note" id="analysisArea">
-
-Analiz hazırlanıyor...
-
-</div>
-
-
-
-
-<div class="title">
-👨‍🏫 Fatih Hoca'nın Notu
-</div>
-
-
-<div class="note" id="fatihNote">
-
-Not hazırlanıyor...
-
-</div>
-
-
-<div class="title">
-📚 Konu Analizi
-</div>
-
-<div class="note" id="topicAnalysis">
-
-Konu analizi hazırlanıyor...
-
-</div>
-
-
-<div class="title">
-🎯 Soru Bazlı Çeldirici Analizi
-</div>
-
-<div id="distractorArea" style="margin-top: 10px;">
-  Çeldirici analizi yükleniyor...
-</div>
-
-
-<div class="title">
-📚 Geçmiş Sınavlarım
-</div>
-
-
-<div class="history" id="historyArea">
-
-</div>
-
-
-</div>
-
-
-
-<div class="footer">
-
-© FatihHoca_UltraMat.
-
-</div>
-
-
-</div>
-
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-
-
-const API_URL="https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
-
-
-// Tarih formatlama fonksiyonu
-function tarihFormatla(tarihStr) {
-  if (!tarihStr) return "";
-  try {
-    let d = new Date(tarihStr);
-    if (isNaN(d.getTime())) return tarihStr; 
-    let gun = String(d.getDate()).padStart(2, '0');
-    let ay = String(d.getMonth() + 1).padStart(2, '0');
-    let yil = d.getFullYear();
-    return `${gun}.${ay}.${yil}`;
-  } catch(e) {
-    return tarihStr;
-  }
-}
-
-
-async function getResult(){
-
-
-let name =
-document.getElementById("studentNameInput").value.trim();
-
-
-let code =
-document.getElementById("studentCodeInput").value.trim();
-
-
-
-if(!name || !code){
-
-alert("Lütfen bilgilerinizi giriniz.");
-
-return;
-
-}
-
-
-
-document.getElementById("loading")
-.classList.remove("hidden");
-
-
-
-try{
-
-
-let url =
-API_URL+
-"?isim="+encodeURIComponent(name)+
-"&kod="+encodeURIComponent(code);
-
-
-
-let response =
-await fetch(url);
-
-
-
-let data =
-await response.json();
-
-console.log("Gelen veri:", data);
-
-
-
-
-if(!data || data.length===0){
-
-alert("Sonuç bulunamadı.");
-
-return;
-
-}
-
-
-
-showResult(data);
-
-
-
-}
-
-catch(error){
-
-console.log(error);
-
-alert("Bağlantı hatası oluştu.");
-
-}
-
-
-
-document.getElementById("loading")
-.classList.add("hidden");
-
-
-}
-
-
-
-
-
-function showResult(data){
-
-
-
-let last=data[data.length-1];
-
-
-
-document.getElementById("loginCard")
-.classList.add("hidden");
-
-
-
-document.getElementById("resultCard")
-.classList.remove("hidden");
-
-
-
-document.getElementById("nameArea")
-.innerHTML=last.isim;
-
-
-
-document.getElementById("classArea")
-.innerHTML=
-last.sinif+". Sınıf - "+
-last.sube+" Şubesi";
-
-
-let t = tarihFormatla(last.tarih);
-document.getElementById("examArea")
-.innerHTML=
-last.sinav+" | "+t;
-
-
-document.getElementById("scoreArea")
-.innerHTML=last.net;
-
-
-
-document.getElementById("correctArea")
-.innerHTML=last.dogru;
-
-
-
-document.getElementById("wrongArea")
-.innerHTML=last.yanlis;
-
-
-
-document.getElementById("emptyArea")
-.innerHTML=last.bos;
-
-
-
-document.getElementById("netArea")
-.innerHTML=last.net;
-
-
-// Sıralama verisi
-if (last.sira) {
-  document.getElementById("rankArea").innerHTML = last.sira + ".";
-} else {
-  document.getElementById("rankArea").innerHTML = "-";
-}
-
-// Başarı Durumu verisi
-if (last.basari) {
-  document.getElementById("successArea").innerHTML = last.basari;
-} else {
-  document.getElementById("successArea").innerHTML = "-";
-}
-
-// Toplam Katılım verisi
-if (last.katilim) {
-  document.getElementById("participationArea").innerHTML = last.katilim + " Öğrenci";
-} else {
-  document.getElementById("participationArea").innerHTML = "-";
-}
-
-
-
-showHistory(data);
-
-
-createChart(data);
-
-
-createAnalysis(data);
-
-createTopicAnalysis(last);
-
-createDistractorAnalysis(last);
-
-
-
-}
-
-
-
-
-
-function showHistory(data){
-
-
-let html="";
-
-
-data.forEach(x=>{
-
-
-html +=
-
-`
-
-<div>
-
-<span>${x.sinav}</span>
-
-<strong>${x.net} Net</strong>
-
-</div>
-
-`;
-
-
-});
-
-
-
-document.getElementById("historyArea")
-.innerHTML=html;
-
-
-}
-
-
-
-
-
-function createChart(data){
-
-
-
-if(!window.Chart){
-
-return;
-
-}
-
-
-
-let labels =
-data.map(x=>x.sinav);
-
-
-
-let values =
-data.map(x=>Number(x.net));
-
-
-
-let ctx =
-document
-.getElementById("progressChart")
-.getContext("2d");
-
-
-
-new Chart(ctx,{
-
-type:"line",
-
-
-data:{
-
-
-labels:labels,
-
-
-datasets:[{
-
-label:"Net",
-
-data:values,
-
-
-borderColor:"#8B5CF6",
-
-backgroundColor:"#F97316",
-
-borderWidth:4,
-
-pointRadius:6,
-
-tension:.4
-
-}]
-
-
-},
-
-
-options:{
-
-
-responsive:true,
-
-maintainAspectRatio:false,
-
-
-scales:{
-
-
-y:{
-
-beginAtZero:true
-
-}
-
-
-}
-
-
-}
-
-
-});
-
-
-
-}
-
-
-
-
-
-function createAnalysis(data){
-  let netler = data.map(x=>Number(x.net));
-  let sonNet = netler[netler.length-1];
-
-  let analizHavuzu = [];
-  let notHavuzu = [];
-
-  // İLK SINAV (TEK SINAV) DURUMLARI
-  if (data.length === 1) {
-    if (sonNet >= 15) {
-      analizHavuzu = [
-        "🟢 İlk deneme sınavı sonuçlarına göre üst düzey kavrama düzeyi ve yüksek başarı oranı tespit edilmiştir.",
-        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir.",
-        "🟢 İlk sınav performansında görülen yüksek net, akademik potansiyelin üst seviyede olduğunu kanıtlamaktadır.",
-        "🟢 Temel kazanımların kusursuz bir şekilde öğrenildiği, ilk deneme verilerinden net bir şekilde anlaşılmaktadır.",
-        "🟢 Başlangıç sınavında elde edilen bu yüksek başarı, hedeflenen zirve için güçlü bir referans oluşturmaktadır."
-      ];
-      notHavuzu = [
-        "Matematikle arandaki bu güzel bağ ilk sınavdan kendini belli etti, aynen böyle devam!",
-        "İlk sınavdan tozuttun ortalığı, nazar değmesin harika bir başlangıç yaptın!",
-        "Bu ne hız böyle! İlk denemeden standardı çok yukarı koydun, tebrikler.",
-        "İlk denemeden bu muazzam neti görmek harika, bu ivmeyi asla kaybetmeyelim.",
-        "İlk sınavdan harika bir sinyal aldık, bu potansiyeli sonuna kadar kullanacağız."
-      ];
-    } else if (sonNet >= 8) {
-      analizHavuzu = [
-        "🟢 İlk sınav sonuçlarına göre ortalama üstü ve dengeli bir matematik başlangıcı yapılmıştır.",
-        "🟢 Öğrencinin temel matematik kazanımlarını büyük ölçüde edindiği, orta-üst düzey bir başlangıç yaptığı tespit edilmiştir.",
-        "🟢 İlk deneme verileri, kazanımların büyük kısmının kavrandığını ancak ufak geliştirmelere açık olduğunu göstermektedir.",
-        "🟢 Sınav performansının kararlı ve güven veren bir temel üzerine kurulduğu istatistiki olarak görülmektedir.",
-        "🟢 İlk sınav ortalaması, hedeflenen başarı seviyesine ulaşmak için elverişli bir zemin sunmaktadır."
-      ];
-      notHavuzu = [
-        "İstikrarlı ve sağlam adımlarla ilerliyorsun, yolun açık olsun.",
-        "Acelemiz yok, böyle sindire sindire gitmek en sağlamı.",
-        "Temelimiz gayet iyi kuruldu, şimdi bunun üzerine çok daha rahat çıkabiliriz.",
-        "Fena değil, güzel bir başlangıç yaptık; ufak dokunuşlarla bunu uçururuz.",
-        "Gayet dengeli bir giriş oldu, bu istikrarı korursak sırtımız yere gelmez."
-      ];
-    } else {
-      analizHavuzu = [
-        "🟢 İlk sınav verilerine göre temel kavram eksiklikleri ve dikkat edilmesi gereken gelişim alanları saptanmıştır.",
-        "🟢 Net verileri, soru çözüm pratiğinin ve konu tekrarının artırılması gerektiğini objektif olarak ortaya koymaktadır.",
-        "🟢 İlk deneme sonuçları, temel formüller ve konu temelleri üzerinde daha fazla durulması gerekliliğini göstermektedir.",
-        "🟢 Performans analizi, öğrencinin potansiyelini açığa çıkarmak için ek çalışma stratejilerine ihtiyaç duyduğunu belirtmektedir.",
-        "🟢 İlk sınav verilerindeki eksikler, düzenli bir çalışma planıyla kısa sürede kapatılabilecek niteliktedir."
-      ];
-      notHavuzu = [
-        "Ufak bir sarsıntı bu, moral bozmak yok, hemen eski formumuza dönüyoruz.",
-        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.",
-        "Hiç canını sıkma, başlangıçlar her zaman zor olabilir. Birlikte çalışarak üstesinden geleceğiz.",
-        "İlk sınavlar sadece aynadır, nerede eksiğimiz olduğunu gördük. Şimdi tam zamanı, sıvazla kolları!",
-        "Bunu bir başlangıç kabul et, ufak adımlarla o netleri yukarı birlikte tırmandıracağız."
-      ];
-    }
-  } 
-  // SONRAKİ SINAVLAR (KARŞILAŞTIRMALI / FARK DURUMLARI)
-  else {
-    let ilk = netler[0];
-    let son = netler[netler.length-1];
-    let fark = son - ilk;
-
-    if (fark >= 3) {
-      analizHavuzu = [
-        "🟢 Zaman içindeki sınav verileri incelendiğinde, matematik netlerinde istikrarlı, sürekli ve güçlü bir ivmelenme gözlemlenmektedir.",
-        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir.",
-        "🟢 Öğrencinin problem çözme becerilerinde ve konu hakimiyetinde net bir artış olduğu istatistiki olarak belgelenmiştir.",
-        "🟢 Sınav serisi boyunca gösterilen net artışı, sistemli çalışmanın meyvelerini vermeye başladığını kanıtlamaktadır.",
-        "🟢 Performans grafiğindeki bu dik tırmanış, öğrencinin konu kalitesini üst basamağa taşıdığını göstermektedir."
-      ];
-      notHavuzu = [
-        "Soru bankalarına rahmet okutmuşsun resmen. Netler tavan, gurur duydum!",
-        "Çalışmanın hakkını sonuna kadar vermişsin. Bu grafik tablosu harika görünüyor.",
-        "Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim.",
-        "İşte bu! Çalışınca nasıl da açılıyor yollar, sakın bu tempoyu düşürme.",
-        "Helal olsun, emeğinin karşılığını çatır çatır alıyorsun. Aynen böyle devam."
-      ];
-    } else if (fark > 0 && fark < 3) {
-      analizHavuzu = [
-        "🟢 Sınav serisi boyunca performansta yavaş fakat kararlı ve pozitif yönlü bir gelişim trendi izlenmektedir.",
-        "🟢 Netlerdeki artış eğilimi, öğrencinin çalışma disiplinini düzenli olarak sürdürdüğünü doğrulamaktadır.",
-        "🟢 Sınav verilerindeki kademeli artış, öğrencinin istikrarını koruyarak ilerlediğini göstermektedir.",
-        "🟢 Performans grafiği, sağlam ve emin adımlarla yukarı yönlü bir ivme yakalandığını tescil etmektedir.",
-        "🟢 Düzenli çalışma alışkanlığının netlere olumlu düzeyde yansıdığı istatistiki olarak görülmektedir."
-      ];
-      notHavuzu = [
-        "Ufak ufak tırmanıyorsun ama bileğini kimse bükemez bu gidişle.",
-        "Damlaya damlaya göl olur misali, her denemede bir basamak daha yukarıdasın.",
-        "Tempon gayet iyi, biraz daha odaklanırsak kim tutar seni.",
-        "İstikrarlı tırmanış budur işte, her sınav biraz daha iyiye gidiyoruz.",
-        "Çizgin tertemiz yukarı bakıyor, minik detayları da tamamen hallettik mi tamamdır."
-      ];
-    } else if (fark === 0) {
-      analizHavuzu = [
-        "🟢 Sınavlar arası net dağılımının benzer düzeyde seyrettiği ve mevcut başarı çizgisinin korunduğu görülmektedir.",
-        "🟢 Performans verileri yatay bir seyir izlemekte olup, öğrencinin potansiyelini tam olarak yansıtabilmesi için ek bir ivmeye ihtiyaç duyduğu anlaşılmaktadır.",
-        "🟢 Matematik netleri genel ortalamada sabit bir çizgi izlemektedir.",
-        "🟢 Sınav istatistikleri, mevcut bilginin korunduğunu ancak yeni bir üst eşiğe henüz geçilmediğini göstermektedir.",
-        "🟢 Çizginin yatay seyri, çalışma temposunda ufak bir çeşitliliğe ihtiyaç duyulduğunu işaret etmektedir."
-      ];
-      notHavuzu = [
-        "Aynı çizgide kalmak güvenlidir ama başarı biraz risk almayı sever. Farklı soru tiplerine de ağırlık verelim.",
-        "Durumun fena değil ama bu kadarı sana yetmemeli. Bir sonraki sınavda çıtayı biraz daha yukarı koyalım.",
-        "Çizgini bozmamak güzel bir temel ama artık üzerine koyma vakti geldi. Daha fazlasını yapabileceğini biliyorum.",
-        "Güvenli bölgedesin ama seni konfor alanından biraz çıkaralım, potansiyelin bunun çok üzerinde.",
-        "Aynı yerde saymak gerilemek gibidir güzel çocuk, artık bu çizgiyi kırma zamanı geldi."
-      ];
-    } else if (fark < 0 && fark >= -2) {
-      analizHavuzu = [
-        "🟢 Son dönem sınavlarında, geçici dikkat hatalarından kaynaklanan sınırlı düzeyde bir net kaybı saptanmıştır.",
-        "🟢 Performans eğrisinde küçük çaplı bir dalgalanma yaşandığı, temel konularda büyük bir kopuş olmadığı tespit edilmiştir.",
-        "🟢 Son sınav performansında küçük çaplı bir gerileme tespit edilmiştir.",
-        "🟢 İstatistikler, net düşüşünün kalıcı olmadığını, anlık odaklanma sorunlarından kaynaklanabileceğini göstermektedir.",
-        "🟢 Sınav verilerindeki bu minik esneme, kısa süreli tekrarlarla kolayca telafi edilebilir düzeydedir."
-      ];
-      notHavuzu = [
-        "Ufak bir nazar boncuğu diyelim, kafa biraz başka yerlerdeymiş sanki bu sınavda.",
-        "Minik bir fren yaptık ama yoldan çıkmadık, hemen toparlarız.",
-        "Gözünden kaçan minik detaylar olmuş, sonraki sınavda affetmek yok.",
-        "Olur öyle ufak kazalar, takılıp kalma. Teneffüste yanıma gel, eksikleri beraber kapatalım.",
-        "Kıvılcım sönmedi, sadece rüzgar aldık. Hemen eski formumuza dönüyoruz!"
-      ];
-    } else {
-      analizHavuzu = [
-        "🟢 Sınav netlerindeki ardışık düşüş eğilimi, konu eksikliklerinin acilen giderilmesi gerektiğini göstermektedir.",
-        "🟢 Performans analizinde belirgin bir gerileme tespit edilmiş olup, çalışma stratejisinin gözden geçirilmesi şarttır.",
-        "🟢 Matematik netlerinde belirgin bir düşüş gözlemlenmektedir.",
-        "🟢 Veriler, soru çözüm hızında veya konu kavramasında ciddi bir tıkanıklık yaşandığını objektif olarak ortaya koymaktadır.",
-        "🟢 Sınav sonuçları, acil bir eylem planı ve birebir takviye yapılması gereken bir sürece girildiğini işaret etmektedir."
-      ];
-      notHavuzu = [
-        "Bu sınav biraz ters köşe yaptı, netler epey aşağı yönlü hareket etti. İlk teneffüs masaya yatırıyoruz bunu.",
-        "Tren biraz raydan çıktı gibi, acilen duruma el koymalıyız. Can sıkmak yok, birlikte çözeceğiz.",
-        "Beklenmeyen bir şok yaşadık ama kriz yönetimi bizim işimiz. Sıvazla kolları hallederiz.",
-        "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs bu işi kökten çözeceğiz.",
-        "Bu sınav bize nerede açık verdiğimizi net gösterdi, hiç dert etme birlikte üstesinden geleceğiz."
-      ];
-    }
-  }
-
-  let analizIndex = Math.abs(Math.round(sonNet * 7)) % analizHavuzu.length;
-  let notIndex = Math.abs(Math.round(sonNet * 3)) % notHavuzu.length;
-
-  document.getElementById("analysisArea").innerHTML = analizHavuzu[analizIndex];
-  document.getElementById("fatihNote").innerHTML = notHavuzu[notIndex];
-}
-
-function createTopicAnalysis(data){
-
-
-if(!data.konular || data.konular.length === 0){
-
-document.getElementById("topicAnalysis")
-.innerHTML=
-"Konu analizi bulunamadı.";
-
-return;
-
-}
-
-
-let html="";
-
-data.konular.forEach(k=>{
-
-
-let renk="";
-
-
-if(k.yuzde>=85){
-
-renk="#16A34A";
-
-}
-else if(k.yuzde>=60){
-
-renk="#F59E0B";
-
-}
-else{
-
-renk="#DC2626";
-
-}
-
-
-
-html+=`
-
-<div class="topicItem">
-
-<div class="topicTitle">
-${k.konu} - %${k.yuzde}
-</div>
-
-
-<div class="progress">
-
-<div class="progressBar"
-style="
-width:${k.yuzde}%;
-background:${renk};
-">
-
-</div>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-
-document.getElementById("topicAnalysis")
-.innerHTML=html;
-
-
-}
-
-function createDistractorAnalysis(data) {
-  let container = document.getElementById("distractorArea");
-  
-  if (!data.sorular || data.sorular.length === 0) {
-    container.innerHTML = "<div class='note'>Soru bazlı detaylı çeldirici verisi bulunamadı.</div>";
-    return;
-  }
-
-  // 1. Ana Tablo (Soru, Doğru Şık, Seçilen, Durum)
-  let html = `
-    <table class="distractorTable">
-      <thead>
-        <tr>
-          <th>Soru</th>
-          <th>Doğru Şık</th>
-          <th>Seçilen</th>
-          <th>Durum</th>
-        </tr>
-      </thead>
-      <tbody>
-  `;
-
-  data.sorular.forEach(s => {
-    let durumBadge = "";
-    if (s.durum === "Dogru" || s.durum === "Doğru") {
-      durumBadge = `<span class="badge-correct">Doğru</span>`;
-    } else if (s.durum === "Yanlis" || s.durum === "Yanlış") {
-      durumBadge = `<span class="badge-wrong">Yanlış</span>`;
-    } else {
-      durumBadge = `<span class="badge-empty">Boş</span>`;
-    }
-
-    html += `
-      <tr>
-        <td style="font-weight:700; color:var(--dark);">Soru ${s.no}</td>
-        <td><strong>${s.dogruSik}</strong></td>
-        <td><strong>${s.ogrenciSik || "-"}</strong></td>
-        <td>${durumBadge}</td>
-      </tr>
-    `;
-  });
-
-  html += `
-      </tbody>
-    </table>
-  `;
-
-  // 2. Sınıf Geneli Soru İstatistikleri (Daha Kompakt / Mini Grid Tasarımı)
-  html += `
-    <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
-      <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-        <span>👥 Sınıf Geneli Soru İstatistikleri</span>
+  <div class="brand">
+    <h1>FatihHoca_<span>UltraMat.</span></h1>
+    <div class="subtitle">Matematik Dersi Analiz Platformu</div>
+    <div class="slogan">"Nerede olduğunu gör, nereye ulaşacağını planla."</div>
+  </div>
+
+  <div class="card" id="resultCard">
+    <div class="student">Ali Kaya</div>
+    <div class="info">8. Sınıf - A Şubesi</div>
+    <div class="info">1. Sınav (D801) | 25.07.2026</div>
+
+    <div class="scoreCard">
+      <div class="scoreTitle">SON SINAV NETİ</div>
+      <div class="score">16.00</div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <small>Doğru</small>
+        <strong>17</strong>
       </div>
-      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
-  `;
-
-  data.sorular.forEach(s => {
-    let dogruKisi = s.dogruKacKisi !== undefined ? s.dogruKacKisi : 0;
-    let yanlisKisi = s.yanlisKacKisi !== undefined ? s.yanlisKacKisi : 0;
-
-    html += `
-      <div style="background: white; padding: 10px 12px; border-radius: 12px; border: 1px solid #E9D5FF; display: flex; flex-direction: column; justify-content: space-between;">
-        <div style="font-weight: 700; color: var(--dark); font-size: 13px; margin-bottom: 6px;">Soru ${s.no}</div>
-        <div style="display: flex; justify-content: space-between; font-size: 12px;">
-          <span style="color: #166534; font-weight: 700;">✅ ${dogruKisi}D</span>
-          <span style="color: #991B1B; font-weight: 700;">❌ ${yanlisKisi}Y</span>
-        </div>
+      <div class="stat">
+        <small>Yanlış</small>
+        <strong>3</strong>
       </div>
-    `;
-  });
+      <div class="stat">
+        <small>Boş</small>
+        <strong>0</strong>
+      </div>
+      <div class="stat">
+        <small>Net</small>
+        <strong>16.00</strong>
+      </div>
 
-  html += `
+      <div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
+        <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Sıralama</small>
+        <strong style="color: #581C87; font-size: 22px; font-weight: 900; margin-top: 4px;">2. / 30</strong>
+      </div>
+
+      <div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
+        <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Başarı Durumu</small>
+        <strong style="color: #581C87; font-size: 16px; font-weight: 900; margin-top: 6px;">Çok İyi</strong>
       </div>
     </div>
-  `;
 
-  container.innerHTML = html;
-}
+    <div class="title">📝 Matematik Gelişim Analizi</div>
+    <div class="note">
+      🟢 İlk deneme sınavı sonuçlarına göre üst düzey kavrama düzeyi ve yüksek başarı oranı tespit edilmiştir. Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları tam anlamıyla içselleştirdiğini göstermektedir.
+    </div>
 
-</script>
+    <div class="title">👨‍🏫 Fatih Hoca'nın Notu</div>
+    <div class="note">
+      İlk sınavdan tozuttun ortalığı, nazar değmesin harika bir başlangıç yaptın! Bu ivmeyi asla kaybetmeyelim.
+    </div>
 
+    <div class="title">🎯 Soru Bazlı Çeldirici Analizi</div>
+    <div style="margin-top: 10px;">
+      <table class="distractorTable">
+        <thead>
+          <tr>
+            <th>Soru</th>
+            <th>Doğru Şık</th>
+            <th>Seçilen</th>
+            <th>Durum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:700; color:var(--dark);">Soru 1</td>
+            <td><strong>A</strong></td>
+            <td><strong>A</strong></td>
+            <td><span class="badge-correct">Doğru</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700; color:var(--dark);">Soru 2</td>
+            <td><strong>C</strong></td>
+            <td><strong>B</strong></td>
+            <td><span class="badge-wrong">Yanlış</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:700; color:var(--dark);">Soru 3</td>
+            <td><strong>B</strong></td>
+            <td><strong>B</strong></td>
+            <td><span class="badge-correct">Doğru</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SINIF GENELİ SORU İSTATİSTİKLERİ (Yepyeni Kompakt Yan Yana Grid Tasarımı) -->
+    <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
+      <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 12px;">👥 Sınıf Geneli Soru İstatistikleri</div>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
+        
+        <div style="background: white; padding: 10px 12px; border-radius: 12px; border: 1px solid #E9D5FF;">
+          <div style="font-weight: 700; color: var(--dark); font-size: 13px; margin-bottom: 6px;">Soru 1</div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <span style="color: #166534; font-weight: 700;">✅ 28 Doğru</span>
+            <span style="color: #991B1B; font-weight: 700;">❌ 2 Yanlış</span>
+          </div>
+        </div>
+
+        <div style="background: white; padding: 10px 12px; border-radius: 12px; border: 1px solid #E9D5FF;">
+          <div style="font-weight: 700; color: var(--dark); font-size: 13px; margin-bottom: 6px;">Soru 2</div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <span style="color: #166534; font-weight: 700;">✅ 12 Doğru</span>
+            <span style="color: #991B1B; font-weight: 700;">❌ 18 Yanlış</span>
+          </div>
+        </div>
+
+        <div style="background: white; padding: 10px 12px; border-radius: 12px; border: 1px solid #E9D5FF;">
+          <div style="font-weight: 700; color: var(--dark); font-size: 13px; margin-bottom: 6px;">Soru 3</div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <span style="color: #166534; font-weight: 700;">✅ 25 Doğru</span>
+            <span style="color: #991B1B; font-weight: 700;">❌ 5 Yanlış</span>
+          </div>
+        </div>
+
+        <div style="background: white; padding: 10px 12px; border-radius: 12px; border: 1px solid #E9D5FF;">
+          <div style="font-weight: 700; color: var(--dark); font-size: 13px; margin-bottom: 6px;">Soru 4</div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <span style="color: #166534; font-weight: 700;">✅ 20 Doğru</span>
+            <span style="color: #991B1B; font-weight: 700;">❌ 10 Yanlış</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © FatihHoca_UltraMat.
+  </div>
+</div>
 
 </body>
-
 </html>
