@@ -498,13 +498,13 @@ color:#94A3B8;
 .distractorTable th {
   background: #FED7AA;
   color: var(--dark);
-  padding: 10px 6px;
+  padding: 12px 8px;
   text-align: center;
   font-weight: 800;
 }
 
 .distractorTable td {
-  padding: 10px 6px;
+  padding: 12px 8px;
   text-align: center;
   border-bottom: 1px solid #FDE68A;
   color: var(--text);
@@ -517,28 +517,28 @@ color:#94A3B8;
 .badge-correct {
   background: #DCFCE7;
   color: #166534;
-  padding: 4px 6px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .badge-wrong {
   background: #FEE2E2;
   color: #991B1B;
-  padding: 4px 6px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .badge-empty {
   background: #F1F5F9;
   color: #475569;
-  padding: 4px 6px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 </style>
@@ -1352,6 +1352,7 @@ function createDistractorAnalysis(data) {
     return;
   }
 
+  // 1. Ana Tablo (Soru, Doğru Şık, Seçilen, Durum)
   let html = `
     <table class="distractorTable">
       <thead>
@@ -1359,7 +1360,6 @@ function createDistractorAnalysis(data) {
           <th>Soru</th>
           <th>Doğru Şık</th>
           <th>Seçilen</th>
-          <th>Doğru/Yanlış</th>
           <th>Durum</th>
         </tr>
       </thead>
@@ -1371,23 +1371,16 @@ function createDistractorAnalysis(data) {
     if (s.durum === "Dogru" || s.durum === "Doğru") {
       durumBadge = `<span class="badge-correct">Doğru</span>`;
     } else if (s.durum === "Yanlis" || s.durum === "Yanlış") {
-      durumBadge = `<span class="badge-wrong">Çeldirici</span>`;
+      durumBadge = `<span class="badge-wrong">Yanlış</span>`;
     } else {
       durumBadge = `<span class="badge-empty">Boş</span>`;
     }
-
-    let dogruKisi = s.dogruKacKisi !== undefined ? s.dogruKacKisi : 0;
-    let yanlisKisi = s.yanlisKacKisi !== undefined ? s.yanlisKacKisi : 0;
 
     html += `
       <tr>
         <td style="font-weight:700; color:var(--dark);">Soru ${s.no}</td>
         <td><strong>${s.dogruSik}</strong></td>
         <td><strong>${s.ogrenciSik || "-"}</strong></td>
-        <td style="font-size:11px;">
-          <span style="color:#166534; font-weight:700;">${dogruKisi}D</span> / 
-          <span style="color:#991B1B; font-weight:700;">${yanlisKisi}Y</span>
-        </td>
         <td>${durumBadge}</td>
       </tr>
     `;
@@ -1396,6 +1389,33 @@ function createDistractorAnalysis(data) {
   html += `
       </tbody>
     </table>
+  `;
+
+  // 2. Sınıf Geneli Soru İstatistikleri (Ayrı Bölüm)
+  html += `
+    <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
+      <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 10px;">👥 Sınıf Geneli Soru İstatistikleri</div>
+      <div style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 13px;">
+  `;
+
+  data.sorular.forEach(s => {
+    let dogruKisi = s.dogruKacKisi !== undefined ? s.dogruKacKisi : 0;
+    let yanlisKisi = s.yanlisKacKisi !== undefined ? s.yanlisKacKisi : 0;
+
+    html += `
+      <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px 12px; border-radius: 10px; border: 1px solid #E9D5FF;">
+        <span style="font-weight: 700; color: var(--dark);">Soru ${s.no}</span>
+        <div>
+          <span style="color: #166534; font-weight: 700; margin-right: 8px;">${dogruKisi} Doğru</span>
+          <span style="color: #991B1B; font-weight: 700;">${yanlisKisi} Yanlış</span>
+        </div>
+      </div>
+    `;
+  });
+
+  html += `
+      </div>
+    </div>
   `;
 
   container.innerHTML = html;
