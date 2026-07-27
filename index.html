@@ -628,6 +628,12 @@ SON SINAV NETİ
   <strong id="successArea" style="color: #581C87; font-size: 18px; font-weight: 900; margin-top: 6px;">-</strong>
 </div>
 
+<!-- ALTTA ORTALI ÜÇÜNCÜ ÖZEL KART (TOPLAM KATILIM) -->
+<div class="stat" style="grid-column: span 2; background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px; text-align: center;">
+  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Toplam Katılım</small>
+  <strong id="participationArea" style="color: #581C87; font-size: 20px; font-weight: 900; margin-top: 4px;">-</strong>
+</div>
+
 </div>
 
 <div class="title">
@@ -885,6 +891,13 @@ if (last.basari) {
   document.getElementById("successArea").innerHTML = last.basari;
 } else {
   document.getElementById("successArea").innerHTML = "-";
+}
+
+// Toplam Katılım verisi
+if (last.katilim) {
+  document.getElementById("participationArea").innerHTML = last.katilim + " Öğrenci";
+} else {
+  document.getElementById("participationArea").innerHTML = "-";
 }
 
 
