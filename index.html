@@ -1391,25 +1391,36 @@ function createDistractorAnalysis(data) {
     </table>
   `;
 
-  // 2. Sınıf Geneli Soru İstatistikleri (Modern Tekli Satır Tasarımı)
+  // 2. Sınıf Geneli Soru İstatistikleri (Modern Tekli Satır Tasarımı + Boş Sayısı + Mini İlerleme Çubuğu)
   html += `
     <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
       <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
         <span>👥 Sınıf Geneli Soru İstatistikleri</span>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
   `;
 
   data.sorular.forEach(s => {
     let dogruKisi = s.dogruKacKisi !== undefined ? s.dogruKacKisi : 0;
     let yanlisKisi = s.yanlisKacKisi !== undefined ? s.yanlisKacKisi : 0;
+    let bosKisi = s.bosKacKisi !== undefined ? s.bosKacKisi : 0;
+    
+    let toplamKatilim = dogruKisi + yanlisKisi + bosKisi;
+    let dogruYuzde = toplamKatilim > 0 ? (dogruKisi / toplamKatilim) * 100 : 0;
 
     html += `
-      <div style="background: white; padding: 12px 15px; border-radius: 12px; border: 1px solid #E9D5FF; display: flex; align-items: center; justify-content: space-between;">
-        <span style="font-weight: 700; color: var(--dark); font-size: 13px;">Soru ${s.no}</span>
-        <div style="display: flex; gap: 12px; font-size: 13px;">
-          <span style="color: #166534; font-weight: 700;">✅ ${dogruKisi} Doğru</span>
-          <span style="color: #991B1B; font-weight: 700;">❌ ${yanlisKisi} Yanlış</span>
+      <div style="background: white; padding: 12px 15px; border-radius: 12px; border: 1px solid #E9D5FF; display: flex; flex-direction: column; gap: 8px;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <span style="font-weight: 700; color: var(--dark); font-size: 13px;">Soru ${s.no}</span>
+          <div style="display: flex; gap: 10px; font-size: 12px;">
+            <span style="color: #166534; font-weight: 700;">✅ ${dogruKisi} Doğru</span>
+            <span style="color: #991B1B; font-weight: 700;">❌ ${yanlisKisi} Yanlış</span>
+            <span style="color: #475569; font-weight: 700;">⚪ ${bosKisi} Boş</span>
+          </div>
+        </div>
+        <!-- Mini İlerleme Çubuğu -->
+        <div style="width: 100%; height: 6px; background: #FEE2E2; border-radius: 4px; overflow: hidden;">
+          <div style="width: ${dogruYuzde}%; height: 100%; background: #16A34A; border-radius: 4px; transition: width 0.4s ease-in-out;"></div>
         </div>
       </div>
     `;
