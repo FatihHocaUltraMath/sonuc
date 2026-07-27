@@ -1391,11 +1391,13 @@ function createDistractorAnalysis(data) {
     </table>
   `;
 
-  // 2. Sınıf Geneli Soru İstatistikleri (Ayrı Bölüm)
+  // 2. Sınıf Geneli Soru İstatistikleri (Daha Kompakt / Mini Grid Tasarımı)
   html += `
     <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
-      <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 10px;">👥 Sınıf Geneli Soru İstatistikleri</div>
-      <div style="display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 13px;">
+      <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+        <span>👥 Sınıf Geneli Soru İstatistikleri</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;">
   `;
 
   data.sorular.forEach(s => {
@@ -1403,11 +1405,11 @@ function createDistractorAnalysis(data) {
     let yanlisKisi = s.yanlisKacKisi !== undefined ? s.yanlisKacKisi : 0;
 
     html += `
-      <div style="display: flex; justify-content: space-between; align-items: center; background: white; padding: 8px 12px; border-radius: 10px; border: 1px solid #E9D5FF;">
-        <span style="font-weight: 700; color: var(--dark);">Soru ${s.no}</span>
-        <div>
-          <span style="color: #166534; font-weight: 700; margin-right: 8px;">${dogruKisi} Doğru</span>
-          <span style="color: #991B1B; font-weight: 700;">${yanlisKisi} Yanlış</span>
+      <div style="background: white; padding: 10px 12px; border-radius: 12px; border: 1px solid #E9D5FF; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-weight: 700; color: var(--dark); font-size: 13px; margin-bottom: 6px;">Soru ${s.no}</div>
+        <div style="display: flex; justify-content: space-between; font-size: 12px;">
+          <span style="color: #166534; font-weight: 700;">✅ ${dogruKisi}D</span>
+          <span style="color: #991B1B; font-weight: 700;">❌ ${yanlisKisi}Y</span>
         </div>
       </div>
     `;
