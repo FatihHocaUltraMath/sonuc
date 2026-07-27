@@ -7,9 +7,6 @@
 
 <title>FatihHoca_UltraMat.</title>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
 <style>
 
 :root{
@@ -688,16 +685,6 @@ Konu analizi hazırlanıyor...
 
 
 <div class="title">
-📱 Dijital Karne QR & Bağlantı
-</div>
-<div class="note" style="text-align: center; background: #FFF7ED; border-left-color: var(--orange);">
-<div id="qrcode" style="display: inline-block; margin-bottom: 10px; padding: 10px; background: white; border-radius: 12px;"></div>
-<div style="font-size: 13px; color: var(--gray); word-break: break-all; margin-top: 5px;">
-  <a id="directLink" href="#" target="_blank" style="color: var(--purple); font-weight: 700; text-decoration: none;">🔗 Doğrudan Sonuç Bağlantısı</a>
-</div>
-</div>
-
-<div class="title">
 📚 Geçmiş Sınavlarım
 </div>
 
@@ -722,6 +709,8 @@ Konu analizi hazırlanıyor...
 
 
 
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
 
@@ -783,7 +772,7 @@ API_URL+
 
 
 let response =
-await fetch(url, { method: 'GET', mode: 'cors' });
+await fetch(url);
 
 
 
@@ -815,7 +804,7 @@ catch(error){
 
 console.log(error);
 
-alert("Bağlantı hatası oluştu. Lütfen dosyanızı bir yerel sunucu (Live Server) üzerinden açtığınızdan ve Google Apps Script yetkinizin 'Herkes' olarak seçili olduğundan emin olun.");
+alert("Bağlantı hatası oluştu.");
 
 }
 
@@ -922,7 +911,6 @@ createChart(data);
 createAnalysis(data);
 
 createTopicAnalysis(last);
-generateQRCode(last);
 
 
 
@@ -1118,7 +1106,7 @@ function createAnalysis(data){
         "Ufak bir sarsıntı bu, moral bozmak yok, hemen eski formumuza dönüyoruz.",
         "Düşmek yasak değil ama takılıp kalmak yasak! İlk teneffüs masaya yatırıyoruz bunu.",
         "Hiç canını sıkma, başlangıçlar her zaman zor olabilir. Birlikte çalışarak üstesinden geleceğiz.",
-        "İlk sınavlar sadece aynadır, nerede eksiğimizi gördük. Şimdi tam zamanı, sıvazla kolları!",
+        "İlk sınavlar sadece aynadır, nerede eksiğimiz olduğunu gördük. Şimdi tam zamanı, sıvazla kolları!",
         "Bunu bir başlangıç kabul et, ufak adımlarla o netleri yukarı birlikte tırmandıracağız."
       ];
     }
@@ -1286,29 +1274,6 @@ document.getElementById("topicAnalysis")
 .innerHTML=html;
 
 
-}
-
-
-
-// QR Kod ve Bağlantı Üretici
-function generateQRCode(last) {
-  let qrContainer = document.getElementById("qrcode");
-  qrContainer.innerHTML = ""; 
-  
-  let currentUrl = window.location.href.split('?')[0] + "?isim=" + encodeURIComponent(last.isim) + "&kod=" + encodeURIComponent(last.kod || "");
-  
-  new QRCode(qrContainer, {
-    text: currentUrl,
-    width: 130,
-    height: 130,
-    colorDark: "#3B0764",
-    colorLight: "#ffffff",
-    correctLevel: QRCode.CorrectLevel.H
-  });
-  
-  let linkElem = document.getElementById("directLink");
-  linkElem.href = currentUrl;
-  linkElem.innerText = last.isim + " - Karne Sonuç Bağlantısı";
 }
 
 </script>
