@@ -53,14 +53,13 @@ body{
 
 .khInfoBox{border:1px solid #F1E9FE;border-radius:16px;padding:16px 18px;margin-bottom:18px;display:flex;}
 .khInfoItem{flex:1;display:flex;align-items:center;gap:10px;}
-.khInfoItem+.khInfoItem{border-left:1px solid #F1E9FE;padding-left:16px;margin-left:6px;}
+.khInfoItem+.khInfoItem{padding-left:16px;margin-left:6px;}
 .khInfoIcon{width:30px;height:30px;flex-shrink:0;}
 .khInfoLabel{font-size:10px;letter-spacing:1px;color:#94A3B8;font-weight:700;}
 .khInfoValue{font-size:14px;font-weight:800;color:var(--dark);line-height:1.25;margin-top:2px;}
 
 .khStatsBox{border:1px solid #F1E9FE;border-radius:18px;padding:18px;display:flex;margin-bottom:16px;}
 .khStat{flex:1;text-align:center;}
-.khStat+.khStat{border-left:1px solid #F1E9FE;}
 .khStatLabel{font-size:11px;letter-spacing:1px;color:#94A3B8;font-weight:800;}
 .khStatValue{font-size:38px;font-weight:900;margin-top:6px;}
 .khUnderline{width:34px;height:3px;border-radius:3px;margin:6px auto 0;}
@@ -68,8 +67,8 @@ body{
 .khBadge{display:inline-flex;align-items:center;gap:6px;background:#ECFDF5;color:var(--green);font-weight:800;font-size:12px;padding:7px 12px;border-radius:20px;margin-top:8px;}
 
 .khBottomRow{border:1px solid #F1E9FE;border-radius:18px;padding:16px 18px;display:flex;gap:18px;margin-bottom:22px;}
-.khDYB{display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
-.khDYBItem{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;white-space:nowrap;}
+.khDYB{display:flex;flex-direction:row;gap:16px;flex-shrink:0;align-items:center;}
+.khDYBItem{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;white-space:nowrap;}
 .khDivider{width:1px;background:#F1E9FE;}
 .khCompare{flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;}
 .khCompareTitle{font-size:11px;letter-spacing:1px;color:#94A3B8;font-weight:800;margin-bottom:2px;}
@@ -79,8 +78,9 @@ body{
 .khBarFill{height:100%;border-radius:6px;}
 .khCompareVal{font-size:12px;font-weight:800;width:44px;text-align:right;flex-shrink:0;}
 
-.khSectionTitle{display:flex;align-items:center;gap:8px;font-weight:900;color:var(--dark);font-size:15px;margin:22px 0 14px;}
-.khSectionTitle .line{flex:1;height:2px;background:#F1E9FE;}
+.khSectionTitle{font-weight:900;color:var(--dark);font-size:15px;margin:22px 0 0;display:flex;align-items:center;gap:8px;}
+.khSectionUnderline{width:100%;height:2px;background:#EDE4FE;margin:10px 0 14px;}
+.khColHeader{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:1px;color:#94A3B8;font-weight:800;margin-bottom:10px;}
 
 .konuRow{margin-bottom:14px;display:flex;align-items:center;gap:12px;}
 .konuIcon{width:34px;height:34px;border-radius:50%;color:white;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -94,9 +94,9 @@ body{
 .khQuoteBody{flex:1;}
 .khQuoteTitle{font-weight:900;color:var(--dark);font-size:12.5px;letter-spacing:.5px;margin-bottom:6px;}
 .khQuoteText{font-size:13px;line-height:1.55;color:var(--text);}
-.khSign{text-align:right;flex-shrink:0;}
-.khSignName{font-family:'Caveat',cursive;font-size:26px;color:var(--purple);}
-.khSignRole{font-size:10.5px;color:var(--gray);font-weight:700;}
+.khSign{text-align:right;flex-shrink:0;border-left:1px solid #E9E1FB;padding-left:18px;}
+.khSignName{font-family:'Caveat',cursive;font-size:28px;color:var(--purple);text-decoration:underline;text-decoration-style:wavy;text-decoration-color:#DDD6FE;text-underline-offset:3px;}
+.khSignRole{font-size:10.5px;color:var(--gray);font-weight:700;margin-top:4px;}
 
 .planRow{display:flex;gap:12px;flex-wrap:wrap;}
 .planCard{flex:1;min-width:140px;background:#FFFBF5;border:1px solid #FED7AA;border-radius:16px;padding:14px;}
@@ -111,7 +111,7 @@ body{
 .khFooterText b{color:var(--dark);}
 .khFooterQuote{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:4px;text-align:right;font-size:13px;color:var(--dark);font-weight:700;font-style:italic;}
 .khFooterQuote .qMark{font-size:32px;color:#DDD6FE;font-weight:900;font-style:normal;line-height:0;flex-shrink:0;}
-.khFooterQuote b{color:var(--purple);text-decoration:underline;font-style:italic;}
+.khFooterQuote b{color:var(--purple);text-decoration:underline;text-decoration-style:wavy;text-decoration-color:var(--purple);text-underline-offset:3px;font-style:italic;}
 
 .aksiyonlar{display:flex;gap:10px;margin-top:14px;}
 .aksiyonlar button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;}
@@ -363,7 +363,9 @@ function olustur(o, idx){
         </div>
       </div>
 
-      <div class="khSectionTitle">${BOOK_SVG} KONU ANALİZİ & EKSİK TAKİBİ <div class="line"></div></div>
+      <div class="khSectionTitle">${BOOK_SVG} KONU ANALİZİ &amp; EKSİK TAKİBİ</div>
+      <div class="khSectionUnderline"></div>
+      <div class="khColHeader"><span>KONU</span><span>BAŞARI ORANI</span></div>
       ${konularHtml || "<div style='font-size:12px;color:#94A3B8;'>Konu analizi bulunamadı.</div>"}
 
       <div class="khQuote">
@@ -378,7 +380,8 @@ function olustur(o, idx){
         </div>
       </div>
 
-      <div class="khSectionTitle">${TARGET_SVG} ÖNERİLEN ÇALIŞMA PLANI <div class="line"></div></div>
+      <div class="khSectionTitle">${TARGET_SVG} ÖNERİLEN ÇALIŞMA PLANI</div>
+      <div class="khSectionUnderline"></div>
       <div class="planRow">${planHtml}</div>
       <div class="planFooter">Düzenli tekrar ve planlı çalışma ile bir sonraki sınavda daha da ileriye gideceksin!</div>
 
