@@ -46,7 +46,7 @@ body{
 .khHeader{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:2px solid #F5F3FF;margin-bottom:20px;}
 .khBrand{display:flex;align-items:center;gap:14px;}
 .khLogo{width:54px;height:54px;flex-shrink:0;}
-.khTitle{font-size:24px;font-weight:800;color:var(--dark);line-height:1.1;}
+.khTitle{font-size:27px;font-weight:800;color:var(--dark);line-height:1.1;}
 .khTitle span{color:var(--orange);font-style:italic;}
 .khSub{font-size:10px;letter-spacing:2.5px;color:#94A3B8;font-weight:700;margin-top:2px;}
 .khDate{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--dark);}
@@ -62,7 +62,7 @@ body{
 .khStat{flex:1;text-align:center;}
 .khStat+.khStat{border-left:1px solid #F1E9FE;}
 .khStatLabel{font-size:11px;letter-spacing:1px;color:#94A3B8;font-weight:800;}
-.khStatValue{font-size:32px;font-weight:900;margin-top:6px;}
+.khStatValue{font-size:38px;font-weight:900;margin-top:6px;}
 .khUnderline{width:34px;height:3px;border-radius:3px;margin:6px auto 0;}
 .khSiraSub{font-size:11px;color:var(--purple);font-weight:800;margin-top:4px;}
 .khBadge{display:inline-flex;align-items:center;gap:6px;background:#ECFDF5;color:var(--green);font-weight:800;font-size:12px;padding:7px 12px;border-radius:20px;margin-top:8px;}
@@ -109,8 +109,9 @@ body{
 .khQr{width:64px;height:64px;border-radius:8px;flex-shrink:0;}
 .khFooterText{font-size:11px;color:var(--gray);line-height:1.4;flex:1;}
 .khFooterText b{color:var(--dark);}
-.khFooterQuote{flex:1;text-align:right;font-size:13px;color:var(--dark);font-weight:700;font-style:italic;}
-.khFooterQuote span{color:var(--purple);text-decoration:underline;}
+.khFooterQuote{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:4px;text-align:right;font-size:13px;color:var(--dark);font-weight:700;font-style:italic;}
+.khFooterQuote .qMark{font-size:32px;color:#DDD6FE;font-weight:900;font-style:normal;line-height:0;flex-shrink:0;}
+.khFooterQuote b{color:var(--purple);text-decoration:underline;font-style:italic;}
 
 .aksiyonlar{display:flex;gap:10px;margin-top:14px;}
 .aksiyonlar button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;}
@@ -201,17 +202,16 @@ function konuIkon(konu){
 }
 
 const LOGO_SVG = `
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="46" fill="none" stroke="#F97316" stroke-width="4" stroke-dasharray="200 60"/>
-  <path d="M30 70 L50 25 L70 70 Z" fill="none" stroke="#3B0764" stroke-width="4" stroke-linejoin="round"/>
-  <circle cx="50" cy="25" r="4" fill="#8B5CF6"/>
-  <line x1="30" y1="70" x2="70" y2="70" stroke="#3B0764" stroke-width="4"/>
+<svg viewBox="0 0 100 100" width="54" height="54" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="44" fill="none" stroke="#F97316" stroke-width="4" stroke-linecap="round" stroke-dasharray="185 100"/>
+  <path d="M32 68 L50 28 L68 68 Z" fill="none" stroke="#3B0764" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle cx="50" cy="28" r="4.5" fill="#8B5CF6"/>
 </svg>`;
 
 const CAL_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>`;
-const PERSON_SVG = `<svg viewBox="0 0 24 24" fill="#8B5CF6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>`;
-const SCHOOL_SVG = `<svg viewBox="0 0 24 24" fill="#8B5CF6"><path d="M12 2 2 8l10 4 10-4-10-6z"/><path d="M6 12v6c0 1 3 3 6 3s6-2 6-3v-6l-6 3-6-3z"/></svg>`;
-const CLIP_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1" fill="#8B5CF6" stroke="none"/></svg>`;
+const PERSON_SVG = `<svg viewBox="0 0 24 24" width="30" height="30" fill="#8B5CF6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>`;
+const SCHOOL_SVG = `<svg viewBox="0 0 24 24" width="30" height="30" fill="#8B5CF6"><path d="M12 2 2 8l10 4 10-4-10-6z"/><path d="M6 12v6c0 1 3 3 6 3s6-2 6-3v-6l-6 3-6-3z"/></svg>`;
+const CLIP_SVG = `<svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1" fill="#8B5CF6" stroke="none"/></svg>`;
 const CHECK_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#16A34A" stroke-width="3"><circle cx="12" cy="12" r="10" stroke="#16A34A"/><path d="M7 12l3 3 7-7"/></svg>`;
 const X_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#DC2626" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M8 8l8 8M16 8l-8 8"/></svg>`;
 const CIRCLE_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748B" stroke-width="3"><circle cx="12" cy="12" r="10"/></svg>`;
@@ -385,7 +385,7 @@ function olustur(o, idx){
       <div class="khFooter">
         <img class="khQr" src="${qrUrl}" crossorigin="anonymous">
         <div class="khFooterText"><b>DETAYLI SONUÇLAR</b><br>Yanlış yaptığın sorular, doğru cevaplar ve detaylı konu analizleri için QR kodu okut.</div>
-        <div class="khFooterQuote">Nerede olduğunu gör,<br>nereye ulaşacağını <span>planla.</span></div>
+        <div class="khFooterQuote"><span class="qMark">&ldquo;</span>Nerede olduğunu gör,<br>nereye ulaşacağını <b>planla.</b><span class="qMark">&rdquo;</span></div>
       </div>
 
     </div>
@@ -411,7 +411,14 @@ function olustur(o, idx){
   }
 }
 
-function pngIndir(cardId, isim){
+async function pngIndir(cardId, isim){
+  // El yazısı imza fontu (Caveat) tam yüklenmeden görüntü alınırsa
+  // düz fontla çizilir; bu yüzden önce fontun hazır olmasını bekliyoruz.
+  try{
+    await document.fonts.load("600 26px Caveat");
+    await document.fonts.ready;
+  }catch(e){}
+
   let el = document.getElementById(cardId);
   html2canvas(el, {scale:2, backgroundColor:"#ffffff", useCORS:true}).then(canvas=>{
     let link = document.createElement("a");
