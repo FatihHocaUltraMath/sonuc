@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karne Üretici - FatihHoca_UltraMat.</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
@@ -14,107 +15,105 @@
   --dark:#3B0764;
   --text:#334155;
   --gray:#64748B;
+  --green:#16A34A;
+  --red:#DC2626;
+  --blue:#2563EB;
 }
 *{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
 body{
-  margin:0;
-  min-height:100vh;
+  margin:0;min-height:100vh;
   background:
     radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),
     linear-gradient(145deg,#FFF7ED,#FFFFFF 55%,#F5F3FF);
-  padding:20px;
-  color:var(--text);
+  padding:20px;color:var(--text);
 }
-.wrap{max-width:480px;margin:0 auto;}
+.wrap{max-width:640px;margin:0 auto;}
 
-.topBar{
-  background:white;border-radius:20px;padding:18px;margin-bottom:20px;
-  box-shadow:0 10px 25px rgba(139,92,246,.12);
-}
+.topBar{background:white;border-radius:20px;padding:18px;margin-bottom:20px;box-shadow:0 10px 25px rgba(139,92,246,.12);}
 .topBar h2{margin:0 0 12px;color:var(--dark);font-size:17px;}
-.topBar input{
-  width:100%;padding:11px 12px;margin-bottom:10px;border-radius:10px;
-  border:1px solid #E2E8F0;font-size:14px;
-}
-.topBar button{
-  width:100%;padding:12px;border:none;border-radius:12px;
-  background:linear-gradient(90deg,var(--orange),var(--purple));
-  color:white;font-weight:800;font-size:14px;cursor:pointer;
-}
+.topBar input{width:100%;padding:11px 12px;margin-bottom:10px;border-radius:10px;border:1px solid #E2E8F0;font-size:14px;}
+.topBar button{width:100%;padding:12px;border:none;border-radius:12px;background:linear-gradient(90deg,var(--orange),var(--purple));color:white;font-weight:800;font-size:14px;cursor:pointer;}
 .durum{text-align:center;font-size:13px;color:var(--gray);margin-top:8px;}
-.uyari{
-  background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;
-  padding:10px 12px;font-size:12px;color:#92400E;margin-bottom:14px;
-}
+.uyari{background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;padding:10px 12px;font-size:12px;color:#92400E;margin-bottom:14px;}
 
-.ogrenciBlok{margin-bottom:26px;}
+.ogrenciBlok{margin-bottom:30px;}
 
+/* ============ KARNE (referans görsele sadık) ============ */
 .karneCard{
-  background:white;border-radius:26px;padding:24px;
-  border:2px solid #FED7AA;box-shadow:0 15px 35px rgba(139,92,246,.12);
+  background:white;border-radius:22px;padding:30px;
+  border:1px solid #EDE9FE;box-shadow:0 20px 45px rgba(139,92,246,.14);
 }
-.karneHeader{
-  display:flex;justify-content:space-between;align-items:center;
-  border-bottom:2px solid #F5F3FF;padding-bottom:14px;margin-bottom:16px;
-}
-.karneHeader .logo{font-size:19px;font-weight:900;color:var(--dark);}
-.karneHeader .logo span{color:var(--orange);}
-.karneHeader .tarih{
-  font-size:12px;font-weight:800;color:var(--purple);
-  background:#F5F3FF;padding:6px 12px;border-radius:12px;
-}
-.karneInfoRow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
-.karneInfoRow .pill{
-  flex:1;min-width:100px;background:#FFF7ED;border:1px solid #FED7AA;
-  border-radius:14px;padding:10px 12px;
-}
-.karneInfoRow .pill small{display:block;color:#94A3B8;font-size:10px;font-weight:800;letter-spacing:.5px;}
-.karneInfoRow .pill strong{display:block;color:var(--dark);font-size:14px;margin-top:2px;}
+.khHeader{display:flex;justify-content:space-between;align-items:center;padding-bottom:18px;border-bottom:2px solid #F5F3FF;margin-bottom:20px;}
+.khBrand{display:flex;align-items:center;gap:14px;}
+.khLogo{width:54px;height:54px;flex-shrink:0;}
+.khTitle{font-size:24px;font-weight:800;color:var(--dark);line-height:1.1;}
+.khTitle span{color:var(--orange);font-style:italic;}
+.khSub{font-size:10px;letter-spacing:2.5px;color:#94A3B8;font-weight:700;margin-top:2px;}
+.khDate{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--dark);}
 
-.karneGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
-.karneGrid .box{border-radius:18px;padding:14px;text-align:center;}
-.karneGrid .box small{display:block;font-size:11px;font-weight:800;color:#94A3B8;letter-spacing:.5px;}
-.karneGrid .box strong{display:block;font-size:26px;font-weight:950;margin-top:4px;}
-.box-net{background:#FFF7ED;color:var(--orange);}
-.box-puan{background:#F5F3FF;color:var(--purple);}
-.box-sira{background:#F5F3FF;color:var(--purple);}
-.box-basari{background:#ECFDF5;color:#16A34A;}
-.box-basari strong{font-size:15px;}
+.khInfoBox{border:1px solid #F1E9FE;border-radius:16px;padding:16px 18px;margin-bottom:18px;display:flex;}
+.khInfoItem{flex:1;display:flex;align-items:center;gap:10px;}
+.khInfoItem+.khInfoItem{border-left:1px solid #F1E9FE;padding-left:16px;margin-left:6px;}
+.khInfoIcon{width:30px;height:30px;flex-shrink:0;}
+.khInfoLabel{font-size:10px;letter-spacing:1px;color:#94A3B8;font-weight:700;}
+.khInfoValue{font-size:14px;font-weight:800;color:var(--dark);line-height:1.25;margin-top:2px;}
 
-.karneMiniStats{display:flex;gap:10px;margin-bottom:16px;}
-.karneMiniStats .mini{flex:1;text-align:center;border-radius:14px;padding:10px 6px;font-weight:800;font-size:13px;}
-.mini-dogru{background:#DCFCE7;color:#166534;}
-.mini-yanlis{background:#FEE2E2;color:#991B1B;}
-.mini-bos{background:#F1F5F9;color:#475569;}
+.khStatsBox{border:1px solid #F1E9FE;border-radius:18px;padding:18px;display:flex;margin-bottom:16px;}
+.khStat{flex:1;text-align:center;}
+.khStat+.khStat{border-left:1px solid #F1E9FE;}
+.khStatLabel{font-size:11px;letter-spacing:1px;color:#94A3B8;font-weight:800;}
+.khStatValue{font-size:32px;font-weight:900;margin-top:6px;}
+.khUnderline{width:34px;height:3px;border-radius:3px;margin:6px auto 0;}
+.khSiraSub{font-size:11px;color:var(--purple);font-weight:800;margin-top:4px;}
+.khBadge{display:inline-flex;align-items:center;gap:6px;background:#ECFDF5;color:var(--green);font-weight:800;font-size:12px;padding:7px 12px;border-radius:20px;margin-top:8px;}
 
-.karneCompareLabel{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--gray);margin-bottom:4px;}
-.karneCompareBar{width:100%;height:10px;background:#E2E8F0;border-radius:8px;overflow:hidden;margin-bottom:14px;}
-.karneCompareBar .fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--purple));border-radius:8px;}
-.karneCompareBar .fillGray{height:100%;background:#94A3B8;}
+.khBottomRow{border:1px solid #F1E9FE;border-radius:18px;padding:16px 18px;display:flex;gap:18px;margin-bottom:22px;}
+.khDYB{display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
+.khDYBItem{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;white-space:nowrap;}
+.khDivider{width:1px;background:#F1E9FE;}
+.khCompare{flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+.khCompareTitle{font-size:11px;letter-spacing:1px;color:#94A3B8;font-weight:800;margin-bottom:2px;}
+.khCompareRow{display:flex;align-items:center;gap:8px;}
+.khCompareLabel{font-size:12px;font-weight:700;color:var(--gray);width:56px;flex-shrink:0;}
+.khBarBg{flex:1;height:9px;background:#E2E8F0;border-radius:6px;overflow:hidden;}
+.khBarFill{height:100%;border-radius:6px;}
+.khCompareVal{font-size:12px;font-weight:800;width:44px;text-align:right;flex-shrink:0;}
 
-.karneTitle{font-weight:900;color:var(--dark);font-size:14px;margin:18px 0 10px;}
-.konuRow{margin-bottom:12px;}
+.khSectionTitle{display:flex;align-items:center;gap:8px;font-weight:900;color:var(--dark);font-size:15px;margin:22px 0 14px;}
+.khSectionTitle .line{flex:1;height:2px;background:#F1E9FE;}
+
+.konuRow{margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.konuIcon{width:34px;height:34px;border-radius:50%;color:white;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.konuBody{flex:1;}
 .konuTop{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:5px;}
-.konuBarBg{width:100%;height:9px;background:#E2E8F0;border-radius:6px;overflow:hidden;}
+.konuBarBg{width:100%;height:8px;background:#E2E8F0;border-radius:6px;overflow:hidden;}
 .konuBarFill{height:100%;border-radius:6px;}
 
-.karneQuote{
-  background:#F5F3FF;border-left:5px solid var(--purple);border-radius:16px;
-  padding:15px;font-size:13px;line-height:1.6;margin:16px 0;
-}
-.karneQuote .imza{margin-top:8px;text-align:right;font-weight:800;color:var(--purple);font-size:12px;}
+.khQuote{background:#F8F5FF;border-radius:18px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start;margin:20px 0;}
+.khQuoteMark{font-size:34px;color:var(--purple);font-weight:900;line-height:1;flex-shrink:0;}
+.khQuoteBody{flex:1;}
+.khQuoteTitle{font-weight:900;color:var(--dark);font-size:12.5px;letter-spacing:.5px;margin-bottom:6px;}
+.khQuoteText{font-size:13px;line-height:1.55;color:var(--text);}
+.khSign{text-align:right;flex-shrink:0;}
+.khSignName{font-family:'Caveat',cursive;font-size:26px;color:var(--purple);}
+.khSignRole{font-size:10.5px;color:var(--gray);font-weight:700;}
 
-.planGrid{display:flex;flex-direction:column;gap:10px;}
-.planCard{background:#FFFBF5;border:1px solid #FED7AA;border-radius:16px;padding:12px 14px;}
-.planCard .planTitle{font-weight:900;color:var(--dark);font-size:13px;margin-bottom:6px;}
-.planCard ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--text);}
+.planRow{display:flex;gap:12px;flex-wrap:wrap;}
+.planCard{flex:1;min-width:140px;background:#FFFBF5;border:1px solid #FED7AA;border-radius:16px;padding:14px;}
+.planIcon{width:30px;height:30px;border-radius:50%;color:white;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;}
+.planTitle{font-weight:900;color:var(--dark);font-size:11.5px;letter-spacing:.3px;margin-bottom:6px;}
+.planCard ul{margin:0;padding-left:16px;font-size:11.5px;color:var(--text);line-height:1.5;}
+.planFooter{text-align:center;font-size:11.5px;color:var(--gray);margin-top:16px;font-style:italic;}
 
-.aksiyonlar{
-  display:flex;gap:10px;margin-top:12px;
-}
-.aksiyonlar button{
-  flex:1;padding:12px;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;
-}
+.khFooter{display:flex;align-items:center;gap:16px;border-top:2px solid #F5F3FF;margin-top:22px;padding-top:18px;}
+.khQr{width:64px;height:64px;border-radius:8px;flex-shrink:0;}
+.khFooterText{font-size:11px;color:var(--gray);line-height:1.4;flex:1;}
+.khFooterText b{color:var(--dark);}
+.khFooterQuote{flex:1;text-align:right;font-size:13px;color:var(--dark);font-weight:700;font-style:italic;}
+.khFooterQuote span{color:var(--purple);text-decoration:underline;}
+
+.aksiyonlar{display:flex;gap:10px;margin-top:14px;}
+.aksiyonlar button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;}
 .btnPng{background:var(--dark);color:white;}
 .btnWa{background:#25D366;color:white;}
 .btnWa:disabled{background:#CBD5E1;cursor:not-allowed;}
@@ -138,8 +137,8 @@ body{
 </div>
 
 <script>
-// Apps Script deploy linkini buraya yapıştır (index.html'deki ile aynı olmalı)
 const API_URL = "https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
+const FRONTEND_URL = "https://SENIN-SITEN.com/index.html"; // öğrenci sonuç ekranının linki (QR ve alt not için)
 
 const notHavuzu = {
   yuksek: [
@@ -178,11 +177,46 @@ function normalizeTelefon(telefon){
   return t;
 }
 
-function konuRenk(yuzde){
-  if(yuzde>=70) return "#16A34A";
-  if(yuzde>=45) return "#F97316";
+function performansRengi(yuzde){
+  if(yuzde>=80) return "#16A34A";
+  if(yuzde>=50) return "#2563EB";
   return "#DC2626";
 }
+
+function konuIkon(konu){
+  konu = (konu||"").toLowerCase();
+  if(konu.includes("üslü")) return "aⁿ";
+  if(konu.includes("karekök")) return "√x";
+  if(konu.includes("çarpan")) return "123";
+  if(konu.includes("cebir")) return "x+y";
+  if(konu.includes("olasılık")) return "%";
+  if(konu.includes("doğrusal")) return "y=x";
+  if(konu.includes("üçgen")) return "△";
+  if(konu.includes("dönüşüm")) return "⟳";
+  if(konu.includes("cisim")) return "⬡";
+  if(konu.includes("eşitsizlik")) return "≠";
+  if(konu.includes("eğim")) return "∕";
+  if(konu.includes("geometri")) return "📐";
+  return "Σ";
+}
+
+const LOGO_SVG = `
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="46" fill="none" stroke="#F97316" stroke-width="4" stroke-dasharray="200 60"/>
+  <path d="M30 70 L50 25 L70 70 Z" fill="none" stroke="#3B0764" stroke-width="4" stroke-linejoin="round"/>
+  <circle cx="50" cy="25" r="4" fill="#8B5CF6"/>
+  <line x1="30" y1="70" x2="70" y2="70" stroke="#3B0764" stroke-width="4"/>
+</svg>`;
+
+const CAL_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>`;
+const PERSON_SVG = `<svg viewBox="0 0 24 24" fill="#8B5CF6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>`;
+const SCHOOL_SVG = `<svg viewBox="0 0 24 24" fill="#8B5CF6"><path d="M12 2 2 8l10 4 10-4-10-6z"/><path d="M6 12v6c0 1 3 3 6 3s6-2 6-3v-6l-6 3-6-3z"/></svg>`;
+const CLIP_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1" fill="#8B5CF6" stroke="none"/></svg>`;
+const CHECK_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#16A34A" stroke-width="3"><circle cx="12" cy="12" r="10" stroke="#16A34A"/><path d="M7 12l3 3 7-7"/></svg>`;
+const X_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#DC2626" stroke-width="3"><circle cx="12" cy="12" r="10"/><path d="M8 8l8 8M16 8l-8 8"/></svg>`;
+const CIRCLE_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#64748B" stroke-width="3"><circle cx="12" cy="12" r="10"/></svg>`;
+const BOOK_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#3B0764" stroke-width="2"><path d="M4 5c2-1 5-1 8 0v14c-3-1-6-1-8 0V5z"/><path d="M20 5c-2-1-5-1-8 0v14c3-1 6-1 8 0V5z"/></svg>`;
+const TARGET_SVG = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#3B0764" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.3" fill="#3B0764"/></svg>`;
 
 async function listeGetir(){
   let sinavID = document.getElementById("sinavIdInput").value.trim();
@@ -191,11 +225,7 @@ async function listeGetir(){
   let listeEl = document.getElementById("liste");
   listeEl.innerHTML = "";
 
-  if(!sinavID || !anahtar){
-    durum.innerHTML = "Sınav ID ve Anahtar gerekli.";
-    return;
-  }
-
+  if(!sinavID || !anahtar){ durum.innerHTML = "Sınav ID ve Anahtar gerekli."; return; }
   durum.innerHTML = "Yükleniyor...";
 
   try{
@@ -203,98 +233,161 @@ async function listeGetir(){
     let res = await fetch(url);
     let data = await res.json();
 
-    if(data && data.hata){
-      durum.innerHTML = "❌ Anahtar hatalı.";
-      return;
-    }
-    if(!data || data.length===0){
-      durum.innerHTML = "Bu Sınav ID'ye ait sonuç bulunamadı.";
-      return;
-    }
+    if(data && data.hata){ durum.innerHTML = "❌ Anahtar hatalı."; return; }
+    if(!data || data.length===0){ durum.innerHTML = "Bu Sınav ID'ye ait sonuç bulunamadı."; return; }
 
     durum.innerHTML = `${data.length} öğrenci bulundu.`;
     data.forEach((ogrenci, idx) => olustur(ogrenci, idx));
 
-  }catch(err){
-    durum.innerHTML = "Hata: " + err;
-  }
+  }catch(err){ durum.innerHTML = "Hata: " + err; }
 }
 
 function olustur(o, idx){
   let listeEl = document.getElementById("liste");
-
   let blok = document.createElement("div");
   blok.className = "ogrenciBlok";
-
   let cardId = "karne_" + idx;
+
   let toplamSoru = (Number(o.dogru)||0)+(Number(o.yanlis)||0)+(Number(o.bos)||0);
   let olcek = Math.max(toplamSoru, Number(o.net)||0, Number(o.sinifOrtalama)||0, 1);
   let senNet = Number(o.net)||0;
   let ortNet = Number(o.sinifOrtalama)||0;
+  let puanSayi = Number(o.puan)||0;
+  let ilkYuzde = (o.sira && o.katilim) ? Math.max(1, Math.round((o.sira/o.katilim)*100)) : null;
 
   let konularHtml = "";
   (o.konular||[]).forEach(k=>{
+    let renk = performansRengi(k.yuzde);
     konularHtml += `
       <div class="konuRow">
-        <div class="konuTop"><span>${k.konu}</span><span style="color:${konuRenk(k.yuzde)}">%${k.yuzde}</span></div>
-        <div class="konuBarBg"><div class="konuBarFill" style="width:${k.yuzde}%;background:${konuRenk(k.yuzde)}"></div></div>
+        <div class="konuIcon" style="background:${renk}">${konuIkon(k.konu)}</div>
+        <div class="konuBody">
+          <div class="konuTop"><span>${k.konu}</span><span style="color:${renk}">%${k.yuzde}</span></div>
+          <div class="konuBarBg"><div class="konuBarFill" style="width:${k.yuzde}%;background:${renk}"></div></div>
+        </div>
       </div>`;
   });
 
   let zayifKonular = (o.konular||[]).filter(k=>k.yuzde<70).sort((a,b)=>a.yuzde-b.yuzde).slice(0,2);
   let planHtml = "";
   zayifKonular.forEach(k=>{
+    let renk = performansRengi(k.yuzde);
     planHtml += `
       <div class="planCard">
-        <div class="planTitle">${k.konu.toUpperCase()} (%${k.yuzde})</div>
+        <div class="planIcon" style="background:${renk}">${konuIkon(k.konu)}</div>
+        <div class="planTitle">${k.konu.toUpperCase()}</div>
         <ul><li>40 soru çözümü</li><li>Konu tekrar videoları</li></ul>
       </div>`;
   });
   planHtml += `
     <div class="planCard">
+      <div class="planIcon" style="background:var(--purple)">⏱</div>
       <div class="planTitle">SÜRE ÇALIŞMASI</div>
       <ul><li>1 deneme çözümü</li><li>Süre analizi</li></ul>
     </div>`;
 
-  let not = notSec(Number(o.puan)||0);
+  let not = notSec(puanSayi);
+  let kisiselLink = FRONTEND_URL + "?isim=" + encodeURIComponent(o.isim) + "&kod=" + encodeURIComponent(o.kod);
+  let qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(kisiselLink);
 
   blok.innerHTML = `
     <div class="karneCard" id="${cardId}">
-      <div class="karneHeader">
-        <div class="logo">FatihHoca_<span>UltraMat.</span></div>
-        <div class="tarih">${bugununTarihi()}</div>
-      </div>
-      <div class="karneInfoRow">
-        <div class="pill"><small>ÖĞRENCİ</small><strong>${o.isim}</strong></div>
-        <div class="pill"><small>SINIF</small><strong>${o.sinif}. Sınıf - ${o.sube} Şb.</strong></div>
-        <div class="pill"><small>SINAV</small><strong>${o.sinav}</strong></div>
-      </div>
-      <div class="karneGrid">
-        <div class="box box-net"><small>NET</small><strong>${o.net}</strong></div>
-        <div class="box box-puan"><small>PUAN</small><strong>${o.puan!==undefined&&o.puan!==""?o.puan:"-"}</strong></div>
-        <div class="box box-sira"><small>SIRALAMA</small><strong>${o.sira?(o.sira+". / "+(o.katilim||"-")):"-"}</strong></div>
-        <div class="box box-basari"><small>GENEL BAŞARI</small><strong>${o.basari||"-"}</strong></div>
-      </div>
-      <div class="karneMiniStats">
-        <div class="mini mini-dogru">${o.dogru} Doğru</div>
-        <div class="mini mini-yanlis">${o.yanlis} Yanlış</div>
-        <div class="mini mini-bos">${o.bos} Boş</div>
-      </div>
-      <div class="karneCompareLabel"><span>Sen</span><span>${senNet.toFixed(2)}</span></div>
-      <div class="karneCompareBar"><div class="fill" style="width:${Math.min(100,(senNet/olcek)*100)}%"></div></div>
-      <div class="karneCompareLabel"><span>Sınıf Ort.</span><span>${o.sinifOrtalama!==null&&o.sinifOrtalama!==undefined?ortNet.toFixed(2):"-"}</span></div>
-      <div class="karneCompareBar"><div class="fillGray" style="width:${Math.min(100,(ortNet/olcek)*100)}%"></div></div>
 
-      <div class="karneTitle">📚 Konu Analizi & Eksik Takibi</div>
+      <div class="khHeader">
+        <div class="khBrand">
+          <div class="khLogo">${LOGO_SVG}</div>
+          <div>
+            <div class="khTitle">FatihHoca_<span>UltraMat.</span></div>
+            <div class="khSub">MATEMATİK DERSİ ANALİZİ</div>
+          </div>
+        </div>
+        <div class="khDate">${CAL_SVG} ${bugununTarihi()}</div>
+      </div>
+
+      <div class="khInfoBox">
+        <div class="khInfoItem">
+          <div class="khInfoIcon">${PERSON_SVG}</div>
+          <div><div class="khInfoLabel">ÖĞRENCİ</div><div class="khInfoValue">${o.isim}</div></div>
+        </div>
+        <div class="khInfoItem">
+          <div class="khInfoIcon">${SCHOOL_SVG}</div>
+          <div><div class="khInfoLabel">SINIF</div><div class="khInfoValue">${o.sinif}. Sınıf<br>${o.sube} Şubesi</div></div>
+        </div>
+        <div class="khInfoItem">
+          <div class="khInfoIcon">${CLIP_SVG}</div>
+          <div><div class="khInfoLabel">SINAV</div><div class="khInfoValue">${o.sinav}</div></div>
+        </div>
+      </div>
+
+      <div class="khStatsBox">
+        <div class="khStat">
+          <div class="khStatLabel">NET</div>
+          <div class="khStatValue" style="color:var(--orange)">${o.net}</div>
+          <div class="khUnderline" style="background:var(--orange)"></div>
+        </div>
+        <div class="khStat">
+          <div class="khStatLabel">PUAN</div>
+          <div class="khStatValue" style="color:var(--purple)">${o.puan!==undefined&&o.puan!==""?o.puan:"-"}</div>
+          <div class="khUnderline" style="background:var(--purple)"></div>
+        </div>
+        <div class="khStat">
+          <div class="khStatLabel">SIRALAMA</div>
+          <div class="khStatValue" style="font-size:22px;color:var(--purple);margin-top:10px;">📶 ${o.sira?(o.sira+". / "+(o.katilim||"-")):"-"}</div>
+          ${ilkYuzde ? `<div class="khSiraSub">İlk %${ilkYuzde}</div>` : ""}
+        </div>
+        <div class="khStat">
+          <div class="khStatLabel">GENEL BAŞARI</div>
+          <div class="khBadge">✓ ${o.basari||"-"}</div>
+        </div>
+      </div>
+
+      <div class="khBottomRow">
+        <div class="khDYB">
+          <div class="khDYBItem">${CHECK_SVG} ${o.dogru} DOĞRU</div>
+          <div class="khDYBItem">${X_SVG} ${o.yanlis} YANLIŞ</div>
+          <div class="khDYBItem">${CIRCLE_SVG} ${o.bos} BOŞ</div>
+        </div>
+        <div class="khDivider"></div>
+        <div class="khCompare">
+          <div class="khCompareTitle">NET KARŞILAŞTIRMASI</div>
+          <div class="khCompareRow">
+            <div class="khCompareLabel">Sen</div>
+            <div class="khBarBg"><div class="khBarFill" style="width:${Math.min(100,(senNet/olcek)*100)}%;background:linear-gradient(90deg,var(--orange),var(--purple))"></div></div>
+            <div class="khCompareVal" style="color:var(--orange)">${senNet.toFixed(2)}</div>
+          </div>
+          <div class="khCompareRow">
+            <div class="khCompareLabel">Sınıf Ort.</div>
+            <div class="khBarBg"><div class="khBarFill" style="width:${Math.min(100,(ortNet/olcek)*100)}%;background:#94A3B8"></div></div>
+            <div class="khCompareVal" style="color:var(--gray)">${o.sinifOrtalama!==null&&o.sinifOrtalama!==undefined?ortNet.toFixed(2):"-"}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="khSectionTitle">${BOOK_SVG} KONU ANALİZİ & EKSİK TAKİBİ <div class="line"></div></div>
       ${konularHtml || "<div style='font-size:12px;color:#94A3B8;'>Konu analizi bulunamadı.</div>"}
 
-      <div class="karneQuote">
-        ${not}
-        <div class="imza">Fatih Hoca</div>
+      <div class="khQuote">
+        <div class="khQuoteMark">&ldquo;</div>
+        <div class="khQuoteBody">
+          <div class="khQuoteTitle">FATİH HOCA'NIN NOTU</div>
+          <div class="khQuoteText">${not}</div>
+        </div>
+        <div class="khSign">
+          <div class="khSignName">Fatih Hoca</div>
+          <div class="khSignRole">Matematik Öğretmeni</div>
+        </div>
       </div>
 
-      <div class="karneTitle">🎯 Önerilen Çalışma Planı</div>
-      <div class="planGrid">${planHtml}</div>
+      <div class="khSectionTitle">${TARGET_SVG} ÖNERİLEN ÇALIŞMA PLANI <div class="line"></div></div>
+      <div class="planRow">${planHtml}</div>
+      <div class="planFooter">Düzenli tekrar ve planlı çalışma ile bir sonraki sınavda daha da ileriye gideceksin!</div>
+
+      <div class="khFooter">
+        <img class="khQr" src="${qrUrl}" crossorigin="anonymous">
+        <div class="khFooterText"><b>DETAYLI SONUÇLAR</b><br>Yanlış yaptığın sorular, doğru cevaplar ve detaylı konu analizleri için QR kodu okut.</div>
+        <div class="khFooterQuote">Nerede olduğunu gör,<br>nereye ulaşacağını <span>planla.</span></div>
+      </div>
+
     </div>
 
     <div class="aksiyonlar">
@@ -306,7 +399,6 @@ function olustur(o, idx){
 
   listeEl.appendChild(blok);
 
-  // WhatsApp butonuna veli telefon + mesaj bilgisini bağla
   let waBtn = document.getElementById("wa_"+idx);
   if(!o.veliTelefon){
     waBtn.disabled = true;
@@ -321,7 +413,7 @@ function olustur(o, idx){
 
 function pngIndir(cardId, isim){
   let el = document.getElementById(cardId);
-  html2canvas(el, {scale:2, backgroundColor:"#ffffff"}).then(canvas=>{
+  html2canvas(el, {scale:2, backgroundColor:"#ffffff", useCORS:true}).then(canvas=>{
     let link = document.createElement("a");
     link.download = isim.trim().replace(/\s+/g,"_") + "_karne.png";
     link.href = canvas.toDataURL("image/png");
