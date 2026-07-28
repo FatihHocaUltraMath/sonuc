@@ -541,6 +541,129 @@ color:#94A3B8;
   font-size: 12px;
 }
 
+/* ================= KARNE (WhatsApp'tan açılan hızlı özet) ================= */
+.karneCard{
+  background:white;
+  border-radius:26px;
+  padding:24px;
+  margin-bottom:22px;
+  border:2px solid #FED7AA;
+  box-shadow:0 15px 35px rgba(139,92,246,.12);
+}
+.karneHeader{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border-bottom:2px solid #F5F3FF;
+  padding-bottom:14px;
+  margin-bottom:16px;
+}
+.karneHeader .logo{
+  font-size:19px;
+  font-weight:900;
+  color:var(--dark);
+}
+.karneHeader .logo span{color:var(--orange);}
+.karneHeader .tarih{
+  font-size:12px;
+  font-weight:800;
+  color:var(--purple);
+  background:#F5F3FF;
+  padding:6px 12px;
+  border-radius:12px;
+}
+.karneInfoRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:18px;
+}
+.karneInfoRow .pill{
+  flex:1;
+  min-width:100px;
+  background:#FFF7ED;
+  border:1px solid #FED7AA;
+  border-radius:14px;
+  padding:10px 12px;
+}
+.karneInfoRow .pill small{display:block;color:#94A3B8;font-size:10px;font-weight:800;letter-spacing:.5px;}
+.karneInfoRow .pill strong{display:block;color:var(--dark);font-size:14px;margin-top:2px;}
+
+.karneGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:16px;
+}
+.karneGrid .box{
+  border-radius:18px;
+  padding:14px;
+  text-align:center;
+}
+.karneGrid .box small{display:block;font-size:11px;font-weight:800;color:#94A3B8;letter-spacing:.5px;}
+.karneGrid .box strong{display:block;font-size:26px;font-weight:950;margin-top:4px;}
+.box-net{background:#FFF7ED;color:var(--orange);}
+.box-puan{background:#F5F3FF;color:var(--purple);}
+.box-sira{background:#F5F3FF;color:var(--purple);}
+.box-basari{background:#ECFDF5;color:#16A34A;}
+.box-basari strong{font-size:15px;}
+
+.karneMiniStats{
+  display:flex;
+  gap:10px;
+  margin-bottom:16px;
+}
+.karneMiniStats .mini{
+  flex:1;
+  text-align:center;
+  border-radius:14px;
+  padding:10px 6px;
+  font-weight:800;
+  font-size:13px;
+}
+.mini-dogru{background:#DCFCE7;color:#166534;}
+.mini-yanlis{background:#FEE2E2;color:#991B1B;}
+.mini-bos{background:#F1F5F9;color:#475569;}
+
+.karneCompareLabel{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--gray);margin-bottom:4px;}
+.karneCompareBar{width:100%;height:10px;background:#E2E8F0;border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.karneCompareBar .fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--purple));border-radius:8px;}
+.karneCompareBar .fillGray{height:100%;background:#94A3B8;}
+.karneCompareRow{margin-bottom:6px;}
+
+.karneQuote{
+  background:#F5F3FF;
+  border-left:5px solid var(--purple);
+  border-radius:16px;
+  padding:15px;
+  font-size:13px;
+  line-height:1.6;
+  margin:16px 0;
+}
+.karneQuote .imza{
+  margin-top:8px;
+  text-align:right;
+  font-weight:800;
+  color:var(--purple);
+  font-size:12px;
+}
+
+.planGrid{display:flex;flex-direction:column;gap:10px;}
+.planCard{
+  background:#FFFBF5;
+  border:1px solid #FED7AA;
+  border-radius:16px;
+  padding:12px 14px;
+}
+.planCard .planTitle{font-weight:900;color:var(--dark);font-size:13px;margin-bottom:6px;}
+.planCard ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--text);}
+
+.karneFooterNote{
+  text-align:center;
+  font-size:12px;
+  color:var(--gray);
+  margin-top:10px;
+}
 </style>
 
 </head>
@@ -622,6 +745,54 @@ Sonuçlar getiriliyor...
 
 
 <div class="card hidden" id="resultCard">
+
+<!-- ============ HIZLI KARNE (WhatsApp'tan açılınca ilk görünen) ============ -->
+<div class="karneCard" id="karneCard">
+  <div class="karneHeader">
+    <div class="logo">FatihHoca_<span>UltraMat.</span></div>
+    <div class="tarih" id="karneTarih">-</div>
+  </div>
+
+  <div class="karneInfoRow">
+    <div class="pill"><small>ÖĞRENCİ</small><strong id="karneIsim">-</strong></div>
+    <div class="pill"><small>SINIF</small><strong id="karneSinif">-</strong></div>
+    <div class="pill"><small>SINAV</small><strong id="karneSinav">-</strong></div>
+  </div>
+
+  <div class="karneGrid">
+    <div class="box box-net"><small>NET</small><strong id="karneNet">-</strong></div>
+    <div class="box box-puan"><small>PUAN</small><strong id="karnePuan">-</strong></div>
+    <div class="box box-sira"><small>SIRALAMA</small><strong id="karneSira">-</strong></div>
+    <div class="box box-basari"><small>GENEL BAŞARI</small><strong id="karneBasari">-</strong></div>
+  </div>
+
+  <div class="karneMiniStats">
+    <div class="mini mini-dogru" id="karneDogru">- Doğru</div>
+    <div class="mini mini-yanlis" id="karneYanlis">- Yanlış</div>
+    <div class="mini mini-bos" id="karneBos">- Boş</div>
+  </div>
+
+  <div class="karneCompareRow">
+    <div class="karneCompareLabel"><span>Sen</span><span id="karneNetSen">-</span></div>
+    <div class="karneCompareBar"><div class="fill" id="karneBarSen" style="width:0%"></div></div>
+    <div class="karneCompareLabel"><span>Sınıf Ort.</span><span id="karneNetOrt">-</span></div>
+    <div class="karneCompareBar"><div class="fillGray" id="karneBarOrt" style="width:0%"></div></div>
+  </div>
+
+  <div class="title" style="margin-top:20px;">📚 Konu Analizi & Eksik Takibi</div>
+  <div id="karneKonuAnalizi"></div>
+
+  <div class="karneQuote" id="karneNot">
+    Not hazırlanıyor...
+    <div class="imza">Fatih Hoca</div>
+  </div>
+
+  <div class="title">🎯 Önerilen Çalışma Planı</div>
+  <div class="planGrid" id="karnePlan"></div>
+
+  <div class="karneFooterNote">Tüm soru bazlı detaylı analiz için aşağı kaydır ⬇️</div>
+</div>
+<!-- ============ /HIZLI KARNE ============ -->
 
 
 <div class="student" id="nameArea"></div>
@@ -800,6 +971,19 @@ function tarihFormatla(tarihStr) {
 }
 
 
+// WhatsApp'tan gelen linkte ?isim=...&kod=... varsa formu atlayıp
+// sonucu otomatik getirir. Böylece veli linke tıkladığı anda karneyi görür.
+window.addEventListener("DOMContentLoaded", function () {
+  let params = new URLSearchParams(window.location.search);
+  let isim = params.get("isim");
+  let kod = params.get("kod");
+  if (isim && kod) {
+    document.getElementById("studentNameInput").value = isim;
+    document.getElementById("studentCodeInput").value = kod;
+    getResult();
+  }
+});
+
 async function getResult(){
 
 
@@ -976,12 +1160,74 @@ createChart(data);
 
 createAnalysis(data);
 
-createTopicAnalysis(last);
+createTopicAnalysis(last, "topicAnalysis");
+createTopicAnalysis(last, "karneKonuAnalizi");
 
 createDistractorAnalysis(last);
 
+fillKarneCard(last);
+
+}
 
 
+// ================= HIZLI KARNE DOLDURMA =================
+function bugununTarihi(){
+  let d = new Date();
+  let g = String(d.getDate()).padStart(2,'0');
+  let a = String(d.getMonth()+1).padStart(2,'0');
+  return `${g}.${a}.${d.getFullYear()}`;
+}
+
+function fillKarneCard(last){
+  document.getElementById("karneTarih").innerHTML = bugununTarihi();
+  document.getElementById("karneIsim").innerHTML = last.isim;
+  document.getElementById("karneSinif").innerHTML = last.sinif + ". Sınıf - " + last.sube + " Şb.";
+  document.getElementById("karneSinav").innerHTML = last.sinav;
+
+  document.getElementById("karneNet").innerHTML = last.net;
+  document.getElementById("karnePuan").innerHTML = (last.puan !== undefined && last.puan !== "") ? last.puan : "-";
+  document.getElementById("karneSira").innerHTML = last.sira ? (last.sira + ". / " + (last.katilim || "-")) : "-";
+  document.getElementById("karneBasari").innerHTML = last.basari || "-";
+
+  document.getElementById("karneDogru").innerHTML = last.dogru + " Doğru";
+  document.getElementById("karneYanlis").innerHTML = last.yanlis + " Yanlış";
+  document.getElementById("karneBos").innerHTML = last.bos + " Boş";
+
+  // Fatih Hoca'nın Notu (createAnalysis tarafından zaten üretildi, buraya kopyalıyoruz)
+  let notEl = document.getElementById("fatihNote");
+  document.getElementById("karneNot").innerHTML =
+    (notEl ? notEl.innerHTML : "") + `<div class="imza">Fatih Hoca</div>`;
+
+  // Sen vs Sınıf Ortalaması karşılaştırma çubuğu
+  let toplamSoru = (Number(last.dogru)||0) + (Number(last.yanlis)||0) + (Number(last.bos)||0);
+  let olcek = Math.max(toplamSoru, Number(last.net)||0, Number(last.sinifOrtalama)||0, 1);
+  let senNet = Number(last.net) || 0;
+  let ortNet = Number(last.sinifOrtalama) || 0;
+
+  document.getElementById("karneNetSen").innerHTML = senNet.toFixed(2);
+  document.getElementById("karneNetOrt").innerHTML = last.sinifOrtalama !== null && last.sinifOrtalama !== undefined ? ortNet.toFixed(2) : "-";
+  document.getElementById("karneBarSen").style.width = Math.min(100, (senNet/olcek)*100) + "%";
+  document.getElementById("karneBarOrt").style.width = Math.min(100, (ortNet/olcek)*100) + "%";
+
+  // Önerilen Çalışma Planı: en zayıf konulardan otomatik üret
+  let planEl = document.getElementById("karnePlan");
+  let html = "";
+  if (last.konular && last.konular.length) {
+    let zayifKonular = last.konular.filter(k => k.yuzde < 70).sort((a,b)=>a.yuzde-b.yuzde).slice(0,2);
+    zayifKonular.forEach(k => {
+      html += `
+        <div class="planCard">
+          <div class="planTitle">${k.konu.toUpperCase()} (%${k.yuzde})</div>
+          <ul><li>40 soru çözümü</li><li>Konu tekrar videoları</li></ul>
+        </div>`;
+    });
+  }
+  html += `
+    <div class="planCard">
+      <div class="planTitle">SÜRE ÇALIŞMASI</div>
+      <ul><li>1 deneme çözümü</li><li>Süre analizi</li></ul>
+    </div>`;
+  planEl.innerHTML = html;
 }
 
 
@@ -1270,12 +1516,13 @@ function createAnalysis(data){
   document.getElementById("fatihNote").innerHTML = notHavuzu[notIndex];
 }
 
-function createTopicAnalysis(data){
+function createTopicAnalysis(data, containerId){
 
+containerId = containerId || "topicAnalysis";
 
 if(!data.konular || data.konular.length === 0){
 
-document.getElementById("topicAnalysis")
+document.getElementById(containerId)
 .innerHTML=
 "Konu analizi bulunamadı.";
 
@@ -1338,7 +1585,7 @@ background:${renk};
 });
 
 
-document.getElementById("topicAnalysis")
+document.getElementById(containerId)
 .innerHTML=html;
 
 
