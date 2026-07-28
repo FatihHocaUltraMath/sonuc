@@ -1,276 +1,276 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FatihHoca_UltraMat | Analiz Platformu</title>
-  <style>
-    :root {
-      --primary: #3B0764;
-      --accent: #F97316;
-      --bg: #F3F4F6;
-      --card-bg: #FFFFFF;
-      --text: #1F2937;
-      --border: #E5E7EB;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 600px; }
-    .card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
-    .header { text-align: center; margin-bottom: 25px; }
-    .header h1 { color: var(--primary); font-size: 24px; margin-bottom: 5px; }
-    .header p { color: #6B7280; font-size: 14px; }
-    .form-group { margin-bottom: 15px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #4B5563; }
-    .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s; }
-    .form-group input:focus { border-color: var(--primary); }
-    .btn { width: 100%; background: var(--primary); color: #FFF; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-    .btn:hover { opacity: 0.9; }
-    .hidden { display: none !important; }
-    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-    .stat-box { background: #F9FAFB; border: 1px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; }
-    .stat-box span { display: block; font-size: 12px; color: #6B7280; margin-bottom: 4px; }
-    .stat-box strong { font-size: 18px; color: var(--primary); }
-    .chart-container { position: relative; height: 200px; margin-bottom: 20px; }
-    .section-title { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px; }
-    .analysis-box { background: #FEF3C7; border-left: 4px solid var(--accent); padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 15px; color: #92400E; line-height: 1.4; }
-    .fatih-note-box { background: #F3E8FF; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 15px; color: #581C87; line-height: 1.4; }
-    .topicItem { margin-bottom: 10px; }
-    .topicTitle { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
-    .progress { background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
-    .progressBar { height: 100%; border-radius: 4px; }
-    .distractorTable { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
-    .distractorTable th, .distractorTable td { border: 1px solid var(--border); padding: 8px; text-align: center; }
-    .distractorTable th { background: #F9FAFB; color: var(--primary); }
-    .badge-correct { color: #16A34A; font-weight: bold; }
-    .badge-wrong { color: #DC2626; font-weight: bold; }
-    .loading { text-align: center; font-weight: 600; color: var(--primary); margin: 15px 0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FatihHoca_UltraMat | Öğrenci Analiz Karnesi</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #3B0764;
+            --accent: #F97316;
+            --bg: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text: #1F2937;
+            --border: #E5E7EB;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { width: 100%; max-width: 600px; }
+        .card { background: var(--card-bg); border-radius: 16px; padding: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--primary); font-size: 24px; margin-bottom: 5px; }
+        .header p { color: #6B7280; font-size: 14px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #4B5563; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .form-group input:focus { border-color: var(--primary); }
+        .btn { width: 100%; background: var(--primary); color: #FFF; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
+        .hidden { display: none !important; }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-box { background: #F9FAFB; border: 1px solid var(--border); padding: 12px; border-radius: 10px; text-align: center; }
+        .stat-box span { display: block; font-size: 12px; color: #6B7280; margin-bottom: 4px; }
+        .stat-box strong { font-size: 18px; color: var(--primary); }
+        .chart-container { position: relative; height: 200px; margin-bottom: 20px; }
+        .section-title { font-size: 16px; font-weight: 700; color: var(--primary); margin-bottom: 10px; border-bottom: 2px solid var(--border); padding-bottom: 5px; }
+        .analysis-box { background: #FEF3C7; border-left: 4px solid var(--accent); padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 15px; color: #92400E; line-height: 1.4; }
+        .fatih-note-box { background: #F3E8FF; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 15px; color: #581C87; line-height: 1.4; }
+        .topicItem { margin-bottom: 10px; }
+        .topicTitle { font-size: 13px; font-weight: 600; margin-bottom: 3px; }
+        .progress { background: var(--border); border-radius: 4px; height: 8px; overflow: hidden; }
+        .progressBar { height: 100%; border-radius: 4px; }
+        .distractorTable { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        .distractorTable th, .distractorTable td { border: 1px solid var(--border); padding: 8px; text-align: center; }
+        .distractorTable th { background: #F9FAFB; color: var(--primary); }
+        .badge-correct { color: #16A34A; font-weight: bold; }
+        .badge-wrong { color: #DC2626; font-weight: bold; }
+        .loading { text-align: center; font-weight: 600; color: var(--primary); margin: 15px 0; }
+    </style>
 </head>
 <body>
 
-  <div class="container">
-    <!-- GİRİŞ EKRANI -->
-    <div class="card" id="loginCard">
-      <div class="header">
-        <h1>FatihHoca_UltraMat</h1>
-        <p>Matematik Analiz ve Karne Sistemi</p>
-      </div>
-      <div class="form-group">
-        <label>Öğrenci Adı Soyadı</label>
-        <input type="text" id="studentNameInput" placeholder="Örn: Ahmet Yılmaz">
-      </div>
-      <div class="form-group">
-        <label>4 Haneli Öğrenci Kodunuz</label>
-        <input type="password" id="studentCodeInput" maxlength="4" placeholder="****">
-      </div>
-      <button class="btn" onclick="getResult()">Karneyi Görüntüle</button>
-      <div id="loading" class="loading hidden">Sonuçlar yükleniyor, lütfen bekleyin...</div>
+    <div class="container">
+        <!-- GİRİŞ EKRANI -->
+        <div class="card" id="loginCard">
+            <div class="header">
+                <h1>FatihHoca_UltraMat</h1>
+                <p>Matematik Analiz ve Karne Sistemi</p>
+            </div>
+            <div class="form-group">
+                <label>Öğrenci Adı Soyadı</label>
+                <input type="text" id="studentNameInput" placeholder="Örn: Ahmet Yılmaz">
+            </div>
+            <div class="form-group">
+                <label>4 Haneli Öğrenci Kodunuz</label>
+                <input type="password" id="studentCodeInput" maxlength="4" placeholder="****">
+            </div>
+            <button class="btn" onclick="getResult()">Karneyi Görüntüle</button>
+            <div id="loading" class="loading hidden">Sonuçlar yükleniyor, lütfen bekleyin...</div>
+        </div>
+
+        <!-- SONUÇ EKRANI -->
+        <div class="card hidden" id="resultCard">
+            <div class="header">
+                <h1 id="nameArea">Öğrenci Adı</h1>
+                <p id="classArea">Sınıf Bilgisi</p>
+                <p id="examArea" style="font-size:12px; color:#9CA3AF; margin-top:3px;">Sınav Adı</p>
+            </div>
+
+            <!-- İSTATİSTİK KARTLARI -->
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span>Net</span>
+                    <strong id="netArea">0.00</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Doğru</span>
+                    <strong id="correctArea" style="color:#16A34A;">0</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Yanlış</span>
+                    <strong id="wrongArea" style="color:#DC2626;">0</strong>
+                </div>
+            </div>
+            <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="stat-box">
+                    <span>Boş</span>
+                    <strong id="emptyArea" style="color:#6B7280;">0</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Sıralama</span>
+                    <strong id="rankArea">-</strong>
+                </div>
+                <div class="stat-box">
+                    <span>Başarı Durumu</span>
+                    <strong id="successArea" style="font-size:11px;">-</strong>
+                </div>
+            </div>
+
+            <!-- GELİŞİM GRAFİĞİ -->
+            <div class="section-title">Gelişim Grafiği</div>
+            <div class="chart-container">
+                <canvas id="progressChart"></canvas>
+            </div>
+
+            <!-- FATİH HOCA NOTU & ANALİZ -->
+            <div class="section-title">Eğitmen Analizi & Notu</div>
+            <div class="analysis-box" id="analysisArea"></div>
+            <div class="fatih-note-box">
+                <strong>Fatih Hoca'nın Notu:</strong> <span id="fatihNote"></span>
+            </div>
+
+            <!-- KONU ANALİZLERİ -->
+            <div class="section-title">Konu Bazlı Başarı Durumu</div>
+            <div id="topicAnalysis" style="margin-bottom: 20px;"></div>
+
+            <!-- ÇELDİRİCİ ANALİZİ -->
+            <div class="section-title">Soru & Çeldirici Analizi</div>
+            <div id="distractorArea"></div>
+        </div>
     </div>
 
-    <!-- SONUÇ EKRANI -->
-    <div class="card hidden" id="resultCard">
-      <div class="header">
-        <h1 id="nameArea">Öğrenci Adı</h1>
-        <p id="classArea">Sınıf Bilgisi</p>
-        <p id="examArea" style="font-size:12px; color:#9CA3AF; margin-top:3px;">Sınav Adı</p>
-      </div>
+    <script>
+        // Google E-Tablo Apps Script Web Uygulaması Bağlantınız
+        const API_URL = "https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
 
-      <!-- İSTATİSTİK KARTLARI -->
-      <div class="stats-grid">
-        <div class="stat-box">
-          <span>Net</span>
-          <strong id="netArea">0.00</strong>
-        </div>
-        <div class="stat-box">
-          <span>Doğru</span>
-          <strong id="correctArea" style="color:#16A34A;">0</strong>
-        </div>
-        <div class="stat-box">
-          <span>Yanlış</span>
-          <strong id="wrongArea" style="color:#DC2626;">0</strong>
-        </div>
-      </div>
-      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
-        <div class="stat-box">
-          <span>Boş</span>
-          <strong id="emptyArea" style="color:#6B7280;">0</strong>
-        </div>
-        <div class="stat-box">
-          <span>Sıralama</span>
-          <strong id="rankArea">-</strong>
-        </div>
-        <div class="stat-box">
-          <span>Başarı Durumu</span>
-          <strong id="successArea" style="font-size:11px;">-</strong>
-        </div>
-      </div>
-
-      <!-- GELİŞİM GRAFİĞİ -->
-      <div class="section-title">Gelişim Grafiği</div>
-      <div class="chart-container">
-        <canvas id="progressChart"></canvas>
-      </div>
-
-      <!-- FATİH HOCA NOTU & ANALİZ -->
-      <div class="section-title">Eğitmen Analizi & Notu</div>
-      <div class="analysis-box" id="analysisArea"></div>
-      <div class="fatih-note-box">
-        <strong>Fatih Hoca'nın Notu:</strong> <span id="fatihNote"></span>
-      </div>
-
-      <!-- KONU ANALİZLERİ -->
-      <div class="section-title">Konu Bazlı Başarı Durumu</div>
-      <div id="topicAnalysis" style="margin-bottom: 20px;"></div>
-
-      <!-- ÇELDİRİCİ ANALİZİ -->
-      <div class="section-title">Soru & Çeldirici Analizi</div>
-      <div id="distractorArea"></div>
-    </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
-
-    function tarihFormatla(tarihStr) {
-      if (!tarihStr) return "";
-      try {
-        let d = new Date(tarihStr);
-        if (isNaN(d.getTime())) return tarihStr; 
-        let gun = String(d.getDate()).padStart(2, '0');
-        let ay = String(d.getMonth() + 1).padStart(2, '0');
-        let yil = d.getFullYear();
-        return `${gun}.${ay}.${yil}`;
-      } catch(e) {
-        return tarihStr;
-      }
-    }
-
-    async function getResult(){
-      let name = document.getElementById("studentNameInput").value.trim();
-      let code = document.getElementById("studentCodeInput").value.trim();
-
-      if(!name || !code){
-        alert("Lütfen adınızı ve 4 haneli kodunuzu giriniz.");
-        return;
-      }
-
-      document.getElementById("loading").classList.remove("hidden");
-
-      try{
-        let url = API_URL + "?isim=" + encodeURIComponent(name) + "&kod=" + encodeURIComponent(code);
-        let response = await fetch(url);
-        let data = await response.json();
-
-        if(!data || data.length === 0){
-          alert("Sonuç bulunamadı. Lütfen adınızı ve kodunuzu kontrol edin.");
-          document.getElementById("loading").classList.add("hidden");
-          return;
+        function tarihFormatla(tarihStr) {
+            if (!tarihStr) return "";
+            try {
+                let d = new Date(tarihStr);
+                if (isNaN(d.getTime())) return tarihStr; 
+                let gun = String(d.getDate()).padStart(2, '0');
+                let ay = String(d.getMonth() + 1).padStart(2, '0');
+                let yil = d.getFullYear();
+                return `${gun}.${ay}.${yil}`;
+            } catch(e) {
+                return tarihStr;
+            }
         }
 
-        showResult(data);
-      }
-      catch(error){
-        console.log(error);
-        alert("Bağlantı hatası oluştu.");
-      }
+        async function getResult(){
+            let name = document.getElementById("studentNameInput").value.trim();
+            let code = document.getElementById("studentCodeInput").value.trim();
 
-      document.getElementById("loading").classList.add("hidden");
-    }
+            if(!name || !code){
+                alert("Lütfen adınızı ve 4 haneli kodunuzu giriniz.");
+                return;
+            }
 
-    function showResult(data){
-      let last = data[data.length - 1];
+            document.getElementById("loading").classList.remove("hidden");
 
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("resultCard").classList.remove("hidden");
+            try{
+                let url = API_URL + "?isim=" + encodeURIComponent(name) + "&kod=" + encodeURIComponent(code);
+                let response = await fetch(url);
+                let data = await response.json();
 
-      document.getElementById("nameArea").innerHTML = last.isim;
-      document.getElementById("classArea").innerHTML = last.sinif + ". Sınıf - " + last.sube + " Şubesi";
+                if(!data || data.length === 0){
+                    alert("Sonuç bulunamadı. Lütfen adınızı ve kodunuzu kontrol edin.");
+                    document.getElementById("loading").classList.add("hidden");
+                    return;
+                }
 
-      let t = tarihFormatla(last.tarih);
-      document.getElementById("examArea").innerHTML = last.sinav + " | " + t;
+                showResult(data);
+            }
+            catch(error){
+                console.log(error);
+                alert("Bağlantı hatası oluştu.");
+            }
 
-      document.getElementById("netArea").innerHTML = last.net;
-      document.getElementById("correctArea").innerHTML = last.dogru;
-      document.getElementById("wrongArea").innerHTML = last.yanlis;
-      document.getElementById("emptyArea").innerHTML = last.bos;
-
-      document.getElementById("rankArea").innerHTML = last.sira ? last.sira + "." : "-";
-      document.getElementById("successArea").innerHTML = last.basari ? last.basari : "-";
-
-      createChart(data);
-      createAnalysis(data);
-    }
-
-    function createChart(data){
-      if(!window.Chart) return;
-
-      let labels = data.map(x => x.sinav);
-      let values = data.map(x => Number(x.net));
-
-      let ctx = document.getElementById("progressChart").getContext("2d");
-
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: labels,
-          datasets: [{
-            label: "Net",
-            data: values,
-            borderColor: "#3B0764",
-            backgroundColor: "#F97316",
-            borderWidth: 3,
-            pointRadius: 5,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { beginAtZero: true }
-          }
+            document.getElementById("loading").classList.add("hidden");
         }
-      });
-    }
 
-    function createAnalysis(data){
-      let netler = data.map(x => Number(x.net));
-      let sonNet = netler[netler.length - 1];
+        function showResult(data){
+            let last = data[data.length - 1];
 
-      let analizHavuzu = [
-        "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları içselleştirdiğini göstermektedir.",
-        "🟢 Performans grafiği, sağlam ve emin adımlarla yukarı yönlü bir ivme yakalandığını tescil etmektedir."
-      ];
-      let notHavuzu = [
-        "Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim.",
-        "İstikrarlı tırmanış budur işte, her sınav biraz daha iyiye gidiyoruz."
-      ];
+            document.getElementById("loginCard").classList.add("hidden");
+            document.getElementById("resultCard").classList.remove("hidden");
 
-      let analizIndex = Math.abs(Math.round(sonNet * 7)) % analizHavuzu.length;
-      let notIndex = Math.abs(Math.round(sonNet * 3)) % notHavuzu.length;
+            document.getElementById("nameArea").innerHTML = last.isim;
+            document.getElementById("classArea").innerHTML = last.sinif + ". Sınıf - " + last.sube + " Şubesi";
 
-      document.getElementById("analysisArea").innerHTML = analizHavuzu[analizIndex];
-      document.getElementById("fatihNote").innerHTML = notHavuzu[notIndex];
-      
-      document.getElementById("topicAnalysis").innerHTML = `
-        <div class="topicItem"><div class="topicTitle">Çarpanlar ve Katlar - %100</div><div class="progress"><div class="progressBar" style="width:100%; background:#16A34A;"></div></div></div>
-        <div class="topicItem"><div class="topicTitle">Üslü İfadeler - %80</div><div class="progress"><div class="progressBar" style="width:80%; background:#16A34A;"></div></div></div>
-        <div class="topicItem"><div class="topicTitle">Kareköklü Sayılar - %50</div><div class="progress"><div class="progressBar" style="width:50%; background:#F59E0B;"></div></div></div>
-      `;
+            let t = tarihFormatla(last.tarih);
+            document.getElementById("examArea").innerHTML = last.sinav + " | " + t;
 
-      document.getElementById("distractorArea").innerHTML = `
-        <table class="distractorTable">
-          <thead><tr><th>Soru</th><th>Doğru Şık</th><th>Seçilen</th><th>Durum</th></tr></thead>
-          <tbody>
-            <tr><td style="font-weight:700;">Soru 1</td><td><strong>A</strong></td><td><strong>A</strong></td><td><span class="badge-correct">Doğru</span></td></tr>
-            <tr><td style="font-weight:700;">Soru 2</td><td><strong>C</strong></td><td><strong>B</strong></td><td><span class="badge-wrong">Yanlış</span></td></tr>
-          </tbody>
-        </table>
-      `;
-    }
-  </script>
+            document.getElementById("netArea").innerHTML = last.net;
+            document.getElementById("correctArea").innerHTML = last.dogru;
+            document.getElementById("wrongArea").innerHTML = last.yanlis;
+            document.getElementById("emptyArea").innerHTML = last.bos;
+
+            document.getElementById("rankArea").innerHTML = last.sira ? last.sira + "." : "-";
+            document.getElementById("successArea").innerHTML = last.basari ? last.basari : "-";
+
+            createChart(data);
+            createAnalysis(data);
+        }
+
+        function createChart(data){
+            if(!window.Chart) return;
+
+            let labels = data.map(x => x.sinav);
+            let values = data.map(x => Number(x.net));
+
+            let ctx = document.getElementById("progressChart").getContext("2d");
+
+            new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Net",
+                        data: values,
+                        borderColor: "#3B0764",
+                        backgroundColor: "#F97316",
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function createAnalysis(data){
+            let netler = data.map(x => Number(x.net));
+            let sonNet = netler[netler.length - 1];
+
+            let analizHavuzu = [
+                "🟢 Sınav verileri, öğrencinin matematik alt yapısının oldukça sağlam olduğunu ve kavramları içselleştirdiğini göstermektedir.",
+                "🟢 Performans grafiği, sağlam ve emin adımlarla yukarı yönlü bir ivme yakalandığını tescil etmektedir."
+            ];
+            let notHavuzu = [
+                "Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim.",
+                "İstikrarlı tırmanış budur işte, her sınav biraz daha iyiye gidiyoruz."
+            ];
+
+            let analizIndex = Math.abs(Math.round(sonNet * 7)) % analizHavuzu.length;
+            let notIndex = Math.abs(Math.round(sonNet * 3)) % notHavuzu.length;
+
+            document.getElementById("analysisArea").innerHTML = analizHavuzu[analizIndex];
+            document.getElementById("fatihNote").innerHTML = notHavuzu[notIndex];
+            
+            document.getElementById("topicAnalysis").innerHTML = `
+                <div class="topicItem"><div class="topicTitle">Çarpanlar ve Katlar - %100</div><div class="progress"><div class="progressBar" style="width:100%; background:#16A34A;"></div></div></div>
+                <div class="topicItem"><div class="topicTitle">Üslü İfadeler - %80</div><div class="progress"><div class="progressBar" style="width:80%; background:#16A34A;"></div></div></div>
+                <div class="topicItem"><div class="topicTitle">Kareköklü Sayılar - %50</div><div class="progress"><div class="progressBar" style="width:50%; background:#F59E0B;"></div></div></div>
+            `;
+
+            document.getElementById("distractorArea").innerHTML = `
+                <table class="distractorTable">
+                    <thead><tr><th>Soru</th><th>Doğru Şık</th><th>Seçilen</th><th>Durum</th></tr></thead>
+                    <tbody>
+                        <tr><td style="font-weight:700;">Soru 1</td><td><strong>A</strong></td><td><strong>A</strong></td><td><span class="badge-correct">Doğru</span></td></tr>
+                        <tr><td style="font-weight:700;">Soru 2</td><td><strong>C</strong></td><td><strong>B</strong></td><td><span class="badge-wrong">Yanlış</span></td></tr>
+                    </tbody>
+                </table>
+            `;
+        }
+    </script>
 </body>
 </html>
