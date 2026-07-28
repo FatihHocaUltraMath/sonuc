@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Karne Üretici - FatihHoca_UltraMat.</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<style>
+:root{
+  --orange:#F97316;
+  --purple:#8B5CF6;
+  --dark:#3B0764;
+  --text:#334155;
+  --gray:#64748B;
+}
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),
+    linear-gradient(145deg,#FFF7ED,#FFFFFF 55%,#F5F3FF);
+  padding:20px;
+  color:var(--text);
+}
+.wrap{max-width:480px;margin:0 auto;}
+
+.topBar{
+  background:white;border-radius:20px;padding:18px;margin-bottom:20px;
+  box-shadow:0 10px 25px rgba(139,92,246,.12);
+}
+.topBar h2{margin:0 0 12px;color:var(--dark);font-size:17px;}
+.topBar input{
+  width:100%;padding:11px 12px;margin-bottom:10px;border-radius:10px;
+  border:1px solid #E2E8F0;font-size:14px;
+}
+.topBar button{
+  width:100%;padding:12px;border:none;border-radius:12px;
+  background:linear-gradient(90deg,var(--orange),var(--purple));
+  color:white;font-weight:800;font-size:14px;cursor:pointer;
+}
+.durum{text-align:center;font-size:13px;color:var(--gray);margin-top:8px;}
+.uyari{
+  background:#FFFBEB;border:1px solid #FDE68A;border-radius:12px;
+  padding:10px 12px;font-size:12px;color:#92400E;margin-bottom:14px;
+}
+
+.ogrenciBlok{margin-bottom:26px;}
+
+.karneCard{
+  background:white;border-radius:26px;padding:24px;
+  border:2px solid #FED7AA;box-shadow:0 15px 35px rgba(139,92,246,.12);
+}
+.karneHeader{
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:2px solid #F5F3FF;padding-bottom:14px;margin-bottom:16px;
+}
+.karneHeader .logo{font-size:19px;font-weight:900;color:var(--dark);}
+.karneHeader .logo span{color:var(--orange);}
+.karneHeader .tarih{
+  font-size:12px;font-weight:800;color:var(--purple);
+  background:#F5F3FF;padding:6px 12px;border-radius:12px;
+}
+.karneInfoRow{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
+.karneInfoRow .pill{
+  flex:1;min-width:100px;background:#FFF7ED;border:1px solid #FED7AA;
+  border-radius:14px;padding:10px 12px;
+}
+.karneInfoRow .pill small{display:block;color:#94A3B8;font-size:10px;font-weight:800;letter-spacing:.5px;}
+.karneInfoRow .pill strong{display:block;color:var(--dark);font-size:14px;margin-top:2px;}
+
+.karneGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+.karneGrid .box{border-radius:18px;padding:14px;text-align:center;}
+.karneGrid .box small{display:block;font-size:11px;font-weight:800;color:#94A3B8;letter-spacing:.5px;}
+.karneGrid .box strong{display:block;font-size:26px;font-weight:950;margin-top:4px;}
+.box-net{background:#FFF7ED;color:var(--orange);}
+.box-puan{background:#F5F3FF;color:var(--purple);}
+.box-sira{background:#F5F3FF;color:var(--purple);}
+.box-basari{background:#ECFDF5;color:#16A34A;}
+.box-basari strong{font-size:15px;}
+
+.karneMiniStats{display:flex;gap:10px;margin-bottom:16px;}
+.karneMiniStats .mini{flex:1;text-align:center;border-radius:14px;padding:10px 6px;font-weight:800;font-size:13px;}
+.mini-dogru{background:#DCFCE7;color:#166534;}
+.mini-yanlis{background:#FEE2E2;color:#991B1B;}
+.mini-bos{background:#F1F5F9;color:#475569;}
+
+.karneCompareLabel{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--gray);margin-bottom:4px;}
+.karneCompareBar{width:100%;height:10px;background:#E2E8F0;border-radius:8px;overflow:hidden;margin-bottom:14px;}
+.karneCompareBar .fill{height:100%;background:linear-gradient(90deg,var(--orange),var(--purple));border-radius:8px;}
+.karneCompareBar .fillGray{height:100%;background:#94A3B8;}
+
+.karneTitle{font-weight:900;color:var(--dark);font-size:14px;margin:18px 0 10px;}
+.konuRow{margin-bottom:12px;}
+.konuTop{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:5px;}
+.konuBarBg{width:100%;height:9px;background:#E2E8F0;border-radius:6px;overflow:hidden;}
+.konuBarFill{height:100%;border-radius:6px;}
+
+.karneQuote{
+  background:#F5F3FF;border-left:5px solid var(--purple);border-radius:16px;
+  padding:15px;font-size:13px;line-height:1.6;margin:16px 0;
+}
+.karneQuote .imza{margin-top:8px;text-align:right;font-weight:800;color:var(--purple);font-size:12px;}
+
+.planGrid{display:flex;flex-direction:column;gap:10px;}
+.planCard{background:#FFFBF5;border:1px solid #FED7AA;border-radius:16px;padding:12px 14px;}
+.planCard .planTitle{font-weight:900;color:var(--dark);font-size:13px;margin-bottom:6px;}
+.planCard ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--text);}
+
+.aksiyonlar{
+  display:flex;gap:10px;margin-top:12px;
+}
+.aksiyonlar button{
+  flex:1;padding:12px;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;
+}
+.btnPng{background:var(--dark);color:white;}
+.btnWa{background:#25D366;color:white;}
+.btnWa:disabled{background:#CBD5E1;cursor:not-allowed;}
+.telefonYok{font-size:11px;color:#DC2626;margin-top:6px;text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topBar">
+    <h2>📇 Karne Görseli Üretici</h2>
+    <div class="uyari">Bu sayfa sadece senin kullanman içindir, linkini velilerle paylaşma (veli telefon numaralarını gösteriyor).</div>
+    <input type="text" id="sinavIdInput" placeholder="Sınav ID (örn: D801)">
+    <input type="password" id="anahtarInput" placeholder="Gizli Anahtar">
+    <button onclick="listeGetir()">Karneleri Getir</button>
+    <div class="durum" id="durum"></div>
+  </div>
+
+  <div id="liste"></div>
+
+</div>
+
+<script>
+// Apps Script deploy linkini buraya yapıştır (index.html'deki ile aynı olmalı)
+const API_URL = "https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
+
+const notHavuzu = {
+  yuksek: [
+    "Zirveye göz kırpan harika bir çıkış yakaladın, tebrik ederim.",
+    "Bu performansı korursan seni büyük başarılar bekliyor, aferin.",
+    "Gerçekten güçlü bir sınavdı, bu tempoyu sürdürelim."
+  ],
+  orta: [
+    "İyi bir temel var, birkaç eksiği kapatınca çok daha yükseleceksin.",
+    "Emeğin belli oluyor, zayıf konulara biraz daha zaman ayıralım.",
+    "Doğru yoldasın, düzenli tekrar ile net artışı kısa sürede gelir."
+  ],
+  dusuk: [
+    "Bu sınav bir başlangıç noktası, birlikte eksikleri kapatacağız.",
+    "Şu an odaklanman gereken net bir konu haritamız var, pes etme.",
+    "Küçük adımlarla ilerleyelim, temelleri sağlamlaştırınca ivme kazanacaksın."
+  ]
+};
+
+function notSec(puan){
+  let havuz = puan>=70 ? notHavuzu.yuksek : (puan>=45 ? notHavuzu.orta : notHavuzu.dusuk);
+  return havuz[Math.floor(Math.random()*havuz.length)];
+}
+
+function bugununTarihi(){
+  let d = new Date();
+  let g = String(d.getDate()).padStart(2,'0');
+  let a = String(d.getMonth()+1).padStart(2,'0');
+  return `${g}.${a}.${d.getFullYear()}`;
+}
+
+function normalizeTelefon(telefon){
+  let t = String(telefon||"").replace(/[^0-9]/g,"");
+  if(t.indexOf("0")===0) t = "90"+t.substring(1);
+  if(t.indexOf("90")!==0) t = "90"+t;
+  return t;
+}
+
+function konuRenk(yuzde){
+  if(yuzde>=70) return "#16A34A";
+  if(yuzde>=45) return "#F97316";
+  return "#DC2626";
+}
+
+async function listeGetir(){
+  let sinavID = document.getElementById("sinavIdInput").value.trim();
+  let anahtar = document.getElementById("anahtarInput").value.trim();
+  let durum = document.getElementById("durum");
+  let listeEl = document.getElementById("liste");
+  listeEl.innerHTML = "";
+
+  if(!sinavID || !anahtar){
+    durum.innerHTML = "Sınav ID ve Anahtar gerekli.";
+    return;
+  }
+
+  durum.innerHTML = "Yükleniyor...";
+
+  try{
+    let url = `${API_URL}?sinavID=${encodeURIComponent(sinavID)}&liste=true&anahtar=${encodeURIComponent(anahtar)}`;
+    let res = await fetch(url);
+    let data = await res.json();
+
+    if(data && data.hata){
+      durum.innerHTML = "❌ Anahtar hatalı.";
+      return;
+    }
+    if(!data || data.length===0){
+      durum.innerHTML = "Bu Sınav ID'ye ait sonuç bulunamadı.";
+      return;
+    }
+
+    durum.innerHTML = `${data.length} öğrenci bulundu.`;
+    data.forEach((ogrenci, idx) => olustur(ogrenci, idx));
+
+  }catch(err){
+    durum.innerHTML = "Hata: " + err;
+  }
+}
+
+function olustur(o, idx){
+  let listeEl = document.getElementById("liste");
+
+  let blok = document.createElement("div");
+  blok.className = "ogrenciBlok";
+
+  let cardId = "karne_" + idx;
+  let toplamSoru = (Number(o.dogru)||0)+(Number(o.yanlis)||0)+(Number(o.bos)||0);
+  let olcek = Math.max(toplamSoru, Number(o.net)||0, Number(o.sinifOrtalama)||0, 1);
+  let senNet = Number(o.net)||0;
+  let ortNet = Number(o.sinifOrtalama)||0;
+
+  let konularHtml = "";
+  (o.konular||[]).forEach(k=>{
+    konularHtml += `
+      <div class="konuRow">
+        <div class="konuTop"><span>${k.konu}</span><span style="color:${konuRenk(k.yuzde)}">%${k.yuzde}</span></div>
+        <div class="konuBarBg"><div class="konuBarFill" style="width:${k.yuzde}%;background:${konuRenk(k.yuzde)}"></div></div>
+      </div>`;
+  });
+
+  let zayifKonular = (o.konular||[]).filter(k=>k.yuzde<70).sort((a,b)=>a.yuzde-b.yuzde).slice(0,2);
+  let planHtml = "";
+  zayifKonular.forEach(k=>{
+    planHtml += `
+      <div class="planCard">
+        <div class="planTitle">${k.konu.toUpperCase()} (%${k.yuzde})</div>
+        <ul><li>40 soru çözümü</li><li>Konu tekrar videoları</li></ul>
+      </div>`;
+  });
+  planHtml += `
+    <div class="planCard">
+      <div class="planTitle">SÜRE ÇALIŞMASI</div>
+      <ul><li>1 deneme çözümü</li><li>Süre analizi</li></ul>
+    </div>`;
+
+  let not = notSec(Number(o.puan)||0);
+
+  blok.innerHTML = `
+    <div class="karneCard" id="${cardId}">
+      <div class="karneHeader">
+        <div class="logo">FatihHoca_<span>UltraMat.</span></div>
+        <div class="tarih">${bugununTarihi()}</div>
+      </div>
+      <div class="karneInfoRow">
+        <div class="pill"><small>ÖĞRENCİ</small><strong>${o.isim}</strong></div>
+        <div class="pill"><small>SINIF</small><strong>${o.sinif}. Sınıf - ${o.sube} Şb.</strong></div>
+        <div class="pill"><small>SINAV</small><strong>${o.sinav}</strong></div>
+      </div>
+      <div class="karneGrid">
+        <div class="box box-net"><small>NET</small><strong>${o.net}</strong></div>
+        <div class="box box-puan"><small>PUAN</small><strong>${o.puan!==undefined&&o.puan!==""?o.puan:"-"}</strong></div>
+        <div class="box box-sira"><small>SIRALAMA</small><strong>${o.sira?(o.sira+". / "+(o.katilim||"-")):"-"}</strong></div>
+        <div class="box box-basari"><small>GENEL BAŞARI</small><strong>${o.basari||"-"}</strong></div>
+      </div>
+      <div class="karneMiniStats">
+        <div class="mini mini-dogru">${o.dogru} Doğru</div>
+        <div class="mini mini-yanlis">${o.yanlis} Yanlış</div>
+        <div class="mini mini-bos">${o.bos} Boş</div>
+      </div>
+      <div class="karneCompareLabel"><span>Sen</span><span>${senNet.toFixed(2)}</span></div>
+      <div class="karneCompareBar"><div class="fill" style="width:${Math.min(100,(senNet/olcek)*100)}%"></div></div>
+      <div class="karneCompareLabel"><span>Sınıf Ort.</span><span>${o.sinifOrtalama!==null&&o.sinifOrtalama!==undefined?ortNet.toFixed(2):"-"}</span></div>
+      <div class="karneCompareBar"><div class="fillGray" style="width:${Math.min(100,(ortNet/olcek)*100)}%"></div></div>
+
+      <div class="karneTitle">📚 Konu Analizi & Eksik Takibi</div>
+      ${konularHtml || "<div style='font-size:12px;color:#94A3B8;'>Konu analizi bulunamadı.</div>"}
+
+      <div class="karneQuote">
+        ${not}
+        <div class="imza">Fatih Hoca</div>
+      </div>
+
+      <div class="karneTitle">🎯 Önerilen Çalışma Planı</div>
+      <div class="planGrid">${planHtml}</div>
+    </div>
+
+    <div class="aksiyonlar">
+      <button class="btnPng" onclick="pngIndir('${cardId}','${o.isim.replace(/'/g,"")}')">🖼️ PNG İndir</button>
+      <button class="btnWa" id="wa_${idx}" onclick="waAc(${idx})">📲 WhatsApp Aç</button>
+    </div>
+    ${!o.veliTelefon ? `<div class="telefonYok">⚠️ Bu öğrencinin veli telefonu Ogrenciler sayfasında eksik.</div>` : ""}
+  `;
+
+  listeEl.appendChild(blok);
+
+  // WhatsApp butonuna veli telefon + mesaj bilgisini bağla
+  let waBtn = document.getElementById("wa_"+idx);
+  if(!o.veliTelefon){
+    waBtn.disabled = true;
+  } else {
+    waBtn.onclick = function(){
+      let telefon = normalizeTelefon(o.veliTelefon);
+      let mesaj = `Sayın Veli, ${o.isim} adlı öğrencimizin sınav karnesi ektedir. 📎\n(PNG İndir butonuyla indirdiğin görseli bu sohbete sürükleyip gönder.)`;
+      window.open(`https://wa.me/${telefon}?text=${encodeURIComponent(mesaj)}`, "_blank");
+    };
+  }
+}
+
+function pngIndir(cardId, isim){
+  let el = document.getElementById(cardId);
+  html2canvas(el, {scale:2, backgroundColor:"#ffffff"}).then(canvas=>{
+    let link = document.createElement("a");
+    link.download = isim.trim().replace(/\s+/g,"_") + "_karne.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
+</script>
+</body>
+</html>
