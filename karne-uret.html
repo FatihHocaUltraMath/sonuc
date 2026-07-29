@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Karne Üretici - FatihHoca_UltraMat.</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <style>
@@ -95,7 +94,7 @@ body{
 .khQuoteTitle{font-weight:900;color:var(--dark);font-size:12.5px;letter-spacing:.5px;margin-bottom:6px;}
 .khQuoteText{font-size:13px;line-height:1.55;color:var(--text);}
 .khSign{text-align:right;flex-shrink:0;border-left:1px solid #E9E1FB;padding-left:18px;}
-.khSignName{font-family:'Caveat',cursive;font-size:28px;color:var(--purple);text-decoration:underline;text-decoration-style:wavy;text-decoration-color:#DDD6FE;text-underline-offset:3px;}
+.khSignName{font-family:'Segoe Script','Bradley Hand','Brush Script MT',cursive;font-size:30px;color:var(--purple);text-decoration:underline;text-decoration-color:#C4B5FD;text-underline-offset:4px;}
 .khSignRole{font-size:10.5px;color:var(--gray);font-weight:700;margin-top:4px;}
 
 .planRow{display:flex;gap:12px;flex-wrap:wrap;}
@@ -111,7 +110,7 @@ body{
 .khFooterText b{color:var(--dark);}
 .khFooterQuote{flex:1;display:flex;align-items:center;justify-content:flex-end;gap:4px;text-align:right;font-size:13px;color:var(--dark);font-weight:700;font-style:italic;}
 .khFooterQuote .qMark{font-size:32px;color:#DDD6FE;font-weight:900;font-style:normal;line-height:0;flex-shrink:0;}
-.khFooterQuote b{color:var(--purple);text-decoration:underline;text-decoration-style:wavy;text-decoration-color:var(--purple);text-underline-offset:3px;font-style:italic;}
+.khFooterQuote b{color:var(--purple);text-decoration:underline;text-decoration-color:var(--purple);text-underline-offset:3px;font-style:italic;}
 
 .aksiyonlar{display:flex;gap:10px;margin-top:14px;}
 .aksiyonlar button{flex:1;padding:13px;border:none;border-radius:12px;font-weight:800;font-size:13px;cursor:pointer;}
@@ -201,12 +200,14 @@ function konuIkon(konu){
   return "Σ";
 }
 
-const LOGO_SVG = `
-<svg viewBox="0 0 100 100" width="54" height="54" xmlns="http://www.w3.org/2000/svg">
-  <circle cx="50" cy="50" r="44" fill="none" stroke="#F97316" stroke-width="4" stroke-linecap="round" stroke-dasharray="185 100"/>
-  <path d="M32 68 L50 28 L68 68 Z" fill="none" stroke="#3B0764" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
-  <circle cx="50" cy="28" r="4.5" fill="#8B5CF6"/>
-</svg>`;
+const LOGO_SVG_RAW =
+'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="54" height="54">'+
+  '<circle cx="50" cy="50" r="44" fill="none" stroke="#F97316" stroke-width="5"/>'+
+  '<path d="M32 68 L50 28 L68 68 Z" fill="none" stroke="#3B0764" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>'+
+  '<circle cx="50" cy="28" r="5" fill="#8B5CF6"/>'+
+'</svg>';
+const LOGO_SVG = '<img src="data:image/svg+xml,' + encodeURIComponent(LOGO_SVG_RAW) + '" width="54" height="54">';
+
 
 const CAL_SVG = `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#8B5CF6" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>`;
 const PERSON_SVG = `<svg viewBox="0 0 24 24" width="30" height="30" fill="#8B5CF6"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>`;
@@ -417,13 +418,6 @@ function olustur(o, idx){
 }
 
 async function pngIndir(cardId, isim){
-  // El yazısı imza fontu (Caveat) tam yüklenmeden görüntü alınırsa
-  // düz fontla çizilir; bu yüzden önce fontun hazır olmasını bekliyoruz.
-  try{
-    await document.fonts.load("600 26px Caveat");
-    await document.fonts.ready;
-  }catch(e){}
-
   let el = document.getElementById(cardId);
   html2canvas(el, {scale:2, backgroundColor:"#ffffff", useCORS:true}).then(canvas=>{
     let link = document.createElement("a");
