@@ -407,11 +407,8 @@ function olustur(o, idx){
   } else {
     waBtn.onclick = function(){
       let telefon = normalizeTelefon(o.veliTelefon);
-      let BAR_EMOJI = String.fromCodePoint(0x1F4CA);   // 📊
-      let MEMO_EMOJI = String.fromCodePoint(0x1F4DD);  // 📝
-      let PRAY_EMOJI = String.fromCodePoint(0x1F64F);  // 🙏
-      let mesaj = `Merhaba,\n${o.isim} adlı öğrencimizin ${o.sinav} sınavına ait Matematik Analiz Karnesi hazırlanmıştır.\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerilerini bulabilirsiniz.\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n— Fatih Hoca ${PRAY_EMOJI}`;
-      window.open(`https://wa.me/${telefon}?text=${encodeURIComponent(mesaj)}`, "_blank");
+      let mesaj = `Merhaba,\n${o.isim} adlı öğrencimizin ${o.sinav} sınavına ait Matematik Analiz Karnesi hazırlanmıştır.\nKarnede; net, puan, sıralama, konu analizleri ve çalışma önerilerini bulabilirsiniz.\nKarneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n— Fatih Hoca`;
+      window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "_blank");
     };
   }
 }
