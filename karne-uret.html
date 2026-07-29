@@ -118,6 +118,8 @@ body{
 .btnPng{background:var(--dark);color:white;}
 .btnWa{background:#25D366;color:white;}
 .btnWa:disabled{background:#CBD5E1;cursor:not-allowed;}
+.btnWa2{background:var(--purple);color:white;width:100%;}
+.btnWa2:disabled{background:#CBD5E1;cursor:not-allowed;}
 .telefonYok{font-size:11px;color:#DC2626;margin-top:6px;text-align:center;}
 </style>
 </head>
@@ -396,14 +398,19 @@ function olustur(o, idx){
       <button class="btnPng" onclick="pngIndir('${cardId}','${o.isim.replace(/'/g,"")}')">🖼️ PNG İndir</button>
       <button class="btnWa" id="wa_${idx}" onclick="waAc(${idx})">📲 WhatsApp Aç</button>
     </div>
+    <div class="aksiyonlar">
+      <button class="btnWa2" id="waDetay_${idx}">🔗 Detaylı Sonuçlar Mesajı</button>
+    </div>
     ${!o.veliTelefon ? `<div class="telefonYok">⚠️ Bu öğrencinin veli telefonu Ogrenciler sayfasında eksik.</div>` : ""}
   `;
 
   listeEl.appendChild(blok);
 
   let waBtn = document.getElementById("wa_"+idx);
+  let waDetayBtn = document.getElementById("waDetay_"+idx);
   if(!o.veliTelefon){
     waBtn.disabled = true;
+    waDetayBtn.disabled = true;
   } else {
     waBtn.onclick = function(){
       let telefon = normalizeTelefon(o.veliTelefon);
@@ -412,6 +419,14 @@ function olustur(o, idx){
       let PRAY_EMOJI = String.fromCodePoint(0x270D, 0xFE0F);  // ✍️
       let mesaj = `Merhaba,\n\n${o.isim} adlı öğrencimizin ${o.sinav} sınavına ait Matematik Analiz Karnesi hazırlanmıştır.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
       window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "whatsappSekmesi");
+    };
+    waDetayBtn.onclick = function(){
+      let telefon = normalizeTelefon(o.veliTelefon);
+      let PIN_EMOJI = String.fromCodePoint(0x1F4CC);   // 📌
+      let LINK_EMOJI = String.fromCodePoint(0x1F517);  // 🔗
+      let siteAdresi = "fatihhocaultramath.github.io/sonuc/";
+      let mesaj2 = `${PIN_EMOJI} DETAYLI SONUÇLAR\n\nKarnede yer alan QR kodu veya aşağıdaki bağlantıyı kullanarak öğrencimizin detaylı sonuçlarına ulaşabilirsiniz.\n\n${LINK_EMOJI} ${siteAdresi}\n\nÖğrenci Kodu: ${o.kod}`;
+      window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj2)}`, "whatsappSekmesi");
     };
   }
 }
