@@ -289,8 +289,8 @@ function olustur(o, idx){
     </div>`;
 
   let not = notSec(puanSayi);
-  let kisiselLink = FRONTEND_URL + "?isim=" + encodeURIComponent(o.isim) + "&kod=" + encodeURIComponent(o.kod);
-  let qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(kisiselLink);
+  let siteKokAdresi = "https://fatihhocaultramath.github.io/sonuc/";
+  let qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(siteKokAdresi);
 
   blok.innerHTML = `
     <div class="karneCard" id="${cardId}">
