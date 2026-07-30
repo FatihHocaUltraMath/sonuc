@@ -417,7 +417,7 @@ function olustur(o, idx){
       let BAR_EMOJI = String.fromCodePoint(0x1F4CA);   // 📊
       let MEMO_EMOJI = String.fromCodePoint(0x1F4DA);  // 📚
       let PRAY_EMOJI = String.fromCodePoint(0x270D, 0xFE0F);  // ✍️
-      let mesaj = `Merhaba,\n\n${o.isim} öğrencimizin *Matematik Dersi ${o.sinav}* sınavına ait analizleri içeren karnesi hazır, birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
+      let mesaj = `Merhaba,\n\nÖğrencimiz ${o.isim} için hazırladığım *${o.sinav} Analiz Karnesi*'ni birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
       window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "whatsappSekmesi");
     };
     waDetayBtn.onclick = async function(){
