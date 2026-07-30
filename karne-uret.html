@@ -395,11 +395,11 @@ function olustur(o, idx){
     </div>
 
     <div class="aksiyonlar">
-      <button class="btnPng" onclick="pngIndir('${cardId}','${o.isim.replace(/'/g,"")}')">🖼️ PNG İndir</button>
-      <button class="btnWa" id="wa_${idx}" onclick="waAc(${idx})">📲 WhatsApp Aç</button>
+      <button class="btnWa" id="wa_${idx}">1. İlk Mesajı Gönder</button>
+      <button class="btnPng" onclick="pngIndir('${cardId}','${o.isim.replace(/'/g,"")}')">2. Karneyi Kopyala</button>
     </div>
     <div class="aksiyonlar">
-      <button class="btnWa2" id="waDetay_${idx}">🔗 Detaylı Sonuçlar Mesajı</button>
+      <button class="btnWa2" id="waDetay_${idx}">3. Son Mesajı Kopyala</button>
     </div>
     ${!o.veliTelefon ? `<div class="telefonYok">⚠️ Bu öğrencinin veli telefonu Ogrenciler sayfasında eksik.</div>` : ""}
   `;
@@ -420,25 +420,39 @@ function olustur(o, idx){
       let mesaj = `Merhaba,\n\n${o.isim} adlı öğrencimizin ${o.sinav} sınavına ait Matematik Analiz Karnesi hazırlanmıştır.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
       window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "whatsappSekmesi");
     };
-    waDetayBtn.onclick = function(){
-      let telefon = normalizeTelefon(o.veliTelefon);
+    waDetayBtn.onclick = async function(){
       let PIN_EMOJI = String.fromCodePoint(0x1F4CC);   // 📌
       let LINK_EMOJI = String.fromCodePoint(0x1F517);  // 🔗
       let siteAdresi = "fatihhocaultramath.github.io/sonuc/";
       let mesaj2 = `${PIN_EMOJI} DETAYLI SONUÇLAR\n\nKarnede yer alan QR kodu veya aşağıdaki bağlantıyı kullanarak öğrencimizin detaylı sonuçlarına ulaşabilirsiniz.\n\n${LINK_EMOJI} ${siteAdresi}\n\nÖğrenci Kodu: ${o.kod}`;
-      window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj2)}`, "whatsappSekmesi");
+      try{
+        await navigator.clipboard.writeText(mesaj2);
+        alert("Mesaj panoya kopyalandı!\n\nWhatsApp sekmesine geç, mesaj kutusuna Ctrl+V yapıştır, sonra Gönder'e bas.");
+      }catch(err){
+        let telefon = normalizeTelefon(o.veliTelefon);
+        window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj2)}`, "whatsappSekmesi");
+      }
     };
   }
 }
 
 async function pngIndir(cardId, isim){
   let el = document.getElementById(cardId);
-  html2canvas(el, {scale:2, backgroundColor:"#ffffff", useCORS:true}).then(canvas=>{
-    let link = document.createElement("a");
-    link.download = isim.trim().replace(/\s+/g,"_") + "_karne.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  });
+  let canvas = await html2canvas(el, {scale:2, backgroundColor:"#ffffff", useCORS:true});
+
+  canvas.toBlob(async function(blob){
+    try{
+      await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
+      alert("Karne panoya kopyalandı!\n\nŞimdi WhatsApp sekmesine geç, mesaj kutusuna tıkla ve Ctrl+V (yapıştır) yap, sonra Gönder'e bas.");
+    }catch(err){
+      // Panoya kopyalama desteklenmiyorsa (bazı tarayıcı/izin durumları), indirmeye geri düş
+      let link = document.createElement("a");
+      link.download = isim.trim().replace(/\s+/g,"_") + "_karne.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+      alert("Bu tarayıcıda panoya kopyalama desteklenmediği için görsel indirildi. İndirilenler klasöründen WhatsApp sohbetine sürükleyip gönder.");
+    }
+  }, "image/png");
 }
 </script>
 </body>
