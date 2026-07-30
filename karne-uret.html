@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Karne Üretici - FatihHoca_UltraMat.</title>
+<title>Karne Üretici - FatihHoca | UltraMat</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -299,8 +299,8 @@ function olustur(o, idx){
         <div class="khBrand">
           <div class="khLogo">${LOGO_SVG}</div>
           <div>
-            <div class="khTitle">FatihHoca_<span>UltraMat.</span></div>
-            <div class="khSub">MATEMATİK DERSİ ANALİZİ</div>
+            <div class="khTitle">FatihHoca <span>| UltraMat</span></div>
+            <div class="khSub">MATEMATİK GELİŞİM ANALİZİ</div>
           </div>
         </div>
         <div class="khDate">${CAL_SVG} ${bugununTarihi()}</div>
@@ -417,7 +417,7 @@ function olustur(o, idx){
       let BAR_EMOJI = String.fromCodePoint(0x1F4CA);   // 📊
       let MEMO_EMOJI = String.fromCodePoint(0x1F4DA);  // 📚
       let PRAY_EMOJI = String.fromCodePoint(0x270D, 0xFE0F);  // ✍️
-      let mesaj = `Merhaba,\n\nÖğrencimiz ${o.isim} için hazırladığım *${o.sinav} Analiz Karnesi*'ni birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
+      let mesaj = `Merhaba,\n\nÖğrencimiz ${o.isim} için hazırladığım *${o.sinav} Analiz Karnesi*ni birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
       window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "whatsappSekmesi");
     };
     waDetayBtn.onclick = async function(){
