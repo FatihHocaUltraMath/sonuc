@@ -416,15 +416,15 @@ function olustur(o, idx){
       let telefon = normalizeTelefon(o.veliTelefon);
       let BAR_EMOJI = String.fromCodePoint(0x1F4CA);   // 📊
       let MEMO_EMOJI = String.fromCodePoint(0x1F4DA);  // 📚
-      let PRAY_EMOJI = String.fromCodePoint(0x270D, 0x1F3FB);  // ✍🏻 (açık ten tonu)
-      let mesaj = `Merhaba,\n\n${o.isim} adlı öğrencimizin ${o.sinav} sınavına ait Matematik Analiz Karnesi hazırlanmıştır.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
+      let PRAY_EMOJI = String.fromCodePoint(0x270D, 0xFE0F);  // ✍️
+      let mesaj = `Merhaba,\n\n${o.isim} öğrencimizin *Matematik Dersi ${o.sinav}* sınavına ait analizleri içeren karnesi hazır, birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
       window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "whatsappSekmesi");
     };
     waDetayBtn.onclick = async function(){
       let PIN_EMOJI = String.fromCodePoint(0x1F4CC);   // 📌
       let LINK_EMOJI = String.fromCodePoint(0x1F517);  // 🔗
       let siteAdresi = "fatihhocaultramath.github.io/sonuc/";
-      let mesaj2 = `${PIN_EMOJI} DETAYLI SONUÇLAR\n\nKarnede yer alan QR kodu veya aşağıdaki bağlantıyı kullanarak öğrencimizin detaylı sonuçlarına ulaşabilirsiniz.\n\n${LINK_EMOJI} ${siteAdresi}\n\nÖğrenci Kodu: ${o.kod}`;
+      let mesaj2 = `${PIN_EMOJI} *Detaylı Sonuçlar*\n\nKarnede yer alan QR kodu veya aşağıdaki bağlantıyı kullanarak öğrencimizin detaylı sonuçlarına ulaşabilirsiniz.\n\n${LINK_EMOJI} ${siteAdresi}\n\nÖğrenci Kodu: ${o.kod}`;
       try{
         await navigator.clipboard.writeText(mesaj2);
         alert("Mesaj panoya kopyalandı!\n\nWhatsApp sekmesine geç, mesaj kutusuna Ctrl+V yapıştır, sonra Gönder'e bas.");
