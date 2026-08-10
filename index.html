@@ -465,18 +465,33 @@ color:#94A3B8;
 /* Konu Analizi İlerleme Çubukları */
 .topicItem {
   margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
+
+.topicIcon{
+  width:34px;height:34px;border-radius:50%;
+  color:white;font-weight:800;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+
+.topicBody{flex:1;}
 
 .topicTitle {
   font-size: 14px;
   font-weight: 700;
   color: var(--dark);
   margin-bottom: 6px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 .progress {
   width: 100%;
-  height: 12px;
+  height: 8px;
   background: #E2E8F0;
   border-radius: 10px;
   overflow: hidden;
@@ -487,6 +502,45 @@ color:#94A3B8;
   border-radius: 10px;
   transition: width 0.4s ease-in-out;
 }
+
+.topicSub {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 5px;
+}
+.topicTrendUp{color:#16A34A;}
+.topicTrendDown{color:#DC2626;}
+.topicTrendSame{color:#94A3B8;}
+.topicSinifOrt{color:#94A3B8;font-weight:600;}
+.topicAltKazanim{color:#B91C1C;font-weight:600;}
+.topicSurekliZayif{
+  display:inline-block;
+  background:#FEE2E2;color:#B91C1C;
+  font-size:10px;font-weight:800;
+  padding:2px 8px;border-radius:8px;
+  margin-left:6px;
+}
+
+/* Önerilen Çalışma Planı */
+.planRow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media (max-width:520px){ .planRow{grid-template-columns:1fr;} }
+.planCard{background:#FFFFFF;border:1px solid #E5E7EB;border-radius:10px;padding:16px;}
+.oncelikRozet{display:inline-block;color:white;font-size:9.5px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:6px;margin-bottom:10px;}
+.planIcon{width:28px;height:28px;border-radius:7px;color:white;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.planTitle{font-weight:800;color:var(--dark);font-size:12px;letter-spacing:.2px;margin-bottom:8px;}
+.planDurum{font-size:11px;color:#64748B;font-weight:700;margin-bottom:4px;}
+.planUyari{font-size:11px;color:#B91C1C;font-weight:700;margin-bottom:10px;}
+.planAsama{font-size:11.5px;color:var(--text);line-height:1.5;margin-top:9px;padding-top:9px;border-top:1px solid #F1F5F9;}
+.planAsama b{color:var(--dark);font-weight:800;font-size:11px;}
+
+.satirVurgu{
+  background:#FEF3C7 !important;
+  outline:2px solid #F59E0B;
+  transition:background .3s ease;
+}
+
+.enGucluRozet{background:#ECFDF5;color:#166534;font-size:11.5px;font-weight:700;padding:8px 12px;border-radius:10px;margin-bottom:14px;}
+.enGucluRozet b{font-weight:900;}
 
 /* Soru Bazlı Çeldirici Analizi Tablosu */
 .distractorTable {
@@ -674,6 +728,7 @@ SON SINAV NETİ
 <div class="stat">
 <small>Net</small>
 <strong id="netArea">-</strong>
+<div id="netTrendArea" style="font-size:10px;font-weight:800;margin-top:4px;"></div>
 </div>
 
 <!-- YAN YANA İKİ ŞIK ÖZEL KART -->
@@ -735,13 +790,24 @@ Not hazırlanıyor...
 
 
 <div class="title">
-📚 Konu Analizi
+📚 Konu Analizi & Eksik Takibi
 </div>
+<div id="enGucluArea"></div>
+<div style="font-size:11px;color:#94A3B8;font-style:italic;margin-bottom:10px;">▲/▼ önceki sınava göre değişimi, Sınıf Ort. bu sınavdaki sınıf ortalamasını gösterir.</div>
 
 <div class="note" id="topicAnalysis">
 
 Konu analizi hazırlanıyor...
 
+</div>
+
+
+<div class="title">
+🎯 Önerilen Çalışma Planı
+</div>
+
+<div id="planArea" style="margin-top: 10px;">
+  Çalışma planı hazırlanıyor...
 </div>
 
 
@@ -948,6 +1014,20 @@ document.getElementById("emptyArea")
 document.getElementById("netArea")
 .innerHTML=last.net;
 
+if(last.netTrend !== undefined && last.netTrend !== null){
+  let trendEl = document.getElementById("netTrendArea");
+  if(last.netTrend > 0){
+    trendEl.style.color = "#16A34A";
+    trendEl.innerHTML = "▲ Önceki sınava göre " + last.netTrend + " artış";
+  } else if(last.netTrend < 0){
+    trendEl.style.color = "#DC2626";
+    trendEl.innerHTML = "▼ Önceki sınava göre " + Math.abs(last.netTrend) + " azalış";
+  } else {
+    trendEl.style.color = "#94A3B8";
+    trendEl.innerHTML = "— Önceki sınavla aynı";
+  }
+}
+
 
 // Sıralama verisi
 if (last.sira) {
@@ -981,6 +1061,8 @@ createChart(data);
 createAnalysis(data);
 
 createTopicAnalysis(last);
+
+createCalismaPlani(last);
 
 createDistractorAnalysis(last);
 
@@ -1274,6 +1356,119 @@ function createAnalysis(data){
   document.getElementById("fatihNote").innerHTML = notHavuzu[notIndex];
 }
 
+function konuIkon(konu){
+  konu = (konu||"").toLowerCase();
+  if(konu.includes("üslü")) return "aⁿ";
+  if(konu.includes("karekök")) return "√x";
+  if(konu.includes("çarpan")) return "123";
+  if(konu.includes("cebir")) return "x+y";
+  if(konu.includes("olasılık")) return "%";
+  if(konu.includes("doğrusal")) return "y=x";
+  if(konu.includes("üçgen")) return "△";
+  if(konu.includes("dönüşüm")) return "⟳";
+  if(konu.includes("cisim")) return "⬡";
+  if(konu.includes("eşitsizlik")) return "≠";
+  if(konu.includes("eğim")) return "∕";
+  if(konu.includes("geometri")) return "∟";
+  return "Σ";
+}
+
+function vurgulaKonu(konu){
+  let tablo = document.getElementById("distractorArea");
+  if(!tablo) return;
+
+  let tumSatirlar = tablo.querySelectorAll("tr[data-konu]");
+  let ilkEslesen = null;
+  tumSatirlar.forEach(tr=>{
+    if(tr.getAttribute("data-konu") === konu){
+      tr.classList.add("satirVurgu");
+      if(!ilkEslesen) ilkEslesen = tr;
+    } else {
+      tr.classList.remove("satirVurgu");
+    }
+  });
+
+  if(ilkEslesen){
+    ilkEslesen.scrollIntoView({behavior:"smooth", block:"center"});
+  }
+}
+
+function performansRengi(yuzde){
+  if(yuzde>=90) return "#16A34A";
+  if(yuzde>50) return "#2563EB";
+  return "#DC2626";
+}
+
+function onerilenSoruSayisi(yuzde){
+  let sayi = Math.round(60 - (yuzde/100)*40);
+  return Math.max(20, Math.min(60, sayi));
+}
+
+function createCalismaPlani(data){
+  let container = document.getElementById("planArea");
+  if(!data.konular || data.konular.length === 0){
+    container.innerHTML = "Çalışma planı için konu verisi bulunamadı.";
+    return;
+  }
+
+  let zayifKonular = data.konular.filter(k=>k.yuzde<60).sort((a,b)=>a.yuzde-b.yuzde).slice(0,3);
+  let planHtml = "";
+
+  if(zayifKonular.length === 0){
+    planHtml = `
+      <div class="planCard" style="border-top:3px solid #16A34A;">
+        <div class="oncelikRozet" style="background:#16A34A">GENEL DEĞERLENDİRME</div>
+        <div class="planIcon" style="background:#16A34A">★</div>
+        <div class="planTitle">İLERİ SEVİYE SORULAR</div>
+        <div class="planDurum">Tüm konularda hedeflenen seviyenin üzerinde</div>
+        <div class="planAsama"><b>1. Derinleştirme</b><br>Zor seviye soru bankası çözümü</div>
+        <div class="planAsama"><b>2. Pekiştirme</b><br>Süreli sınav simülasyonu</div>
+      </div>`;
+  } else {
+    zayifKonular.forEach((k, idx)=>{
+      let renk = performansRengi(k.yuzde);
+      let altKazanimlar = altKazanimlariBul(data, k.konu);
+      let soruSayisi = onerilenSoruSayisi(k.yuzde);
+      let dogruSayisi = (k.dogruSayisi!==undefined) ? k.dogruSayisi : "?";
+      let toplamSoru = (k.soruSayisi!==undefined) ? k.soruSayisi : "?";
+      let karsilastirma = (k.sinifOrtalamaYuzde!==undefined && k.sinifOrtalamaYuzde!==null)
+        ? ` — sınıf ortalaması %${k.sinifOrtalamaYuzde} (fark: ${k.sinifOrtalamaYuzde - k.yuzde} puan)`
+        : "";
+      let surekliSatiri = k.surekliZayif
+        ? `<div class="planUyari">Son 3 sınavın en az ikisinde bu konu zayıf çıktı, önceliklendirilmeli.</div>` : "";
+      let kavramMetni = altKazanimlar.length
+        ? altKazanimlar.slice(0,2).join(", ")
+        : `${k.konu} (alt kazanım detayı girilmemiş)`;
+      let pekistirmeMetni = altKazanimlar.length > 2
+        ? altKazanimlar.slice(2).join(", ") + " konularında ek pekiştirme"
+        : "Karma soru çözümüyle pekiştirme";
+      planHtml += `
+        <div class="planCard" style="border-top:3px solid ${renk};">
+          <div class="oncelikRozet" style="background:${renk}">ÖNCELİK ${idx+1}</div>
+          <div class="planIcon" style="background:${renk}">${konuIkon(k.konu)}</div>
+          <div class="planTitle">${k.konu.toUpperCase()}</div>
+          <div class="planDurum">${toplamSoru} sorudan ${dogruSayisi} doğru (%${k.yuzde})${karsilastirma}</div>
+          ${surekliSatiri}
+          <div class="planAsama"><b>1. Kavram Tekrarı</b><br>${kavramMetni}</div>
+          <div class="planAsama"><b>2. Uygulama</b><br>${soruSayisi} soru çözümü</div>
+          <div class="planAsama"><b>3. Pekiştirme</b><br>${pekistirmeMetni}</div>
+        </div>`;
+    });
+  }
+
+  container.innerHTML = `<div class="planRow">${planHtml}</div>`;
+}
+
+function altKazanimlariBul(data, konu){
+  let sayac = {};
+  (data.sorular||[]).forEach(s=>{
+    if(s.konu===konu && s.durum!=="Dogru" && s.durum!=="Doğru" && s.altKazanim){
+      sayac[s.altKazanim] = (sayac[s.altKazanim]||0)+1;
+    }
+  });
+  return Object.keys(sayac).sort((a,b)=>sayac[b]-sayac[a]);
+}
+
 function createTopicAnalysis(data){
 
 
@@ -1283,6 +1478,8 @@ document.getElementById("topicAnalysis")
 .innerHTML=
 "Konu analizi bulunamadı.";
 
+document.getElementById("enGucluArea").innerHTML = "";
+
 return;
 
 }
@@ -1290,7 +1487,14 @@ return;
 
 let html="";
 
-data.konular.forEach(k=>{
+let siraliKonular = [...data.konular].sort((a,b)=>a.yuzde-b.yuzde);
+
+let enGucluKonu = siraliKonular.length ? siraliKonular[siraliKonular.length-1] : null;
+document.getElementById("enGucluArea").innerHTML = enGucluKonu
+  ? `<div class="enGucluRozet">★ En güçlü konu: <b>${enGucluKonu.konu}</b> (%${enGucluKonu.yuzde})</div>`
+  : "";
+
+siraliKonular.forEach(k=>{
 
 
 let renk="";
@@ -1312,14 +1516,36 @@ renk="#DC2626";
 
 }
 
+let trendHtml = "";
+if(k.oncekiYuzde !== undefined && k.oncekiYuzde !== null){
+  let fark = k.yuzde - k.oncekiYuzde;
+  if(fark > 0) trendHtml = `<span class="topicTrendUp">▲${fark} puan</span>`;
+  else if(fark < 0) trendHtml = `<span class="topicTrendDown">▼${Math.abs(fark)} puan</span>`;
+  else trendHtml = `<span class="topicTrendSame">Değişim yok</span>`;
+}
+
+let surekliHtml = k.surekliZayif ? `<span class="topicSurekliZayif">⚠ Sürekli Zayıf</span>` : "";
+
+let sinifOrtHtml = (k.sinifOrtalamaYuzde !== undefined && k.sinifOrtalamaYuzde !== null)
+  ? `<div class="topicSub topicSinifOrt">Sınıf Ort. %${k.sinifOrtalamaYuzde}</div>` : "";
+
+let altKazanimlar = altKazanimlariBul(data, k.konu);
+let altKazanimHtml = (altKazanimlar.length && k.yuzde < 90)
+  ? `<div class="topicSub topicAltKazanim">Zayıf alt kazanımlar: ${altKazanimlar.join(", ")}</div>` : "";
+
 
 
 html+=`
 
-<div class="topicItem">
+<div class="topicItem" style="cursor:pointer;" onclick="vurgulaKonu('${k.konu.replace(/'/g,"\\'")}')" title="Bu konudaki soruları aşağıda göster">
+
+<div class="topicIcon" style="background:${renk}">${konuIkon(k.konu)}</div>
+
+<div class="topicBody">
 
 <div class="topicTitle">
-${k.konu} - %${k.yuzde}
+<span>${k.konu}${surekliHtml}</span>
+<span style="color:${renk}">%${k.yuzde} ${trendHtml}</span>
 </div>
 
 
@@ -1332,6 +1558,10 @@ background:${renk};
 ">
 
 </div>
+
+</div>
+${sinifOrtHtml}
+${altKazanimHtml}
 
 </div>
 
@@ -1362,6 +1592,7 @@ function createDistractorAnalysis(data) {
       <thead>
         <tr>
           <th>Soru</th>
+          <th>Alt Kazanım</th>
           <th>Doğru Şık</th>
           <th>Seçilen</th>
           <th>Durum</th>
@@ -1381,8 +1612,9 @@ function createDistractorAnalysis(data) {
     }
 
     html += `
-      <tr>
+      <tr data-konu="${s.konu || ""}" id="soru-${s.no}">
         <td style="font-weight:700; color:var(--dark);">Soru ${s.no}</td>
+        <td style="color:var(--gray); font-size:12px;">${s.altKazanim || "-"}</td>
         <td><strong>${s.dogruSik}</strong></td>
         <td><strong>${s.ogrenciSik || "-"}</strong></td>
         <td>${durumBadge}</td>
