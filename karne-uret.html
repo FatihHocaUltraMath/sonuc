@@ -397,51 +397,7 @@ function olustur(o, idx){
       </div>`;
   });
 
-  let zayifKonular = (o.konular||[]).filter(k=>k.yuzde<60).sort((a,b)=>a.yuzde-b.yuzde).slice(0,3);
-  let planHtml = "";
-  if(zayifKonular.length === 0){
-    planHtml += `
-      <div class="planCard" style="border-top:3px solid #16A34A;">
-        <div class="oncelikRozet" style="background:#16A34A">GENEL DEĞERLENDİRME</div>
-        <div class="planIcon" style="background:#16A34A">★</div>
-        <div class="planTitle">İLERİ SEVİYE SORULAR</div>
-        <div class="planDurum">Tüm konularda hedeflenen seviyenin üzerinde</div>
-        <div class="planAsama"><b>1. Derinleştirme</b><br>Zor seviye soru bankası çözümü</div>
-        <div class="planAsama"><b>2. Pekiştirme</b><br>Süreli sınav simülasyonu</div>
-      </div>`;
-  } else {
-    zayifKonular.forEach((k, idx)=>{
-      let renk = performansRengi(k.yuzde);
-      let altKazanimlar = zayifAltKazanimlar(o, k.konu);
-      let soruSayisi = onerilenSoruSayisi(k.yuzde);
-      let dogruSayisi = (k.dogruSayisi!==undefined) ? k.dogruSayisi : "?";
-      let toplamSoru = (k.soruSayisi!==undefined) ? k.soruSayisi : "?";
-      let karsilastirma = (k.sinifOrtalamaYuzde!==undefined && k.sinifOrtalamaYuzde!==null)
-        ? ` — sınıf ortalaması %${k.sinifOrtalamaYuzde} (fark: ${k.sinifOrtalamaYuzde - k.yuzde} puan)`
-        : "";
-      let surekliSatiri = k.surekliZayif
-        ? `<div class="planUyari">Son 3 sınavın en az ikisinde bu konu zayıf çıktı, önceliklendirilmeli.</div>` : "";
-      let kavramMetni = altKazanimlar.length
-        ? altKazanimlar.slice(0,2).join(", ")
-        : `${k.konu} (alt kazanım detayı girilmemiş — Soru_Haritasi'na eklenebilir)`;
-      let pekistirmeMetni = altKazanimlar.length > 2
-        ? altKazanimlar.slice(2).join(", ") + " konularında ek pekiştirme"
-        : "Karma soru çözümüyle pekiştirme";
-      planHtml += `
-        <div class="planCard" style="border-top:3px solid ${renk};">
-          <div class="oncelikRozet" style="background:${renk}">ÖNCELİK ${idx+1}</div>
-          <div class="planIcon" style="background:${renk}">${konuIkon(k.konu)}</div>
-          <div class="planTitle">${k.konu.toUpperCase()}</div>
-          <div class="planDurum">${toplamSoru} sorudan ${dogruSayisi} doğru (%${k.yuzde})${karsilastirma}</div>
-          ${surekliSatiri}
-          <div class="planAsama"><b>1. Kavram Tekrarı</b><br>${kavramMetni}</div>
-          <div class="planAsama"><b>2. Uygulama</b><br>${soruSayisi} soru çözümü</div>
-          <div class="planAsama"><b>3. Pekiştirme</b><br>${pekistirmeMetni}</div>
-        </div>`;
-    });
-  }
-
-  // (Not: "Fatih Hoca'nın Notu" kutusu kaldırıldı, imza artık kartın sağ altında.)
+  // (Not: "Önerilen Çalışma Planı" karneden kaldırıldı, detaylı hali sitede. "Fatih Hoca'nın Notu" kutusu da kaldırıldı, imza artık kartın sağ altında.)
   let siteKokAdresi = "https://fatihhocaultramath.github.io/sonuc/";
   let qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(siteKokAdresi);
 
@@ -522,13 +478,9 @@ function olustur(o, idx){
       <div class="khSectionTitle">${BOOK_SVG} KONU ANALİZİ &amp; EKSİK TAKİBİ</div>
       ${enGucluKonu ? `<div class="enGucluRozet">★ En güçlü konu: <b>${enGucluKonu.konu}</b> (%${enGucluKonu.yuzde})</div>` : ""}
       <div class="khSectionUnderline"></div>
-      <div class="konuAciklama">Trend, sınıf ortalaması ve alt kazanım detayları için siteden detaylı sonuçlara bakabilirsiniz.</div>
+      <div class="konuAciklama">Trend, sınıf ortalaması, alt kazanım detayları ve önerilen çalışma planı için siteden detaylı sonuçlara bakabilirsiniz.</div>
       <div class="khColHeader"><span>KONU</span><span>BAŞARI ORANI</span></div>
       ${konularHtml || "<div style='font-size:12px;color:#64748B;'>Konu analizi bulunamadı.</div>"}
-
-      <div class="khSectionTitle">${TARGET_SVG} ÖNERİLEN ÇALIŞMA PLANI</div>
-      <div class="khSectionUnderline"></div>
-      <div class="planRow">${planHtml}</div>
 
       <div class="khFooter">
         <img class="khQr" src="${qrUrl}" crossorigin="anonymous">
@@ -564,7 +516,7 @@ function olustur(o, idx){
       let BAR_EMOJI = String.fromCodePoint(0x1F4CA);   // 📊
       let MEMO_EMOJI = String.fromCodePoint(0x1F4DA);  // 📚
       let PRAY_EMOJI = String.fromCodePoint(0x270D, 0xFE0F);  // ✍️
-      let mesaj = `Merhaba,\n\nÖğrencimiz ${o.isim} için hazırladığım *${o.sinav} Analiz Karnesi*ni birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, konu analizleri ve çalışma önerileri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
+      let mesaj = `Merhaba,\n\nÖğrencimiz ${o.isim} için hazırladığım *${o.sinav} Analiz Karnesi*'ni birazdan gönderiyorum.\n\n${BAR_EMOJI} Karnede; net, puan, sıralama, genel başarı ve konu analizleri yer almaktadır.\n\n${MEMO_EMOJI} Karneyi incelemenizi rica eder, iyi çalışmalar dilerim.\n\n— Fatih Hoca ${PRAY_EMOJI}`;
       window.open(`https://web.whatsapp.com/send?phone=${telefon}&text=${encodeURIComponent(mesaj)}`, "whatsappSekmesi");
     };
     waDetayBtn.onclick = async function(){
