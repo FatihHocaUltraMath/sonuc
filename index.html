@@ -58,6 +58,18 @@ max-width:430px;
 
 }
 
+/* Masaüstü/geniş ekranlarda mobil genişliğe sıkışıp kalmasın diye kademeli genişleme.
+   Mobilde (aşağıdaki eşiklerin altında) hiçbir şey değişmiyor, sadece daha geniş
+   ekranlarda konteyner biraz daha ferah olsun diye eklendi. */
+@media (min-width:600px){
+  .container{ max-width:560px; }
+}
+@media (min-width:1000px){
+  .container{ max-width:680px; }
+  body{ padding:44px 24px; }
+  .card{ padding:36px; }
+}
+
 
 
 .brand{
@@ -252,6 +264,21 @@ opacity:.9;
 button:disabled{
 opacity:.6;
 cursor:not-allowed;
+}
+
+.backLink{
+width:auto;
+margin:0 0 16px 0;
+padding:8px 4px;
+background:none;
+color:var(--purple);
+font-size:13px;
+font-weight:800;
+text-align:left;
+box-shadow:none;
+}
+.backLink:hover{
+opacity:.75;
 }
 
 
@@ -621,7 +648,7 @@ color:#94A3B8;
 .gelisimMini strong{display:block;font-size:15px;margin-top:4px;color:var(--dark);}
 
 /* Önerilen Çalışma Planı */
-.planRow{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.planRow{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
 @media (max-width:520px){ .planRow{grid-template-columns:1fr;} }
 .planCard{background:#FFFFFF;border:1px solid #E5E7EB;border-radius:10px;padding:16px;}
 .oncelikRozet{display:inline-block;color:white;font-size:9.5px;font-weight:800;letter-spacing:.5px;padding:3px 8px;border-radius:6px;margin-bottom:10px;}
@@ -645,6 +672,7 @@ color:#94A3B8;
 /* Soru Bazlı Çeldirici Analizi Tablosu */
 .distractorTable {
   width: 100%;
+  min-width: 480px;
   border-collapse: collapse;
   background: #FFF7ED;
   border-radius: 16px;
@@ -719,6 +747,30 @@ color:#94A3B8;
 }
 .celdiriciLegend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:3px;vertical-align:-1px;}
 
+/* Geniş tabloların dar telefon ekranlarında taşmak yerine yatay kaymasını sağlar */
+.tableScroll{
+  width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Tıklanarak açılıp kapanan bölüm başlıkları (ör. Soru Bazlı Çeldirici Analizi) */
+.titleToggle{
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  user-select:none;
+}
+.titleToggle:hover{opacity:.85;}
+.titleToggleHint{
+  font-size:12px;
+  font-weight:800;
+  color:var(--purple);
+  white-space:nowrap;
+}
+
 </style>
 
 </head>
@@ -767,14 +819,14 @@ Sonucuna Ulaş
 </p>
 
 
-<label>
+<label for="studentNameInput">
 Ad Soyad
 </label>
 
 <input id="studentNameInput" placeholder="Örn: Ali Kaya" autocomplete="name">
 
 
-<label>
+<label for="studentCodeInput">
 4 Haneli Kişisel Kod
 </label>
 
@@ -788,13 +840,13 @@ SONUÇLARINI GÖR
 </button>
 
 
-<div id="loading" class="loading hidden">
+<div id="loading" class="loading hidden" role="status" aria-live="polite">
 
 <span class="spin"></span>Sonuçlar getiriliyor...
 
 </div>
 
-<div id="errorArea"></div>
+<div id="errorArea" role="alert" aria-live="assertive"></div>
 
 
 </div>
@@ -803,6 +855,8 @@ SONUÇLARINI GÖR
 
 <div class="card hidden" id="resultCard">
 
+
+<button id="backToLoginBtn" class="backLink" type="button">← Başka Sonuç Ara</button>
 
 <div class="student" id="nameArea"></div>
 
@@ -867,6 +921,7 @@ SON SINAV NETİ
 <div class="stat" style="grid-column: span 2; background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px; text-align: center;">
   <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Toplam Katılım</small>
   <strong id="participationArea" style="color: #581C87; font-size: 20px; font-weight: 900; margin-top: 4px;">-</strong>
+  <div id="katilimNotuArea" style="font-size:10.5px;font-weight:700;color:#92400E;margin-top:4px;"></div>
 </div>
 
 </div>
@@ -910,8 +965,8 @@ Not hazırlanıyor...
 <div id="enGucluArea"></div>
 
 <div class="viewToggle" id="konuGorunumToggle">
-  <button class="active" data-mod="kumulatif">Genel Durum</button>
-  <button data-mod="son">Bu Sınavda</button>
+  <button class="active" data-mod="son">Bu Sınavda</button>
+  <button data-mod="kumulatif">Genel Durum</button>
 </div>
 
 <div class="note" id="topicAnalysis" style="background:transparent;border:none;padding:0;">
@@ -930,11 +985,12 @@ Konu analizi hazırlanıyor...
 </div>
 
 
-<div class="title">
-🎯 Soru Bazlı Çeldirici Analizi
+<div class="title titleToggle" id="distractorToggle">
+<span>🎯 Soru Bazlı Çeldirici Analizi</span>
+<span class="titleToggleHint" id="distractorToggleHint">Detayları Göster ▾</span>
 </div>
 
-<div id="distractorArea" style="margin-top: 10px;">
+<div id="distractorArea" class="hidden" style="margin-top: 10px;">
   Çeldirici analizi yükleniyor...
 </div>
 
@@ -973,7 +1029,7 @@ Konu analizi hazırlanıyor...
 const API_URL="https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
 
 let sonGelenVeri = null;
-let konuGorunumModu = "kumulatif";
+let konuGorunumModu = "son";
 let chartNesnesi = null;
 
 
@@ -1003,24 +1059,42 @@ function guvenBadge(guven) {
 // gösterir. Ayrı bir Chart.js örneği açmadan, tek satırlık bir "sparkline" olarak çalışır.
 // En az 2 nokta yoksa (tek sınav / konu sadece 1 kez test edilmiş) boş döner — çağıran taraf
 // bu durumda metinsel bir açıklama göstermeli, sahte bir çizgi çizilmez.
-function konuSparklineSVG(zamanSerisi){
+// benzersizId: aynı sayfada birden fazla sparkline olduğunda (öncelikli konu başına bir tane,
+// en fazla 3) her birinin gradyanı çakışmasın diye dışarıdan verilen benzersiz bir değer.
+function konuSparklineSVG(zamanSerisi, benzersizId){
   if(!zamanSerisi || zamanSerisi.length < 2) return "";
-  const w = 260, h = 56, padX = 8, padY = 10;
+  const w = 260, h = 76, padX = 10, tavanY = 10, tabanY = 46; // cizgi alani: y 10-46 arasi
+  const etiketY = 68; // deger etiketleri, cizgi alanindan (en fazla y=46) net ayrik (22px bosluk)
   const n = zamanSerisi.length;
   const xAt = i => padX + (i * (w - 2*padX)) / (n - 1);
-  const yAt = v => (h - padY) - (Math.max(0,Math.min(100,v)) / 100) * (h - 2*padY);
+  const yAt = v => tabanY - (Math.max(0,Math.min(100,v)) / 100) * (tabanY - tavanY);
 
   const pts = zamanSerisi.map((p, i) => ({ x: xAt(i), y: yAt(p.yuzdeKumulatif), v: p.yuzdeKumulatif }));
   const cizgi = pts.map(p => `${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
-  const noktalar = pts.map((p,i) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="3" fill="${i===n-1?'#8B5CF6':'#C4B5FD'}"><title>${zamanSerisi[i].sinavAdi}: %${p.v}</title></circle>`).join("");
+  const alanNoktalari = `${pts[0].x.toFixed(1)},${tabanY} ${cizgi} ${pts[n-1].x.toFixed(1)},${tabanY}`;
+  const noktalar = pts.map((p,i) => `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${i===n-1?'#8B5CF6':'#C4B5FD'}" stroke="white" stroke-width="1.5"><title>${zamanSerisi[i].sinavAdi}: %${p.v}</title></circle>`).join("");
   const ilkV = zamanSerisi[0].yuzdeKumulatif, sonV = zamanSerisi[n-1].yuzdeKumulatif;
+  const gradId = 'sparkGrad_' + benzersizId;
+
+  const degisimYokEtiketi = Math.abs(sonV - ilkV) < 1
+    ? `<text x="${w/2}" y="${(tavanY+tabanY)/2}" font-size="9.5" fill="#94A3B8" text-anchor="middle" font-style="italic">değişim yok</text>`
+    : "";
 
   return `
-    <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:${h}px;display:block;margin-top:8px;">
-      <polyline points="${cizgi}" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <svg viewBox="0 0 ${w} ${h}" style="width:100%;height:auto;aspect-ratio:${w}/${h};display:block;margin-top:6px;">
+      <defs>
+        <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <line x1="${padX}" y1="${tabanY}" x2="${w-padX}" y2="${tabanY}" stroke="#E2E8F0" stroke-width="1"/>
+      <polygon points="${alanNoktalari}" fill="url(#${gradId})"/>
+      <polyline points="${cizgi}" fill="none" stroke="#8B5CF6" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+      ${degisimYokEtiketi}
       ${noktalar}
-      <text x="${pts[0].x}" y="${h-1}" font-size="9" fill="#94A3B8" text-anchor="start">%${ilkV}</text>
-      <text x="${pts[n-1].x}" y="${h-1}" font-size="9" fill="#7C3AED" font-weight="700" text-anchor="end">%${sonV}</text>
+      <text x="${pts[0].x}" y="${etiketY}" font-size="10.5" font-weight="700" fill="#94A3B8" text-anchor="start">%${ilkV}</text>
+      <text x="${pts[n-1].x}" y="${etiketY}" font-size="10.5" font-weight="800" fill="#7C3AED" text-anchor="end">%${sonV}</text>
     </svg>
   `;
 }
@@ -1062,6 +1136,26 @@ function hataTemizle(){
   document.getElementById("errorArea").innerHTML = "";
 }
 
+// fetch'e yerleşik bir zaman aşımı yok; sunucu yanıt vermezse kullanıcı süresiz
+// "getiriliyor..." ekranında kalmasın diye AbortController ile bunu ekliyoruz.
+async function fetchZamanAsimli(url, zamanAsimiMs){
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), zamanAsimiMs);
+  try{
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response;
+  }catch(err){
+    clearTimeout(timeoutId);
+    if(err.name === "AbortError"){
+      const zamanAsimiHatasi = new Error("ZAMAN_ASIMI");
+      zamanAsimiHatasi.isTimeout = true;
+      throw zamanAsimiHatasi;
+    }
+    throw err;
+  }
+}
+
 async function getResult(){
 
 let name = document.getElementById("studentNameInput").value.trim();
@@ -1080,7 +1174,7 @@ let data;
 try{
 
   let url = API_URL + "?isim=" + encodeURIComponent(name) + "&kod=" + encodeURIComponent(code);
-  let response = await fetch(url);
+  let response = await fetchZamanAsimli(url, 20000);
 
   if(!response.ok){
     hataGoster("Sunucuya ulaşılamadı (kod: " + response.status + "). Lütfen internet bağlantını kontrol edip tekrar dene.");
@@ -1092,7 +1186,11 @@ try{
 
 }catch(error){
   console.log(error);
-  hataGoster("Bağlantı kurulamadı. İnternet bağlantını kontrol edip tekrar dene.");
+  if(error && error.isTimeout){
+    hataGoster("Sunucu 20 saniye içinde yanıt vermedi. Bağlantın yavaş olabilir ya da sunucu şu an yoğun — birazdan tekrar dene.");
+  } else {
+    hataGoster("Bağlantı kurulamadı. İnternet bağlantını kontrol edip tekrar dene.");
+  }
   setLoading(false);
   return;
 }
@@ -1164,6 +1262,7 @@ document.getElementById("rankArea").innerText = last.sira ? (last.sira + ".") : 
 document.getElementById("rankPercentileArea").innerText = last.yuzdelikDilim ? ("İlk %" + last.yuzdelikDilim) : "";
 document.getElementById("successArea").innerText = last.basari || "-";
 document.getElementById("participationArea").innerText = last.katilim ? (last.katilim + " Öğrenci") : "-";
+document.getElementById("katilimNotuArea").innerText = last.katilimNotu || "";
 
 showHistory(sonGelenVeri);
 createChart(sonGelenVeri);
@@ -1238,7 +1337,7 @@ function showHistory(data){
 function createChart(data){
   if(!window.Chart) return;
 
-  let labels = data.map(x => x.sinav + (x.tarih ? (' ('+tarihFormatla(x.tarih)+')') : ''));
+  let labels = data.map(x => x.sinav);
   let values = data.map(x => (x.net === null || x.net === undefined) ? null : Number(x.net));
 
   let ctx = document.getElementById("progressChart").getContext("2d");
@@ -1288,7 +1387,7 @@ function renderKonuAnalizi(){
   let enGelisen = window._enCokGelisenKonu;
 
   let rozetHtml = "";
-  if(konuGorunumModu === "kumulatif" && enGuclu){
+  if(enGuclu){
     rozetHtml += `<div class="enGucluRozet">★ En güçlü konu (geçmiş sınavlar genelinde): <b>${enGuclu.konu}</b> (%${enGuclu.yuzde}${guvenBadge(enGuclu.guven)})</div>`;
   }
   if(konuGorunumModu === "kumulatif" && enGelisen){
@@ -1309,12 +1408,23 @@ function renderKonuAnalizi(){
     let surekliHtml = k.surekliZayif ? `<span class="topicSurekliZayif">⚠ Sürekli Zayıf</span>` : "";
     let sinifOrtHtml = (k.sinifOrtalamaYuzde !== undefined && k.sinifOrtalamaYuzde !== null)
       ? `<div class="topicSub topicSinifOrt">Sınıf Ort. %${k.sinifOrtalamaYuzde}</div>` : "";
-    let aralikHtml = (k.aralikAlt !== undefined && k.aralikAlt !== null)
-      ? `<div class="topicSub" style="color:#94A3B8;">Olası aralık: %${k.aralikAlt}–%${k.aralikUst} (n=${k.soruSayisi})</div>` : "";
 
+    // İstatistiksel aralık/n= gösterimi yerine, veli/öğrencinin doğrudan anlayacağı düz bir
+    // cümle: kaç soruya dayandığını ve bunun henüz kesinleşmediğini anlatır. Yeterli veri
+    // varsa (yüksek güven) hiçbir uyarı gösterilmez, çünkü o zaman zaten netleşmiş demektir.
+    let dusukVeriHtml = "";
+    if(k.guven === 'düşük'){
+      dusukVeriHtml = `<div class="topicSub" style="color:#92400E;">Bu sonuç sadece ${k.soruSayisi} soruya dayanıyor, henüz kesinleşmedi.</div>`;
+    } else if(k.guven === 'orta'){
+      dusukVeriHtml = `<div class="topicSub" style="color:#92400E;">Bu sonuç ${k.soruSayisi} soruya dayanıyor, veri arttıkça netleşecek.</div>`;
+    }
+
+    // Çubuğun üzerindeki hafif gölgeli bölge, gerçek başarının şu an için hangi aralıkta
+    // olabileceğini SAYI YAZMADAN, sadece görsel olarak gösterir — az veri varken bunu
+    // göstermek anlamlı, yeterli veri varsa (aralık zaten dar) göstermeye gerek yok.
     let aralikBarHtml = "";
-    if(k.aralikAlt !== undefined && k.aralikAlt !== null){
-      aralikBarHtml = `<div class="progressAralik" style="left:${k.aralikAlt}%;width:${Math.max(1,k.aralikUst-k.aralikAlt)}%;"></div>`;
+    if((k.guven === 'düşük' || k.guven === 'orta') && k.aralikAlt !== undefined && k.aralikAlt !== null){
+      aralikBarHtml = `<div class="progressAralik" style="left:${k.aralikAlt}%;width:${Math.max(1,k.aralikUst-k.aralikAlt)}%;" title="Gerçek başarı, verinin azlığı nedeniyle bu aralıkta herhangi bir yerde olabilir"></div>`;
     }
 
     html += `
@@ -1330,7 +1440,7 @@ function renderKonuAnalizi(){
             <div class="progressBar" style="width:${k.yuzde}%;background:${renk};"></div>
           </div>
           ${sinifOrtHtml}
-          ${aralikHtml}
+          ${dusukVeriHtml}
         </div>
       </div>
     `;
@@ -1356,10 +1466,11 @@ function createCalismaPlani(data){
     let renk = renkler[idx] || "#8B5CF6";
     let surekliHtml = k.surekliZayif ? `<span class="topicSurekliZayif">⚠ Sürekli Zayıf</span>` : "";
     let asamalar = k.adimlar.map((a, i) => `<div class="planAsama"><b>${i+1}. Adım</b><br>${a}</div>`).join("");
-    let sparkline = konuSparklineSVG(k.zamanSerisi);
+    let sparkline = konuSparklineSVG(k.zamanSerisi, idx);
     let trendBolumu = sparkline
       ? `<div class="planAsama"><b>Zaman içindeki gidişat</b>${sparkline}</div>`
       : `<div class="planAsama"><b>Zaman içindeki gidişat</b><br>Bu konu şimdiye kadar sadece bir sınavda ölçüldü, trend için en az bir ölçüm daha gerekiyor.</div>`;
+    let hataTuruHtml = k.hataTuruNotu ? `<div class="planAsama"><b>Eksiğin türü</b><br>${k.hataTuruNotu}</div>` : "";
     return `
       <div class="planCard" style="border-top:3px solid ${renk};">
         <div class="oncelikRozet" style="background:${renk}">ÖNCELİK ${k.oncelik}</div>
@@ -1367,6 +1478,7 @@ function createCalismaPlani(data){
         <div class="planTitle">${k.konu.toUpperCase()} ${surekliHtml}</div>
         <div class="planDurum">Genel başarı: %${k.yuzde} ${guvenBadge(k.guven)}${(k.sinifOrtalamaYuzde!=null)? (' — sınıf ort. %'+k.sinifOrtalamaYuzde) : ''}</div>
         ${asamalar}
+        ${hataTuruHtml}
         ${trendBolumu}
         <div class="planGuvenNotu">ℹ️ ${k.guvenNotu}</div>
       </div>`;
@@ -1387,6 +1499,7 @@ function createDistractorAnalysis(data) {
   }
 
   let html = `
+    <div class="tableScroll">
     <table class="distractorTable">
       <thead>
         <tr>
@@ -1417,57 +1530,85 @@ function createDistractorAnalysis(data) {
     `;
   });
 
-  html += `</tbody></table>`;
+  html += `</tbody></table></div>`;
 
-  // Sınıf geneli — artık gerçekten hangi yanlış şıkkın en çok seçildiğini gösteriyor.
-  html += `
-    <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
-      <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 4px;">👥 Sınıf Geneli Çeldirici Analizi</div>
-      <div class="celdiriciLegend">
-        <span><i style="background:#16A34A;"></i>Doğru şık</span>
-        <span><i style="background:#DC2626;"></i>En çok seçilen yanlış şık</span>
-        <span><i style="background:#CBD5E1;"></i>Diğer</span>
-      </div>
-      <div style="display: flex; flex-direction: column; gap: 12px; margin-top:10px;">
-  `;
+  // Sınıf geneli çeldirici analizi — artık iki koşula bağlı:
+  // 1) Sadece YANLIŞ/BOŞ sorularda gösteriliyor: doğru yapılan bir soruda sınıfın
+  //    ne işaretlediğinin veli/öğrenci için hiçbir aksiyon değeri yok.
+  // 2) Katılım çok azken (aynı eşik: katilimGuvenNotu'nda kullandığımız <5) hiç
+  //    gösterilmiyor — "3 kişi B demiş" gibi bir bilgi, küçük bir grupta isim
+  //    vermeden de kimin ne yaptığını dolaylı ele verebilir.
+  let katilim = data.katilim || 0;
 
-  data.sorular.forEach(s => {
-    let d = s.sikDagilimi || {A:0,B:0,C:0,D:0,Bos:0};
-    let toplam = d.A + d.B + d.C + d.D + d.Bos;
-    if (toplam === 0) return;
-
-    // En çok seçilen YANLIŞ şıkkı bul (doğru şık hariç)
-    let enCokYanlis = null, enCokSayi = -1;
-    ["A","B","C","D"].forEach(sik => {
-      if (sik !== s.dogruSik && d[sik] > enCokSayi) { enCokSayi = d[sik]; enCokYanlis = sik; }
-    });
-
-    let segmentler = ["A","B","C","D","Bos"].map(sik => {
-      let sayi = d[sik] || 0;
-      if (sayi === 0) return "";
-      let yuzde = (sayi / toplam) * 100;
-      let renk = sik === s.dogruSik ? "#16A34A" : (sik === enCokYanlis && enCokSayi > 0 ? "#DC2626" : "#CBD5E1");
-      let etiket = sik === "Bos" ? "Boş" : sik;
-      return `<span style="width:${yuzde}%;background:${renk};" title="${etiket}: ${sayi} kişi">${yuzde>=12?etiket:""}</span>`;
-    }).join("");
-
-    let notMetni = (enCokYanlis && enCokSayi > 0)
-      ? `Yanlış cevaplayanların çoğu "${enCokYanlis}" şıkkını işaretlemiş (${enCokSayi} kişi).`
-      : `Bu soruda belirgin bir çeldirici öne çıkmıyor.`;
+  if (katilim > 0 && katilim < 5) {
 
     html += `
-      <div style="background: white; padding: 12px 15px; border-radius: 12px; border: 1px solid #E9D5FF;">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom:4px;">
-          <span style="font-weight: 700; color: var(--dark); font-size: 13px;">Soru ${s.no} <span style="color:var(--gray);font-weight:600;">(Doğru: ${s.dogruSik})</span></span>
-          <span style="font-size:11px;color:var(--gray);font-weight:700;">${s.dogruKacKisi||0} doğru / ${s.yanlisKacKisi||0} yanlış / ${s.bosKacKisi||0} boş</span>
-        </div>
-        <div class="celdiriciCubuk">${segmentler}</div>
-        <div style="font-size:11px;color:#7C3AED;font-weight:700;margin-top:6px;">${notMetni}</div>
+      <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple); font-size:12.5px; color:var(--gray); font-weight:600;">
+        👥 Bu sınava çok az kişi katıldığı için sınıf geneli çeldirici karşılaştırması şu an gösterilmiyor.
       </div>
     `;
-  });
 
-  html += `</div></div>`;
+  } else {
+
+    let kartHtml = "";
+
+    data.sorular.forEach(s => {
+      if (s.durum === "Dogru") return; // sadece yanlış/boş sorularda çeldirici karşılaştırması anlamlı
+
+      let d = s.sikDagilimi || {A:0,B:0,C:0,D:0,Bos:0};
+      let toplam = d.A + d.B + d.C + d.D + d.Bos;
+      if (toplam === 0) return;
+
+      // En çok seçilen YANLIŞ şıkkı bul (doğru şık hariç)
+      let enCokYanlis = null, enCokSayi = -1;
+      ["A","B","C","D"].forEach(sik => {
+        if (sik !== s.dogruSik && d[sik] > enCokSayi) { enCokSayi = d[sik]; enCokYanlis = sik; }
+      });
+
+      let segmentler = ["A","B","C","D","Bos"].map(sik => {
+        let sayi = d[sik] || 0;
+        if (sayi === 0) return "";
+        let yuzde = (sayi / toplam) * 100;
+        let renk = sik === s.dogruSik ? "#16A34A" : (sik === enCokYanlis && enCokSayi > 0 ? "#DC2626" : "#CBD5E1");
+        let etiket = sik === "Bos" ? "Boş" : sik;
+        return `<span style="width:${yuzde}%;background:${renk};" title="${etiket}: ${sayi} kişi">${yuzde>=12?etiket:""}</span>`;
+      }).join("");
+
+      let notMetni = (enCokYanlis && enCokSayi > 0)
+        ? `Yanlış cevaplayanların çoğu "${enCokYanlis}" şıkkını işaretlemiş (${enCokSayi} kişi).`
+        : `Bu soruda belirgin bir çeldirici öne çıkmıyor.`;
+
+      kartHtml += `
+        <div style="background: white; padding: 12px 15px; border-radius: 12px; border: 1px solid #E9D5FF;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom:4px;">
+            <span style="font-weight: 700; color: var(--dark); font-size: 13px;">Soru ${s.no} <span style="color:var(--gray);font-weight:600;">(Doğru: ${s.dogruSik})</span></span>
+            <span style="font-size:11px;color:var(--gray);font-weight:700;">${s.dogruKacKisi||0} doğru / ${s.yanlisKacKisi||0} yanlış / ${s.bosKacKisi||0} boş</span>
+          </div>
+          <div class="celdiriciCubuk">${segmentler}</div>
+          <div style="font-size:11px;color:#7C3AED;font-weight:700;margin-top:6px;">${notMetni}</div>
+        </div>
+      `;
+    });
+
+    if (kartHtml) {
+      html += `
+        <div style="margin-top: 15px; background: #F5F3FF; border-radius: 16px; padding: 15px; border-left: 5px solid var(--purple);">
+          <div style="font-weight: 800; font-size: 14px; color: var(--dark); margin-bottom: 4px;">👥 Sınıf Geneli Çeldirici Analizi</div>
+          <div class="celdiriciLegend">
+            <span><i style="background:#16A34A;"></i>Doğru şık</span>
+            <span><i style="background:#DC2626;"></i>En çok seçilen yanlış şık</span>
+            <span><i style="background:#CBD5E1;"></i>Diğer</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top:10px;">
+            ${kartHtml}
+          </div>
+        </div>
+      `;
+    } else {
+      html += `<div class="tamamIyiKutu" style="margin-top:15px;">🎉 Bu sınavda yanlış ya da boş sorun yok — karşılaştıracak bir çeldirici analizi bulunmuyor.</div>`;
+    }
+
+  }
 
   container.innerHTML = html;
 }
@@ -1478,6 +1619,26 @@ document.getElementById("studentCodeInput").addEventListener("keydown", function
 });
 document.getElementById("studentNameInput").addEventListener("keydown", function(e){
   if(e.key === "Enter") document.getElementById("studentCodeInput").focus();
+});
+
+document.getElementById("backToLoginBtn").addEventListener("click", function(){
+  if(chartNesnesi){ chartNesnesi.destroy(); chartNesnesi = null; }
+  sonGelenVeri = null;
+  document.getElementById("resultCard").classList.add("hidden");
+  document.getElementById("loginCard").classList.remove("hidden");
+  document.getElementById("studentNameInput").value = "";
+  document.getElementById("studentCodeInput").value = "";
+  hataTemizle();
+  document.getElementById("studentNameInput").focus();
+});
+
+// Soru Bazlı Çeldirici Analizi: varsayılan kapalı, tıklayınca açılıp kapanıyor
+document.getElementById("distractorToggle").addEventListener("click", function(){
+  let alan = document.getElementById("distractorArea");
+  let ipucu = document.getElementById("distractorToggleHint");
+  let acikMi = !alan.classList.contains("hidden");
+  alan.classList.toggle("hidden");
+  ipucu.textContent = acikMi ? "Detayları Göster ▾" : "Detayları Gizle ▴";
 });
 
 </script>
