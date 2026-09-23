@@ -2080,6 +2080,47 @@ document.getElementById("metodolojiToggle").addEventListener("click", function()
   ipucu.textContent = acikMi ? "Göster ▾" : "Gizle ▴";
 });
 
+// Üst bölüm (başlık, alt başlık, slogan) her ekranda TEK SATIR görünsün diye:
+// her satır önce tek satır olarak ölçülür; sığıyorsa CSS'teki boyutu aynen kalır, sığmıyorsa (dar
+// telefonlar) yalnızca tam sığacak kadar küçültülür. Ölçüm telefonda hangi yazı tipi kullanılıyorsa
+// (Android'de Roboto, iPhone'da Arial, Windows'ta Segoe UI) onunla yapılır. Alt sınırlar, küçülme
+// okunaksız hâle gelmesin diye konmuştur; o sınırın da altına düşülmesi gereken çok dar ekranlarda
+// satır kısıtı kaldırılır ve metin eskisi gibi alt satıra iner (sayfa asla yana taşmaz).
+// JavaScript çalışmazsa bu satırlar eskisi gibi davranır.
+const TEK_SATIR_OGELERI = [
+  { secici: ".brand h1",       enKucuk: 20 },
+  { secici: ".brand .subtitle", enKucuk: 12 },
+  { secici: ".brand .slogan",   enKucuk: 11 }
+];
+
+function ustBolumuTekSatiraSigdir(){
+  TEK_SATIR_OGELERI.forEach(function(oge){
+    let el = document.querySelector(oge.secici);
+    if(!el) return;
+    el.style.fontSize = "";            // önce CSS'teki asıl boyuta dön (ekran genişlerse büyüyebilsin)
+    el.style.whiteSpace = "nowrap";
+    let genislik = el.clientWidth, icerik = el.scrollWidth;
+    if(genislik > 0 && icerik > genislik){
+      let asilBoyut = parseFloat(getComputedStyle(el).fontSize);
+      let yeniBoyut = Math.floor(asilBoyut * genislik / icerik * 10) / 10 - 0.3;
+      if(yeniBoyut >= oge.enKucuk){
+        el.style.fontSize = yeniBoyut + "px";
+      } else {
+        el.style.fontSize = oge.enKucuk + "px";
+        el.style.whiteSpace = "";      // en küçük boyutta da sığmıyorsa tek satır zorlanmaz
+      }
+    }
+  });
+}
+ustBolumuTekSatiraSigdir();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(ustBolumuTekSatiraSigdir);
+let ustBolumSigdirmaBekleyen = false;
+window.addEventListener("resize", function(){   // telefon yan çevrilince ya da pencere boyutu değişince
+  if(ustBolumSigdirmaBekleyen) return;
+  ustBolumSigdirmaBekleyen = true;
+  requestAnimationFrame(function(){ ustBolumSigdirmaBekleyen = false; ustBolumuTekSatiraSigdir(); });
+});
+
 </script>
 
 
