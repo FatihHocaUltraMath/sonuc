@@ -223,7 +223,9 @@ const API_URL = "https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR
 // Öğrenci sonuç sayfasının adresi (protokolsüz; WhatsApp mesajında düz metin olarak kullanılır). Karnedeki
 // QR_IMG bunu gösteren AYRI, sabit gömülü bir görseldir (harici QR servisine bağımlı olmasın diye); bu
 // adres değişirse hem bu sabit hem de QR_IMG yeniden üretilmelidir (aşağıda, karneKartiHtml öncesi).
-const SITE_ADRESI = "fatihhocaultramath.github.io/sonuc/";
+// "https://" ile yazılır: WhatsApp bağlantı önizleme kartını (başlık, açıklama, afiş) güvenilir biçimde yalnızca
+// tam adreslerde üretir; "https://" olmadan bağlantı mavi görünse bile kart çıkmayabiliyordu.
+const SITE_ADRESI = "https://fatihhocaultramath.github.io/sonuc/";
 
 // v2: Sabit cümle havuzundan rastgele not seçme (notHavuzu/notSec) kaldırıldı. Not: karne
 // görseli bilinçli olarak özlü tutuluyor (orijinal tasarımın "detaylı hali sitede" ilkesi
@@ -869,9 +871,18 @@ function olustur(o, idx){
     };
     waDetayBtn.onclick = async function(){
       satirBildirimiTemizle(idx);
-      let PIN_EMOJI = String.fromCodePoint(0x1F4CC);   // 📌
       let LINK_EMOJI = String.fromCodePoint(0x1F517);  // 🔗
-      let mesaj2 = `${PIN_EMOJI} *Detaylı Sonuçlar*\n\nKarnede yer alan QR kodu veya aşağıdaki bağlantıyı kullanarak öğrencimizin detaylı sonuçlarına ulaşabilirsiniz.\n\n${LINK_EMOJI} ${SITE_ADRESI}\n\nGiriş için:\nAd Soyad: ${o.isim}\nGiriş Kodu: ${o.girisKodu}`;
+      let KISI_EMOJI = String.fromCodePoint(0x1F464);  // 👤
+      let ANAHTAR_EMOJI = String.fromCodePoint(0x1F511); // 🔑
+      let KILIT_EMOJI = String.fromCodePoint(0x1F512);   // 🔒
+      // Düzen: önce giriş bilgileri, bağlantı EN ALTTA. WhatsApp önizleme kartını adresin yerinden bağımsız
+      // olarak mesajın en üstüne koyar; adres altta olunca velinin sohbet listesinde ve bildiriminde ilk
+      // satır olarak "Giriş Bilgileri" görünür. Tanıtım metnini artık kart taşıyor (index.html'deki og etiketleri).
+      // trim(): WhatsApp'ta kalın yazı (*...*) yıldızın yanında boşluk varsa çalışmaz ve yıldızlar görünür kalır;
+      // hücre sonunda fark edilmeyen bir boşluk bu yüzden mesajı bozmasın.
+      let adSoyad = String(o.isim || "").trim();
+      let girisKodu = String(o.girisKodu || "").trim();
+      let mesaj2 = `*Giriş Bilgileri*\n${KISI_EMOJI} Ad Soyad: *${adSoyad}*\n${ANAHTAR_EMOJI} Giriş Kodu: *${girisKodu}*\n\n${KILIT_EMOJI} _Giriş kodu öğrencimize özeldir. Lütfen kimseyle paylaşmayınız._\n\n${LINK_EMOJI} ${SITE_ADRESI}`;
       try{
         await navigator.clipboard.writeText(mesaj2);
         satirBildirimi(idx, "✅ Mesaj panoya kopyalandı — WhatsApp sohbetine yapıştır (Ctrl+V), sonra Gönder'e bas.", "ok", BILDIRIM_SURESI_MS);
