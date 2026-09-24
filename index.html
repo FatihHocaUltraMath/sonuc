@@ -383,7 +383,8 @@ margin-top:6px;
 
 
 .scoreCard{
-
+position:relative;
+overflow:hidden;
 margin:25px 0;
 
 padding:25px;
@@ -411,11 +412,223 @@ linear-gradient(135deg,var(--purple),var(--orange));
   font-size:13px;
   padding:10px 14px;
   border-radius:14px;
-  animation: rekorBelir 0.5s ease-out;
+  overflow:hidden;
+  animation: rekorBelir 0.75s cubic-bezier(.22,1,.36,1);
 }
+/* ================= SİNEMATİK AÇILIŞ =================
+   Net halkası: net sayılırken etrafında dolan parlayan halka (net / soru sayısı oranında). */
+.netHalka{position:relative;width:200px;height:200px;margin:6px auto 0;}
+.netHalka svg{width:100%;height:100%;transform:rotate(-90deg);overflow:visible;}
+.halkaIz{fill:none;stroke:rgba(255,255,255,.22);stroke-width:13;}
+.halkaDolu{fill:none;stroke:#FFFFFF;stroke-width:13;stroke-linecap:round;
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.75));
+  transition:stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1);}
+.netHalkaIc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.netHalka .score{font-size:52px;line-height:1;}
+.netHalkaAlt{font-size:12.5px;font-weight:700;opacity:.85;margin-top:8px;letter-spacing:.2px;}
+/* Kartın üzerinden bir kez geçen ışık süzmesi */
+.scoreCard::after{content:"";position:absolute;top:0;left:-60%;width:45%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.28),transparent);
+  transform:skewX(-18deg);opacity:0;pointer-events:none;}
+.scoreCard.parla::after{animation:kartParlama 1.1s ease-out .35s 1;}
+@keyframes kartParlama{0%{left:-60%;opacity:1}100%{left:130%;opacity:1}}
+/* Sahneleme: bölümler ekrana girdikçe aşağıdan süzülerek belirir */
+#resultCard > .belir{opacity:0;transform:translateY(18px);}
+#resultCard > .belir.belirdi{opacity:1;transform:none;
+  transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1);transition-delay:var(--gecikme,0ms);}
+/* Grafik: son sınav noktasında nabız */
+.chartBox{position:relative;}
+.sonNoktaNabiz{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;
+  pointer-events:none;opacity:0;}
+.sonNoktaNabiz.aktif{opacity:1;}
+.sonNoktaNabiz::before,.sonNoktaNabiz::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:rgba(249,115,22,.55);animation:nabiz 1.8s ease-out infinite;}
+.sonNoktaNabiz::after{animation-delay:.9s;}
+@keyframes nabiz{0%{transform:scale(1);opacity:.9}100%{transform:scale(3.4);opacity:0}}
+
+/* ================= ROZET DOLABI ================= */
+.rozetBaslik{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+.rozetSayac{font-size:13px;font-weight:800;color:var(--purple);white-space:nowrap;}
+.rozetDolabi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
+.rozet{position:relative;text-align:center;padding:12px 4px 10px;border-radius:16px;background:#FFFBF5;border:1px solid #FDE7CF;}
+.rozet.kilitli{background:#F8FAFC;border-color:#E2E8F0;}
+.rozetMadalya{position:relative;width:54px;height:54px;margin:0 auto 7px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:27px;line-height:1;box-shadow:0 4px 10px rgba(59,7,100,.18), inset 0 -3px 0 rgba(0,0,0,.12), inset 0 2px 0 rgba(255,255,255,.45);}
+.rozet[data-grup="katilim"] .rozetMadalya{background:linear-gradient(145deg,#A78BFA,#7C3AED);}
+.rozet[data-grup="net"] .rozetMadalya{background:linear-gradient(145deg,#FDBA74,#F97316);}
+.rozet[data-grup="gelisim"] .rozetMadalya{background:linear-gradient(145deg,#6EE7B7,#10B981);}
+.rozet[data-grup="basari"] .rozetMadalya{background:linear-gradient(145deg,#FDE68A,#F59E0B);}
+.rozet.kilitli .rozetMadalya{background:#E2E8F0 !important;box-shadow:inset 0 2px 4px rgba(15,23,42,.08);}
+.rozet.kilitli .rozetEmoji{filter:grayscale(1);opacity:.35;}
+.rozetKilit{position:absolute;right:-3px;bottom:-3px;width:22px;height:22px;border-radius:50%;background:#FFFFFF;
+  border:1px solid #E2E8F0;font-size:11px;display:flex;align-items:center;justify-content:center;}
+.rozetAd{font-size:12px;font-weight:900;color:var(--dark);line-height:1.2;}
+.rozet.kilitli .rozetAd{color:#94A3B8;}
+.rozetAlt{font-size:10.5px;font-weight:600;color:#64748B;line-height:1.3;margin-top:3px;}
+.rozet.kilitli .rozetAlt{color:#94A3B8;}
+.rozetYeni{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#F97316,#EC4899);color:#fff;
+  font-size:9.5px;font-weight:900;letter-spacing:.6px;padding:3px 8px;border-radius:999px;box-shadow:0 3px 8px rgba(236,72,153,.35);white-space:nowrap;}
+.rozet.yeni{border-color:#FDBA74;background:#FFF7ED;}
+/* Yeni rozetin madalyası etrafında dönen ışık halkası. Halkanın kendisi değil, içindeki renk geçişinin
+   açısı döner: dönen bir kutu köşeleriyle rozet kutusunun dışına taşmış gibi ölçülüyordu. Açı animasyonunu
+   desteklemeyen eski tarayıcılarda halka sabit durur. */
+@property --rozetAci{syntax:"<angle>";inherits:false;initial-value:0deg;}
+.rozet.yeni .rozetMadalya::before{content:"";position:absolute;inset:-6px;border-radius:50%;
+  background:conic-gradient(from var(--rozetAci),transparent 0 60%,rgba(249,115,22,.9) 75%,rgba(236,72,153,.9) 85%,transparent 100%);
+  -webkit-mask:radial-gradient(circle,transparent 29px,#000 30px);mask:radial-gradient(circle,transparent 29px,#000 30px);
+  animation:rozetIsik 2.2s linear infinite;}
+@keyframes rozetIsik{to{--rozetAci:360deg;}}
+/* Çok dar ekranlarda (ör. 320px) madalya ve ışık halkası rozet kutusuna sığsın */
+@media (max-width:345px){
+  .rozetDolabi{gap:8px;}
+  .rozetMadalya{width:46px;height:46px;font-size:23px;}
+  .rozet.yeni .rozetMadalya::before{inset:-5px;
+    -webkit-mask:radial-gradient(circle,transparent 25px,#000 26px);mask:radial-gradient(circle,transparent 25px,#000 26px);}
+  .kivilcim{top:35px;}
+}
+/* Belirme: rozetler sırayla "pıt" diye yerine oturur; yeni olanlar ek olarak zıplayıp kıvılcım saçar */
+.rozetDolabi.hazir .rozet{opacity:0;transform:scale(.6);}
+.rozetDolabi.oyna .rozet{animation:rozetBelir .5s cubic-bezier(.34,1.56,.64,1) both;animation-delay:var(--rg,0ms);}
+.rozetDolabi.oyna .rozet.yeni{animation:rozetBelir .5s cubic-bezier(.34,1.56,.64,1) both, rozetZipla .7s ease-out both;
+  animation-delay:var(--rg,0ms), calc(var(--rg,0ms) + 450ms);}
+@keyframes rozetBelir{from{opacity:0;transform:scale(.6);}to{opacity:1;transform:scale(1);}}
+@keyframes rozetZipla{0%{transform:scale(1)}35%{transform:scale(1.13) rotate(-3deg)}65%{transform:scale(.97) rotate(2deg)}100%{transform:scale(1)}}
+.kivilcim{position:absolute;left:50%;top:39px;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;pointer-events:none;
+  animation:kivilcimSac .8s ease-out forwards;}
+@keyframes kivilcimSac{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--kx),var(--ky)) scale(.3);opacity:0}}
+
+/* ================= ROZET ŞERİDİ (üstte, kompakt) =================
+   Net kartı ve istatistiklerin hemen altında tek satır: yeni rozetlerin madalyaları, sayaç ve Paylaş düğmesi.
+   Şeride dokununca sayfa, aşağıdaki tam Rozet Dolabı'na kayar. */
+.rozetSeridi{display:grid;grid-template-columns:1fr auto;grid-template-areas:"madalya paylas" "metin metin";align-items:center;
+  row-gap:9px;column-gap:10px;margin:14px 0 6px;padding:12px 14px;border-radius:18px;
+  background:#FFF7ED;border:1px solid #FDE7CF;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.rozetSeridi .seritMadalyalar{grid-area:madalya;}
+.rozetSeridi .paylasTetik{grid-area:paylas;min-width:max-content;white-space:nowrap;}   /* yazı asla kırpılmaz */
+.rozetSeridi:empty{display:none;}
+.seritMadalyalar{display:flex;flex-shrink:0;}
+.seritMadalya{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;line-height:1;
+  border:2px solid #FFF7ED;box-shadow:0 3px 8px rgba(59,7,100,.18);}
+.seritMadalya + .seritMadalya{margin-left:-10px;}
+.seritMadalya[data-grup="katilim"]{background:linear-gradient(145deg,#A78BFA,#7C3AED);}
+.seritMadalya[data-grup="net"]{background:linear-gradient(145deg,#FDBA74,#F97316);}
+.seritMadalya[data-grup="gelisim"]{background:linear-gradient(145deg,#6EE7B7,#10B981);}
+.seritMadalya[data-grup="basari"]{background:linear-gradient(145deg,#FDE68A,#F59E0B);}
+.seritMadalya.bos{background:#E2E8F0;}
+.rozetSeridi.oyna .seritMadalya{animation:rozetBelir .5s cubic-bezier(.34,1.56,.64,1) both;animation-delay:var(--sg,0ms);}
+.seritMetin{grid-area:metin;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.seritMetin b{font-size:14.5px;font-weight:900;color:var(--dark);line-height:1.25;}
+.seritMetin small{font-size:12px;font-weight:700;color:var(--purple);}
+
+
+/* ================= HATA DEFTERİ (sayfadaki bölüm) ================= */
+.hdKutu{margin-top:10px;background:#FFFFFF;border:1px solid #E9D5FF;border-radius:18px;padding:16px;}
+.hdUst{display:flex;align-items:center;gap:14px;}
+.hdSayi{flex-shrink:0;width:64px;height:64px;border-radius:18px;background:linear-gradient(135deg,var(--purple),var(--orange));color:#fff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1;box-shadow:0 6px 14px rgba(139,92,246,.25);}
+.hdSayi b{font-size:26px;font-weight:900;}
+.hdSayi small{font-size:10px;font-weight:800;opacity:.9;margin-top:3px;letter-spacing:.3px;}
+.hdOzet b{display:block;font-size:14.5px;font-weight:900;color:var(--dark);line-height:1.3;}
+.hdOzet span{display:block;font-size:12px;font-weight:600;color:#64748B;margin-top:3px;line-height:1.4;}
+.hdKonular{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.hdKonu{font-size:11.5px;font-weight:800;color:#6D28D9;background:#F5F3FF;border:1px solid #E9D5FF;border-radius:999px;padding:4px 10px;}
+.hdKonu.tekrar{color:#C2410C;background:#FFF7ED;border-color:#FED7AA;}
+.hdNot{font-size:11.5px;font-weight:700;color:#047857;background:#ECFDF5;border-radius:10px;padding:7px 10px;margin-top:10px;}
+.hdListe{margin-top:12px;border-top:1px dashed #E2E8F0;}
+.hdSatir{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed #E2E8F0;font-size:12.5px;}
+.hdSatirNo{flex-shrink:0;width:24px;height:24px;border-radius:8px;background:#F1F5F9;color:#475569;font-weight:900;font-size:11.5px;display:flex;align-items:center;justify-content:center;}
+.hdSatirMetin{flex:1;min-width:0;}
+.hdSatirMetin b{display:block;color:var(--dark);font-weight:800;}
+.hdSatirMetin small{display:block;color:#64748B;font-weight:600;font-size:11px;margin-top:1px;}
+.hdCevap{flex-shrink:0;font-size:11px;font-weight:800;color:#B91C1C;background:#FEF2F2;border-radius:8px;padding:4px 8px;white-space:nowrap;}
+.hdDaha{font-size:12px;font-weight:700;color:#64748B;padding-top:9px;}
+.hdDugme{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin:14px 0 0;padding:14px;border:none;border-radius:14px;cursor:pointer;
+  font-family:inherit;font-weight:900;font-size:15px;line-height:1;color:#fff;background:linear-gradient(135deg,var(--purple),var(--orange));box-shadow:0 8px 18px rgba(139,92,246,.28);}
+.hdDugme:active{transform:scale(.98);}
+@media (max-width:345px){ .hdDugme{font-size:13.5px;padding:13px 10px;} }
+.hdIpucu{font-size:11px;font-weight:600;color:#94A3B8;text-align:center;margin-top:7px;line-height:1.4;}
+.hdBos{margin-top:10px;background:#ECFDF5;border:1px solid #A7F3D0;color:#047857;border-radius:14px;padding:14px;font-weight:800;font-size:13.5px;}
+
+/* ================= HATA DEFTERİ FÖYÜ (yalnızca yazdırırken / PDF) ================= */
+.foyYazdirma{display:none;}
+@media print{
+  @page{size:A4 portrait;margin:12mm 12mm 14mm;}
+  body.foyYazdiriliyor{background:#FFFFFF !important;}
+  body.foyYazdiriliyor > *:not(#foyYazdirmaAlani){display:none !important;}
+  body.foyYazdiriliyor #foyYazdirmaAlani{display:block !important;}
+  #foyYazdirmaAlani, #foyYazdirmaAlani *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+.foy{font-family:"Segoe UI",Roboto,Arial,sans-serif;color:#1E293B;font-size:10.5pt;}
+.foyBas{display:flex;align-items:center;gap:12px;padding-bottom:8px;border-bottom:2.5px solid #7C3AED;}
+.foyBas svg{width:46px;height:auto;flex-shrink:0;}
+.foyMarka{font-weight:900;font-size:17pt;color:#3B0764;line-height:1.1;}
+.foyMarka span{color:#F97316;}
+.foyAltBaslik{font-size:9pt;font-weight:700;letter-spacing:2px;color:#64748B;}
+.foyBaslikSag{margin-left:auto;text-align:right;}
+.foyBaslikSag b{display:block;font-size:14pt;color:#3B0764;}
+.foyBaslikSag small{font-size:8.5pt;color:#64748B;font-weight:600;}
+.foyBilgi{display:flex;flex-wrap:wrap;gap:4px 18px;margin:8px 0;font-size:9.5pt;}
+.foyBilgi b{color:#3B0764;}
+.foyNasil{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:8px;padding:7px 10px;font-size:9pt;line-height:1.45;margin-bottom:8px;}
+.foyNasil b{color:#6D28D9;}
+.foyIzgara{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.foySoru{border:1px solid #CBD5E1;border-radius:8px;padding:7px 9px;break-inside:avoid;page-break-inside:avoid;display:flex;flex-direction:column;}
+.foySoruUst{display:flex;align-items:center;gap:6px;font-size:9pt;}
+.foySoruNo{width:20px;height:20px;border-radius:6px;background:#3B0764;color:#fff;font-weight:900;font-size:9pt;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.foySoruUst b{color:#1E293B;}
+.foyTekrar{margin-left:auto;font-size:7.5pt;font-weight:800;color:#C2410C;background:#FFF7ED;border:1px solid #FED7AA;border-radius:999px;padding:1px 6px;}
+.foyKonu{font-size:8.5pt;color:#475569;margin-top:3px;line-height:1.35;}
+.foyIlk{font-size:8.5pt;color:#B91C1C;font-weight:700;margin-top:2px;}
+.foyGorsel{margin-top:5px;max-width:100%;max-height:70mm;object-fit:contain;border:1px solid #E2E8F0;border-radius:4px;}
+.foyCozum{margin-top:5px;height:36mm;border:1px dashed #CBD5E1;border-radius:6px;
+  background-image:repeating-linear-gradient(to bottom,transparent 0,transparent 5.5mm,#EEF2F7 5.5mm,#EEF2F7 5.8mm);}
+.foyCozum.kisa{height:22mm;}
+.foyOz{display:flex;gap:10px;margin-top:5px;font-size:8.5pt;color:#334155;font-weight:600;}
+.foyKutucuk{display:inline-block;width:9px;height:9px;border:1.3px solid #64748B;border-radius:2px;margin-right:3px;vertical-align:-1px;}
+.foyAnahtar{break-before:page;page-break-before:always;}
+.foyAnahtar h3{font-size:13pt;color:#3B0764;margin:0 0 4px;}
+.foyAnahtar p{font-size:9pt;color:#64748B;margin:0 0 8px;}
+.foyTablo{width:100%;border-collapse:collapse;font-size:9.5pt;}
+.foyTablo th{background:#F5F3FF;color:#3B0764;text-align:left;padding:5px 7px;border-bottom:1.5px solid #C4B5FD;}
+.foyTablo td{padding:5px 7px;border-bottom:1px solid #E2E8F0;}
+.foyTablo td.dogruCvp{font-weight:900;color:#047857;}
+.foyAlt{margin-top:10px;font-size:8pt;color:#94A3B8;text-align:center;letter-spacing:1.5px;}
+
+/* ================= BAŞARI KARTI ================= */
+.paylasTetik{display:flex;align-items:center;gap:6px;flex-shrink:0;padding:10px 14px;border:none;border-radius:999px;cursor:pointer;
+  color:#fff;background:linear-gradient(135deg,var(--purple),var(--orange));box-shadow:0 6px 14px rgba(139,92,246,.3);
+  font-family:inherit;font-weight:900;font-size:13.5px;line-height:1;margin:0;width:auto;position:relative;overflow:hidden;}
+
+.paylasTetik::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;
+  background:linear-gradient(100deg,transparent,rgba(255,255,255,.3),transparent);transform:skewX(-18deg);animation:tetikParilti 3.2s ease-in-out 1.2s infinite;}
+@keyframes tetikParilti{0%{left:-60%}35%,100%{left:130%}}
+.paylasTetikIkon{font-size:17px;line-height:1;}
+/* Çok dar ekranlarda (ör. 320px) "Paylaş" yazısı düğmenin içinde kırpılıyordu: yalnızca 📸 simgesi kalır */
+@media (max-width:360px){ .paylasTetikYazi{display:none;} .paylasTetik{padding:10px 12px;} }
+.paylasTetik:active{transform:scale(.96);}
+.paylasPerde{position:fixed;inset:0;z-index:10000;background:rgba(20,10,40,.72);display:flex;align-items:center;justify-content:center;
+  padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));animation:perdeBelir .25s ease-out;}
+@keyframes perdeBelir{from{opacity:0}to{opacity:1}}
+.paylasKutu{position:relative;width:100%;max-width:380px;max-height:100%;overflow:auto;background:#fff;border-radius:24px;padding:18px 16px 16px;text-align:center;
+  animation:kutuBelir .35s cubic-bezier(.22,1,.36,1);}
+@keyframes kutuBelir{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+.paylasBaslik{font-size:17px;font-weight:900;color:var(--dark);margin:2px 30px 12px;}
+.paylasOnizleme{display:flex;justify-content:center;}
+.paylasOnizleme img{width:auto;max-width:100%;max-height:52vh;border-radius:16px;box-shadow:0 10px 30px rgba(59,7,100,.25);background:#F3E8FF;aspect-ratio:9/16;}
+.paylasDugmeler{display:flex;gap:10px;margin-top:14px;}
+.paylasDugmeler button{flex:1;border:none;border-radius:14px;padding:13px 10px;font-family:inherit;font-weight:900;font-size:15px;line-height:1;margin:0;width:auto;cursor:pointer;}
+.paylasAna{color:#fff;background:linear-gradient(135deg,var(--purple),var(--orange));}
+.paylasIkincil{color:var(--dark);background:#F3E8FF;}
+.paylasKapat{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;background:#F1F5F9;color:#475569;
+  font-size:16px;line-height:1;padding:0;margin:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;}
+.paylasDugmeler.tekDugme .paylasIkincil{color:#fff;background:linear-gradient(135deg,var(--purple),var(--orange));}
+.paylasNot{font-size:11px;font-weight:600;color:#94A3B8;margin-top:10px;line-height:1.4;}
+
 @keyframes rekorBelir{
-  from{ opacity:0; transform:scale(0.9) translateY(-6px); }
-  to{ opacity:1; transform:scale(1) translateY(0); }
+  /* Önce rozetin yeri yumuşakça açılır (alttaki kartlar sıçramadan kayar), sonra rozet belirir */
+  0%  { opacity:0; max-height:0; padding-top:0; padding-bottom:0; margin-bottom:0; transform:scale(0.92); }
+  55% { opacity:0; max-height:90px; padding-top:10px; padding-bottom:10px; margin-bottom:15px; transform:scale(0.92); }
+  100%{ opacity:1; max-height:90px; padding-top:10px; padding-bottom:10px; margin-bottom:15px; transform:scale(1); }
 }
 .confettiParcasi{
   position:fixed;
@@ -539,6 +752,9 @@ border-left:5px solid var(--purple);
 
 
 
+/* Çizim alanı hiçbir durumda kutusundan geniş olamaz: grafik yüklenemediğinde tarayıcının varsayılan
+   300px genişliğinde kalıp dar telefonlarda sayfayı yana taşırıyordu. */
+#progressChart{max-width:100%;}
 .chartBox{
 
 height:230px;
@@ -582,6 +798,11 @@ border-bottom:1px solid #E2E8F0;
 }
 
 .history div:last-child{border-bottom:none;}
+/* Dar telefonlarda (yaklaşık 390px altı) net değeri "2.67 / Net" diye ikiye bölünüyor ve satırdan satıra
+   kayıyordu. Net artık tek parça ve sağa yaslı kalır; yer daralırsa sınav adı ile tarih alt satıra iner.
+   Geniş ekranlarda görünüm değişmez. */
+.history div > span{min-width:0;}
+.history div > strong{white-space:nowrap;flex-shrink:0;text-align:right;margin-left:10px;}
 
 
 
@@ -855,6 +1076,27 @@ color:#94A3B8;
 }
 .celdiriciLegend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:3px;vertical-align:-1px;}
 
+/* Soru tablosu telefonda: eskiden en az 480px genişlik şart olduğu için telefonlarda yalnızca "Soru" ve
+   "Konu" görünüyor, asıl önemli "Doğru / Cevap / Durum" sütunları sağda gizli kalıyordu. Dar ekranlarda
+   tablo artık kaydırma gerektirmeden sığar: kısa başlıklar, sarabilen konu adları, daha dar boşluklar.
+   600px'ten geniş ekranlarda (tablet, bilgisayar) hiçbir şey değişmez. */
+.thKisa{display:none;}
+@media (max-width:600px){
+  .distractorTable{min-width:0;font-size:12px;}
+  .distractorTable th,.distractorTable td{padding:9px 4px;}
+  .distractorTable th{font-size:11.5px;}
+  .distractorTable td:first-child{white-space:nowrap;}
+  .distractorTable th:last-child,.distractorTable td:last-child{padding-right:8px;}
+  .distractorTable td:nth-child(2){font-size:10.5px !important;line-height:1.3;}
+  .distractorTable .badge-correct,.distractorTable .badge-wrong,.distractorTable .badge-empty{padding:4px 6px;font-size:11px;white-space:nowrap;}
+  .thUzun{display:none;}
+  .thKisa{display:inline;}
+}
+@media (max-width:360px){             /* en dar telefonlar (320–360px): birkaç piksel daha kazan */
+  .distractorTable th,.distractorTable td{padding:8px 2px;}
+  .distractorTable th:last-child,.distractorTable td:last-child{padding-right:4px;}
+  .distractorTable .badge-correct,.distractorTable .badge-wrong,.distractorTable .badge-empty{padding:3px 4px;}
+}
 /* Geniş tabloların dar telefon ekranlarında taşmak yerine yatay kaymasını sağlar */
 .tableScroll{
   width:100%;
@@ -864,7 +1106,11 @@ color:#94A3B8;
 
 /* Tıklanarak açılıp kapanan bölüm başlıkları (ör. Soru Bazlı Çeldirici Analizi) —
    gerçek <button> olduğu için tarayıcı varsayılanlarını (arka plan, kenarlık, yazı
-   tipi) sıfırlıyoruz ki görünüm eskisiyle (div) birebir aynı kalsın. */
+   tipi) sıfırlıyoruz ki görünüm eskisiyle (div) birebir aynı kalsın.
+   DİKKAT: burada "font:inherit" ve "color:inherit" KULLANILMAZ — bu sınıf .title'dan sonra
+   tanımlandığı için .title'ın kalınlığını (900), boyutunu (18px) ve rengini eziyordu; başlıklar
+   diğer bölüm başlıklarından ince, küçük ve gri görünüyordu. Yalnızca yazı ailesi ve satır
+   yüksekliği devralınır; kalınlık, boyut ve renk .title'dan gelir. */
 .titleToggle{
   cursor:pointer;
   display:flex;
@@ -876,9 +1122,9 @@ color:#94A3B8;
   border:none;
   padding:0;
   width:100%;
-  font:inherit;
+  font-family:inherit;
+  line-height:inherit;
   text-align:left;
-  color:inherit;
 }
 .titleToggle:hover{opacity:.85;}
 .titleToggleHint{
@@ -886,6 +1132,12 @@ color:#94A3B8;
   font-weight:800;
   color:var(--purple);
   white-space:nowrap;
+}
+/* Telefonda (600px altı) ipucunun yalnızca oku görünür ve biraz büyür; böylece başlık 18px'te
+   tek satırda kalır. Tablet ve bilgisayarda "Detayları Göster ▾" yazısı aynen görünür. */
+@media (max-width:600px){
+  .ipucuMetin{display:none;}
+  .ipucuOk{font-size:16px;}
 }
 
 </style>
@@ -992,8 +1244,15 @@ SON SINAV NETİ
 </div>
 
 
-<div class="score" id="scoreArea">
--
+<div class="netHalka">
+<svg viewBox="0 0 200 200" aria-hidden="true">
+<circle class="halkaIz" cx="100" cy="100" r="86"></circle>
+<circle class="halkaDolu" id="netHalkaDolu" cx="100" cy="100" r="86"></circle>
+</svg>
+<div class="netHalkaIc">
+<div class="score" id="scoreArea">-</div>
+<div class="netHalkaAlt" id="netHalkaAlt"></div>
+</div>
 </div>
 
 
@@ -1047,6 +1306,9 @@ SON SINAV NETİ
 </div>
 
 
+<div class="rozetSeridi" id="rozetSeridi"></div>
+
+
 <div class="title">
 📝 Gelişim Analizi
 </div>
@@ -1073,6 +1335,7 @@ Not hazırlanıyor...
 <div class="chartBox">
 
 <canvas id="progressChart"></canvas>
+<div class="sonNoktaNabiz" id="sonNoktaNabiz" aria-hidden="true"></div>
 
 </div>
 
@@ -1107,9 +1370,15 @@ Konu analizi hazırlanıyor...
 </div>
 
 
+<div class="title">
+📝 Hata Defterim
+</div>
+<div id="hataDefteriAlani"></div>
+
+
 <button type="button" class="title titleToggle" id="distractorToggle">
 <span>🎯 Soru Bazlı Çeldirici Analizi</span>
-<span class="titleToggleHint" id="distractorToggleHint">Detayları Göster ▾</span>
+<span class="titleToggleHint" id="distractorToggleHint"><span class="ipucuMetin">Detayları Göster </span><span class="ipucuOk">▾</span></span>
 </button>
 
 <div id="distractorArea" class="hidden" style="margin-top: 10px;">
@@ -1127,9 +1396,15 @@ Konu analizi hazırlanıyor...
 </div>
 
 
+<div class="title rozetBaslik" id="rozetBolumu">
+<span>🏅 Rozet Dolabım</span><span class="rozetSayac" id="rozetSayac"></span>
+</div>
+<div class="rozetDolabi" id="rozetAlani"></div>
+
+
 <button type="button" class="title titleToggle" id="metodolojiToggle">
 <span>ℹ️ Nasıl Değerlendiriyoruz?</span>
-<span class="titleToggleHint" id="metodolojiToggleHint">Göster ▾</span>
+<span class="titleToggleHint" id="metodolojiToggleHint"><span class="ipucuMetin">Göster </span><span class="ipucuOk">▾</span></span>
 </button>
 
 <div id="metodolojiArea" class="hidden" style="margin-top: 10px; font-size: 13px; color: var(--text); line-height: 1.7;">
@@ -1155,6 +1430,23 @@ Konu analizi hazırlanıyor...
 
 
 
+
+<!-- Hata defteri: yazdırma / PDF alanı (ekranda görünmez, yalnızca yazdırırken gösterilir) -->
+<div id="foyYazdirmaAlani" class="foyYazdirma" aria-hidden="true"></div>
+
+<!-- Başarı kartı önizleme penceresi -->
+<div class="paylasPerde hidden" id="paylasPerde" role="dialog" aria-modal="true" aria-label="Başarı kartı">
+  <div class="paylasKutu">
+    <button type="button" class="paylasKapat" id="paylasKapat" aria-label="Kapat">✕</button>
+    <div class="paylasBaslik">📸 Başarı Kartın Hazır</div>
+    <div class="paylasOnizleme"><img id="paylasGorsel" alt="Başarı kartı önizlemesi"></div>
+    <div class="paylasDugmeler">
+      <button type="button" class="paylasAna" id="paylasBtn">📤 Paylaş</button>
+      <button type="button" class="paylasIkincil" id="indirBtn">⬇ İndir</button>
+    </div>
+    <div class="paylasNot">Kartta yalnızca ad ve soyadın baş harfi yer alır; giriş kodu ve sıralama yer almaz.</div>
+  </div>
+</div>
 
 <!-- Chart.js 4.4.4 — paketteki gerçek dosya (chart.umd.js zaten küçültülmüş; ".min.js" pakette yok,
      jsDelivr onu anlık üretiyordu). integrity: tarayıcı dosyayı çalıştırmadan önce içeriğini doğrular;
@@ -1280,6 +1572,654 @@ function enGucluKonuBulClient(konular){
 
 // Sayfa ilk açıldığında sayılar aniden belirmesin, 0'dan hedefe doğru kısa bir animasyonla
 // dolsun diye. Negatif ve ondalıklı değerleri de (net gibi) doğru formatla destekler.
+// ================= SİNEMATİK AÇILIŞ =================
+// Sonuç kartının doğrudan çocukları (başlıklar, kartlar, grafik...) ekrana girdikçe sırayla, aşağıdan
+// süzülerek belirir. Bir bölüme "sahne olayı" kaydedilmişse (ör. net kartı → sayma + halka), o olay
+// bölüm göründüğü anda çalışır; böylece animasyonlar ekran dışında boşa akmaz.
+// IntersectionObserver desteklenmiyorsa hiçbir şey gizlenmez ve olaylar hemen çalışır.
+let sahneOlaylari = new Map();
+let sahneGozlemci = null;
+// Her sonuç ekranının bir kimliği var: veli hızla başka bir öğrenciye geçerse, önceki ekrandan kalan
+// gecikmeli olaylar (sayma, rekor rozeti, konfeti) yeni ekrana dokunamaz.
+let sahneNo = 0;
+
+function sahneyiSifirla(){
+  sahneNo++;
+  let perde = document.getElementById("paylasPerde");
+  if(perde) perde.classList.add("hidden");   // açık bir başarı kartı penceresi başka öğrenciye taşınmasın
+  sahneOlaylari.clear();
+  if(sahneGozlemci){ sahneGozlemci.disconnect(); sahneGozlemci = null; }
+  document.querySelectorAll(".confettiParcasi").forEach(function(p){ p.remove(); });
+}
+
+function sahneOlayiKaydet(el, fn){
+  if(!el) return;
+  let benimNo = sahneNo, asil = fn;
+  fn = function(){ if(benimNo === sahneNo) asil(); };
+  let kart = document.getElementById("resultCard");
+  while(el && el.parentElement !== kart) el = el.parentElement;   // kartın doğrudan çocuğuna çık
+  if(!el) return;
+  if(!("IntersectionObserver" in window)){ fn(); return; }
+  let liste = sahneOlaylari.get(el) || [];
+  liste.push(fn);
+  sahneOlaylari.set(el, liste);
+}
+
+function sahneyiBaslat(){
+  let kart = document.getElementById("resultCard");
+  if(sahneGozlemci){ sahneGozlemci.disconnect(); sahneGozlemci = null; }
+  if(!("IntersectionObserver" in window)) return;
+  let ogeler = Array.from(kart.children);
+  ogeler.forEach(function(o){ o.classList.remove("belirdi"); o.classList.add("belir"); o.style.removeProperty("--gecikme"); });
+  sahneGozlemci = new IntersectionObserver(function(girdiler){
+    let yeniler = girdiler.filter(function(g){ return g.isIntersecting; }).map(function(g){ return g.target; })
+      .sort(function(a,b){ return a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });
+    yeniler.forEach(function(o, i){
+      let gecikme = Math.min(i * 70, 560);
+      o.style.setProperty("--gecikme", gecikme + "ms");
+      o.classList.add("belirdi");
+      sahneGozlemci.unobserve(o);
+      let olaylar = sahneOlaylari.get(o);
+      if(olaylar){
+        sahneOlaylari.delete(o);
+        setTimeout(function(){ olaylar.forEach(function(fn){ try{ fn(); }catch(e){ console.error("[UltraMat] Sahne olayı:", e); } }); }, gecikme + 120);
+      }
+    });
+  }, { threshold: 0, rootMargin: "0px 0px -6% 0px" });   // uzun bölümler de ilk pikselleri ekrana girer girmez belirir
+  ogeler.forEach(function(o){ sahneGozlemci.observe(o); });
+}
+
+// Net halkası: net / soru sayısı oranında dolar. Negatif net halkayı boş bırakır (utandırmadan, sade).
+const NET_HALKA_CEVRE = 2 * Math.PI * 86;
+function netHalkasiOrani(kayit){
+  let toplam = (Number(kayit.dogru) || 0) + (Number(kayit.yanlis) || 0) + (Number(kayit.bos) || 0);
+  let net = Number(kayit.net);
+  if(!toplam || isNaN(net)) return { oran: 0, toplam: toplam };
+  return { oran: Math.max(0, Math.min(1, net / toplam)), toplam: toplam };
+}
+function netHalkasiniSifirla(kayit){
+  let halka = document.getElementById("netHalkaDolu");
+  let alt = document.getElementById("netHalkaAlt");
+  let o = netHalkasiOrani(kayit);
+  halka.style.transition = "none";
+  halka.style.strokeDasharray = NET_HALKA_CEVRE;
+  halka.style.strokeDashoffset = NET_HALKA_CEVRE;
+  halka.style.opacity = o.oran > 0 ? "1" : "0";
+  halka.getBoundingClientRect();          // başlangıç durumunu çizdir
+  halka.style.transition = "";
+  alt.innerText = o.toplam ? (o.toplam + " soru üzerinden") : "";
+  document.querySelector(".scoreCard").classList.remove("parla");
+}
+function netHalkasiniOynat(kayit){
+  let o = netHalkasiOrani(kayit);
+  document.getElementById("netHalkaDolu").style.strokeDashoffset = NET_HALKA_CEVRE * (1 - o.oran);
+  let kart = document.querySelector(".scoreCard");
+  kart.classList.remove("parla"); void kart.offsetWidth; kart.classList.add("parla");
+}
+
+// ================= ROZET DOLABI =================
+// Rozetler öğrencinin BÜTÜN sınav geçmişinden hesaplanır; bir kez kazanılan rozet sonraki sınavlarda
+// kaybolmaz. Her rozet için "ilk kazanıldığı sınav" bulunur; bu son sınavsa rozet YENİ sayılır.
+// Yalnızca son sınavda ayrıntısı olan veriye (konu kırılımı) dayanan rozet bilinçli olarak yok.
+function sinavSoruSayisi(x){ return (Number(x.dogru)||0) + (Number(x.yanlis)||0) + (Number(x.bos)||0); }
+function sayi(x){ let n = Number(x); return (x === null || x === undefined || x === "" || isNaN(n)) ? null : n; }
+
+function enUzunArtisSerisi(sinavlar){
+  let enUzun = 0, seri = 0;
+  for(let i = 1; i < sinavlar.length; i++){
+    let a = sayi(sinavlar[i-1].net), b = sayi(sinavlar[i].net);
+    if(a !== null && b !== null && b > a){ seri++; enUzun = Math.max(enUzun, seri); } else { seri = 0; }
+  }
+  return enUzun;
+}
+
+function rozetTanimlari(sonSoru){
+  // Net eşikleri sınavın soru sayısına göre: 20 soruluk sınavda 5 / 10 / 15 net.
+  let esik = function(oran){ return Math.round(sonSoru * oran * 100) / 100; };
+  let netAdi = function(oran){ return sonSoru ? (esik(oran) + " Net") : ("%" + Math.round(oran*100) + " Net"); };
+  let netSarti = function(oran){ return sonSoru ? (esik(oran) + " nete ulaş") : ("Soruların %" + Math.round(oran*100) + "'i kadar nete ulaş"); };
+  let netOran = function(oran){ return function(s){ return s.some(function(x){ let n = sayi(x.net), t = sinavSoruSayisi(x); return n !== null && t > 0 && n >= t * oran; }); }; };
+  return [
+    { id:"kararli",   grup:"katilim", emoji:"📅", ad:"Kararlı",            sart:"3 sınava katıl",                 kosul:function(s){ return s.length >= 3; } },
+    { id:"maratoncu", grup:"katilim", emoji:"🏃", ad:"Maratoncu",          sart:"5 sınava katıl",                 kosul:function(s){ return s.length >= 5; } },
+    { id:"net25",     grup:"net",     emoji:"🥉", ad:netAdi(.25),          sart:netSarti(.25),          kosul:netOran(.25) },
+    { id:"net50",     grup:"net",     emoji:"🥈", ad:netAdi(.50),          sart:netSarti(.50),          kosul:netOran(.50) },
+    { id:"net75",     grup:"net",     emoji:"🥇", ad:netAdi(.75),          sart:netSarti(.75),          kosul:netOran(.75) },
+    { id:"tamnet",    grup:"net",     emoji:"💎", ad:"Tam Net",            sart:"Bütün soruları doğru yap",       kosul:function(s){ return s.some(function(x){ let t = sinavSoruSayisi(x); return t > 0 && Number(x.dogru) === t; }); } },
+    { id:"seri2",     grup:"gelisim", emoji:"📈", ad:"Yükselişte",         sart:"Üst üste 2 sınav netini artır", kosul:function(s){ return enUzunArtisSerisi(s) >= 2; } },
+    { id:"seri3",     grup:"gelisim", emoji:"🔥", ad:"Üçlü Seri",          sart:"Üst üste 3 sınav netini artır", kosul:function(s){ return enUzunArtisSerisi(s) >= 3; } },
+    { id:"sicrama",   grup:"gelisim", emoji:"🚀", ad:"Büyük Sıçrama",      sart:"Tek sınavda +3 net artış",       kosul:function(s){ for(let i = 1; i < s.length; i++){ let a = sayi(s[i-1].net), b = sayi(s[i].net); if(a !== null && b !== null && b - a >= 3) return true; } return false; } },
+    { id:"ortalama",  grup:"basari",  emoji:"⭐", ad:"Ortalamanın Üstünde", sart:"Sınıf ortalamasını geç",        kosul:function(s){ return s.some(function(x){ let n = sayi(x.net), o = sayi(x.sinifNetOrtalamasi); return n !== null && o !== null && (Number(x.katilim)||0) >= 3 && n > o; }); } },
+    { id:"sifiryanlis",grup:"basari", emoji:"🎯", ad:"Sıfır Yanlış",       sart:"Hiç yanlış yapmadan bitir",      kosul:function(s){ return s.some(function(x){ let t = sinavSoruSayisi(x); return t > 0 && Number(x.yanlis) === 0 && Number(x.dogru) >= t * .25; }); } },
+    { id:"podyum",    grup:"basari",  emoji:"🏆", ad:"Podyum",             sart:"Sınıfta ilk 3'e gir",            kosul:function(s){ return s.some(function(x){ let r = sayi(x.sira); return r !== null && r >= 1 && r <= 3 && (Number(x.katilim)||0) >= 5; }); } }
+  ];
+}
+
+function rozetleriHesapla(sinavlar){
+  let son = sinavlar[sinavlar.length - 1] || {};
+  return rozetTanimlari(sinavSoruSayisi(son)).map(function(r){
+    let ilk = -1;
+    for(let k = 0; k < sinavlar.length; k++){ if(r.kosul(sinavlar.slice(0, k + 1))){ ilk = k; break; } }
+    return { id:r.id, grup:r.grup, emoji:r.emoji, ad:r.ad, sart:r.sart,
+             kazanildi: ilk !== -1, kazanilanSinav: ilk !== -1 ? sinavlar[ilk].sinav : null,
+             yeni: ilk !== -1 && ilk === sinavlar.length - 1 };   // ilk sınavda kazanılanlar da gerçekten yeni
+  });
+}
+
+function rozetDolabiniCiz(sinavlar){
+  let alan = document.getElementById("rozetAlani");
+  let rozetler = rozetleriHesapla(sinavlar);
+  let kazanilan = rozetler.filter(function(r){ return r.kazanildi; }).length;
+  let yeniSay = rozetler.filter(function(r){ return r.yeni; }).length;
+  document.getElementById("rozetSayac").innerText = kazanilan + " / " + rozetler.length + (yeniSay ? ("  ·  " + yeniSay + " yeni") : "");
+  alan.classList.remove("oyna"); alan.classList.add("hazir");
+  alan.innerHTML = rozetler.map(function(r, i){
+    let alt = r.kazanildi ? htmlKacis(r.kazanilanSinav || "") : htmlKacis(r.sart);
+    return `<div class="rozet${r.kazanildi ? "" : " kilitli"}${r.yeni ? " yeni" : ""}" data-grup="${r.grup}" style="--rg:${i * 55}ms"
+      title="${htmlKacis(r.ad + (r.kazanildi ? (" — " + r.kazanilanSinav + " sınavında kazanıldı") : (" — " + r.sart)))}">
+      ${r.yeni ? '<span class="rozetYeni">YENİ</span>' : ""}
+      <div class="rozetMadalya"><span class="rozetEmoji">${r.emoji}</span>${r.kazanildi ? "" : '<span class="rozetKilit">🔒</span>'}</div>
+      <div class="rozetAd">${htmlKacis(r.ad)}</div>
+      <div class="rozetAlt">${alt}</div>
+    </div>`;
+  }).join("");
+  // Dolap ekrana geldiğinde rozetler sırayla yerine oturur; yeni olanlar zıplayıp kıvılcım saçar.
+  sahneOlayiKaydet(alan, function(){ rozetDolabiniOynat(alan); });
+  if(!("IntersectionObserver" in window)) alan.classList.remove("hazir");
+}
+
+function rozetDolabiniOynat(alan){
+  alan.classList.remove("hazir"); void alan.offsetWidth; alan.classList.add("oyna");
+  let renkler = ["#F97316","#EC4899","#8B5CF6","#FACC15","#10B981"];
+  let benimNo = sahneNo;
+  alan.querySelectorAll(".rozet.yeni").forEach(function(rozet){
+    let gecikme = parseFloat(getComputedStyle(rozet).getPropertyValue("--rg")) || 0;
+    setTimeout(function(){
+      if(benimNo !== sahneNo) return;
+      for(let k = 0; k < 12; k++){
+        let kv = document.createElement("span");
+        kv.className = "kivilcim";
+        let aci = (Math.PI * 2 * k) / 12, uzaklik = 34 + Math.random() * 14;
+        kv.style.setProperty("--kx", Math.cos(aci) * uzaklik + "px");
+        kv.style.setProperty("--ky", Math.sin(aci) * uzaklik + "px");
+        kv.style.background = renkler[k % renkler.length];
+        rozet.appendChild(kv);
+        setTimeout(function(){ kv.remove(); }, 900);
+      }
+      try{ if(navigator.vibrate) navigator.vibrate(18); }catch(e){}
+    }, gecikme + 520);
+  });
+}
+
+// ================= OKUMA TAKİBİ =================
+// Veli sonucu açtığında, sunucunun bu girişe verdiği oturum numarasıyla: (1) ekranın açık OLDUĞU ve velinin son
+// 2 dakikada sayfayla etkileşimde bulunduğu süre (telefon açık unutulursa süre şişmez), (2) sonuç kartının yüzde
+// kaçının ekrandan geçtiği, (3) ekranın alt kısmına kadar gelmiş en son bölüm başlığı öğretmene bildirilir.
+// Bildirim: uygulama arka plana atılınca / sayfadan çıkılınca / "Başka Sonuç Ara"da / açıkken dakikada bir.
+// Demo sayfasında çalışmaz. Gönderilemezse sayfa hiçbir şekilde etkilenmez.
+const OKUMA_TIK_SANIYE = 5, OKUMA_ETKILESIM_PENCERESI = 120000, OKUMA_BILDIRIM_ARALIGI = 60;
+let okumaTakibi = null;
+
+function okumaTakibiniBaslat(oturum){
+  okumaTakibiniBitir();
+  if(!oturum || window.__DEMO) return;
+  okumaTakibi = { oturum:String(oturum), sure:0, oran:0, bolum:"", bolumSira:-1, sonEtkilesim:Date.now(), tik:0, sonImza:"" };
+  okumaTakibi.zamanlayici = setInterval(function(){
+    let t = okumaTakibi; if(!t) return;
+    if(document.visibilityState === "visible" && Date.now() - t.sonEtkilesim < OKUMA_ETKILESIM_PENCERESI) t.sure += OKUMA_TIK_SANIYE;
+    t.tik++;
+    if(t.tik % Math.round(OKUMA_BILDIRIM_ARALIGI / OKUMA_TIK_SANIYE) === 0) okumaBildir();
+  }, OKUMA_TIK_SANIYE * 1000);
+  okumaOlc();
+}
+
+function okumaOlc(){
+  let t = okumaTakibi; if(!t) return;
+  let kart = document.getElementById("resultCard");
+  if(kart.classList.contains("hidden")) return;
+  let r = kart.getBoundingClientRect();
+  if(r.height > 0){
+    let oran = Math.round(Math.max(0, Math.min(r.height, innerHeight - r.top)) / r.height * 100);
+    if(oran > t.oran) t.oran = Math.min(100, oran);
+  }
+  let basliklar = Array.from(kart.querySelectorAll(".title")).filter(function(b){ return b.offsetParent !== null; });
+  let sinir = innerHeight * 0.85;
+  basliklar.forEach(function(b, i){
+    if(i > t.bolumSira && b.getBoundingClientRect().top < sinir){
+      t.bolumSira = i;
+      let ad = b.querySelector("span:not(.titleToggleHint):not(.ipucuMetin):not(.ipucuOk):not(.rozetSayac)");
+      t.bolum = (ad ? ad.textContent : b.textContent).replace(/\s+/g, " ").trim().slice(0, 60);
+    }
+  });
+}
+
+function okumaBildir(){
+  let t = okumaTakibi; if(!t) return;
+  okumaOlc();
+  let veri = { islem:"okuma", oturum:t.oturum, sure:t.sure, oran:t.oran, bolum:t.bolum };
+  let imza = veri.sure + "|" + veri.oran + "|" + veri.bolum;
+  if(imza === t.sonImza) return;          // değişiklik yoksa gönderme
+  t.sonImza = imza;
+  let govde = JSON.stringify(veri);
+  try{ if(navigator.sendBeacon && navigator.sendBeacon(API_URL, new Blob([govde], { type:"text/plain;charset=UTF-8" }))) return; }catch(e){}
+  try{ fetch(API_URL, { method:"POST", body:govde, keepalive:true, mode:"no-cors", headers:{ "Content-Type":"text/plain;charset=UTF-8" } }).catch(function(){}); }catch(e){}
+}
+
+function okumaTakibiniBitir(){
+  if(!okumaTakibi) return;
+  okumaBildir();
+  clearInterval(okumaTakibi.zamanlayici);
+  okumaTakibi = null;
+}
+
+(function(){
+  let etkilesim = function(){ if(okumaTakibi) okumaTakibi.sonEtkilesim = Date.now(); };
+  let olcBekleyen = false;
+  window.addEventListener("scroll", function(){
+    etkilesim();
+    if(olcBekleyen || !okumaTakibi) return;
+    olcBekleyen = true;
+    requestAnimationFrame(function(){ olcBekleyen = false; okumaOlc(); });
+  }, { passive:true });
+  ["touchstart", "pointerdown", "keydown", "wheel"].forEach(function(o){ window.addEventListener(o, etkilesim, { passive:true }); });
+  document.addEventListener("visibilitychange", function(){
+    if(!okumaTakibi) return;
+    if(document.visibilityState === "hidden") okumaBildir(); else etkilesim();
+  });
+  window.addEventListener("pagehide", function(){ okumaBildir(); });
+})();
+
+// ================= HATA DEFTERİ =================
+// Son 3 sınavın (sunucu: yanlisSorular) yanlış sorularından tekrar çözüm föyü. Kurallar:
+//  • Öncelik: birden fazla sınavda yanlış yapılan konudaki sorular (🔁) → konusu en zayıf olanlar → en yeni sınav.
+//  • "Öğrenildi": konu son sınavda yanlışsız geçildiyse VE genel başarısı %80+ ise eski yanlışları defterden düşer.
+//  • Bir föyde en fazla 20 soru (bir LGS matematik testi uzunluğu); kalanlar sonraki föye.
+//  • Soru_Haritasi'nda "Soru Görseli" varsa föye sorunun resmi basılır; yoksa soru no + kitapçık referansı.
+const HD_FOY_SORU_SINIRI = 20;
+const HD_OGRENILDI_ESIGI = 80;
+const HD_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 131 119">
+<path d="M25.40 83.31 L24.10 81.44 L23.02 79.43 L22.07 77.36 L21.24 75.23 L20.52 73.06 L19.92 70.85 L19.43 68.61 L19.05 66.34 L18.79 64.06 L18.65 61.76 L18.62 59.46 L18.71 57.15 L18.91 54.85 L19.23 52.57 L19.66 50.29 L20.21 48.05 L20.87 45.83 L21.64 43.64 L22.52 41.50 L23.51 39.40 L24.60 37.35 L25.80 35.36 L27.09 33.43 L28.47 31.57 L29.95 29.77 L31.52 28.06 L33.17 26.42 L34.90 24.87 L36.70 23.40 L38.58 22.03 L40.52 20.75 L42.53 19.58 L44.59 18.50 L46.70 17.53 L48.85 16.66 L51.05 15.90 L53.28 15.26 L55.54 14.72 L57.83 14.31 L60.13 14.00 L62.44 13.81 L64.75 13.74 L67.07 13.78 L69.38 13.94 L71.68 14.21 L73.96 14.60 L76.21 15.10 L78.44 15.72 L80.63 16.44 L82.77 17.27 L84.88 18.21 L86.92 19.26 L88.92 20.40 L90.84 21.65 L92.70 22.99 L94.48 24.42 L96.18 25.95 L97.79 27.56 L99.29 29.27 L100.59 31.14 L100.06 31.60 L98.37 30.14 L96.72 28.67 L95.03 27.26 L93.29 25.93 L91.49 24.68 L89.64 23.52 L87.75 22.44 L85.80 21.46 L83.82 20.56 L81.80 19.77 L79.74 19.07 L77.66 18.47 L75.55 17.97 L73.42 17.58 L71.28 17.28 L69.13 17.09 L66.97 17.00 L64.81 17.02 L62.66 17.14 L60.52 17.36 L58.39 17.68 L56.28 18.10 L54.19 18.63 L52.13 19.25 L50.11 19.98 L48.12 20.80 L46.17 21.71 L44.27 22.71 L42.43 23.81 L40.63 24.99 L38.90 26.26 L37.22 27.60 L35.62 29.03 L34.08 30.53 L32.62 32.11 L31.23 33.75 L29.93 35.46 L28.70 37.23 L27.57 39.06 L26.52 40.94 L25.56 42.87 L24.70 44.85 L23.93 46.86 L23.25 48.92 L22.68 51.00 L22.21 53.11 L21.83 55.24 L21.56 57.39 L21.39 59.55 L21.33 61.72 L21.36 63.89 L21.50 66.06 L21.74 68.23 L22.09 70.38 L22.53 72.52 L23.07 74.64 L23.71 76.74 L24.43 78.82 L25.24 80.87 L26.01 82.97 Z" fill="#FE4D0E"/>
+<path d="M108 46.5 Q122 69 108 91.5" fill="none" stroke="#715FAC" stroke-width="2.3" stroke-dasharray="4 4" stroke-linecap="round"/>
+<line x1="36.5" y1="96" x2="107" y2="96" stroke="#1B1058" stroke-width="3"/>
+<line x1="36.5" y1="96" x2="102.3" y2="46.2" stroke="#1B1058" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="62.8" y1="55.2" x2="36.5" y2="96" stroke="#1B1058" stroke-width="2.9" stroke-linecap="round"/>
+<line x1="70.2" y1="55.2" x2="91.5" y2="88" stroke="#1B1058" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="66.5" cy="51" r="4.9" fill="none" stroke="#1B1058" stroke-width="3.1"/>
+<circle cx="66.5" cy="42.4" r="3.4" fill="#1B1058"/>
+<circle cx="36.5" cy="96" r="3.9" fill="#1B1058"/>
+<circle cx="107.6" cy="96" r="2.9" fill="#261263"/>
+<circle cx="108" cy="42.5" r="2.9" fill="#35156A"/>
+</svg>`;
+
+function hataDefteriHazirla(sinavlar){
+  let son = sinavlar[sinavlar.length - 1] || {};
+  let kumulatif = {};
+  (son.konularKumulatif || []).forEach(function(k){ kumulatif[k.konu] = Number(k.yuzde); });
+  let sonKonular = {}, sonYanlisKonular = {};
+  (son.konular || []).forEach(function(k){ sonKonular[k.konu] = true; });
+  (son.yanlisSorular || []).forEach(function(s){ sonYanlisKonular[s.konu] = true; });
+
+  let tumu = [];
+  sinavlar.forEach(function(x, sinavSirasi){
+    (x.yanlisSorular || []).forEach(function(s){
+      tumu.push({ sinav:x.sinav, sinavTarih:sinavTarihiMetni(x), sinavSirasi:sinavSirasi, no:s.no, konu:s.konu || "Genel",
+                  altKazanim:s.altKazanim || "", ogrenciSik:s.ogrenciSik || "", dogruSik:s.dogruSik || "", soruGorseli:s.soruGorseli || "" });
+    });
+  });
+  if(!tumu.length) return { sorular:[], kalan:0, ogrenilen:[], kapsam:[], toplamYanlis:0, tekrarKonular:[] };
+
+  // Öğrenilen konular (defterden çıkar)
+  let ogrenilenler = {};
+  Object.keys(sonKonular).forEach(function(konu){
+    if(!sonYanlisKonular[konu] && kumulatif[konu] !== undefined && kumulatif[konu] >= HD_OGRENILDI_ESIGI) ogrenilenler[konu] = true;
+  });
+  let aday = tumu.filter(function(s){ return !ogrenilenler[s.konu]; });
+  let cikanKonular = Object.keys(ogrenilenler).filter(function(k){ return tumu.some(function(s){ return s.konu === k; }); });
+
+  // Tekrarlayan konular: birden fazla sınavda yanlış
+  let konuSinavlari = {};
+  aday.forEach(function(s){ (konuSinavlari[s.konu] = konuSinavlari[s.konu] || {})[s.sinavSirasi] = true; });
+  let tekrar = {};
+  Object.keys(konuSinavlari).forEach(function(k){ if(Object.keys(konuSinavlari[k]).length >= 2) tekrar[k] = true; });
+
+  aday.forEach(function(s){ s.tekrar = !!tekrar[s.konu]; });
+  aday.sort(function(a, b){
+    if(a.tekrar !== b.tekrar) return a.tekrar ? -1 : 1;
+    let ka = kumulatif[a.konu] === undefined ? 100 : kumulatif[a.konu], kb = kumulatif[b.konu] === undefined ? 100 : kumulatif[b.konu];
+    if(ka !== kb) return ka - kb;
+    if(a.sinavSirasi !== b.sinavSirasi) return b.sinavSirasi - a.sinavSirasi;
+    return a.no - b.no;
+  });
+  let secilen = aday.slice(0, HD_FOY_SORU_SINIRI);
+  // 🔁 işareti yalnızca ayırt ediciyse gösterilir: tekrarlayan konular seçilen konuların yarısından azsa.
+  // (Neredeyse her konu tekrarlıyorsa işaret bilgi taşımaz, yalnızca kalabalık yapar; öncelik sıralaması yine uygulanır.)
+  let secilenKonular = {}; secilen.forEach(function(s){ secilenKonular[s.konu] = true; });
+  let tekrarListesi = Object.keys(tekrar).filter(function(k){ return secilenKonular[k]; });
+  let tekrarAnlamli = tekrarListesi.length > 0 && tekrarListesi.length <= Object.keys(secilenKonular).length / 2;
+  if(!tekrarAnlamli){ secilen.forEach(function(s){ s.tekrar = false; }); tekrarListesi = []; }
+  // Seçim önceliğe göre yapıldı; föyde ise sınav sınav ve soru numarasına göre dizilir (kitapçıkta bulmak kolay olsun)
+  secilen.sort(function(a, b){ return a.sinavSirasi !== b.sinavSirasi ? a.sinavSirasi - b.sinavSirasi : a.no - b.no; });
+  let kapsam = []; sinavlar.forEach(function(x){ if(x.yanlisSorular) kapsam.push(x.sinav); });
+  return { sorular:secilen, kalan:Math.max(0, aday.length - secilen.length), ogrenilen:cikanKonular, kapsam:kapsam,
+           toplamYanlis:tumu.length, tekrarKonular:tekrarListesi };
+}
+
+function hataDefteriniCiz(sinavlar){
+  let alan = document.getElementById("hataDefteriAlani");
+  let hd = hataDefteriHazirla(sinavlar);
+  if(!hd.sorular.length){
+    alan.innerHTML = hd.toplamYanlis
+      ? `<div class="hdBos">🎉 Yanlış yaptığın konuların hepsini artık öğrenmiş görünüyorsun; defterinde tekrar edilecek soru kalmadı.</div>`
+      : `<div class="hdBos">🎉 Son sınavlarında yanlışın yok; hata defterin boş.</div>`;
+    return;
+  }
+  let konuSay = {};
+  hd.sorular.forEach(function(s){ konuSay[s.konu] = (konuSay[s.konu] || 0) + 1; });
+  let konular = Object.keys(konuSay).sort(function(a, b){ return konuSay[b] - konuSay[a]; });
+  let onizleme = hd.sorular.slice(0, 3);
+  alan.innerHTML = `<div class="hdKutu">
+    <div class="hdUst">
+      <div class="hdSayi"><b>${hd.sorular.length}</b><small>SORU</small></div>
+      <div class="hdOzet"><b>Yeniden çözmen gereken sorular hazır</b>
+        <span>Son ${hd.kapsam.length} sınavındaki ${hd.toplamYanlis} yanlıştan seçildi${hd.kalan ? (" · " + hd.kalan + " soru sonraki föyde") : ""}.</span></div>
+    </div>
+    <div class="hdKonular">${konular.map(function(k){ return `<span class="hdKonu${hd.tekrarKonular.indexOf(k) !== -1 ? " tekrar" : ""}">${hd.tekrarKonular.indexOf(k) !== -1 ? "🔁 " : ""}${htmlKacis(k)} · ${konuSay[k]}</span>`; }).join("")}</div>
+    ${hd.ogrenilen.length ? `<div class="hdNot">✅ Öğrendiğin için defterden çıkan: ${hd.ogrenilen.map(htmlKacis).join(", ")}</div>` : ""}
+    <div class="hdListe">
+      ${onizleme.map(function(s, i){ return `<div class="hdSatir"><span class="hdSatirNo">${i + 1}</span>
+        <span class="hdSatirMetin"><b>${htmlKacis(s.sinav)} · Soru ${htmlKacis(s.no)}${s.tekrar ? " 🔁" : ""}</b><small>${htmlKacis(s.konu)}</small></span>
+        <span class="hdCevap">Cevabın: ${htmlKacis(s.ogrenciSik || "-")}</span></div>`; }).join("")}
+      ${hd.sorular.length > 3 ? `<div class="hdDaha">+ ${hd.sorular.length - 3} soru daha föyde</div>` : ""}
+    </div>
+    <button type="button" class="hdDugme" id="hdFoyDugmesi">📄 Föyü PDF Olarak İndir</button>
+    <div class="hdIpucu">Açılan pencerede hedef olarak "PDF olarak kaydet"i seç. Föyü yazdırıp da kullanabilirsin.</div>
+  </div>`;
+  document.getElementById("hdFoyDugmesi").addEventListener("click", function(){ hataDefteriFoyunuYazdir(sinavlar); });
+}
+
+function hataDefteriFoyuHtml(sinavlar){
+  let hd = hataDefteriHazirla(sinavlar);
+  let son = sinavlar[sinavlar.length - 1] || {};
+  let bugun = new Date();
+  let tarih = String(bugun.getDate()).padStart(2, "0") + "." + String(bugun.getMonth() + 1).padStart(2, "0") + "." + bugun.getFullYear();
+  let gorselliSayi = hd.sorular.filter(function(s){ return s.soruGorseli; }).length;
+  let bulmaTalimati = !gorselliSayi ? "Soruları ilgili sınavın kitapçığından (sınav adı ve soru numarasıyla)"
+    : gorselliSayi === hd.sorular.length ? "Soruları föydeki görsellerden"
+    : "Görseli olan soruları föyden, diğerlerini ilgili sınavın kitapçığından (sınav adı ve soru numarasıyla)";
+  let kutular = hd.sorular.map(function(s, i){
+    return `<div class="foySoru">
+      <div class="foySoruUst"><span class="foySoruNo">${i + 1}</span><b>${htmlKacis(s.sinav)} · Soru ${htmlKacis(s.no)}</b>${s.tekrar ? '<span class="foyTekrar">🔁 tekrarlayan konu</span>' : ""}</div>
+      <div class="foyKonu"><b>${htmlKacis(s.konu)}</b>${s.altKazanim ? (" · " + htmlKacis(s.altKazanim)) : ""}</div>
+      <div class="foyIlk">İlk cevabın: ${htmlKacis(s.ogrenciSik || "-")} (yanlış)</div>
+      ${s.soruGorseli ? `<img class="foyGorsel" src="${htmlKacis(s.soruGorseli)}" alt="Soru ${htmlKacis(s.no)}">` : ""}
+      <div class="foyCozum${s.soruGorseli ? " kisa" : ""}"></div>
+      <div class="foyOz"><span><span class="foyKutucuk"></span>Bu sefer doğru yaptım</span><span><span class="foyKutucuk"></span>Hâlâ zorlanıyorum</span></div>
+    </div>`;
+  }).join("");
+  let anahtar = hd.sorular.map(function(s, i){
+    return `<tr><td>${i + 1}</td><td>${htmlKacis(s.sinav)}</td><td>${htmlKacis(s.no)}</td><td>${htmlKacis(s.konu)}</td><td>${htmlKacis(s.ogrenciSik || "-")}</td><td class="dogruCvp">${htmlKacis(s.dogruSik)}</td></tr>`;
+  }).join("");
+  return `<div class="foy">
+    <div class="foyBas">${HD_LOGO_SVG}
+      <div><div class="foyMarka">FatihHoca | <span>UltraMat</span></div><div class="foyAltBaslik">MATEMATİK GELİŞİM ANALİZİ</div></div>
+      <div class="foyBaslikSag"><b>📝 Tekrar Çözüm Föyü</b><small>Hata Defteri</small></div>
+    </div>
+    <div class="foyBilgi"><span>Öğrenci: <b>${htmlKacis(son.isim || "")}</b></span><span>Sınıf: <b>${htmlKacis(son.sinif || "")}${son.sube ? ("-" + htmlKacis(son.sube)) : ""}</b></span>
+      <span>Hazırlanma: <b>${tarih}</b></span><span>Kapsam: <b>${hd.kapsam.map(htmlKacis).join(", ")}</b></span><span>Soru: <b>${hd.sorular.length}</b></span></div>
+    <div class="foyNasil"><b>Nasıl çalışmalı?</b> ${bulmaTalimati} bul ve çözüm alanında yeniden çöz.
+      <b>1. çözüm:</b> 2–3 gün içinde. <b>2. çözüm:</b> 1 hafta sonra, önceki çözümünü kapatarak. Her sorudan sonra kutucuklardan birini işaretle;
+      cevap anahtarına (son sayfa) ancak çözdükten sonra bak.${hd.tekrarKonular.length ? " 🔁 işaretli sorular birden fazla sınavda zorlandığın konulardan." : ""}</div>
+    <div class="foyIzgara">${kutular}</div>
+    <div class="foyAnahtar"><h3>🔑 Cevap Anahtarı</h3><p>Önce bütün soruları çöz, sonra kontrol et. Yine yanlış yaptıklarını Fatih Hoca'ya sor.</p>
+      <table class="foyTablo"><thead><tr><th>#</th><th>Sınav</th><th>Soru</th><th>Konu</th><th>İlk cevabın</th><th>Doğru cevap</th></tr></thead><tbody>${anahtar}</tbody></table>
+      ${hd.kalan ? `<p style="margin-top:8px">Bu föye sığmayan ${hd.kalan} soru, bir sonraki föyde yer alacak.</p>` : ""}
+      <div class="foyAlt">FATİHHOCA · ULTRAMAT</div></div>
+  </div>`;
+}
+
+function hataDefteriFoyunuYazdir(sinavlar){
+  let alan = document.getElementById("foyYazdirmaAlani");
+  alan.innerHTML = hataDefteriFoyuHtml(sinavlar);
+  let son = sinavlar[sinavlar.length - 1] || {};
+  let eskiBaslik = document.title;
+  document.title = "Hata-Defteri-" + String(son.isim || "Ogrenci").trim().replace(/\s+/g, "-");   // PDF dosya adı önerisi
+  document.body.classList.add("foyYazdiriliyor");
+  let bitir = function(){
+    document.body.classList.remove("foyYazdiriliyor");
+    document.title = eskiBaslik;
+    window.removeEventListener("afterprint", bitir);
+  };
+  window.addEventListener("afterprint", bitir);
+  // Görseller varsa yüklenmelerini kısa süre bekle (yazdırmada boş kutu çıkmasın)
+  let gorseller = Array.from(alan.querySelectorAll("img"));
+  Promise.all(gorseller.map(function(g){ return g.complete ? null : new Promise(function(c){ g.onload = g.onerror = c; setTimeout(c, 4000); }); }))
+    .then(function(){ window.print(); });
+}
+
+// ================= BAŞARI KARTI =================
+// Kutlanacak bir an varsa (yeni kişisel rekor, yeni rozet ya da net artışı) velinin tek dokunuşla indirip
+// paylaşabileceği 1080×1920 (hikâye boyutu) markalı bir görsel üretilir. Gizlilik: yalnızca ad ve soyadın
+// baş harfi; giriş kodu, sayfa adresi ve sıralama karta YAZILMAZ. Düşüşte düğme hiç görünmez.
+const BASARI_LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 131 119">
+<path d="M25.40 83.31 L24.10 81.44 L23.02 79.43 L22.07 77.36 L21.24 75.23 L20.52 73.06 L19.92 70.85 L19.43 68.61 L19.05 66.34 L18.79 64.06 L18.65 61.76 L18.62 59.46 L18.71 57.15 L18.91 54.85 L19.23 52.57 L19.66 50.29 L20.21 48.05 L20.87 45.83 L21.64 43.64 L22.52 41.50 L23.51 39.40 L24.60 37.35 L25.80 35.36 L27.09 33.43 L28.47 31.57 L29.95 29.77 L31.52 28.06 L33.17 26.42 L34.90 24.87 L36.70 23.40 L38.58 22.03 L40.52 20.75 L42.53 19.58 L44.59 18.50 L46.70 17.53 L48.85 16.66 L51.05 15.90 L53.28 15.26 L55.54 14.72 L57.83 14.31 L60.13 14.00 L62.44 13.81 L64.75 13.74 L67.07 13.78 L69.38 13.94 L71.68 14.21 L73.96 14.60 L76.21 15.10 L78.44 15.72 L80.63 16.44 L82.77 17.27 L84.88 18.21 L86.92 19.26 L88.92 20.40 L90.84 21.65 L92.70 22.99 L94.48 24.42 L96.18 25.95 L97.79 27.56 L99.29 29.27 L100.59 31.14 L100.06 31.60 L98.37 30.14 L96.72 28.67 L95.03 27.26 L93.29 25.93 L91.49 24.68 L89.64 23.52 L87.75 22.44 L85.80 21.46 L83.82 20.56 L81.80 19.77 L79.74 19.07 L77.66 18.47 L75.55 17.97 L73.42 17.58 L71.28 17.28 L69.13 17.09 L66.97 17.00 L64.81 17.02 L62.66 17.14 L60.52 17.36 L58.39 17.68 L56.28 18.10 L54.19 18.63 L52.13 19.25 L50.11 19.98 L48.12 20.80 L46.17 21.71 L44.27 22.71 L42.43 23.81 L40.63 24.99 L38.90 26.26 L37.22 27.60 L35.62 29.03 L34.08 30.53 L32.62 32.11 L31.23 33.75 L29.93 35.46 L28.70 37.23 L27.57 39.06 L26.52 40.94 L25.56 42.87 L24.70 44.85 L23.93 46.86 L23.25 48.92 L22.68 51.00 L22.21 53.11 L21.83 55.24 L21.56 57.39 L21.39 59.55 L21.33 61.72 L21.36 63.89 L21.50 66.06 L21.74 68.23 L22.09 70.38 L22.53 72.52 L23.07 74.64 L23.71 76.74 L24.43 78.82 L25.24 80.87 L26.01 82.97 Z" fill="#FE4D0E"/>
+<path d="M108 46.5 Q122 69 108 91.5" fill="none" stroke="#715FAC" stroke-width="2.3" stroke-dasharray="4 4" stroke-linecap="round"/>
+<line x1="36.5" y1="96" x2="107" y2="96" stroke="#1B1058" stroke-width="3"/>
+<line x1="36.5" y1="96" x2="102.3" y2="46.2" stroke="#1B1058" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="62.8" y1="55.2" x2="36.5" y2="96" stroke="#1B1058" stroke-width="2.9" stroke-linecap="round"/>
+<line x1="70.2" y1="55.2" x2="91.5" y2="88" stroke="#1B1058" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="66.5" cy="51" r="4.9" fill="none" stroke="#1B1058" stroke-width="3.1"/>
+<circle cx="66.5" cy="42.4" r="3.4" fill="#1B1058"/>
+<circle cx="36.5" cy="96" r="3.9" fill="#1B1058"/>
+<circle cx="107.6" cy="96" r="2.9" fill="#261263"/>
+<circle cx="108" cy="42.5" r="2.9" fill="#35156A"/>
+</svg>`;
+let basariKartiBlob = null;
+
+function kisaIsim(isim){
+  let p = String(isim || "").trim().split(/\s+/).filter(Boolean);
+  if(p.length <= 1) return p[0] || "";
+  return p.slice(0, -1).join(" ") + " " + p[p.length - 1].charAt(0).toLocaleUpperCase("tr-TR") + ".";
+}
+
+function basariKartiKonusu(sinavlar){
+  let son = sinavlar[sinavlar.length - 1]; if(!son) return null;
+  let onceki = sinavlar.slice(0, -1).map(function(x){ return sayi(x.net); }).filter(function(n){ return n !== null; });
+  let net = sayi(son.net);
+  let yeniRozetler = rozetleriHesapla(sinavlar).filter(function(r){ return r.yeni; });
+  // Net bir önceki sınava göre düştüyse kart önerilmez: kart neti büyük yazar ve veliyi zor bir anı
+  // paylaşmaya yönlendirmek istemiyoruz. (Yeni rozetler dolapta yine kutlanır.)
+  let oncekiNet = onceki.length ? onceki[onceki.length - 1] : null;
+  if(net !== null && oncekiNet !== null && net < oncekiNet) return null;
+  if(net !== null && sinavlar.length >= 3 && onceki.length && net > Math.max.apply(null, onceki))
+    return { emoji:"🎉", etiket:"YENİ KİŞİSEL REKOR", aciklama:"Şimdiye kadarki en yüksek net", yeniRozetler:yeniRozetler };
+  if(yeniRozetler.length)
+    return { emoji:"🏅", etiket:(yeniRozetler.length === 1 ? "YENİ ROZET" : (yeniRozetler.length + " YENİ ROZET")), aciklama:"Bu sınavda kazanıldı", yeniRozetler:yeniRozetler };
+  let onc = onceki.length ? onceki[onceki.length - 1] : null;
+  if(net !== null && onc !== null && net > onc){
+    let fark = Math.round((net - onc) * 100) / 100;
+    return { emoji:"📈", etiket:"+" + fark + " NET ARTIŞ", aciklama:"Bir önceki sınava göre", yeniRozetler:yeniRozetler };
+  }
+  return null;
+}
+
+// Üstteki kompakt şerit: yeni rozetler (yoksa son kazanılanlar), sayaç ve (kutlanacak bir an varsa) Paylaş.
+function rozetSeridiniCiz(sinavlar){
+  let serit = document.getElementById("rozetSeridi");
+  basariKartiBlob = null;
+  let rozetler = rozetleriHesapla(sinavlar);
+  let kazanilan = rozetler.filter(function(r){ return r.kazanildi; });
+  let yeniler = rozetler.filter(function(r){ return r.yeni; });
+  let gosterilen = (yeniler.length ? yeniler : kazanilan.slice(-3)).slice(0, 4);
+  let madalyalar = gosterilen.length
+    ? gosterilen.map(function(r, i){ return `<span class="seritMadalya" data-grup="${r.grup}" style="--sg:${i * 90}ms">${r.emoji}</span>`; }).join("")
+    : `<span class="seritMadalya bos">🏅</span>`;
+  let baslik = yeniler.length ? (yeniler.length === 1 ? "Yeni rozet kazandın!" : (yeniler.length + " yeni rozet kazandın!"))
+             : (kazanilan.length ? "Rozet dolabın" : "İlk rozetin seni bekliyor");
+  let konu = basariKartiKonusu(sinavlar);
+  serit.innerHTML = `<span class="seritMadalyalar">${madalyalar}</span>
+    <span class="seritMetin"><b>${baslik}</b><small>${kazanilan.length} / ${rozetler.length} rozet · Dolabı gör ↓</small></span>
+    ${konu ? `<button type="button" class="paylasTetik" id="paylasTetik" aria-label="Başarı kartını paylaş"><span class="paylasTetikIkon">📸</span><span class="paylasTetikYazi">Paylaş</span></button>` : ""}`;
+  serit.onclick = function(e){
+    if(e.target.closest("#paylasTetik")) return;
+    let hedef = document.getElementById("rozetBolumu");
+    if(hedef) hedef.scrollIntoView({ behavior:"smooth", block:"start" });
+  };
+  if(konu) document.getElementById("paylasTetik").addEventListener("click", function(){ basariKartiniAc(sinavlar, konu); });
+  serit.classList.remove("oyna");
+  sahneOlayiKaydet(serit, function(){ void serit.offsetWidth; serit.classList.add("oyna"); });
+}
+
+function gorselYukle(kaynak){
+  return new Promise(function(coz, reddet){ let g = new Image(); g.onload = function(){ coz(g); }; g.onerror = reddet; g.src = kaynak; });
+}
+
+function yuvarlakDikdortgen(c, x, y, w, h, r){
+  c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+}
+
+async function basariKartiCiz(sinavlar, konu){
+  const W = 1080, H = 1920, son = sinavlar[sinavlar.length - 1];
+  let tuval = document.createElement("canvas"); tuval.width = W; tuval.height = H;
+  let c = tuval.getContext("2d");
+  const YAZI = '"Segoe UI", Roboto, Arial, sans-serif';
+  let aralik = function(px){ if("letterSpacing" in c) c.letterSpacing = px + "px"; };
+
+  // Arka plan: sayfanın mor → turuncu geçişi ve yumuşak ışık lekeleri
+  let g = c.createLinearGradient(0, 0, W, H);
+  g.addColorStop(0, "#5B21B6"); g.addColorStop(.55, "#8B5CF6"); g.addColorStop(1, "#F97316");
+  c.fillStyle = g; c.fillRect(0, 0, W, H);
+  [[140, 260, 320, .10], [960, 520, 260, .08], [180, 1500, 380, .07], [900, 1780, 300, .10]].forEach(function(d){
+    c.beginPath(); c.arc(d[0], d[1], d[2], 0, Math.PI * 2); c.fillStyle = "rgba(255,255,255," + d[3] + ")"; c.fill();
+  });
+
+  // Marka: beyaz daire içinde logo + yazı
+  c.beginPath(); c.arc(W / 2, 250, 92, 0, Math.PI * 2); c.fillStyle = "#FFFFFF"; c.fill();
+  try{
+    let logo = await gorselYukle("data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(BASARI_LOGO_SVG))));
+    c.drawImage(logo, W / 2 - 70, 250 - 64, 140, 127);
+  }catch(e){}
+  c.textAlign = "center"; c.textBaseline = "alphabetic";
+  c.font = "900 64px " + YAZI; aralik(-1);
+  let s1 = "FatihHoca | ", s2 = "UltraMat", w1 = c.measureText(s1).width, w2 = c.measureText(s2).width;
+  c.textAlign = "left"; c.fillStyle = "#FFFFFF"; c.fillText(s1, W / 2 - (w1 + w2) / 2, 430);
+  c.fillStyle = "#FED7AA"; c.fillText(s2, W / 2 - (w1 + w2) / 2 + w1, 430);
+  c.textAlign = "center"; c.font = "700 26px " + YAZI; aralik(8); c.fillStyle = "rgba(255,255,255,.8)";
+  c.fillText("MATEMATİK GELİŞİM ANALİZİ", W / 2, 482);
+
+  // Kutlama etiketi
+  c.font = "900 40px " + YAZI; aralik(2);
+  let etiket = konu.emoji + "  " + konu.etiket, ew = c.measureText(etiket).width + 90;
+  yuvarlakDikdortgen(c, W / 2 - ew / 2, 560, ew, 92, 46); c.fillStyle = "#FFFFFF"; c.fill();
+  c.fillStyle = "#6D28D9"; c.fillText(etiket, W / 2, 621);
+
+  // Net halkası
+  let o = netHalkasiOrani(son), cx = W / 2, cy = 1000, r = 250;
+  c.lineWidth = 34; c.lineCap = "round";
+  c.beginPath(); c.arc(cx, cy, r, 0, Math.PI * 2); c.strokeStyle = "rgba(255,255,255,.22)"; c.stroke();
+  if(o.oran > 0){
+    c.save(); c.shadowColor = "rgba(255,255,255,.8)"; c.shadowBlur = 24;
+    c.beginPath(); c.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * o.oran); c.strokeStyle = "#FFFFFF"; c.stroke(); c.restore();
+  }
+  c.fillStyle = "#FFFFFF"; c.font = "900 170px " + YAZI; aralik(-4); c.fillText(String(son.net), cx, cy + 50);
+  c.font = "800 40px " + YAZI; aralik(10); c.fillText("NET", cx, cy + 118);
+  c.font = "600 30px " + YAZI; aralik(0); c.fillStyle = "rgba(255,255,255,.85)";
+  if(o.toplam) c.fillText(o.toplam + " soru üzerinden", cx, cy - 110);
+
+  // Öğrenci ve sınav
+  c.fillStyle = "#FFFFFF"; c.font = "900 58px " + YAZI; aralik(0);
+  c.fillText(kisaIsim(son.isim), W / 2, 1350);
+  c.font = "600 32px " + YAZI; c.fillStyle = "rgba(255,255,255,.85)";
+  c.fillText([son.sinav, sinavTarihiMetni(son)].filter(Boolean).join("  ·  "), W / 2, 1405);
+
+  // Alt bölüm: yeni rozetler (en fazla 4) ya da doğru/yanlış/boş
+  let kutuY = 1470, kutuH = 300;
+  yuvarlakDikdortgen(c, 70, kutuY, W - 140, kutuH, 40); c.fillStyle = "rgba(255,255,255,.14)"; c.fill();
+  let rozetler = (konu.yeniRozetler || []).slice(0, 4);
+  if(rozetler.length){
+    const RENK = { katilim:["#A78BFA","#7C3AED"], net:["#FDBA74","#F97316"], gelisim:["#6EE7B7","#10B981"], basari:["#FDE68A","#F59E0B"] };
+    let adim = (W - 140) / rozetler.length;
+    rozetler.forEach(function(rz, i){
+      let x = 70 + adim * i + adim / 2, y = kutuY + 118;
+      let rg = c.createLinearGradient(x - 70, y - 70, x + 70, y + 70);
+      rg.addColorStop(0, RENK[rz.grup][0]); rg.addColorStop(1, RENK[rz.grup][1]);
+      c.beginPath(); c.arc(x, y, 72, 0, Math.PI * 2); c.fillStyle = rg; c.fill();
+      c.lineWidth = 6; c.strokeStyle = "rgba(255,255,255,.9)"; c.stroke();
+      c.font = "76px " + YAZI; c.fillStyle = "#000"; c.textBaseline = "middle"; c.fillText(rz.emoji, x, y + 4); c.textBaseline = "alphabetic";
+      c.font = "800 " + (rozetler.length > 3 ? 27 : 31) + "px " + YAZI; c.fillStyle = "#FFFFFF";
+      // Uzun adlar (ör. "Ortalamanın Üstünde") komşu rozete taşmasın diye iki satıra bölünür
+      let kelimeler = String(rz.ad).split(" "), satirlar = [kelimeler.shift()];
+      kelimeler.forEach(function(k){
+        let deneme = satirlar[satirlar.length - 1] + " " + k;
+        if(c.measureText(deneme).width <= adim - 24) satirlar[satirlar.length - 1] = deneme; else satirlar.push(k);
+      });
+      satirlar.slice(0, 2).forEach(function(st, j){ c.fillText(st, x, kutuY + 240 + j * 32 - (satirlar.length > 1 ? 10 : 0)); });
+    });
+  } else {
+    let degerler = [["Doğru", son.dogru], ["Yanlış", son.yanlis], ["Boş", son.bos]], adim = (W - 140) / 3;
+    degerler.forEach(function(d, i){
+      let x = 70 + adim * i + adim / 2;
+      c.fillStyle = "#FFFFFF"; c.font = "900 96px " + YAZI; c.fillText(String(d[1] ?? "-"), x, kutuY + 160);
+      c.font = "700 32px " + YAZI; c.fillStyle = "rgba(255,255,255,.85)"; c.fillText(d[0], x, kutuY + 220);
+    });
+  }
+
+  // Alt imza
+  c.font = "700 28px " + YAZI; aralik(3); c.fillStyle = "rgba(255,255,255,.75)";
+  c.fillText("FATİHHOCA  ·  ULTRAMAT", W / 2, 1855);
+
+  return await new Promise(function(coz){ tuval.toBlob(coz, "image/png"); });
+}
+
+async function basariKartiniAc(sinavlar, konu){
+  let perde = document.getElementById("paylasPerde");
+  let gorsel = document.getElementById("paylasGorsel");
+  let paylasBtn = document.getElementById("paylasBtn");
+  gorsel.removeAttribute("src");
+  perde.classList.remove("hidden");
+  try{
+    basariKartiBlob = await basariKartiCiz(sinavlar, konu);
+    gorsel.src = URL.createObjectURL(basariKartiBlob);
+    let dosya = new File([basariKartiBlob], "UltraMat-Basari-Karti.png", { type:"image/png" });
+    let paylasilabilir = !!(navigator.canShare && navigator.canShare({ files:[dosya] }));
+    paylasBtn.style.display = paylasilabilir ? "" : "none";
+    // Paylaşım desteklenmiyorsa (ör. bilgisayar) İndir tek başına kalır ve ana düğme gibi görünür
+    paylasBtn.parentElement.classList.toggle("tekDugme", !paylasilabilir);
+  }catch(e){
+    console.error("[UltraMat] Başarı kartı oluşturulamadı:", e);
+    perde.classList.add("hidden");
+  }
+}
+
+function basariKartiniKapat(){ document.getElementById("paylasPerde").classList.add("hidden"); }
+
+document.getElementById("paylasKapat").addEventListener("click", basariKartiniKapat);
+document.getElementById("paylasPerde").addEventListener("click", function(e){ if(e.target === this) basariKartiniKapat(); });
+document.addEventListener("keydown", function(e){ if(e.key === "Escape") basariKartiniKapat(); });
+document.getElementById("paylasBtn").addEventListener("click", async function(){
+  if(!basariKartiBlob) return;
+  let dosya = new File([basariKartiBlob], "UltraMat-Basari-Karti.png", { type:"image/png" });
+  try{ await navigator.share({ files:[dosya], title:"Başarı Kartı", text:"FatihHoca | UltraMat ile matematik yolculuğu 📈" }); }
+  catch(e){ if(e && e.name !== "AbortError") console.error("[UltraMat] Paylaşım:", e); }
+});
+document.getElementById("indirBtn").addEventListener("click", function(){
+  if(!basariKartiBlob) return;
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(basariKartiBlob); a.download = "UltraMat-Basari-Karti.png";
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+// Grafik ekrana geldiğinde baştan, noktadan noktaya çizilir.
+function grafigiYenidenOynat(){
+  if(!chartNesnesi) return;
+  chartNesnesi.$oynatma = (chartNesnesi.$oynatma || 0) + 1;
+  chartNesnesi.$animBitti = false;
+  let nabiz = document.getElementById("sonNoktaNabiz");
+  if(nabiz) nabiz.classList.remove("aktif");
+  chartNesnesi.reset();
+  chartNesnesi.update();
+}
+
 function sayiyiAnimasyonluYaz(elementId, hedefDeger, sure){
   let el = document.getElementById(elementId);
   if(!el) return;
@@ -1543,6 +2483,8 @@ try{
 
 function showResult(data){
 
+sahneyiSifirla();   // önceki sonuç ekranından kalan animasyon olaylarını ve konfetiyi temizle
+
 // Sıra sunucudan geliyor: Code.gs sınavları tarihe göre dizer, tarihi boş/okunamayan sınavı "en yeni" sayar.
 // Burada yeniden sıralamak (örn. tarihe bakarak) son sınavı yanlış seçtirebilir; ayrıntılı analiz son sıradaki kayıttadır.
 sonGelenVeri = data.slice();
@@ -1585,11 +2527,20 @@ bolumuGuvenliCiz("Sunucu uyumluluğu", null, function(){
   }
 });
 
-sayiyiAnimasyonluYaz("scoreArea", last.net, 900);
-sayiyiAnimasyonluYaz("correctArea", last.dogru, 700);
-sayiyiAnimasyonluYaz("wrongArea", last.yanlis, 700);
-sayiyiAnimasyonluYaz("emptyArea", last.bos, 700);
-sayiyiAnimasyonluYaz("netArea", last.net, 900);
+// Sinematik açılış: sayılar ve net halkası, kendi kartları ekranda belirdiği anda başlar.
+["scoreArea","correctArea","wrongArea","emptyArea","netArea"].forEach(function(id){ document.getElementById(id).innerText = "0"; });
+netHalkasiniSifirla(last);
+sahneOlayiKaydet(document.querySelector(".scoreCard"), function(){
+  netHalkasiniOynat(last);
+  sayiyiAnimasyonluYaz("scoreArea", last.net, 1200);
+});
+sahneOlayiKaydet(document.querySelector(".stats"), function(){
+  sayiyiAnimasyonluYaz("correctArea", last.dogru, 800);
+  sayiyiAnimasyonluYaz("wrongArea", last.yanlis, 800);
+  sayiyiAnimasyonluYaz("emptyArea", last.bos, 800);
+  sayiyiAnimasyonluYaz("netArea", last.net, 1000);
+});
+sahneOlayiKaydet(document.querySelector(".chartBox"), grafigiYenidenOynat);
 
 // ---- 2) BÖLÜMLER — her biri kendi korumasıyla; biri çökerse diğerleri çizilmeye devam eder ----
 
@@ -1604,8 +2555,17 @@ bolumuGuvenliCiz("Kişisel rekor", null, function(){
     if(oncekiNetler.length > 0){
       let oncekiEnYuksekNet = Math.max(...oncekiNetler);
       if(Number(last.net) > oncekiEnYuksekNet){
-        rekorAlani.innerHTML = `<div class="rekorRozeti">🎉 Yeni Kişisel Rekorun! Şimdiye kadarki en yüksek netin.</div>`;
-        konfetiPatlat();
+        // Koreografi: rozet ve konfeti, net halkası dolup sayı yerine oturduğu anda gelir.
+        sahneOlayiKaydet(document.querySelector(".scoreCard"), function(){
+          let benimNo = sahneNo;
+          setTimeout(function(){
+            if(benimNo !== sahneNo) return;   // bu arada başka bir sonuca geçildiyse gösterme
+            rekorAlani.innerHTML = `<div class="rekorRozeti">🎉 Yeni Kişisel Rekorun! Şimdiye kadarki en yüksek netin.</div>`;
+            konfetiPatlat();
+            // Android'de kısa, hafif bir titreşim (iPhone tarayıcıları desteklemez; orada sessizce atlanır)
+            try{ if(navigator.vibrate) navigator.vibrate([30, 60, 45]); }catch(e){}
+          }, 1150);
+        });
       }
     }
   }
@@ -1630,7 +2590,16 @@ bolumuGuvenliCiz("Net değişimi", null, function(){
 });
 
 bolumuGuvenliCiz("Geçmiş sınavlar", "historyArea", function(){ showHistory(sonGelenVeri); });
-bolumuGuvenliCiz("Gelişim grafiği", "chartHataArea", function(){ createChart(sonGelenVeri); });
+bolumuGuvenliCiz("Rozet dolabı", "rozetAlani", function(){ rozetDolabiniCiz(sonGelenVeri); });
+bolumuGuvenliCiz("Rozet şeridi", "rozetSeridi", function(){ rozetSeridiniCiz(sonGelenVeri); });
+bolumuGuvenliCiz("Gelişim grafiği", "chartHataArea", function(){
+  try{ createChart(sonGelenVeri); }
+  catch(err){   // çizim beklenmedik bir hatayla yarıda kalırsa da boş kutu bırakma; not bolumuGuvenliCiz'den gelir
+    let kutu = document.querySelector(".chartBox");
+    if(kutu) kutu.classList.add("hidden");
+    throw err;
+  }
+});
 
 bolumuGuvenliCiz("Analiz ve not", "analysisArea", function(){
   document.getElementById("analysisArea").innerText = last.narratif || "Bu sınav için henüz bir analiz metni oluşturulamadı.";
@@ -1653,6 +2622,10 @@ konuAnaliziniGuvenliCiz();
 
 bolumuGuvenliCiz("Çalışma planı", "planArea", function(){ createCalismaPlani(last); });
 bolumuGuvenliCiz("Çeldirici analizi", "distractorArea", function(){ createDistractorAnalysis(last); });
+bolumuGuvenliCiz("Hata defteri", "hataDefteriAlani", function(){ hataDefteriniCiz(sonGelenVeri); });
+bolumuGuvenliCiz("Açılır başlıklar", null, acilirBasliklariSigdir);   // kart görünür olduğu için artık ölçülebilir
+sahneyiBaslat();   // bölümler ekrana girdikçe sırayla belirsin (sinematik açılış)
+bolumuGuvenliCiz("Okuma takibi", null, function(){ okumaTakibiniBaslat(last.oturum); });
 
 }
 
@@ -1711,11 +2684,16 @@ function showHistory(data){
 function createChart(data){
   let chartHataAlani = document.getElementById("chartHataArea");
   chartHataAlani.innerHTML = "";
+  // Grafik kutusu varsayılan olarak görünür (başka bir öğrencide gizlenmiş olabilir); grafik
+  // çizilemezse aşağıda gizlenir ki not, üstünde boş bir kutu olmadan başlığın hemen altında dursun.
+  let grafikKutusu = document.getElementById("progressChart").closest(".chartBox");
+  if(grafikKutusu) grafikKutusu.classList.remove("hidden");
 
   // Grafik kütüphanesi (Chart.js) internetten yüklenir; yüklenemediyse grafik alanı eskiden
   // sessizce boş kalıyordu. Artık kısa bir not çıkıyor — Geçmiş Sınavlarım listesi aynı bilgiyi veriyor.
   if(!window.Chart){
     console.error("[UltraMat] Chart.js yüklenemedi; gelişim grafiği çizilmedi.");
+    if(grafikKutusu) grafikKutusu.classList.add("hidden");   // boş kutu yerine yalnızca not görünsün
     chartHataAlani.innerHTML = `<div class="bolumHataKutusu">⚠️ Grafik şu an yüklenemedi. Netlerinin sınav sınav listesini aşağıdaki "Geçmiş Sınavlarım" bölümünde görebilirsin.</div>`;
     return;
   }
@@ -1727,22 +2705,83 @@ function createChart(data){
 
   if(chartNesnesi){ chartNesnesi.destroy(); }
 
+  // En yüksek net yıldızla işaretlenir (en az 2 sınav varsa); son sınav noktası nabız gibi atar.
+  let enYuksekIdx = -1, sonIdx = -1;
+  values.forEach(function(v, i){
+    if(v === null) return;
+    sonIdx = i;
+    if(enYuksekIdx === -1 || v >= values[enYuksekIdx]) enYuksekIdx = i;
+  });
+  let yildizVar = values.filter(function(v){ return v !== null; }).length >= 2;
+  let noktaStili = values.map(function(v, i){ return (yildizVar && i === enYuksekIdx) ? "star" : "circle"; });
+  let noktaBoyu = values.map(function(v, i){ return (yildizVar && i === enYuksekIdx) ? 11 : 6; });
+
+  // Kendini çizme: her nokta bir öncekinin ardından, soldan sağa belirir.
+  let cizimSuresi = 1300, adimSuresi = cizimSuresi / Math.max(values.length, 1);
+  function oncekiY(c){
+    if(c.index === 0) return c.chart.scales.y.getPixelForValue(c.chart.scales.y.min);
+    let onceki = c.chart.getDatasetMeta(c.datasetIndex).data[c.index - 1];
+    return onceki ? onceki.getProps(["y"], true).y : c.chart.scales.y.getPixelForValue(c.chart.scales.y.min);
+  }
+  function adimGecikmesi(eksen){
+    return function(c){
+      if(c.type !== "data") return 0;
+      let anahtar = "_" + eksen + (c.chart.$oynatma || 0);
+      if(c[anahtar]) return 0;
+      c[anahtar] = true;
+      return c.index * adimSuresi;
+    };
+  }
+  let nabizEklentisi = {
+    id: "sonNoktaNabiz",
+    afterDraw: function(ch){
+      let nabiz = document.getElementById("sonNoktaNabiz");
+      if(!nabiz || sonIdx < 0) return;
+      let nokta = ch.getDatasetMeta(0).data[sonIdx];
+      if(!nokta) return;
+      let tuval = ch.canvas;
+      nabiz.style.left = (tuval.offsetLeft + nokta.x) + "px";
+      nabiz.style.top = (tuval.offsetTop + nokta.y) + "px";
+      nabiz.classList.toggle("aktif", !!ch.$animBitti);
+    }
+  };
+
   chartNesnesi = new Chart(ctx,{
     type:"line",
+    plugins:[nabizEklentisi],
     data:{
       labels:labels,
       datasets:[{
         label:"Net",
         data:values,
         borderColor:"#8B5CF6",
-        backgroundColor:"#F97316",
+        backgroundColor:function(c){
+          let alan = c.chart.chartArea;
+          if(!alan) return "rgba(139,92,246,.15)";
+          let g = c.chart.ctx.createLinearGradient(0, alan.top, 0, alan.bottom);
+          g.addColorStop(0, "rgba(139,92,246,.28)");
+          g.addColorStop(1, "rgba(139,92,246,0)");
+          return g;
+        },
+        fill:true,
+        pointBackgroundColor:"#F97316",
+        pointBorderColor:"#8B5CF6",
+        pointStyle:noktaStili,
+        pointRadius:noktaBoyu,
+        pointHoverRadius:noktaBoyu.map(function(r){ return r + 2; }),
         borderWidth:4,
-        pointRadius:6,
         spanGaps:true,
         tension:.4
       }]
     },
     options:{
+      animation:{
+        onComplete: function(a){ if(!a.chart.$animBitti){ a.chart.$animBitti = true; a.chart.draw(); } }
+      },
+      animations:{
+        x:{ type:"number", easing:"linear", duration:adimSuresi, from:NaN, delay:adimGecikmesi("x") },
+        y:{ type:"number", easing:"linear", duration:adimSuresi, from:oncekiY, delay:adimGecikmesi("y") }
+      },
       // Sayı biçimi: Chart.js dil belirtilmezse cihazın dilini kullanır; Türkçe telefonda grafikte
       // "12,67" çıkarken sayfanın geri kalanı, karne ve analiz metinleri "12.67" yazıyordu.
       // Sistem genelinde nokta kullanıldığı için grafik de noktaya sabitleniyor.
@@ -1935,8 +2974,8 @@ function createDistractorAnalysis(data) {
         <tr>
           <th>Soru</th>
           <th>Konu</th>
-          <th>Doğru Şık</th>
-          <th>Seçilen</th>
+          <th>Doğru<span class="thUzun"> Şık</span></th>
+          <th><span class="thUzun">Seçilen</span><span class="thKisa">Cevap</span></th>
           <th>Durum</th>
         </tr>
       </thead>
@@ -2052,6 +3091,8 @@ document.getElementById("studentNameInput").addEventListener("keydown", function
 });
 
 document.getElementById("backToLoginBtn").addEventListener("click", function(){
+  okumaTakibiniBitir();   // o ana kadarki süre ve okuma bildirilir
+  sahneyiSifirla();
   if(chartNesnesi){ chartNesnesi.destroy(); chartNesnesi = null; }
   sonGelenVeri = null;
   document.getElementById("resultCard").classList.add("hidden");
@@ -2062,13 +3103,20 @@ document.getElementById("backToLoginBtn").addEventListener("click", function(){
   document.getElementById("studentNameInput").focus();
 });
 
+// Açılır başlıkların ipucu iki parçadır: yazı ("Detayları Göster ") ve ok ("▾"). Telefonda yalnızca ok
+// görünür (CSS), bu yüzden ikisi ayrı güncellenir.
+function ipucuGuncelle(ipucu, metin, ok){
+  ipucu.querySelector(".ipucuMetin").textContent = metin;
+  ipucu.querySelector(".ipucuOk").textContent = ok;
+}
+
 // Soru Bazlı Çeldirici Analizi: varsayılan kapalı, tıklayınca açılıp kapanıyor
 document.getElementById("distractorToggle").addEventListener("click", function(){
   let alan = document.getElementById("distractorArea");
   let ipucu = document.getElementById("distractorToggleHint");
   let acikMi = !alan.classList.contains("hidden");
   alan.classList.toggle("hidden");
-  ipucu.textContent = acikMi ? "Detayları Göster ▾" : "Detayları Gizle ▴";
+  ipucuGuncelle(ipucu, acikMi ? "Detayları Göster " : "Detayları Gizle ", acikMi ? "▾" : "▴");
 });
 
 // Nasıl Değerlendiriyoruz?: aynı açılır/kapanır davranış
@@ -2077,7 +3125,7 @@ document.getElementById("metodolojiToggle").addEventListener("click", function()
   let ipucu = document.getElementById("metodolojiToggleHint");
   let acikMi = !alan.classList.contains("hidden");
   alan.classList.toggle("hidden");
-  ipucu.textContent = acikMi ? "Göster ▾" : "Gizle ▴";
+  ipucuGuncelle(ipucu, acikMi ? "Göster " : "Gizle ", acikMi ? "▾" : "▴");
 });
 
 // Üst bölüm (başlık, alt başlık, slogan) her ekranda TEK SATIR görünsün diye:
@@ -2112,13 +3160,36 @@ function ustBolumuTekSatiraSigdir(){
     }
   });
 }
+// Açılır başlıklar (Soru Bazlı Çeldirici Analizi, Nasıl Değerlendiriyoruz?) için aynı güvence: başlık
+// yazısı sağdaki ipucuyla birlikte tek satıra sığmıyorsa (yalnızca çok dar ekranlarda, ör. 320px)
+// sığacak kadar küçültülür; sığıyorsa 18px aynen kalır. Sonuç kartı gizliyken ölçüm yapılamadığı
+// için sonuç ekranı açıldığında da çağrılır.
+function acilirBasliklariSigdir(){
+  ["distractorToggle","metodolojiToggle"].forEach(function(id){
+    let dugme = document.getElementById(id);
+    if(!dugme || dugme.clientWidth === 0) return;
+    let yazi = dugme.querySelector("span:not(.titleToggleHint):not(.ipucuMetin):not(.ipucuOk)");
+    let ipucu = dugme.querySelector(".titleToggleHint");
+    if(!yazi || !ipucu) return;
+    yazi.style.fontSize = "";
+    yazi.style.whiteSpace = "nowrap";
+    let bosAlan = dugme.clientWidth - ipucu.getBoundingClientRect().width - 10;   // 10 = başlık ile ipucu arası boşluk
+    let genislik = yazi.getBoundingClientRect().width;
+    if(genislik > bosAlan){
+      let yeniBoyut = Math.floor(parseFloat(getComputedStyle(yazi).fontSize) * bosAlan / genislik * 10) / 10 - 0.3;
+      if(yeniBoyut >= 14){ yazi.style.fontSize = yeniBoyut + "px"; }
+      else { yazi.style.fontSize = "14px"; yazi.style.whiteSpace = ""; }
+    }
+  });
+}
+
 ustBolumuTekSatiraSigdir();
 if(document.fonts && document.fonts.ready) document.fonts.ready.then(ustBolumuTekSatiraSigdir);
 let ustBolumSigdirmaBekleyen = false;
 window.addEventListener("resize", function(){   // telefon yan çevrilince ya da pencere boyutu değişince
   if(ustBolumSigdirmaBekleyen) return;
   ustBolumSigdirmaBekleyen = true;
-  requestAnimationFrame(function(){ ustBolumSigdirmaBekleyen = false; ustBolumuTekSatiraSigdir(); });
+  requestAnimationFrame(function(){ ustBolumSigdirmaBekleyen = false; ustBolumuTekSatiraSigdir(); acilirBasliklariSigdir(); });
 });
 
 </script>
