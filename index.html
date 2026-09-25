@@ -9,8 +9,10 @@
 
 <!-- ===== Bağlantı önizlemesi (WhatsApp vb.), arama motoru ve ikon ayarları =====
      WhatsApp, bağlantı yapıştırıldığında bu etiketleri okuyup mesajın içine bir önizleme kartı koyar.
-     og:image, bu sayfayla AYNI klasöre yüklenen onizleme.png dosyasını gösterir (1200×630, ~30 KB).
-     Görseli değiştirirsen dosya adını da değiştir (ör. onizleme2.png) — WhatsApp eski görseli önbellekte tutar. -->
+     og:image, bu sayfayla AYNI klasöre yüklenen onizleme-v3.jpg dosyasını gösterir (1200×630, ~85 KB).
+     v3: WhatsApp kartı çoğunlukla KÜÇÜK (kare, ortadan kırpılmış) gösterdiği için logo ve yazı görselin ortasındaki
+     630×630 karede; kenarlardaki renkli şeritler yalnızca büyük kartta görünür. Dosya adı değişti ki WhatsApp eski
+     görseli önbellekten göstermesin (görsel yine değişirse adı onizleme-v4.jpg gibi yeniden değiştirilmeli). -->
 <meta name="description" content="Öğrencimizin sınavlarına ait detaylı içerik analizlerine buradan ulaşabilirsiniz.">
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#FFF7ED">
@@ -20,8 +22,8 @@
 <meta property="og:title" content="FatihHoca | UltraMat">
 <meta property="og:description" content="Öğrencimizin sınavlarına ait detaylı içerik analizlerine buradan ulaşabilirsiniz.">
 <meta property="og:url" content="https://fatihhocaultramath.github.io/sonuc/">
-<meta property="og:image" content="https://fatihhocaultramath.github.io/sonuc/onizleme.png">
-<meta property="og:image:type" content="image/png">
+<meta property="og:image" content="https://fatihhocaultramath.github.io/sonuc/onizleme-v3.jpg">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="FatihHoca | UltraMat — Matematik Gelişim Analizi">
@@ -331,6 +333,11 @@ vertical-align:-2px;
 animation:spin .8s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
+/* Sorgu sürerken durum düğmenin kendisinde görünür (karne-uret ile aynı desen): parmağın/gözün olduğu yer. */
+#submitBtn:disabled{cursor:wait;opacity:.92;}
+#submitBtn .spin{display:inline-block;width:15px;height:15px;border:2.5px solid rgba(255,255,255,.45);border-top-color:#fff;
+  border-radius:50%;margin-right:9px;vertical-align:-2px;animation:spin .8s linear infinite;}
+@media (prefers-reduced-motion:reduce){ #submitBtn .spin, .loading .spin{animation-duration:2.4s;} }
 
 .errorBox{
 background:#FEF2F2;
@@ -499,10 +506,19 @@ linear-gradient(135deg,var(--purple),var(--orange));
 
 /* ================= ROZET ŞERİDİ (üstte, kompakt) =================
    Net kartı ve istatistiklerin hemen altında tek satır: yeni rozetlerin madalyaları, sayaç ve Paylaş düğmesi.
-   Şeride dokununca sayfa, aşağıdaki tam Rozet Dolabı'na kayar. */
-.rozetSeridi{display:grid;grid-template-columns:1fr auto;grid-template-areas:"madalya paylas" "metin metin";align-items:center;
+   Altında gösterilen rozetlerin adı/nerede kazanıldığı ve sıradaki rozet yazar (v2: aşağı kaydırma kaldırıldı). */
+.rozetSeridi{display:grid;grid-template-columns:1fr auto;grid-template-areas:"madalya paylas" "metin metin" "bilgi bilgi";align-items:center;
   row-gap:9px;column-gap:10px;margin:14px 0 6px;padding:12px 14px;border-radius:18px;
-  background:#FFF7ED;border:1px solid #FDE7CF;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+  background:#FFF7ED;border:1px solid #FDE7CF;}
+/* v2: şerit artık dokununca aşağıya (dolaba) kaydırmaz; rozetlerin ne olduğu hemen altında yazar */
+.seritBilgi{grid-area:bilgi;display:flex;flex-direction:column;gap:6px;border-top:1px dashed #FDE7CF;padding-top:9px;}
+.seritBilgiSatir{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.35;color:#475569;font-weight:600;}
+.seritBilgiSatir .sbEmoji{flex:0 0 22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.seritBilgiSatir b{color:var(--dark);font-weight:900;}
+.seritBilgiSatir .sbYeni{display:inline-block;background:linear-gradient(90deg,#F97316,#EC4899);color:#fff;font-size:9.5px;font-weight:900;
+  padding:1px 6px;border-radius:999px;margin-left:4px;vertical-align:1px;}
+.seritBilgiSatir.hedef{color:#64748B;}
+.seritBilgiSatir.hedef .sbEmoji{background:#E2E8F0;filter:grayscale(1);}
 .rozetSeridi .seritMadalyalar{grid-area:madalya;}
 .rozetSeridi .paylasTetik{grid-area:paylas;min-width:max-content;white-space:nowrap;}   /* yazı asla kırpılmaz */
 .rozetSeridi:empty{display:none;}
@@ -670,55 +686,52 @@ font-weight:950;
 
 
 
-.stats{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:12px;
-
-}
+.stats{display:block;}
 
 
 
-.stat{
-
-background:#FFF7ED;
-
-border:1px solid #FED7AA;
-
-border-radius:18px;
-
-padding:15px;
-
-text-align:center;
-
-}
-
-
-
-.stat small{
-
-color:#475569;
-
-}
-
-
-
-.stat strong{
-
-display:block;
-
-font-size:24px;
-
-color:var(--dark);
-
-margin-top:5px;
-
-}
-
-
+/* ===== Sonuç kutuları (v2: anlamına göre renk, tekrar eden Net kutusu kaldırıldı) ===== */
+.dybKutular{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.dybKutu{position:relative;border-radius:18px;padding:14px 6px 12px;text-align:center;border:1px solid;}
+.dybKutu strong{display:block;font-size:28px;font-weight:900;line-height:1.05;font-variant-numeric:tabular-nums;}
+.dybKutu small{display:block;font-size:12.5px;font-weight:800;margin-top:3px;}
+.dybIkon{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;
+  font-size:13px;font-weight:900;color:#fff;margin-bottom:6px;}
+.dybKutu.dogru{background:#F0FDF4;border-color:#BBF7D0;color:#15803D;}
+.dybKutu.dogru .dybIkon{background:#22C55E;}
+.dybKutu.yanlis{background:#FEF2F2;border-color:#FECACA;color:#B91C1C;}
+.dybKutu.yanlis .dybIkon{background:#EF4444;}
+.dybKutu.bos{background:#F8FAFC;border-color:#E2E8F0;color:#475569;}
+.dybKutu.bos .dybIkon{background:#94A3B8;}
+.dybSerit{display:flex;gap:3px;height:10px;margin:10px 2px 0;border-radius:999px;overflow:hidden;background:#F1F5F9;}
+.dybSerit span{display:block;height:100%;width:0;transition:width .9s cubic-bezier(.22,1,.36,1);}
+.dybSerit span:first-child{border-radius:999px 0 0 999px;}
+.dybSerit span:last-child{border-radius:0 999px 999px 0;}
+.dybSerit .d{background:#22C55E;} .dybSerit .y{background:#EF4444;} .dybSerit .b{background:#CBD5E1;}
+.durumKutular{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.durumKutu{border-radius:18px;padding:13px 8px 12px;text-align:center;border:1px solid;display:flex;flex-direction:column;align-items:center;}
+.durumKutu > small{font-size:12.5px;font-weight:800;}
+.durumDeger{display:flex;align-items:baseline;justify-content:center;gap:4px;margin-top:4px;min-height:34px;}
+.durumKutu strong{font-size:26px;font-weight:900;line-height:1.1;}
+.durumAlt{font-size:11.5px;font-weight:800;margin-top:4px;min-height:14px;}
+.durumKutu.sira{background:#F5F3FF;border-color:#DDD6FE;color:#6D28D9;}
+.durumKutu.sira strong{color:#3B0764;}
+#participationArea{font-size:14px;font-weight:800;color:#7C3AED;}
+.siraKatilim{display:block;font-weight:700;color:#7C3AED;}
+.siraDilim{display:inline-block;margin-top:4px;background:#EDE9FE;color:#5B21B6;border-radius:999px;padding:2px 8px;font-weight:900;}
+.durumKutu.basari{background:#F1F5F9;border-color:#E2E8F0;color:#475569;}
+.durumKutu.basari strong{font-size:19px;align-self:center;}
+.durumKutu.basari .durumDeger{align-items:center;}
+.basariIkon{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:12px;color:#fff;flex-shrink:0;}
+.basariIkon:empty{display:none;}
+.katilimNotu{margin-top:10px;background:#FFFBEB;border:1px solid #FDE68A;color:#92400E;font-size:11.5px;font-weight:700;
+  line-height:1.45;border-radius:12px;padding:8px 11px;text-align:left;}
+.katilimNotu:empty{display:none;}
+.katilimNotu::before{content:"ⓘ ";font-weight:900;}
+.netTrendCip{display:inline-block;margin-top:12px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.2);
+  font-size:12.5px;font-weight:800;color:#fff;}
+.netTrendCip:empty{display:none;}
+@media (max-width:345px){ .dybKutu strong{font-size:24px;} .durumKutu strong{font-size:22px;} .durumKutu.basari strong{font-size:16px;} }
 
 .title{
 
@@ -933,6 +946,34 @@ color:#94A3B8;
 .altKazanimAdi{color:var(--dark);font-weight:600;}
 .altKazanimYuzde{font-weight:800;white-space:nowrap;}
 
+/* ===== İÇERİK ANALİZİ — karne-uret'teki karnenin "İçerik Analizi" biçimiyle aynı =====
+   Sütun başlığı; her içerik çerçevesi: renkli ikon + ad + oran + çubuk; altında içerikler alt alta
+   (ad · ince çubuk · oran), %50 ve altı kırmızı, %50–90 mavi, %90+ yeşil zeminli. */
+.icColHeader{display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:1px;color:#64748B;font-weight:800;
+  margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #F1F5F9;}
+.icSatir{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid #F5F3FF;}
+.icSatir:first-of-type{border-top:none;padding-top:2px;}
+.icIkon{width:30px;height:30px;border-radius:50%;color:#fff;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.icGovde{flex:1;min-width:0;}
+.icUst{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:14px;font-weight:800;color:var(--dark);margin-bottom:5px;}
+.icUst .icAd{min-width:0;}
+.icOran{font-weight:900;white-space:nowrap;}
+.icMeta{font-size:11px;font-weight:600;color:#64748B;margin-top:5px;line-height:1.4;}
+.icMeta .uyari{color:#92400E;}
+.icSurekli{display:inline-block;background:#FEE2E2;color:#B91C1C;font-size:9.5px;font-weight:800;padding:2px 6px;border-radius:7px;margin-left:5px;vertical-align:2px;}
+.icAltListe{margin-top:7px;}
+.icAltSatir{display:flex;align-items:center;gap:10px;font-size:11.5px;font-weight:600;color:#475569;line-height:1.25;
+  margin:3px 0 0 -6px;padding:3px 6px;border-radius:6px;}
+.icAltSatir.zayif{background:#FEF2F2;border-left:3px solid #FCA5A5;}
+.icAltSatir.orta{background:#EFF6FF;border-left:3px solid #93C5FD;}
+.icAltSatir.guclu{background:#F0FDF4;border-left:3px solid #86EFAC;}
+.icAltAd{flex:0 0 46%;min-width:0;}
+.icAltBar{flex:1;height:5px;background:#E2E8F0;border-radius:4px;overflow:hidden;display:block;}
+.icAltBar .progressBar{display:block;border-radius:4px;min-width:4px;}
+.icAltOran{flex:0 0 42px;text-align:right;font-weight:800;}
+@media (max-width:360px){ .icAltAd{flex-basis:50%;} }
+/* Az veride olası aralık: dolu çubukla karışmasın diye taralı ve soluk */
+.icSatir .progressAralik{background:repeating-linear-gradient(135deg,rgba(100,116,139,.22) 0 4px,transparent 4px 8px);}
 /* Konu görünüm anahtarı (Bu Sınav / Genel) */
 .viewToggle{
   display:flex;
@@ -1211,7 +1252,7 @@ SONUÇLARINI GÖR
 
 <div id="loading" class="loading hidden" role="status" aria-live="polite">
 
-<span class="spin"></span>Sonuçlar getiriliyor...
+Sunucu her zamankinden yavaş yanıt veriyor. Sayfayı kapatmadan birkaç saniye daha bekle.
 
 </div>
 
@@ -1254,6 +1295,7 @@ SON SINAV NETİ
 <div class="netHalkaAlt" id="netHalkaAlt"></div>
 </div>
 </div>
+<div class="netTrendCip" id="netTrendArea"></div>
 
 
 </div>
@@ -1262,46 +1304,30 @@ SON SINAV NETİ
 
 <div class="stats">
 
-<div class="stat">
-<small>Doğru</small>
-<strong id="correctArea">-</strong>
-</div>
+  <!-- Doğru / Yanlış / Boş: anlamına göre renkli üç kutu + altında dağılım şeridi -->
+  <div class="dybKutular">
+    <div class="dybKutu dogru"><span class="dybIkon" aria-hidden="true">✓</span><strong id="correctArea">-</strong><small>Doğru</small></div>
+    <div class="dybKutu yanlis"><span class="dybIkon" aria-hidden="true">✕</span><strong id="wrongArea">-</strong><small>Yanlış</small></div>
+    <div class="dybKutu bos"><span class="dybIkon" aria-hidden="true">○</span><strong id="emptyArea">-</strong><small>Boş</small></div>
+  </div>
+  <div class="dybSerit" id="dybSerit" role="img" aria-label="Doğru, yanlış ve boş dağılımı">
+    <span class="d" id="dybSeritDogru"></span><span class="y" id="dybSeritYanlis"></span><span class="b" id="dybSeritBos"></span>
+  </div>
 
-
-<div class="stat">
-<small>Yanlış</small>
-<strong id="wrongArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Boş</small>
-<strong id="emptyArea">-</strong>
-</div>
-
-
-<div class="stat">
-<small>Net</small>
-<strong id="netArea">-</strong>
-<div id="netTrendArea" style="font-size:10px;font-weight:800;margin-top:4px;"></div>
-</div>
-
-<div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Sıralama</small>
-  <strong id="rankArea" style="color: #581C87; font-size: 22px; font-weight: 900; margin-top: 4px;">-</strong>
-  <div id="rankPercentileArea" style="font-size:10.5px;font-weight:800;color:#7C3AED;margin-top:2px;"></div>
-</div>
-
-<div class="stat" style="background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Başarı Durumu</small>
-  <strong id="successArea" style="color: #581C87; font-size: 18px; font-weight: 900; margin-top: 6px;">-</strong>
-</div>
-
-<div class="stat" style="grid-column: span 2; background: #F3E8FF; border-color: #D8B4FE; padding: 12px 8px; text-align: center;">
-  <small style="color: #6B21A8; font-size: 13px; font-weight: 700;">Toplam Katılım</small>
-  <strong id="participationArea" style="color: #581C87; font-size: 20px; font-weight: 900; margin-top: 4px;">-</strong>
-  <div id="katilimNotuArea" style="font-size:10.5px;font-weight:700;color:#92400E;margin-top:4px;"></div>
-</div>
+  <!-- Sıralama (katılım bilgisiyle birlikte) + Başarı durumu (karne ile aynı renk dili) -->
+  <div class="durumKutular">
+    <div class="durumKutu sira">
+      <small>Sıralama</small>
+      <div class="durumDeger"><strong id="rankArea">-</strong><span id="participationArea"></span></div>
+      <div class="durumAlt" id="rankPercentileArea"></div>
+    </div>
+    <div class="durumKutu basari" id="successBox">
+      <small>Başarı Durumu</small>
+      <div class="durumDeger"><span class="basariIkon" id="successIcon" aria-hidden="true"></span><strong id="successArea">-</strong></div>
+      <div class="durumAlt" id="successNote"></div>
+    </div>
+  </div>
+  <div class="katilimNotu" id="katilimNotuArea"></div>
 
 </div>
 
@@ -1345,7 +1371,7 @@ Not hazırlanıyor...
 
 
 <div class="title">
-📚 Konu Analizi &amp; Eksik Takibi
+📚 İçerik Analizi
 </div>
 <div id="enGucluArea"></div>
 
@@ -1356,7 +1382,7 @@ Not hazırlanıyor...
 
 <div class="note" id="topicAnalysis" style="background:transparent;border:none;padding:0;">
 
-Konu analizi hazırlanıyor...
+İçerik analizi hazırlanıyor...
 
 </div>
 
@@ -1937,15 +1963,19 @@ function hataDefteriniCiz(sinavlar){
   document.getElementById("hdFoyDugmesi").addEventListener("click", function(){ hataDefteriFoyunuYazdir(sinavlar); });
 }
 
+function foyBulmaTalimati(gorselliSayi, toplam){
+  return !gorselliSayi ? "Soruları ilgili sınavın kitapçığından (sınav adı ve soru numarasıyla)"
+    : gorselliSayi === toplam ? "Soruları föydeki görsellerden"
+    : "Görseli olan soruları föyden, diğerlerini ilgili sınavın kitapçığından (sınav adı ve soru numarasıyla)";
+}
+
 function hataDefteriFoyuHtml(sinavlar){
   let hd = hataDefteriHazirla(sinavlar);
   let son = sinavlar[sinavlar.length - 1] || {};
   let bugun = new Date();
   let tarih = String(bugun.getDate()).padStart(2, "0") + "." + String(bugun.getMonth() + 1).padStart(2, "0") + "." + bugun.getFullYear();
   let gorselliSayi = hd.sorular.filter(function(s){ return s.soruGorseli; }).length;
-  let bulmaTalimati = !gorselliSayi ? "Soruları ilgili sınavın kitapçığından (sınav adı ve soru numarasıyla)"
-    : gorselliSayi === hd.sorular.length ? "Soruları föydeki görsellerden"
-    : "Görseli olan soruları föyden, diğerlerini ilgili sınavın kitapçığından (sınav adı ve soru numarasıyla)";
+  let bulmaTalimati = foyBulmaTalimati(gorselliSayi, hd.sorular.length);
   let kutular = hd.sorular.map(function(s, i){
     return `<div class="foySoru">
       <div class="foySoruUst"><span class="foySoruNo">${i + 1}</span><b>${htmlKacis(s.sinav)} · Soru ${htmlKacis(s.no)}</b>${s.tekrar ? '<span class="foyTekrar">🔁 tekrarlayan konu</span>' : ""}</div>
@@ -1966,7 +1996,7 @@ function hataDefteriFoyuHtml(sinavlar){
     </div>
     <div class="foyBilgi"><span>Öğrenci: <b>${htmlKacis(son.isim || "")}</b></span><span>Sınıf: <b>${htmlKacis(son.sinif || "")}${son.sube ? ("-" + htmlKacis(son.sube)) : ""}</b></span>
       <span>Hazırlanma: <b>${tarih}</b></span><span>Kapsam: <b>${hd.kapsam.map(htmlKacis).join(", ")}</b></span><span>Soru: <b>${hd.sorular.length}</b></span></div>
-    <div class="foyNasil"><b>Nasıl çalışmalı?</b> ${bulmaTalimati} bul ve çözüm alanında yeniden çöz.
+    <div class="foyNasil"><b>Nasıl çalışmalı?</b> <span class="foyBulma">${bulmaTalimati}</span> bul ve çözüm alanında yeniden çöz.
       <b>1. çözüm:</b> 2–3 gün içinde. <b>2. çözüm:</b> 1 hafta sonra, önceki çözümünü kapatarak. Her sorudan sonra kutucuklardan birini işaretle;
       cevap anahtarına (son sayfa) ancak çözdükten sonra bak.${hd.tekrarKonular.length ? " 🔁 işaretli sorular birden fazla sınavda zorlandığın konulardan." : ""}</div>
     <div class="foyIzgara">${kutular}</div>
@@ -1990,10 +2020,25 @@ function hataDefteriFoyunuYazdir(sinavlar){
     window.removeEventListener("afterprint", bitir);
   };
   window.addEventListener("afterprint", bitir);
-  // Görseller varsa yüklenmelerini kısa süre bekle (yazdırmada boş kutu çıkmasın)
-  let gorseller = Array.from(alan.querySelectorAll("img"));
+  // Görsellerin yüklenmesini kısa süre bekle (yazdırmada boş kutu çıkmasın). AÇILAMAYAN görsel (çoğunlukla Drive
+  // paylaşımı kapalı) föyde kırık resim simgesi olarak basılmasın: o soru görselsiz (kitapçık referansı + tam boy
+  // çözüm alanı) kalır, "nasıl çalışmalı" talimatı da kalan görsel sayısına göre yeniden yazılır.
+  let gorseller = Array.from(alan.querySelectorAll("img.foyGorsel"));
   Promise.all(gorseller.map(function(g){ return g.complete ? null : new Promise(function(c){ g.onload = g.onerror = c; setTimeout(c, 4000); }); }))
-    .then(function(){ window.print(); });
+    .then(function(){
+      let acilmayan = gorseller.filter(function(g){ return !(g.complete && g.naturalWidth > 0); });
+      if(acilmayan.length){
+        console.warn("[UltraMat] Açılamayan soru görselleri föye kitapçık referansıyla basıldı:", acilmayan.map(function(g){ return g.getAttribute("src"); }));
+        acilmayan.forEach(function(g){
+          let cozum = g.parentNode && g.parentNode.querySelector(".foyCozum");
+          if(cozum) cozum.classList.remove("kisa");
+          g.remove();
+        });
+        let bulma = alan.querySelector(".foyBulma");
+        if(bulma) bulma.textContent = foyBulmaTalimati(gorseller.length - acilmayan.length, alan.querySelectorAll(".foySoru").length);
+      }
+      window.print();
+    });
 }
 
 // ================= BAŞARI KARTI =================
@@ -2053,17 +2098,22 @@ function rozetSeridiniCiz(sinavlar){
   let madalyalar = gosterilen.length
     ? gosterilen.map(function(r, i){ return `<span class="seritMadalya" data-grup="${r.grup}" style="--sg:${i * 90}ms">${r.emoji}</span>`; }).join("")
     : `<span class="seritMadalya bos">🏅</span>`;
+  // Gösterilen her rozetin adı ve nerede kazanıldığı; ardından sıradaki (kilitli) rozetin nasıl kazanılacağı.
+  let GRUP_RENK = { katilim:"linear-gradient(145deg,#A78BFA,#7C3AED)", net:"linear-gradient(145deg,#FDBA74,#F97316)",
+                    gelisim:"linear-gradient(145deg,#6EE7B7,#10B981)", basari:"linear-gradient(145deg,#FDE68A,#F59E0B)" };
+  let siradaki = rozetler.find(function(r){ return !r.kazanildi; });
+  let bilgiSatirlari = gosterilen.map(function(r){
+    return `<div class="seritBilgiSatir"><span class="sbEmoji" style="background:${GRUP_RENK[r.grup] || "#E2E8F0"}">${r.emoji}</span>
+      <span><b>${htmlKacis(r.ad)}</b>${r.yeni ? '<span class="sbYeni">YENİ</span>' : ""} · <span style="white-space:nowrap">${htmlKacis(r.kazanilanSinav || "")}</span> sınavında kazanıldı</span></div>`;
+  }).join("") + (siradaki ? `<div class="seritBilgiSatir hedef"><span class="sbEmoji">${siradaki.emoji}</span>
+      <span>Sıradaki rozet: <b>${htmlKacis(siradaki.ad)}</b> · ${htmlKacis(siradaki.sart)}</span></div>` : "");
   let baslik = yeniler.length ? (yeniler.length === 1 ? "Yeni rozet kazandın!" : (yeniler.length + " yeni rozet kazandın!"))
              : (kazanilan.length ? "Rozet dolabın" : "İlk rozetin seni bekliyor");
   let konu = basariKartiKonusu(sinavlar);
   serit.innerHTML = `<span class="seritMadalyalar">${madalyalar}</span>
-    <span class="seritMetin"><b>${baslik}</b><small>${kazanilan.length} / ${rozetler.length} rozet · Dolabı gör ↓</small></span>
-    ${konu ? `<button type="button" class="paylasTetik" id="paylasTetik" aria-label="Başarı kartını paylaş"><span class="paylasTetikIkon">📸</span><span class="paylasTetikYazi">Paylaş</span></button>` : ""}`;
-  serit.onclick = function(e){
-    if(e.target.closest("#paylasTetik")) return;
-    let hedef = document.getElementById("rozetBolumu");
-    if(hedef) hedef.scrollIntoView({ behavior:"smooth", block:"start" });
-  };
+    <span class="seritMetin"><b>${baslik}</b><small>${kazanilan.length} / ${rozetler.length} rozet kazanıldı</small></span>
+    ${konu ? `<button type="button" class="paylasTetik" id="paylasTetik" aria-label="Başarı kartını paylaş"><span class="paylasTetikIkon">📸</span><span class="paylasTetikYazi">Paylaş</span></button>` : ""}
+    <div class="seritBilgi">${bilgiSatirlari}</div>`;
   if(konu) document.getElementById("paylasTetik").addEventListener("click", function(){ basariKartiniAc(sinavlar, konu); });
   serit.classList.remove("oyna");
   sahneOlayiKaydet(serit, function(){ void serit.offsetWidth; serit.classList.add("oyna"); });
@@ -2220,6 +2270,35 @@ function grafigiYenidenOynat(){
   chartNesnesi.update();
 }
 
+// Başarı durumu kutusu, karne-uret'teki rozetle AYNI renk dilini kullanır (yazan ifadeye göre): Mükemmel yeşil,
+// Çok İyi mavi, İyi amber, Geliştirilmeli kırmızı. Tanınmayan bir etiket gelirse nötr gri kalır.
+const BASARI_RENK = {
+  "Mükemmel":       { bg:"#ECFDF5", kenar:"#A7F3D0", fg:"#16A34A", ikon:"★", not:"Harika bir sonuç" },
+  "Çok İyi":        { bg:"#EFF6FF", kenar:"#BFDBFE", fg:"#2563EB", ikon:"✓", not:"Güçlü bir sonuç" },
+  "İyi":            { bg:"#FFFBEB", kenar:"#FDE68A", fg:"#92400E", ikon:"✓", not:"Doğru yoldasın" },
+  "Geliştirilmeli": { bg:"#FEF2F2", kenar:"#FECACA", fg:"#B91C1C", ikon:"↑", not:"Çalışma planı aşağıda" }
+};
+function basariKutusunuBoya(etiket){
+  let r = BASARI_RENK[etiket];
+  let kutu = document.getElementById("successBox"), ikon = document.getElementById("successIcon");
+  document.getElementById("successArea").innerText = etiket || "-";
+  kutu.style.background = r ? r.bg : ""; kutu.style.borderColor = r ? r.kenar : ""; kutu.style.color = r ? r.fg : "";
+  document.getElementById("successArea").style.color = r ? r.fg : "";
+  ikon.innerText = r ? r.ikon : ""; ikon.style.background = r ? r.fg : "";
+  document.getElementById("successNote").innerText = r ? r.not : "";
+}
+function dybSeridiniSifirla(){
+  ["dybSeritDogru","dybSeritYanlis","dybSeritBos"].forEach(function(id){ let e = document.getElementById(id); e.style.transition = "none"; e.style.width = "0"; e.getBoundingClientRect(); e.style.transition = ""; });
+}
+function dybSeridiniOynat(kayit){
+  let d = Number(kayit.dogru) || 0, y = Number(kayit.yanlis) || 0, b = Number(kayit.bos) || 0, t = d + y + b;
+  if(!t) return;
+  document.getElementById("dybSeritDogru").style.width = (d / t * 100) + "%";
+  document.getElementById("dybSeritYanlis").style.width = (y / t * 100) + "%";
+  document.getElementById("dybSeritBos").style.width = (b / t * 100) + "%";
+  document.getElementById("dybSerit").setAttribute("aria-label", d + " doğru, " + y + " yanlış, " + b + " boş");
+}
+
 function sayiyiAnimasyonluYaz(elementId, hedefDeger, sure){
   let el = document.getElementById(elementId);
   if(!el) return;
@@ -2293,10 +2372,23 @@ function konuIkon(konu){
   return "Σ";
 }
 
+// Sorgu sürerken düğmenin YAZISI değişir ("Sonuçların hazırlanıyor…" + dönen simge). Düğmenin altındaki satır
+// (#loading) yalnızca yanıt YAVAS_YANIT_MS'yi aşarsa "sayfayı kapatma" uyarısı olarak çıkar; hızlı yanıtta hiç görünmez.
+const YAVAS_YANIT_MS = 6000;
+let yavasYanitZamanlayici = null, submitBtnMetni = null;
 function setLoading(durum){
   sorguSuruyor = durum;
-  document.getElementById("loading").classList.toggle("hidden", !durum);
-  document.getElementById("submitBtn").disabled = durum;
+  let dugme = document.getElementById("submitBtn"), yavas = document.getElementById("loading");
+  if(submitBtnMetni === null) submitBtnMetni = dugme.innerHTML;
+  clearTimeout(yavasYanitZamanlayici);
+  yavas.classList.add("hidden");
+  if(durum){
+    dugme.innerHTML = '<span class="spin" aria-hidden="true"></span>Sonuçların hazırlanıyor…';
+    yavasYanitZamanlayici = setTimeout(function(){ if(sorguSuruyor) yavas.classList.remove("hidden"); }, YAVAS_YANIT_MS);
+  }else{
+    dugme.innerHTML = submitBtnMetni;
+  }
+  dugme.disabled = durum;
   // Sorgu sürerken ad/kod kutuları da kilitlenir: yanıt beklenirken bilgiler değiştirilip
   // ikinci bir istek başlatılamasın. (Mobilde kilitlenen kutu klavyeyi de kapatır.)
   document.getElementById("studentNameInput").disabled = durum;
@@ -2503,9 +2595,10 @@ let t = sinavTarihiMetni(last);
 document.getElementById("examArea").innerText = last.sinav + (t ? (" | " + t) : "");
 
 document.getElementById("rankArea").innerText = last.sira ? (last.sira + ".") : "-";
-document.getElementById("rankPercentileArea").innerText = last.yuzdelikDilim ? ("İlk %" + last.yuzdelikDilim) : "";
-document.getElementById("successArea").innerText = last.basari || "-";
-document.getElementById("participationArea").innerText = last.katilim ? (last.katilim + " Öğrenci") : "-";
+document.getElementById("participationArea").innerText = (last.sira && last.katilim) ? ("/ " + last.katilim) : "";
+document.getElementById("rankPercentileArea").innerHTML = (last.katilim ? `<span class="siraKatilim">${htmlKacis(last.katilim)} öğrenci içinde</span>` : "") +
+  (last.yuzdelikDilim ? `<span class="siraDilim">İlk %${htmlKacis(last.yuzdelikDilim)}</span>` : "");
+basariKutusunuBoya(last.basari);
 document.getElementById("katilimNotuArea").innerText = last.katilimNotu || "";
 
 // Temel bilgiler hazır — artık sonuç kartına geçilebilir. (Grafik, görünür bir kutuda
@@ -2528,7 +2621,8 @@ bolumuGuvenliCiz("Sunucu uyumluluğu", null, function(){
 });
 
 // Sinematik açılış: sayılar ve net halkası, kendi kartları ekranda belirdiği anda başlar.
-["scoreArea","correctArea","wrongArea","emptyArea","netArea"].forEach(function(id){ document.getElementById(id).innerText = "0"; });
+["scoreArea","correctArea","wrongArea","emptyArea"].forEach(function(id){ document.getElementById(id).innerText = "0"; });
+dybSeridiniSifirla();
 netHalkasiniSifirla(last);
 sahneOlayiKaydet(document.querySelector(".scoreCard"), function(){
   netHalkasiniOynat(last);
@@ -2538,7 +2632,7 @@ sahneOlayiKaydet(document.querySelector(".stats"), function(){
   sayiyiAnimasyonluYaz("correctArea", last.dogru, 800);
   sayiyiAnimasyonluYaz("wrongArea", last.yanlis, 800);
   sayiyiAnimasyonluYaz("emptyArea", last.bos, 800);
-  sayiyiAnimasyonluYaz("netArea", last.net, 1000);
+  dybSeridiniOynat(last);
 });
 sahneOlayiKaydet(document.querySelector(".chartBox"), grafigiYenidenOynat);
 
@@ -2574,16 +2668,10 @@ bolumuGuvenliCiz("Kişisel rekor", null, function(){
 bolumuGuvenliCiz("Net değişimi", null, function(){
   let trendEl = document.getElementById("netTrendArea");
   if(last.netTrend !== undefined && last.netTrend !== null){
-    if(last.netTrend > 0){
-      trendEl.style.color = "#16A34A";
-      trendEl.innerText = "▲ Önceki sınava göre " + last.netTrend + " artış";
-    } else if(last.netTrend < 0){
-      trendEl.style.color = "#DC2626";
-      trendEl.innerText = "▼ Önceki sınava göre " + Math.abs(last.netTrend) + " azalış";
-    } else {
-      trendEl.style.color = "#94A3B8";
-      trendEl.innerText = "— Önceki sınavla aynı";
-    }
+    // Net halkasının altında, beyaz yazılı yarı saydam hap (renkli arka plan üstünde okunur kalsın diye renk yok)
+    if(last.netTrend > 0) trendEl.innerText = "▲ Önceki sınava göre +" + last.netTrend + " net";
+    else if(last.netTrend < 0) trendEl.innerText = "▼ Önceki sınava göre " + Math.abs(last.netTrend) + " net az";
+    else trendEl.innerText = "— Önceki sınavla aynı net";
   } else {
     trendEl.innerText = "";
   }
@@ -2817,10 +2905,10 @@ function renderKonuAnalizi(){
   let enGuclu, enGucluEtiket;
   if(konuGorunumModu === "kumulatif"){
     enGuclu = window._enGucluKonu;
-    enGucluEtiket = "En güçlü konu (geçmiş sınavlar genelinde)";
+    enGucluEtiket = "En güçlü içerik çerçevesi (geçmiş sınavlar genelinde)";
   } else {
     enGuclu = enGucluKonuBulClient(window._sonSinavKonular);
-    enGucluEtiket = "En güçlü konu (bu sınavda)";
+    enGucluEtiket = "En güçlü içerik çerçevesi (bu sınavda)";
   }
 
   let rozetHtml = "";
@@ -2828,78 +2916,62 @@ function renderKonuAnalizi(){
     rozetHtml += `<div class="enGucluRozet">★ ${enGucluEtiket}: <b>${htmlKacis(enGuclu.konu)}</b> (%${enGuclu.yuzde}${guvenBadge(enGuclu.guven)})</div>`;
   }
   if(konuGorunumModu === "kumulatif" && enGelisen){
-    rozetHtml += `<div class="enGelisenRozet">📈 En çok gelişme gösteren konu: <b>${htmlKacis(enGelisen.konu)}</b> (bu sınavla birlikte +${enGelisen.degisim} puan, şu an %${enGelisen.yuzde}${guvenBadge(enGelisen.guven)})</div>`;
+    rozetHtml += `<div class="enGelisenRozet">📈 En çok gelişen içerik çerçevesi: <b>${htmlKacis(enGelisen.konu)}</b> (bu sınavla birlikte +${enGelisen.degisim} puan, şu an %${enGelisen.yuzde}${guvenBadge(enGelisen.guven)})</div>`;
   }
   document.getElementById("enGucluArea").innerHTML = rozetHtml;
 
   if(!kaynak || kaynak.length === 0){
-    document.getElementById("topicAnalysis").innerHTML = "<div class='note'>Bu görünüm için konu verisi bulunamadı.</div>";
+    document.getElementById("topicAnalysis").innerHTML = "<div class='note'>Bu görünüm için içerik verisi bulunamadı.</div>";
     return;
   }
 
   let sirali = kaynak.slice().sort((a,b) => a.yuzde - b.yuzde);
-  let html = "";
+  // Sütun başlığı ve satır biçimi karne-uret'teki karnenin "İçerik Analizi" bölümüyle aynı.
+  let html = `<div class="icColHeader"><span>İÇERİK ÇERÇEVESİ / İÇERİK</span><span>BAŞARI ORANI</span></div>`;
 
   sirali.forEach(k => {
     let renk = performansRengi(k.yuzde);
-    let surekliHtml = k.surekliZayif ? `<span class="topicSurekliZayif">⚠ Sürekli Zayıf</span>` : "";
-    let sinifOrtHtml = (k.sinifOrtalamaYuzde !== undefined && k.sinifOrtalamaYuzde !== null)
-      ? `<div class="topicSub topicSinifOrt">Sınıf Ort. %${k.sinifOrtalamaYuzde}</div>` : "";
+    let surekliHtml = k.surekliZayif ? `<span class="icSurekli">⚠ Sürekli Zayıf</span>` : "";
 
-    // İstatistiksel aralık/n= gösterimi yerine, veli/öğrencinin doğrudan anlayacağı düz bir
-    // cümle: kaç soruya dayandığını ve bunun henüz kesinleşmediğini anlatır. Yeterli veri
-    // varsa (yüksek güven) hiçbir uyarı gösterilmez, çünkü o zaman zaten netleşmiş demektir.
-    let dusukVeriHtml = "";
-    if(k.guven === 'düşük'){
-      dusukVeriHtml = `<div class="topicSub" style="color:#92400E;">Bu sonuç sadece ${k.soruSayisi} soruya dayanıyor, henüz kesinleşmedi.</div>`;
-    } else if(k.guven === 'orta'){
-      dusukVeriHtml = `<div class="topicSub" style="color:#92400E;">Bu sonuç ${k.soruSayisi} soruya dayanıyor, veri arttıkça netleşecek.</div>`;
-    }
+    // Sınıf ortalaması ve "kaç soruya dayanıyor" notu tek bir kısa satırda (yüksek güvende not yok). Güven rozeti
+    // satırda ayrıca gösterilmez: aynı bilgiyi bu cümle düz Türkçeyle veriyor (karnedeki sade biçim korunur).
+    let meta = [];
+    if(k.sinifOrtalamaYuzde !== undefined && k.sinifOrtalamaYuzde !== null) meta.push(`Sınıf ort. %${k.sinifOrtalamaYuzde}`);
+    if(k.guven === 'düşük') meta.push(`<span class="uyari">${k.soruSayisi} soruya dayanıyor, henüz kesinleşmedi</span>`);
+    else if(k.guven === 'orta') meta.push(`<span class="uyari">${k.soruSayisi} soruya dayanıyor, veri arttıkça netleşecek</span>`);
+    let metaHtml = meta.length ? `<div class="icMeta">${meta.join(" · ")}</div>` : "";
 
-    // Çubuğun üzerindeki hafif gölgeli bölge, gerçek başarının şu an için hangi aralıkta
-    // olabileceğini SAYI YAZMADAN, sadece görsel olarak gösterir — az veri varken bunu
-    // göstermek anlamlı, yeterli veri varsa (aralık zaten dar) göstermeye gerek yok.
+    // Çubuğun üzerindeki hafif gölgeli bölge: az veride gerçek başarının olabileceği aralık (sayı yazmadan).
     let aralikBarHtml = "";
     if((k.guven === 'düşük' || k.guven === 'orta') && k.aralikAlt !== undefined && k.aralikAlt !== null){
       aralikBarHtml = `<div class="progressAralik" style="left:${k.aralikAlt}%;width:${Math.max(1,k.aralikUst-k.aralikAlt)}%;" title="Gerçek başarı, verinin azlığı nedeniyle bu aralıkta herhangi bir yerde olabilir"></div>`;
     }
 
-    // Konu geniş/az sayıdaysa bile, altındaki bölümler (varsa) burada tek tek görünür —
-    // en zayıf bölüm en üstte. Veri yoksa (alt kazanım sütunu girilmemiş ya da bu konuda
-    // hiç kullanılmamış) altKazanimlar boş dizi gelir ve burası hiçbir şey basmaz. Her satırın
-    // zemini performansRengi ile aynı üç eşiğe göre boyanır — karne-uret.html'deki karne kartıyla
-    // aynı mantık (bkz. .altKazanimRow.zayif/.orta/.guclu).
-    let altKazanimHtml = "";
+    // İçerikler (Soru_Haritasi "İçerik" sütunu): alt alta, en zayıf üstte; ad · ince çubuk · oran.
+    let altHtml = "";
     if(k.altKazanimlar && k.altKazanimlar.length > 0){
-      let satirlar = k.altKazanimlar.map(ak => {
-        let akRenk = performansRengi(ak.yuzde);
-        let akGuvenEtiket = (ak.guven === 'yüksek') ? "" : guvenBadge(ak.guven);
-        let akSeviye = ak.yuzde <= 50 ? "zayif" : (ak.yuzde >= 90 ? "guclu" : "orta");
-        return `
-          <div class="altKazanimRow ${akSeviye}">
-            <span class="altKazanimAdi">${htmlKacis(ak.altKazanim)}</span>
-            <span class="altKazanimYuzde" style="color:${akRenk}">%${ak.yuzde}${akGuvenEtiket}</span>
-          </div>
-        `;
-      }).join("");
-      altKazanimHtml = `<div class="altKazanimListesi"><div class="altKazanimBaslik">Bölümler</div>${satirlar}</div>`;
+      let liste = k.altKazanimlar.map(ak => ({ ad: ak.altKazanim, yuzde: (typeof ak.yuzde === "number") ? ak.yuzde
+        : (ak.soruSayisi ? Math.round(ak.dogruSayisi / ak.soruSayisi * 1000) / 10 : 0) }))
+        .sort((x, y) => x.yuzde - y.yuzde);
+      altHtml = `<div class="icAltListe">` + liste.map(ak => {
+        let r = performansRengi(ak.yuzde), seviye = ak.yuzde <= 50 ? "zayif" : (ak.yuzde >= 90 ? "guclu" : "orta");
+        return `<div class="icAltSatir ${seviye}"><span class="icAltAd">${htmlKacis(ak.ad)}</span>
+          <span class="icAltBar"><span class="progressBar" style="width:0%;background:${r}" data-hedef-genislik="${ak.yuzde}"></span></span>
+          <span class="icAltOran" style="color:${r}">%${ak.yuzde}</span></div>`;
+      }).join("") + `</div>`;
     }
 
     html += `
-      <div class="topicItem">
-        <div class="topicIcon" style="background:${renk}">${konuIkon(k.konu)}</div>
-        <div class="topicBody">
-          <div class="topicTitle">
-            <span>${htmlKacis(k.konu)}${surekliHtml}</span>
-            <span style="color:${renk}">%${k.yuzde} ${guvenBadge(k.guven)}</span>
-          </div>
+      <div class="icSatir">
+        <div class="icIkon" style="background:${renk}">${konuIkon(k.konu)}</div>
+        <div class="icGovde">
+          <div class="icUst"><span class="icAd">${htmlKacis(k.konu)}${surekliHtml}</span><span class="icOran" style="color:${renk}">%${k.yuzde}</span></div>
           <div class="progress">
             ${aralikBarHtml}
             <div class="progressBar" style="width:0%;background:${renk};" data-hedef-genislik="${k.yuzde}"></div>
           </div>
-          ${sinifOrtHtml}
-          ${dusukVeriHtml}
-          ${altKazanimHtml}
+          ${metaHtml}
+          ${altHtml}
         </div>
       </div>
     `;
