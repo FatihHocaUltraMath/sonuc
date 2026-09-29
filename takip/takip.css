@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.1)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.2)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -105,7 +105,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;}
 .durum-hata button{background:var(--red-acik);color:var(--red);}
 .durumAlt{max-width:640px;margin:2px auto 0;font-size:11.5px;color:var(--gray);font-weight:400;}
 
-/* ---- Bölüm (henüz yapılmadı) ekranı ---- */
+/* ---- Bölüm başlıkları ---- */
 .geriDugme{border:none;background:none;color:var(--purple);font-weight:800;font-size:15px;padding:8px 2px;cursor:pointer;min-height:44px;}
 .bolumBaslik{margin:4px 0 12px;font-size:19px;font-weight:800;color:var(--dark);}
 
@@ -113,6 +113,98 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;}
 .altBaglantilar{display:flex;justify-content:center;gap:18px;margin-top:18px;}
 .altBaglantilar button{border:none;background:none;color:var(--gray);font-size:13px;text-decoration:underline;cursor:pointer;min-height:40px;}
 .surumBilgi{text-align:center;font-size:10.5px;color:#CBD5E1;margin-top:8px;}
+
+/* ================= Aşama 1: ödev takibi ================= */
+body.kaydetVar{padding-bottom:calc(150px + env(safe-area-inset-bottom));}
+.altBilgi{font-size:13px;color:var(--gray);margin:0 0 12px;line-height:1.45;}
+.merkez{text-align:center;}
+.bosluk{height:8px;}
+.ikinciDugme{width:100%;min-height:48px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:700;font-size:14px;color:var(--dark);cursor:pointer;}
+.baglantiDugme{border:none;background:none;color:var(--purple);font-weight:700;font-size:13.5px;padding:6px 0;min-height:40px;cursor:pointer;}
+.tehlikeBaglanti{border:none;background:none;color:var(--red);font-weight:700;font-size:13.5px;padding:10px 0;min-height:44px;cursor:pointer;}
+.kayitliNot{display:block;color:var(--purple);font-weight:700;}
+.dugmeSatir{display:grid;gap:8px;margin-top:16px;}
+
+/* ödev listesi */
+.grupBaslik{font-size:12.5px;font-weight:800;color:var(--gray);margin:16px 4px 8px;}
+.odevKart{width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:8px;display:block;cursor:pointer;}
+.odevKart.bekliyor{border-left:5px solid var(--orange);}
+.odevKart.kontrollu{border-left:5px solid var(--green);}
+.odevKart:active{transform:scale(.99);}
+.odevUst{display:flex;justify-content:space-between;gap:8px;align-items:baseline;}
+.odevAd{font-size:15.5px;font-weight:800;color:var(--dark);min-width:0;overflow-wrap:anywhere;}
+.odevTarih{font-size:12px;color:var(--gray);white-space:nowrap;}
+.odevKonu{font-size:12.5px;color:var(--gray);margin-top:2px;}
+.odevDurum{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;font-size:12.5px;font-weight:700;}
+.rozet{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:999px;background:#F1F5F9;}
+.rozet.b{background:var(--amber-acik);color:var(--amber);}
+.rozet.tas{background:var(--purple-acik);color:var(--dark);}
+.kart.bos{font-size:13.5px;color:var(--gray);text-align:center;padding:18px 8px;margin-top:12px;}
+.ipucu.merkez{text-align:center;}
+
+/* form */
+label.alan{display:block;font-size:13px;font-weight:700;color:var(--dark);margin:12px 0 6px;}
+label.alan:first-child{margin-top:0;}
+.girdi{width:100%;min-height:48px;padding:0 12px;border:1.5px solid var(--line);border-radius:12px;font-size:16px;background:#fff;color:var(--text);}
+textarea.girdi{padding:10px 12px;min-height:80px;resize:vertical;margin-top:4px;}
+.girdi:focus{outline:none;border-color:var(--purple);}
+.girdi.hatali{border-color:var(--red);}
+.cipler{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.cip{border:1px solid var(--line);background:#F1F5F9;border-radius:999px;padding:6px 12px;font-size:13px;min-height:36px;cursor:pointer;}
+.konuNot{font-size:12px;color:var(--gray);margin-top:5px;}
+
+/* hızlı kontrol */
+.tumuDugme{width:100%;min-height:56px;border:2px solid var(--green);background:var(--green-acik);color:#14532D;border-radius:14px;font-weight:800;font-size:15.5px;cursor:pointer;}
+.tumuDugme:disabled{opacity:.45;}
+.lejant{display:flex;justify-content:flex-end;gap:4px;font-size:10.5px;color:var(--gray);padding:0 8px 4px;}
+.lejant span{width:44px;text-align:center;}
+.ogrListe{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+.ogrSatir{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border-top:1px solid var(--line);min-height:58px;}
+.ogrSatir:first-child{border-top:none;}
+.ogrSatir.istisna{background:#FFFBF5;}
+.ogrAd{flex:1;min-width:0;font-size:14.5px;font-weight:700;color:var(--dark);line-height:1.25;overflow-wrap:anywhere;}
+.ogrAd small{display:block;font-weight:600;font-size:11.5px;color:var(--gray);}
+.ogrAd small.degisti{color:var(--purple);}
+.segment{display:flex;gap:4px;flex:0 0 auto;}
+.seg{width:44px;height:44px;border-radius:11px;border:1.5px solid var(--line);background:#fff;font-size:19px;line-height:1;opacity:.55;filter:grayscale(.6);cursor:pointer;padding:0;}
+.seg.secili{opacity:1;filter:none;}
+.seg.secili.T{background:var(--green-acik);border-color:var(--green);}
+.seg.secili.E{background:var(--amber-acik);border-color:#F59E0B;}
+.seg.secili.Y{background:var(--red-acik);border-color:var(--red);}
+.seg.secili.M{background:#F1F5F9;border-color:#94A3B8;}
+.kaydetCubugu{position:fixed;left:0;right:0;bottom:calc(49px + env(safe-area-inset-bottom));z-index:6;padding:8px 14px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);}
+.kaydetIc{max-width:640px;margin:0 auto;display:flex;gap:10px;align-items:center;}
+.sayac{flex:1;font-size:12.5px;font-weight:700;line-height:1.5;display:flex;flex-wrap:wrap;gap:2px 8px;}
+.sayac .bosSayi{color:var(--amber);}
+.kaydetIc .anaDugme{width:auto;flex:0 0 auto;padding:0 18px;min-height:48px;}
+
+/* özet */
+.ozetKart{margin-top:8px;}
+.ozetBaslik{display:flex;gap:10px;align-items:center;}
+.ozetBaslik .bolumBaslik{margin:0;}
+.ozetBaslik .altBilgi{margin:0;}
+.ozetBaslik .tik{width:40px;height:40px;border-radius:50%;background:var(--green-acik);color:var(--green);display:grid;place-items:center;font-size:22px;font-weight:900;flex:0 0 auto;}
+.ozetSayilar{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0 4px;}
+.ozetSayi{background:#F1F5F9;border-radius:12px;padding:8px 4px;text-align:center;}
+.ozetSayi b{display:block;font-size:20px;color:var(--dark);}
+.ozetSayi small{font-size:11.5px;color:var(--gray);}
+.ozetGrup{border-top:1px solid var(--line);padding:10px 0 2px;margin-top:10px;}
+.ozetGrup h4{margin:0 0 4px;font-size:13.5px;color:var(--dark);}
+.ozetGrup p{margin:0;font-size:13.5px;line-height:1.55;white-space:pre-line;}
+details.ozetGrup summary{font-size:13.5px;font-weight:700;color:var(--dark);min-height:32px;cursor:pointer;}
+
+/* alt sayfa ve bildirim */
+.perde{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center;}
+.altSayfa{background:#fff;width:100%;max-width:640px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto;}
+.altSayfa h3{margin:0 0 6px;font-size:16.5px;color:var(--dark);}
+.altSayfa p{margin:0 0 12px;font-size:13.5px;line-height:1.5;}
+.secenek{display:block;width:100%;text-align:left;border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:12px 14px;margin-bottom:8px;min-height:52px;cursor:pointer;}
+.secenek b{display:block;font-size:14.5px;color:var(--dark);}
+.secenek.tehlike{border-color:var(--red);}
+.secenek.tehlike b{color:var(--red);}
+.bildirim{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(122px + env(safe-area-inset-bottom));z-index:15;background:#1E293B;color:#fff;border-radius:12px;padding:10px 12px 10px 14px;font-size:13.5px;display:flex;gap:12px;align-items:center;max-width:92vw;}
+.bildirim button{border:none;background:none;color:#FDBA74;font-weight:800;min-height:36px;cursor:pointer;}
+button:focus-visible,.girdi:focus-visible{outline:3px solid var(--purple);outline-offset:2px;}
 
 @media (min-width:700px){ body{padding-top:28px;} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }

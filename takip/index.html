@@ -9,7 +9,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Öğrenci Takip - FatihHoca | UltraMat</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
-<link rel="stylesheet" href="takip.css?v=0.1">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="takip.css?v=0.2">
 </head>
 <body>
 <div class="wrap">
@@ -46,7 +48,7 @@
     <div class="modulListe">
       <button class="modulDugme ev" type="button" data-bolum="odev">
         <span class="ikon" aria-hidden="true">📋</span>
-        <span><b>Ödev ve Çalışma Takibi</b><small>Kontrol, geçmiş, veli mesajı</small></span>
+        <span><b>Ödev Takibi</b><small>Ödev oluşturma ve kontrol</small></span>
       </button>
       <button class="modulDugme ders" type="button" data-bolum="gozlem">
         <span class="ikon" aria-hidden="true">🧑‍🏫</span>
@@ -65,14 +67,88 @@
     <div class="surumBilgi" id="surumBilgi"></div>
   </main>
 
-  <!-- Ekran: bölüm (Aşama 0'da yer tutucu) -->
+  <!-- Ekran: henüz yapılmamış bölümler için yer tutucu -->
   <main id="ekran-bolum" hidden>
-    <button class="geriDugme" type="button" id="geriDugme">‹ Ana ekran</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
     <h2 class="bolumBaslik" id="bolumBaslik"></h2>
     <div class="kart"><p class="bosDurum" id="bolumMetin"></p></div>
   </main>
 
+  <!-- Ekran: ödev listesi -->
+  <main id="ekran-odevListe" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <h2 class="bolumBaslik" id="odevListeBaslik"></h2>
+    <p class="altBilgi" id="odevListeAlt"></p>
+    <button class="anaDugme" type="button" id="yeniOdevDugme">＋ Yeni ödev</button>
+    <div id="odevListeIcerik"></div>
+    <div class="altBaglantilar"><button type="button" id="odevYenileDugme">Ödev listesini yenile</button></div>
+  </main>
+
+  <!-- Ekran: yeni ödev / ödev bilgilerini düzenle -->
+  <main id="ekran-odevForm" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Vazgeç</button>
+    <h2 class="bolumBaslik" id="formBaslik"></h2>
+    <p class="altBilgi" id="formAlt"></p>
+    <div class="kart">
+      <label class="alan" for="fTarih">Tarih</label>
+      <input class="girdi" type="date" id="fTarih">
+      <label class="alan" for="fKonu">Konu</label>
+      <select class="girdi" id="fKonu"></select>
+      <div class="konuNot" id="konuNot"></div>
+      <label class="alan" for="fAd">Ödevin kısa adı</label>
+      <input class="girdi" id="fAd" maxlength="60" placeholder="Ör. Kitap s. 18–21" autocomplete="off">
+      <div class="cipler">
+        <button class="cip" type="button" data-cip="Kitap s. ">Kitap s.</button>
+        <button class="cip" type="button" data-cip="Föy ">Föy</button>
+        <button class="cip" type="button" data-cip="Test ">Test</button>
+        <button class="cip" type="button" data-cip="Tekrar">Tekrar</button>
+      </div>
+      <button class="baglantiDugme" type="button" id="aciklamaAc">＋ Açıklama ekle (isteğe bağlı)</button>
+      <textarea class="girdi" id="fAciklama" maxlength="500" placeholder="Ör. 5, 7 ve 9. sorular zorunlu" hidden></textarea>
+      <div class="dugmeSatir" id="formDugmeler"></div>
+      <div class="merkez" id="iptalAlani" hidden>
+        <button class="tehlikeBaglanti" type="button" id="iptalDugme">Bu ödevi iptal et</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Ekran: hızlı ödev kontrolü -->
+  <main id="ekran-kontrol" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Ödev listesi</button>
+    <h2 class="bolumBaslik" id="kAd"></h2>
+    <p class="altBilgi" id="kAlt"></p>
+    <button class="tumuDugme" type="button" id="tumuDugme"></button>
+    <p class="ipucu">İstisnaları önce ya da sonra işaretleyebilirsiniz; bu düğme yalnızca <b>boş</b> satırları doldurur, işaretlediklerinize dokunmaz. Aynı düğmeye tekrar dokunmak işareti kaldırır.</p>
+    <div class="lejant" aria-hidden="true"><span>✅ Tam</span><span>🟡 Eksik</span><span>❌ Yapmadı</span><span>⚪ Mazeret</span></div>
+    <div class="ogrListe" id="ogrListe"></div>
+  </main>
+
+  <!-- Ekran: kayıt özeti -->
+  <main id="ekran-ozet" hidden>
+    <div class="kart ozetKart">
+      <div class="ozetBaslik"><div class="tik" aria-hidden="true">✓</div>
+        <div><h2 class="bolumBaslik" id="oBaslik"></h2><div class="altBilgi" id="oAlt"></div></div>
+      </div>
+      <div class="ozetSayilar" id="oSayilar"></div>
+      <div id="oGruplar"></div>
+    </div>
+    <div class="dugmeSatir">
+      <button class="ikinciDugme" type="button" id="ozetDuzelt">✏️ Düzelt</button>
+      <button class="anaDugme" type="button" id="ozetListe">Ödev listesine dön</button>
+    </div>
+  </main>
+
 </div>
+
+<!-- Kontrol ekranında: sayaç + kaydet -->
+<div class="kaydetCubugu" id="kaydetCubugu" hidden>
+  <div class="kaydetIc"><div class="sayac" id="sayac"></div>
+    <button class="anaDugme" type="button" id="kaydetDugme">Kontrolü Kaydet</button></div>
+</div>
+
+<!-- Alt sayfa (soru) ve kısa bildirim -->
+<div class="perde" id="perde" hidden><div class="altSayfa" id="altSayfa" role="dialog" aria-modal="true"></div></div>
+<div class="bildirim" id="bildirim" hidden role="status"><span id="bildirimMetin"></span><button type="button" id="bildirimDugme">Geri al</button></div>
 
 <!-- Alt çubuk: kayıtların gönderilme durumu -->
 <div class="durumCubugu" id="durumCubugu" hidden>
@@ -85,6 +161,6 @@
 </div>
 
 <script src="etiketler.js?v=0.1"></script>
-<script src="takip.js?v=0.1"></script>
+<script src="takip.js?v=0.2"></script>
 </body>
 </html>
