@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.5 · Aşama 4: öğrenci görünümü)
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.6 · Aşama 5: Excel ve PDF raporları)
  *
  * Kalıcı verinin tek kaynağı UltraMat_Takip Google tablosudur. Telefonda yalnızca şunlar tutulur:
  *  - öğretmen anahtarı (her girişte sormamak için),
@@ -13,7 +13,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.5";
+const SURUM = "0.6";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -46,7 +46,9 @@ const durum = {
   gozlemSecili: new Set(),   // "Birden fazla öğrenci" açıkken seçilenler
   gozlemCoklu: false,
   ogrKod: null,          // öğrenci görünümünde açık öğrenci
-  ogrKapsam: "donem"     // "donem" | "yil"
+  ogrKapsam: "donem",    // "donem" | "yil"
+  raporKapsam: "donem",
+  excelSayfa: 0
 };
 
 // ---------- küçük yardımcılar ----------
@@ -135,7 +137,7 @@ async function api(islem, ek, anahtar) {
 function anahtarReddi(e) { return e instanceof SunucuHatasi && (e.kod === "anahtar" || e.kod === "anahtar_yok"); }
 
 // ---------- ekranlar ve gezinme ----------
-const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli", "gozlem", "ogrListe", "ogrenci"];
+const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli", "gozlem", "ogrListe", "ogrenci", "rapor", "raporPdf", "raporExcel"];
 
 function ekranGoster(ad) {
   EKRANLAR.forEach(e => { $("ekran-" + e).hidden = e !== ad; });
@@ -185,6 +187,9 @@ function ciz() {
   else if (ust.e === "gozlem") gozlemCiz();
   else if (ust.e === "ogrListe") ogrListeCiz();
   else if (ust.e === "ogrenci") ogrenciCiz();
+  else if (ust.e === "rapor") raporCiz();
+  else if (ust.e === "raporPdf") raporPdfCiz();
+  else if (ust.e === "raporExcel") raporExcelCiz();
   durumCubugunuCiz();
 }
 
@@ -276,15 +281,14 @@ function anaEkraniCiz() {
   $("surumBilgi").textContent = "FatihHoca UltraMat · Öğrenci Takip · sürüm " + SURUM + (v.surum && v.surum !== SURUM ? " · sunucu " + v.surum : "");
 }
 
-const BOLUMLER = {
-  rapor: { ad: "Excel · PDF", asama: 5 }
-};
+const BOLUMLER = {};
 
 function bolumAc(ad) {
   if (!durum.seciliSinif) return;
   if (ad === "odev") { ileri({ e: "odevListe" }); odevleriTazele(durum.seciliSinif); return; }
   if (ad === "gozlem") { gozlemAc(); return; }
   if (ad === "ogrenci") { ogrenciGorunumuAc(); return; }
+  if (ad === "rapor") { raporAc(); return; }
   if (BOLUMLER[ad]) ileri({ e: "bolum", ad });
 }
 function bolumCiz(ad) {
@@ -1515,6 +1519,304 @@ function ogrenciCiz() {
 function ogrenciEkraniniYenile() {
   if (ekranAcik("ogrListe")) ogrListeCiz();
   else if (ekranAcik("ogrenci")) ogrenciCiz();
+  else if (ekranAcik("rapor")) raporCiz();
+}
+
+// ---------- 8. raporlar: öğrenci PDF'i (yazdırma) + sınıf Excel'i ----------
+const XLSX_ADRESI = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+const escHtml = s => String(s === null || s === undefined ? "" : s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const noktaliTarih = t => t ? t.split("-").reverse().join(".") : "";
+
+function raporAc() {
+  durum.raporKapsam = "donem";
+  ileri({ e: "rapor" });
+  odevleriTazele(durum.seciliSinif);
+  dersGozlemleriTazele(durum.seciliSinif);
+}
+
+function raporKapsamAdi(kapsam) {
+  return kapsam === "donem"
+    ? (durum.veri.donem ? durum.veri.donem.ad : "Bu dönem")
+    : (durum.veri.egitimYili || "") + " Eğitim Yılı";
+}
+
+function raporCiz() {
+  ekranGoster("rapor");
+  $("raporBaslik").textContent = "Excel · PDF · " + durum.seciliSinif;
+  $("raporDonem").classList.toggle("secili", durum.raporKapsam === "donem");
+  $("raporYil").classList.toggle("secili", durum.raporKapsam === "yil");
+  $("raporDonem").setAttribute("aria-pressed", durum.raporKapsam === "donem" ? "true" : "false");
+  $("raporYil").setAttribute("aria-pressed", durum.raporKapsam === "yil" ? "true" : "false");
+  const ov = ogrenciVerisi(durum.seciliSinif, durum.raporKapsam);
+  $("raporDurum").textContent = ov.yukleniyor ? "Bilgiler yükleniyor…" : "";
+}
+
+function raporOgrencileri() {
+  const sinif = sinifBul(durum.seciliSinif);
+  return sinif ? sinif.ogrenciler.filter(o => o.aktif) : [];
+}
+
+// ----- PDF -----
+function pdfAc() {
+  const sec = $("pOgr");
+  sec.innerHTML = "";
+  const ogr = raporOgrencileri();
+  ogr.forEach(s => { const o = el("option", "", s.ad); o.value = s.kod; sec.appendChild(o); });
+  const hepsi = el("option", "", "Tüm sınıf (her öğrenci ayrı sayfa · " + ogr.length + " sayfa)"); hepsi.value = "*";
+  sec.appendChild(hepsi);
+  if (durum.ogrKod && ogr.some(s => s.kod === durum.ogrKod)) sec.value = durum.ogrKod;
+  ileri({ e: "raporPdf" });
+}
+
+function raporPdfCiz() {
+  ekranGoster("raporPdf");
+  $("pdfAlt").textContent = durum.seciliSinif + " · " + raporKapsamAdi(durum.raporKapsam);
+  const kutu = $("a4Icerik");
+  kutu.innerHTML = pdfSayfalari();
+  olcekle();
+}
+
+function olcekle() {
+  const kutu = $("a4Icerik");
+  const genislik = $("a4Kutu").clientWidth - 24;
+  const o = Math.min(1, genislik / 794);
+  kutu.querySelectorAll(".a4").forEach(a => {
+    a.style.transform = "scale(" + o + ")";
+    a.style.marginBottom = (-(1 - o) * a.offsetHeight + 14) + "px";
+    a.style.marginRight = (-(1 - o) * 794) + "px";
+  });
+}
+
+function pdfSayfalari() {
+  const secim = $("pOgr").value;
+  const ogr = raporOgrencileri().filter(s => secim === "*" || s.kod === secim);
+  const ov = ogrenciVerisi(durum.seciliSinif, durum.raporKapsam);
+  const secenek = { akademik: $("pAkademik").checked, dikkat: $("pDikkat").checked, liste: $("pOdevListe").checked };
+  return ogr.map(s => pdfSayfasi(s, ov, secenek)).join("");
+}
+
+function pdfSayfasi(s, ov, secenek) {
+  const kod = s.kod, kontrol = ov.v.kontrol;
+  const kapsamMetni = durum.raporKapsam === "donem" ? "Bu dönemde" : "Bu yıl";
+  const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
+  ov.kontrollu.forEach(o => { const d = (kontrol[o.id] || {})[kod]; if (d) c[d]++; else yok++; });
+  const benim = ov.gozlemler.filter(g => g.kod === kod && g.kategori !== "gelisim");
+  const og = benim.filter(g => g.baglam === "odev"), dg = benim.filter(g => g.baglam === "ders");
+  const bugun = new Date().toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+
+  function grupla(liste) {
+    const grup = {};
+    liste.forEach(g => { (grup[g.etiket] = grup[g.etiket] || []).push(g); });
+    return Object.keys(grup).map(et => {
+      const l = grup[et].sort((a, b) => (a.tarih || "").localeCompare(b.tarih || ""));
+      const e = gozEtiket(l[0]);
+      let dr = "";
+      if (ACIK_KATEGORILER[l[0].kategori]) {
+        const acik = l.filter(g => !ov.duzeldiHaritasi[g.id]).length, duz = l.length - acik;
+        if (acik) dr += ' <span class="rozet acik">' + acik + " açık</span>";
+        if (duz) dr += ' <span class="rozet duz">' + escHtml(e.duzelme || "✓ Düzeldi") + (duz > 1 ? " ×" + duz : "") + "</span>";
+      }
+      return "<li>" + e.emoji + " " + escHtml(e.ad) + " — " + l.length + ' kez <span class="silik">(' + l.map(g => kisaGun(g.tarih)).join(", ") + ")</span>" + dr + "</li>";
+    }).join("");
+  }
+
+  let h = '<section class="a4"><div class="ust"><div><div class="m">FatihHoca | <span>UltraMat</span></div><h1>' + escHtml(s.ad) +
+    '</h1><div class="silik">Matematik · Öğrenci Takip Raporu</div></div><div class="sag">Sınıf: <b>' + escHtml(durum.seciliSinif) + "</b><br>" +
+    escHtml(raporKapsamAdi(durum.raporKapsam)) + "<br>Rapor tarihi: " + escHtml(bugun) + "</div></div>";
+
+  h += "<h2>📋 Ödevler</h2>";
+  if (!ov.kontrollu.length) h += '<p class="silik">' + kapsamMetni + " kontrol edilmiş ödev yok.</p>";
+  else {
+    h += '<div class="sayilar"><div class="sayi"><b>' + ov.kontrollu.length + "</b><small>Kontrol edilen</small></div>" +
+      DURUM_SIRASI.map(d => '<div class="sayi"><b>' + c[d] + "</b><small>" + DURUM[d].emoji + " " + DURUM[d].ad + "</small></div>").join("") + "</div>";
+    if (yok) h += '<p class="silik kucuk">' + yok + " ödevde kontrol edilmedi.</p>";
+    if (secenek.liste) {
+      h += "<table><thead><tr><th>Tarih</th><th>Ödev</th><th>Konu</th><th>Durum</th></tr></thead><tbody>" +
+        ov.kontrollu.map(o => { const d = (kontrol[o.id] || {})[kod];
+          return "<tr><td>" + kisaGun(o.tarih) + "</td><td>" + escHtml(o.ad) + "</td><td>" + escHtml(o.konu || "") + "</td><td>" + (d ? DURUM[d].emoji + " " + DURUM[d].ad : "kontrol edilmedi") + "</td></tr>"; }).join("") +
+        "</tbody></table>";
+    }
+  }
+
+  h += "<h2>🏷️ Ödev gözlemleri</h2>";
+  if (!og.length) h += '<p class="silik">' + kapsamMetni + " ödev gözlemi yok.</p>";
+  else {
+    const o1 = og.filter(g => g.kategori === "olumlu"), o2 = og.filter(g => g.kategori === "gelistir");
+    h += '<div class="iki"><div>' + (o1.length ? '<div class="g o">Olumlu</div><ul>' + grupla(o1) + "</ul>" : "") + "</div><div>" +
+      (o2.length ? '<div class="g ge">Geliştirilmeli</div><ul>' + grupla(o2) + "</ul>" : "") + "</div></div>";
+  }
+
+  h += "<h2>👀 Ders içi gözlemler</h2>";
+  const ol = dg.filter(g => g.kategori === "olumlu"), di = dg.filter(g => g.kategori === "dikkat"), ak = dg.filter(g => g.kategori === "akademik");
+  const gorunen = ol.length + (secenek.akademik ? ak.length : 0) + (secenek.dikkat ? di.length : 0);
+  if (!gorunen) h += '<p class="silik">' + kapsamMetni + " raporda gösterilecek ders gözlemi yok.</p>";
+  if (ol.length) h += '<div class="g o">Olumlu</div><ul>' + grupla(ol) + "</ul>";
+  if (secenek.akademik && ak.length) {
+    const konular = {};
+    ak.forEach(g => { const k = g.konu || "Konu belirtilmemiş"; (konular[k] = konular[k] || []).push(g); });
+    h += '<div class="g a">Akademik · konulara göre</div><table><thead><tr><th>Konu</th><th>Gözlem</th><th>Tarih</th><th>Durum</th></tr></thead><tbody>' +
+      Object.keys(konular).map(k => konular[k].sort((a, b) => (a.tarih || "").localeCompare(b.tarih || "")).map((g, i) => {
+        const e = gozEtiket(g), dz = ov.duzeldiHaritasi[g.id];
+        return "<tr><td>" + (i ? "" : escHtml(k)) + "</td><td>" + e.emoji + " " + escHtml(e.ad) + (g.altKonu ? " · " + escHtml(g.altKonu) : "") + "</td><td>" + kisaGun(g.tarih) + "</td><td>" +
+          (dz ? '<span class="rozet duz">' + escHtml(e.duzelme || "✓ Düzeldi") + " (" + kisaGun(dz.tarih) + ")</span>" : '<span class="rozet acik">açık</span>') + "</td></tr>";
+      }).join("")).join("") + "</tbody></table>";
+  }
+  if (secenek.dikkat && di.length) h += '<div class="g d">Dikkat gerektiren</div><ul>' + grupla(di) + "</ul>";
+
+  h += '<div class="not">Bu rapor ders içi gözlemler ve ödev kontrollerinden oluşur; puan, not ya da sıralama içermez. ' +
+    "Gözlem kaydı olmayan alanlar “değerlendirilmedi” anlamına gelir, “sorun yok” değil.</div>" +
+    '<div class="imza">— Fatih Hoca ✍️</div></section>';
+  return h;
+}
+
+function pdfOlustur() {
+  const alan = $("yazdirmaAlani");
+  alan.innerHTML = pdfSayfalari();
+  if (!alan.innerHTML) { bildirimGoster("Raporda gösterilecek öğrenci yok."); return; }
+  const secim = $("pOgr").value;
+  const ogr = raporOgrencileri().find(s => s.kod === secim);
+  const eskiBaslik = document.title;
+  document.title = dosyaAdi(durum.seciliSinif + "_" + (ogr ? ogr.ad : "Tum_Sinif") + "_Takip_Raporu");
+  const geriAl = () => { document.title = eskiBaslik; alan.innerHTML = ""; window.removeEventListener("afterprint", geriAl); };
+  window.addEventListener("afterprint", geriAl);
+  setTimeout(() => window.print(), 50);
+}
+
+/** Dosya adına uygun, Türkçe harfleri sadeleştirilmiş ad. */
+function dosyaAdi(ad) {
+  const harita = { ç: "c", Ç: "C", ğ: "g", Ğ: "G", ı: "i", İ: "I", ö: "o", Ö: "O", ş: "s", Ş: "S", ü: "u", Ü: "U", "–": "-" };
+  return String(ad).replace(/[çÇğĞıİöÖşŞüÜ–]/g, x => harita[x]).replace(/[^A-Za-z0-9_-]+/g, "_").replace(/_+/g, "_").replace(/^_|_$/g, "");
+}
+
+// ----- Excel -----
+function excelAc() {
+  durum.excelSayfa = 0;
+  ileri({ e: "raporExcel" });
+}
+
+function excelSayfalari() {
+  const ov = ogrenciVerisi(durum.seciliSinif, durum.raporKapsam);
+  const ogr = raporOgrencileri();
+  const kontrol = ov.v.kontrol;
+  const adlar = {};
+  const sinif = sinifBul(durum.seciliSinif);
+  (sinif ? sinif.ogrenciler : []).forEach(s => { adlar[s.kod] = s.ad; });
+
+  // 1. Ödevler
+  const odevler = { ad: "Ödevler", bas: ["Öğrenci"].concat(ov.kontrollu.map(o => noktaliTarih(o.tarih) + " · " + o.ad), ["Tam", "Eksik", "Yapılmadı", "Mazeretli", "Kontrol edilmedi"]), satir: [], renk: [] };
+  ogr.forEach(s => {
+    const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
+    const hucre = ov.kontrollu.map(o => { const d = (kontrol[o.id] || {})[s.kod]; if (d) c[d]++; else yok++; return d || ""; });
+    odevler.satir.push([s.ad].concat(hucre.map(d => d ? DURUM[d].ad : "—"), [c.T, c.E, c.Y, c.M, yok]));
+    odevler.renk.push([""].concat(hucre));
+  });
+
+  // 2. Gözlem sayıları
+  const etiketler = [];
+  const gorulen = {};
+  ov.gozlemler.filter(g => g.kategori !== "gelisim").forEach(g => {
+    const anahtar = g.baglam + ":" + g.etiket;
+    if (gorulen[anahtar]) return;
+    gorulen[anahtar] = true;
+    const e = gozEtiket(g);
+    etiketler.push({ anahtar, ad: (g.baglam === "odev" ? "Ödev · " : "Ders · ") + e.emoji + " " + e.ad });
+  });
+  const gozlem = { ad: "Gözlem sayıları", bas: ["Öğrenci"].concat(etiketler.map(x => x.ad), ["Açık kayıt"]), satir: [] };
+  ogr.forEach(s => {
+    const benim = ov.gozlemler.filter(g => g.kod === s.kod && g.kategori !== "gelisim");
+    const acik = ov.tumGozlemler.filter(g => g.kod === s.kod && ACIK_KATEGORILER[g.kategori] && !ov.duzeldiHaritasi[g.id]).length;
+    gozlem.satir.push([s.ad].concat(etiketler.map(x => benim.filter(g => g.baglam + ":" + g.etiket === x.anahtar).length || ""), [acik || ""]));
+  });
+
+  // 3. Tüm kayıtlar
+  const tum = { ad: "Tüm kayıtlar", bas: ["Tarih", "Öğrenci", "Tür", "Kayıt", "Konu", "Alt konu", "Durum"], satir: [] };
+  const siraliSatir = [];
+  ov.kontrollu.forEach(o => ogr.forEach(s => {
+    const d = (kontrol[o.id] || {})[s.kod];
+    siraliSatir.push([o.tarih, s.ad, "Ödev kontrolü", o.ad, o.konu || "", "", d ? DURUM[d].ad : "kontrol edilmedi"]);
+  }));
+  ov.gozlemler.forEach(g => {
+    if (!adlar[g.kod]) return;
+    if (g.kategori === "gelisim") {
+      const eski = ov.tumGozlemler.find(x => x.id === g.baglantiId);
+      const e = eski ? gozEtiket(eski) : null;
+      siraliSatir.push([g.tarih, adlar[g.kod], "Düzeldi", e ? (e.duzelme || "✓ Düzeldi") + " (" + e.ad + ")" : "✓ Düzeldi", eski && eski.baglam === "ders" ? eski.konu || "" : "", "", ""]);
+    } else {
+      const e = gozEtiket(g);
+      siraliSatir.push([g.tarih, adlar[g.kod], g.baglam === "odev" ? "Ödev gözlemi" : "Ders gözlemi", e.emoji + " " + e.ad,
+        g.baglam === "odev" ? (g.odev ? g.odev.konu || "" : "") : g.konu || "", g.altKonu || "",
+        ACIK_KATEGORILER[g.kategori] ? (ov.duzeldiHaritasi[g.id] ? "düzeldi" : "açık") : ""]);
+    }
+  });
+  siraliSatir.sort((a, b) => (a[0] || "").localeCompare(b[0] || ""));
+  tum.satir = siraliSatir.map(r => [noktaliTarih(r[0])].concat(r.slice(1)));
+
+  // 4. Veli mesajları
+  const veli = { ad: "Veli mesajları", bas: ["Öğrenci", "Dönem", "Blok", "Gönderilme"], satir: [] };
+  ov.veli.filter(x => adlar[x.kod]).sort((a, b) => (a.donemNo - b.donemNo) || (a.blokNo - b.blokNo) || (a.zaman || 0) - (b.zaman || 0)).forEach(x => {
+    veli.satir.push([adlar[x.kod], x.donemNo ? x.donemNo + ". Dönem" : "", x.blokNo + ". blok", x.zaman ? new Date(x.zaman).toLocaleDateString("tr-TR") : ""]);
+  });
+
+  return [odevler, gozlem, tum, veli];
+}
+
+function excelDosyaAdi() {
+  const k = durum.raporKapsam === "donem" ? raporKapsamAdi("donem") : (durum.veri.egitimYili || "Yil");
+  return dosyaAdi(durum.seciliSinif + "_Ogrenci_Takip_" + k) + ".xlsx";
+}
+
+function raporExcelCiz() {
+  ekranGoster("raporExcel");
+  $("xAd").textContent = excelDosyaAdi();
+  const S = excelSayfalari();
+  const sekme = $("xSayfalar");
+  sekme.innerHTML = "";
+  S.forEach((s, i) => sekme.appendChild(dugme(i === durum.excelSayfa ? "secili" : "", s.ad, () => { durum.excelSayfa = i; raporExcelCiz(); })));
+  const s = S[durum.excelSayfa];
+  let h = "<table><thead><tr>" + s.bas.map(b => "<th>" + escHtml(b) + "</th>").join("") + "</tr></thead><tbody>";
+  s.satir.forEach((r, ri) => {
+    h += "<tr>" + r.map((c, i) => {
+      if (i === 0 && durum.excelSayfa < 2) return "<th>" + escHtml(c) + "</th>";
+      const renk = s.renk ? s.renk[ri][i] : "";
+      return '<td class="' + (typeof c === "number" || s.renk ? "o " : "") + (renk || "") + '">' + escHtml(c) + "</td>";
+    }).join("") + "</tr>";
+  });
+  if (!s.satir.length) h += '<tr><td colspan="' + s.bas.length + '">Kayıt yok.</td></tr>';
+  $("xTablo").innerHTML = h + "</tbody></table>";
+}
+
+let xlsxYukleniyor = null;
+function xlsxYukle() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  if (xlsxYukleniyor) return xlsxYukleniyor;
+  xlsxYukleniyor = new Promise((tamam, hata) => {
+    const s = document.createElement("script");
+    s.src = XLSX_ADRESI;
+    s.onload = () => window.XLSX ? tamam(window.XLSX) : hata(new Error("yok"));
+    s.onerror = () => { xlsxYukleniyor = null; s.remove(); hata(new Error("ag")); };
+    document.head.appendChild(s);
+  });
+  return xlsxYukleniyor;
+}
+
+async function excelIndir() {
+  const d = $("excelIndirDugme");
+  d.disabled = true; d.textContent = "Hazırlanıyor…";
+  try {
+    const X = await xlsxYukle();
+    const kitap = X.utils.book_new();
+    excelSayfalari().forEach(s => {
+      const sayfa = X.utils.aoa_to_sheet([s.bas].concat(s.satir));
+      sayfa["!cols"] = s.bas.map((b, i) => ({ wch: Math.min(40, Math.max(8, String(b).length + 2, ...s.satir.map(r => String(r[i] === undefined ? "" : r[i]).length + 2))) }));
+      X.utils.book_append_sheet(kitap, sayfa, s.ad.slice(0, 31));
+    });
+    X.writeFile(kitap, excelDosyaAdi());
+    bildirimGoster("Excel indirildi: " + excelDosyaAdi());
+  } catch (e) {
+    bildirimGoster("Excel hazırlanamadı. Excel için internet bağlantısı gerekiyor; bağlanıp tekrar deneyin.");
+  } finally {
+    d.disabled = false; d.textContent = "📊 Excel'i indir";
+  }
 }
 
 // ---------- alt sayfa ve bildirim ----------
@@ -1703,6 +2005,15 @@ function baslat() {
   $("konuSerit").addEventListener("click", dersKonusuSayfasi);
   $("kapsamDonem").addEventListener("click", () => { durum.ogrKapsam = "donem"; ogrenciCiz(); });
   $("kapsamYil").addEventListener("click", () => { durum.ogrKapsam = "yil"; ogrenciCiz(); });
+  $("ogrPdfDugme").addEventListener("click", () => { durum.raporKapsam = durum.ogrKapsam; pdfAc(); });
+  $("raporDonem").addEventListener("click", () => { durum.raporKapsam = "donem"; raporCiz(); });
+  $("raporYil").addEventListener("click", () => { durum.raporKapsam = "yil"; raporCiz(); });
+  $("pdfDugme").addEventListener("click", pdfAc);
+  $("excelDugme").addEventListener("click", excelAc);
+  ["pOgr", "pAkademik", "pDikkat", "pOdevListe"].forEach(id => $(id).addEventListener("change", raporPdfCiz));
+  $("pdfOlusturDugme").addEventListener("click", pdfOlustur);
+  $("excelIndirDugme").addEventListener("click", excelIndir);
+  window.addEventListener("resize", () => { if (ekranAcik("raporPdf")) olcekle(); });
   $("cokluAnahtar").addEventListener("click", () => { durum.gozlemCoklu = !durum.gozlemCoklu; durum.gozlemSecili.clear(); gozlemCiz(); });
   $("secimTemizle").addEventListener("click", () => { durum.gozlemSecili.clear(); gozlemCiz(); });
   $("secimGozlem").addEventListener("click", () => { if (durum.gozlemSecili.size) gozlemEtiketSayfasi(Array.from(durum.gozlemSecili)); });

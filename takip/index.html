@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.5">
+<link rel="stylesheet" href="takip.css?v=0.6">
 </head>
 <body>
 <div class="wrap">
@@ -160,6 +160,43 @@
     <p class="altBilgi" id="ogrAlt"></p>
     <div class="sekmeler"><button type="button" id="kapsamDonem">Bu dönem</button><button type="button" id="kapsamYil">Tüm yıl</button></div>
     <div id="ogrIcerik"></div>
+    <button class="ikinciDugme" type="button" id="ogrPdfDugme">📄 Bu öğrencinin PDF raporu</button>
+  </main>
+
+  <!-- Ekran: raporlar -->
+  <main id="ekran-rapor" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <h2 class="bolumBaslik" id="raporBaslik"></h2>
+    <p class="altBilgi">Raporlar telefondaki son bilgilerden hazırlanır. Puan, not ya da sıralama içermez.</p>
+    <div class="sekmeler"><button type="button" id="raporDonem">Bu dönem</button><button type="button" id="raporYil">Tüm yıl</button></div>
+    <button class="raporDugme" type="button" id="pdfDugme"><span class="ik">📄</span><span><b>Öğrenci raporu (PDF)</b><small>Bir öğrenci ya da tüm sınıf (her öğrenci ayrı sayfa). Veli görüşmesi, rehberlik, dosya için.</small></span></button>
+    <button class="raporDugme" type="button" id="excelDugme"><span class="ik">📊</span><span><b>Sınıf tablosu (Excel)</b><small>Ödev tablosu, gözlem sayıları, tüm kayıtlar ve veli mesajları; 4 sayfa. İnternet gerekir.</small></span></button>
+    <p class="ipucu merkez" id="raporDurum"></p>
+  </main>
+
+  <main id="ekran-raporPdf" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Geri</button>
+    <h2 class="bolumBaslik">Öğrenci raporu (PDF)</h2>
+    <p class="altBilgi" id="pdfAlt"></p>
+    <div class="kart secenekKart">
+      <select class="girdi" id="pOgr" aria-label="Öğrenci"></select>
+      <label class="satir"><input type="checkbox" id="pAkademik" checked><span>Akademik gözlemleri ekle<small>Konuya göre: zorlandığı, karıştırdığı kavramlar ve düzelenler.</small></span></label>
+      <label class="satir"><input type="checkbox" id="pDikkat"><span>Dikkat gerektiren gözlemleri ekle<small>Varsayılan kapalı. Konuşma, materyal eksikliği gibi davranış kayıtları.</small></span></label>
+      <label class="satir"><input type="checkbox" id="pOdevListe" checked><span>Ödev listesini tek tek yaz<small>Kapalıysa yalnızca sayılar.</small></span></label>
+    </div>
+    <p class="ipucu">“PDF oluştur” deyince yazdırma ekranı açılır; yazıcı olarak <b>PDF olarak kaydet</b>i seçin (UltraMat karnelerindeki gibi).</p>
+    <button class="anaDugme" type="button" id="pdfOlusturDugme">📄 PDF oluştur</button>
+    <div class="grupBaslik">Kâğıttaki görünümü</div>
+    <div class="a4Kutu" id="a4Kutu"><div id="a4Icerik"></div></div>
+  </main>
+
+  <main id="ekran-raporExcel" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Raporlar</button>
+    <h2 class="bolumBaslik">Sınıf tablosu (Excel)</h2>
+    <p class="altBilgi">Dosya adı: <b id="xAd"></b>. İndirilir; Excel ya da Google E-Tablolar ile açılır.</p>
+    <button class="anaDugme" type="button" id="excelIndirDugme">📊 Excel'i indir</button>
+    <div class="grupBaslik">İçindekiler</div>
+    <div class="excelOn"><div class="sayfalar" id="xSayfalar"></div><div class="tablo" id="xTablo"></div></div>
   </main>
 
   <!-- Ekran: kayıt özeti -->
@@ -185,6 +222,9 @@
     <button class="anaDugme" type="button" id="kaydetDugme">Kontrolü Kaydet</button></div>
 </div>
 
+<!-- Yalnızca yazdırırken görünen rapor sayfaları -->
+<div id="yazdirmaAlani" aria-hidden="true"></div>
+
 <!-- Ders gözleminde birden fazla öğrenci seçiliyken -->
 <div class="secimCubugu" id="secimCubugu" hidden>
   <div class="secimIc"><span id="secimMetin"></span>
@@ -207,6 +247,6 @@
 </div>
 
 <script src="etiketler.js?v=0.1"></script>
-<script src="takip.js?v=0.5"></script>
+<script src="takip.js?v=0.6"></script>
 </body>
 </html>

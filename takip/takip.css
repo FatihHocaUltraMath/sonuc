@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.5)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.6)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -330,6 +330,65 @@ details.odevDetay summary{font-size:13px;font-weight:700;color:var(--purple);min
 .zcSatir{display:flex;gap:8px;font-size:13px;padding:5px 0;line-height:1.35;}
 .zcSatir .ik{width:22px;text-align:center;flex:0 0 auto;}
 .zcSatir small{display:block;color:var(--gray);font-size:11.5px;}
+
+/* ================= Aşama 5: raporlar ================= */
+.raporDugme{width:100%;display:flex;gap:12px;align-items:center;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;min-height:76px;cursor:pointer;}
+.raporDugme .ik{font-size:28px;}
+.raporDugme b{display:block;font-size:15.5px;color:var(--dark);}
+.raporDugme small{display:block;font-size:12.5px;color:var(--gray);margin-top:3px;line-height:1.4;}
+#ogrPdfDugme{margin-top:4px;}
+.secenekKart label.satir{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line);font-size:14px;line-height:1.4;min-height:48px;cursor:pointer;}
+.secenekKart select + label.satir{margin-top:6px;border-top:none;}
+.secenekKart input[type=checkbox]{width:22px;height:22px;margin:1px 0 0;accent-color:var(--purple);flex:0 0 auto;}
+.secenekKart label small{display:block;font-size:12px;color:var(--gray);}
+.a4Kutu{overflow-x:auto;background:#CBD5E1;border-radius:12px;padding:12px;margin-bottom:12px;}
+.excelOn{background:#fff;border:1px solid #CBD5E1;border-radius:10px;overflow:hidden;}
+.excelOn .sayfalar{display:flex;gap:2px;background:#E2E8F0;padding:4px 4px 0;overflow-x:auto;}
+.excelOn .sayfalar button{border:none;background:#F1F5F9;border-radius:6px 6px 0 0;padding:6px 12px;font-size:12px;font-weight:700;color:#475569;white-space:nowrap;min-height:34px;cursor:pointer;}
+.excelOn .sayfalar button.secili{background:#fff;color:#166534;border-bottom:2px solid #16A34A;}
+.excelOn .tablo{overflow:auto;max-height:420px;}
+.excelOn table{border-collapse:collapse;font-size:12px;min-width:100%;}
+.excelOn th,.excelOn td{border:1px solid #E2E8F0;padding:4px 8px;white-space:nowrap;text-align:left;}
+.excelOn thead th{background:#F0FDF4;position:sticky;top:0;color:#14532D;font-size:11.5px;}
+.excelOn tbody th{background:#FAFAFA;position:sticky;left:0;}
+.excelOn td.o{text-align:center;}
+.excelOn td.T{background:#F0FDF4;} .excelOn td.E{background:#FFFBEB;} .excelOn td.Y{background:#FEF2F2;} .excelOn td.M{background:#F8FAFC;}
+
+/* A4 rapor sayfası (ekranda önizleme ve yazdırmada ortak) */
+.a4{width:794px;min-height:1123px;margin:0 auto;background:#fff;color:#1E293B;padding:44px 50px;font-size:12.5px;line-height:1.45;box-shadow:0 2px 12px rgba(0,0,0,.15);transform-origin:top left;}
+.a4 .ust{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #F97316;padding-bottom:10px;margin-bottom:16px;}
+.a4 .ust .m{font-size:12px;font-weight:800;color:#3B0764;} .a4 .ust .m span{color:#F97316;}
+.a4 .ust h1{margin:2px 0 0;font-size:22px;color:#3B0764;}
+.a4 .ust .sag{text-align:right;font-size:11.5px;color:#475569;line-height:1.5;}
+.a4 h2{font-size:14px;color:#3B0764;margin:18px 0 8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0;break-after:avoid;}
+.a4 .sayilar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:10px;}
+.a4 .sayi{border:1px solid #E2E8F0;border-radius:8px;padding:6px;text-align:center;}
+.a4 .sayi b{display:block;font-size:18px;color:#3B0764;} .a4 .sayi small{font-size:10.5px;color:#475569;}
+.a4 table{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:6px;}
+.a4 th{background:#FFF7ED;text-align:left;padding:5px 6px;border-bottom:1px solid #E2E8F0;font-size:11px;color:#3B0764;}
+.a4 td{padding:4px 6px;border-bottom:1px solid #F1F5F9;vertical-align:top;}
+.a4 tr{break-inside:avoid;}
+.a4 .iki{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.a4 .g{font-size:11px;font-weight:800;margin:6px 0 4px;}
+.a4 .g.o{color:#15803D;} .a4 .g.d{color:#B91C1C;} .a4 .g.a{color:#1D4ED8;} .a4 .g.ge{color:#B45309;}
+.a4 ul{margin:0 0 6px;padding-left:18px;} .a4 li{margin:2px 0;}
+.a4 .silik{color:#64748B;} .a4 .kucuk{font-size:11px;margin:0 0 6px;}
+.a4 p{margin:0 0 6px;}
+.a4 .rozet{font-size:10px;font-weight:800;border-radius:4px;padding:0 4px;}
+.a4 .rozet.acik{background:#FEF3C7;color:#92400E;} .a4 .rozet.duz{background:#EDE9FE;color:#3B0764;}
+.a4 .not{font-size:10.5px;color:#64748B;margin-top:22px;border-top:1px solid #E2E8F0;padding-top:8px;line-height:1.5;}
+.a4 .imza{text-align:right;margin-top:14px;font-weight:700;color:#3B0764;}
+#yazdirmaAlani{display:none;}
+
+@media print{
+  @page{size:A4;margin:12mm;}
+  html,body{background:#fff !important;padding:0 !important;margin:0 !important;}
+  body > *:not(#yazdirmaAlani){display:none !important;}
+  #yazdirmaAlani{display:block !important;}
+  #yazdirmaAlani .a4{width:auto;min-height:0;padding:0;box-shadow:none;transform:none !important;margin:0 !important;break-after:page;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  #yazdirmaAlani .a4:last-child{break-after:auto;}
+}
 
 @media (min-width:700px){ body{padding-top:28px;} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
