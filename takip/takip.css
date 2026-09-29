@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.3)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.4)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -244,6 +244,52 @@ button:focus-visible,.girdi:focus-visible{outline:3px solid var(--purple);outlin
 .uyariKucuk{background:var(--amber-acik);color:var(--amber);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin-bottom:10px;}
 .bitti{text-align:center;padding:24px 12px;}
 .bitti .buyuk{font-size:40px;}
+
+/* ================= Aşama 3: ders içi gözlem ================= */
+.konuSerit{width:100%;display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid #2563EB;background:#DBEAFE;border-radius:14px;padding:10px 12px;min-height:56px;margin-bottom:10px;cursor:pointer;}
+.konuSerit .ik{font-size:22px;}
+.konuSerit b{display:block;color:#1E3A8A;font-size:14.5px;}
+.konuSerit small{display:block;color:#1E40AF;font-size:12px;margin-top:1px;}
+.konuSerit .deg{margin-left:auto;color:#1E40AF;font-weight:800;font-size:13px;white-space:nowrap;}
+.araSatir{display:flex;justify-content:space-between;align-items:center;margin:4px 2px 8px;gap:8px;}
+.araSatir .baslikK{font-size:13px;font-weight:800;color:var(--dark);}
+.anahtar{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px 4px 4px;min-height:40px;font-size:13px;font-weight:700;cursor:pointer;}
+.anahtar .top{width:34px;height:20px;border-radius:999px;background:#CBD5E1;position:relative;transition:background .15s;}
+.anahtar .top::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s;}
+.anahtar.acik{border-color:var(--purple);color:var(--dark);}
+.anahtar.acik .top{background:var(--purple);}
+.anahtar.acik .top::after{left:16px;}
+.ogrIzgara{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;}
+.ogrDugme{min-height:62px;border:1.5px solid var(--line);border-radius:14px;background:#fff;text-align:left;padding:8px 10px;display:flex;flex-direction:column;justify-content:center;position:relative;cursor:pointer;}
+.ogrDugme b{font-size:14.5px;color:var(--dark);line-height:1.2;padding-right:18px;}
+.ogrDugme small{font-size:12px;color:var(--gray);margin-top:3px;min-height:16px;letter-spacing:1px;}
+.ogrDugme.secili{border-color:var(--purple);background:var(--purple-acik);}
+.ogrDugme.secili::after{content:"✓";position:absolute;top:6px;right:8px;width:20px;height:20px;border-radius:50%;background:var(--purple);color:#fff;font-size:12px;font-weight:900;display:grid;place-items:center;}
+.ogrDugme:active{transform:scale(.98);}
+.bugunListe{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+.bugunSatir{display:flex;gap:10px;align-items:center;padding:9px 12px;border-top:1px solid var(--line);font-size:13.5px;}
+.bugunSatir:first-child{border-top:none;}
+.bugunSatir .saat{font-size:11.5px;color:var(--gray);width:38px;flex:0 0 auto;}
+.bugunSatir .ne{flex:1;line-height:1.35;min-width:0;}
+.bugunSatir .ne b{color:var(--dark);}
+.bugunSatir .ne small{display:block;color:var(--gray);font-size:11.5px;}
+.bugunSatir button{border:none;background:none;color:var(--gray);font-size:12.5px;font-weight:700;text-decoration:underline;min-height:40px;cursor:pointer;}
+.secimCubugu{position:fixed;left:0;right:0;bottom:calc(49px + env(safe-area-inset-bottom));z-index:6;padding:8px 14px;background:rgba(255,255,255,.97);border-top:1px solid var(--line);}
+.secimIc{max-width:640px;margin:0 auto;display:flex;gap:8px;align-items:center;}
+.secimIc span{flex:1;font-size:13.5px;font-weight:700;color:var(--dark);}
+.secimIc .temizle{border:none;background:none;color:var(--gray);text-decoration:underline;font-size:13px;min-height:44px;cursor:pointer;}
+.secimIc .anaDugme{width:auto;padding:0 16px;min-height:46px;}
+body.secimVar{padding-bottom:calc(140px + env(safe-area-inset-bottom));}
+.etiketGrup.olumlu{color:var(--green);}
+.etiketGrup.dikkat{color:var(--red);}
+.etiketGrup.akademik{color:#2563EB;}
+.etiketGrup.acik{color:var(--amber);}
+.etiket.ders.olumlu{border-left:4px solid var(--green);}
+.etiket.ders.dikkat{border-left:4px solid var(--red);}
+.etiket.ders.akademik{border-left:4px solid #2563EB;}
+.etiket.ders:active{background:#F1F5F9;}
+.etiket .k{font-size:11px;color:#2563EB;font-weight:700;display:block;}
+.duzeldiDugme{max-width:48%;padding:4px 10px;white-space:normal;}
 
 @media (min-width:700px){ body{padding-top:28px;} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }

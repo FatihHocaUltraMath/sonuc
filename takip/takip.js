@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.3 · Aşama 2: ödev gözlemleri + 4 ödevde bir veli mesajı)
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.4 · Aşama 3: ders içi gözlem)
  *
  * Kalıcı verinin tek kaynağı UltraMat_Takip Google tablosudur. Telefonda yalnızca şunlar tutulur:
  *  - öğretmen anahtarı (her girişte sormamak için),
@@ -13,10 +13,11 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.3";
+const SURUM = "0.4";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
-  odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu"
+  odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
+  dersGoz: "fhTakip_dersGozlem", dersKonu: "fhTakip_dersKonu"
 };
 const ZAMAN_ASIMI_MS = 25000;
 const TEKRAR_DENEME_MS = 30000;
@@ -39,7 +40,11 @@ const durum = {
   ozet: null,            // son kaydın özeti: { odevId, ilk, onceki }
   cikisOnayli: false,
   form: null,            // açık form: { id } (düzenleme) ya da { id: null } (yeni)
-  veliSira: 0            // veli mesajı ekranında sıradaki velinin yeri
+  veliSira: 0,           // veli mesajı ekranında sıradaki velinin yeri
+  dersYukleniyor: {},    // classId → true (ders gözlemleri okunuyor)
+  dersHata: {},
+  gozlemSecili: new Set(),   // "Birden fazla öğrenci" açıkken seçilenler
+  gozlemCoklu: false
 };
 
 // ---------- küçük yardımcılar ----------
@@ -128,13 +133,14 @@ async function api(islem, ek, anahtar) {
 function anahtarReddi(e) { return e instanceof SunucuHatasi && (e.kod === "anahtar" || e.kod === "anahtar_yok"); }
 
 // ---------- ekranlar ve gezinme ----------
-const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli"];
+const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli", "gozlem"];
 
 function ekranGoster(ad) {
   EKRANLAR.forEach(e => { $("ekran-" + e).hidden = e !== ad; });
   $("durumCubugu").hidden = ad === "giris";
   $("kaydetCubugu").hidden = ad !== "kontrol";
   document.body.classList.toggle("kaydetVar", ad === "kontrol");
+  if (ad !== "gozlem") { $("secimCubugu").hidden = true; document.body.classList.remove("secimVar"); }
   window.scrollTo(0, 0);
 }
 
@@ -174,6 +180,7 @@ function ciz() {
   else if (ust.e === "kontrol") kontrolCiz(true);
   else if (ust.e === "ozet") ozetCiz();
   else if (ust.e === "veli") veliCiz();
+  else if (ust.e === "gozlem") gozlemCiz();
   durumCubugunuCiz();
 }
 
@@ -266,7 +273,6 @@ function anaEkraniCiz() {
 }
 
 const BOLUMLER = {
-  gozlem: { ad: "Ders İçi Gözlem", asama: 3 },
   ogrenci: { ad: "Öğrenci Görünümü", asama: 4 },
   rapor: { ad: "Excel · PDF", asama: 5 }
 };
@@ -274,6 +280,7 @@ const BOLUMLER = {
 function bolumAc(ad) {
   if (!durum.seciliSinif) return;
   if (ad === "odev") { ileri({ e: "odevListe" }); odevleriTazele(durum.seciliSinif); return; }
+  if (ad === "gozlem") { gozlemAc(); return; }
   if (BOLUMLER[ad]) ileri({ e: "bolum", ad });
 }
 function bolumCiz(ad) {
@@ -989,6 +996,264 @@ function veliGonderildi(s, b, mesaj) {
   veliCiz();
 }
 
+// ---------- 6. ders içi gözlem ----------
+const DERS_ETIKET = {};
+ETIKETLER.DERS_GOZLEM.forEach(e => { DERS_ETIKET[e.kod] = e; });
+const dersEtiket = kod => DERS_ETIKET[kod] || { kod, kategori: "", emoji: "•", ad: kod };
+const DERS_GRUPLARI = [["olumlu", "Olumlu"], ["dikkat", "Dikkat gerektiren"], ["akademik", "Akademik"]];
+
+/** Son okunan ders gözlemleri + henüz gönderilmemiş kayıtlar. */
+function dersVerisi(classId) {
+  const tum = depo.oku(DEPO.dersGoz, {});
+  const v = kopya(tum[classId] || { gozlemler: [], yok: true });
+  depo.oku(DEPO.kuyruk, []).forEach(k => dersUygula(v, k, classId));
+  return v;
+}
+
+function dersUygula(v, k, classId) {
+  const x = k.veri || {};
+  if (k.tur === "dersGozlem" && x.classId === classId) {
+    (x.kayitlar || []).forEach(g => {
+      if (v.gozlemler.some(y => y.id === g.id)) return;
+      v.gozlemler.push({ id: g.id, kod: g.kod, kategori: g.kategori, etiket: g.etiket, tarih: x.tarih, zaman: x.zaman,
+        konu: g.konuyaBagli ? x.konu : "", altKonu: g.konuyaBagli ? x.altKonu : "", baglantiId: g.baglantiId || "" });
+    });
+  } else if (k.tur === "gozlemIptal" && x.classId === classId) {
+    const iptal = new Set(x.idler || []);
+    v.gozlemler = v.gozlemler.filter(g => !iptal.has(g.id));
+  }
+}
+
+async function dersGozlemleriTazele(classId) {
+  if (!apiAyarliMi() || !classId || durum.dersYukleniyor[classId]) return;
+  durum.dersYukleniyor[classId] = true;
+  const sayac = durum.gonderimSayaci;
+  let tekrar = false;
+  try {
+    const y = await api("dersGozlemleri", { classId });
+    if (sayac !== durum.gonderimSayaci) tekrar = true;
+    else {
+      const tum = depo.oku(DEPO.dersGoz, {});
+      tum[classId] = { gozlemler: y.gozlemler || [], alinma: Date.now() };
+      depo.yaz(DEPO.dersGoz, tum);
+      delete durum.dersHata[classId];
+    }
+  } catch (e) {
+    if (anahtarReddi(e)) { depo.sil(DEPO.anahtar); girisGoster("Anahtar değişmiş ya da kaldırılmış. Yeni anahtarla giriş yapın."); return; }
+    durum.dersHata[classId] = true;
+  } finally {
+    durum.dersYukleniyor[classId] = false;
+  }
+  if (tekrar) { dersGozlemleriTazele(classId); return; }
+  if (ekranAcik("gozlem")) gozlemCiz();
+}
+
+/** Sınıfın bugünkü konusu: telefonda sınıf başına hatırlanır; yoksa ödevde son kullanılan konu. */
+function dersKonusu(classId) {
+  const kayit = depo.oku(DEPO.dersKonu, {})[classId];
+  if (kayit && kayit.konu !== undefined) return kayit;
+  const sinif = sinifBul(classId);
+  const konular = (durum.veri.konular && sinif && durum.veri.konular[sinif.sinif]) || [];
+  const son = depo.oku(DEPO.sonKonu, {})[classId];
+  return { konu: son || konular[0] || "", alt: "" };
+}
+
+function gozlemAc() {
+  durum.gozlemSecili = new Set();
+  durum.gozlemCoklu = false;
+  ileri({ e: "gozlem" });
+  dersGozlemleriTazele(durum.seciliSinif);
+}
+
+function gozlemCiz() {
+  const classId = durum.seciliSinif;
+  const sinif = sinifBul(classId);
+  ekranGoster("gozlem");
+  $("gozlemBaslik").textContent = "Ders İçi Gözlem · " + classId;
+  const v = dersVerisi(classId);
+  const bugun = bugunMetni();
+
+  // konu şeridi
+  const k = dersKonusu(classId);
+  const serit = $("konuSerit");
+  serit.innerHTML = "";
+  const metin = el("span");
+  metin.append(el("b", "", "Bugünün konusu: " + (k.konu || "seçilmedi")),
+    el("small", "", (k.alt ? "Alt konu: " + k.alt + " · " : "") + "💡 ❓ ve akademik gözlemler bu konuya bağlanır"));
+  serit.append(el("span", "ik", "📘"), metin, el("span", "deg", "Değiştir"));
+
+  $("cokluAnahtar").classList.toggle("acik", durum.gozlemCoklu);
+  $("cokluAnahtar").setAttribute("aria-pressed", durum.gozlemCoklu ? "true" : "false");
+
+  // öğrenciler
+  const izgara = $("gozlemIzgara");
+  izgara.innerHTML = "";
+  const bugunkuler = v.gozlemler.filter(g => g.tarih === bugun);
+  (sinif ? sinif.ogrenciler.filter(o => o.aktif) : []).forEach(s => {
+    const secili = durum.gozlemSecili.has(s.kod);
+    const b = dugme("ogrDugme" + (secili ? " secili" : ""), null, () => gozlemOgrTik(s.kod));
+    b.setAttribute("aria-pressed", secili ? "true" : "false");
+    const simgeler = bugunkuler.filter(g => g.kod === s.kod).sort((a, c) => (a.zaman || 0) - (c.zaman || 0))
+      .map(g => g.kategori === "gelisim" ? "✓" : dersEtiket(g.etiket).emoji).join(" ");
+    b.append(el("b", "", s.ad), el("small", "", simgeler));
+    izgara.appendChild(b);
+  });
+
+  // bugün bu sınıfta
+  const liste = bugunkuler.slice().sort((a, c) => (c.zaman || 0) - (a.zaman || 0));
+  $("bugunBaslik").textContent = "Bugün bu sınıfta (" + liste.length + ")";
+  const kutu = $("bugunListe");
+  kutu.innerHTML = "";
+  if (!liste.length) {
+    kutu.appendChild(el("div", "kart bos", v.yok && durum.dersYukleniyor[classId] ? "Yükleniyor…" : "Bugün henüz gözlem yok."));
+  } else {
+    const l = el("div", "bugunListe");
+    const adlar = {};
+    (sinif ? sinif.ogrenciler : []).forEach(s => { adlar[s.kod] = s.ad; });
+    liste.forEach(g => {
+      const satir = el("div", "bugunSatir");
+      const saat = g.zaman ? new Date(g.zaman).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" }) : "";
+      const ne = el("span", "ne");
+      ne.appendChild(el("b", "", adlar[g.kod] || g.kod));
+      let alt = "";
+      if (g.kategori === "gelisim") {
+        const eski = v.gozlemler.find(y => y.id === g.baglantiId);
+        const e = eski ? dersEtiket(eski.etiket) : null;
+        ne.appendChild(document.createTextNode(" · " + (e && e.duzelme ? e.duzelme : "✓ Düzeldi")));
+        if (e) alt = e.emoji + " " + e.ad + (e.konuyaBaglanir && eski.konu ? " · " + eski.konu : "");
+      } else {
+        const e = dersEtiket(g.etiket);
+        ne.appendChild(document.createTextNode(" · " + e.emoji + " " + e.ad));
+        if (g.konu) alt = g.konu + (g.altKonu ? " · " + g.altKonu : "");
+      }
+      if (alt) ne.appendChild(el("small", "", alt));
+      satir.append(el("span", "saat", saat), ne, dugme("", "Geri al", () => gozlemGeriAl([g.id], "Gözlem geri alındı")));
+      l.appendChild(satir);
+    });
+    kutu.appendChild(l);
+  }
+  if (durum.dersHata[classId] && !v.yok) kutu.appendChild(el("p", "ipucu merkez", "Liste güncellenemedi; telefondaki son liste gösteriliyor."));
+
+  // seçim çubuğu
+  const secimVar = durum.gozlemCoklu && durum.gozlemSecili.size > 0;
+  $("secimCubugu").hidden = !secimVar;
+  document.body.classList.toggle("secimVar", secimVar);
+  $("secimMetin").textContent = durum.gozlemSecili.size + " öğrenci seçili";
+}
+
+function gozlemOgrTik(kod) {
+  if (!durum.gozlemCoklu) { gozlemEtiketSayfasi([kod]); return; }
+  if (durum.gozlemSecili.has(kod)) durum.gozlemSecili.delete(kod); else durum.gozlemSecili.add(kod);
+  gozlemCiz();
+}
+
+/** Öğrencinin önceki derslerden açık kalan dikkat/akademik gözlemleri (düzeldi denmemiş olanlar). */
+function acikDersKayitlari(v, kod) {
+  const duzelen = new Set(v.gozlemler.filter(g => g.kategori === "gelisim").map(g => g.baglantiId));
+  return v.gozlemler.filter(g => g.kod === kod && (g.kategori === "dikkat" || g.kategori === "akademik") && !duzelen.has(g.id))
+    .sort((a, c) => (c.zaman || 0) - (a.zaman || 0));
+}
+
+function gozlemEtiketSayfasi(kodlar) {
+  const classId = durum.seciliSinif;
+  const sinif = sinifBul(classId);
+  const adlar = {};
+  sinif.ogrenciler.forEach(s => { adlar[s.kod] = s.ad; });
+  const v = dersVerisi(classId);
+  const konu = dersKonusu(classId);
+  const tek = kodlar.length === 1;
+  sayfaAc(sy => {
+    sy.append(el("h3", "", tek ? adlar[kodlar[0]] : kodlar.length + " öğrenci: " + kodlar.map(k => (adlar[k] || "").split(" ")[0]).join(", ")),
+      el("p", "alt", "Bir etikete dokunmak kaydeder. Yanlışsa “Geri al”."));
+    if (tek) {
+      const acik = acikDersKayitlari(v, kodlar[0]);
+      if (acik.length) {
+        sy.appendChild(el("div", "etiketGrup acik", "Önceki derslerden açık kalan"));
+        acik.forEach(g => {
+          const e = dersEtiket(g.etiket);
+          const satir = el("div", "acikKayit");
+          const m = el("div", "", e.emoji + " " + e.ad);
+          m.appendChild(el("small", "", tarihYaz(g.tarih) + (g.konu ? " · " + g.konu : "")));
+          satir.append(m, dugme("duzeldiDugme", e.duzelme || "✓ Düzeldi", () => dersDuzeldi(g, adlar[g.kod])));
+          sy.appendChild(satir);
+        });
+      }
+    }
+    DERS_GRUPLARI.forEach(([kat, baslik]) => {
+      sy.appendChild(el("div", "etiketGrup " + kat, kat === "akademik" && konu.konu ? baslik + " · " + konu.konu : baslik));
+      const izgara = el("div", "etiketIzgara");
+      ETIKETLER.DERS_GOZLEM.filter(e => e.kategori === kat && !e.emekli).forEach(e => {
+        const b = dugme("etiket ders " + kat, null, () => dersGozlemKaydet(kodlar, e, adlar));
+        const yazi = el("span", "", e.ad);
+        if (e.konuyaBaglanir && konu.konu) yazi.appendChild(el("span", "k", konu.konu));
+        b.append(el("span", "", e.emoji), yazi);
+        izgara.appendChild(b);
+      });
+      sy.appendChild(izgara);
+    });
+    sy.appendChild(el("div", "bosluk"));
+    sy.appendChild(dugme("ikinciDugme", "Vazgeç", sayfaKapat));
+  });
+}
+
+function dersGozlemKaydet(kodlar, e, adlar) {
+  const classId = durum.seciliSinif;
+  const konu = dersKonusu(classId);
+  const kayitlar = kodlar.map(kod => ({ id: yeniKimlik(), kod, ad: adlar[kod] || "", kategori: e.kategori, etiket: e.kod, baglantiId: "", konuyaBagli: !!e.konuyaBaglanir }));
+  if (!kuyrugaEkle("dersGozlem", { classId, tarih: bugunMetni(), zaman: Date.now(), konu: konu.konu, altKonu: konu.alt, kayitlar })) return;
+  durum.gozlemSecili.clear();
+  sayfaKapat();
+  gozlemCiz();
+  const kim = kodlar.length === 1 ? adlar[kodlar[0]] : kodlar.length + " öğrenci";
+  bildirimGoster(kim + ": " + e.emoji + " " + e.ad, () => gozlemGeriAl(kayitlar.map(k => k.id), "Geri alındı"));
+}
+
+function dersDuzeldi(g, ad) {
+  const e = dersEtiket(g.etiket);
+  const id = yeniKimlik();
+  if (!kuyrugaEkle("dersGozlem", {
+    classId: durum.seciliSinif, tarih: bugunMetni(), zaman: Date.now(), konu: g.konu, altKonu: g.altKonu,
+    kayitlar: [{ id, kod: g.kod, ad, kategori: "gelisim", etiket: ETIKETLER.DUZELDI_KODU, baglantiId: g.id, konuyaBagli: !!g.konu }]
+  })) return;
+  sayfaKapat();
+  gozlemCiz();
+  bildirimGoster(ad + ": " + (e.duzelme || "✓ Düzeldi") + " (eski kayıt korunur)", () => gozlemGeriAl([id], "Geri alındı"));
+}
+
+function gozlemGeriAl(idler, mesaj) {
+  if (!kuyrugaEkle("gozlemIptal", { classId: durum.seciliSinif, idler })) return;
+  if (ekranAcik("gozlem")) gozlemCiz();
+  bildirimGoster(mesaj);
+}
+
+function dersKonusuSayfasi() {
+  const classId = durum.seciliSinif;
+  const sinif = sinifBul(classId);
+  const konular = (durum.veri.konular && sinif && durum.veri.konular[sinif.sinif]) || [];
+  const k = dersKonusu(classId);
+  sayfaAc(sy => {
+    sy.append(el("h3", "", "Bugünün konusu · " + classId),
+      el("p", "alt", "Bu sınıfta girilen 💡 ❓ ve akademik gözlemler bu konuya bağlanır. Ertesi derste son seçtiğiniz konu hazır gelir."));
+    const l1 = el("label", "alan", "Konu (Müfredat)"); l1.htmlFor = "dkSec";
+    const sec = el("select", "girdi"); sec.id = "dkSec";
+    konular.forEach(x => { const o = el("option", "", x); o.value = x; sec.appendChild(o); });
+    if (k.konu && konular.indexOf(k.konu) === -1) { const o = el("option", "", k.konu); o.value = k.konu; sec.appendChild(o); }
+    const yok = el("option", "", "— Konu yok"); yok.value = ""; sec.appendChild(yok);
+    sec.value = k.konu || "";
+    const l2 = el("label", "alan", "Alt konu (isteğe bağlı)"); l2.htmlFor = "dkAlt";
+    const alt = el("input", "girdi"); alt.id = "dkAlt"; alt.maxLength = 60; alt.placeholder = "Ör. Negatif üs"; alt.value = k.alt || "";
+    sy.append(l1, sec, l2, alt, el("div", "bosluk"),
+      dugme("anaDugme", "Kaydet", () => {
+        const tum = depo.oku(DEPO.dersKonu, {});
+        const yeniKonu = sec.value;
+        tum[classId] = { konu: yeniKonu, alt: alt.value.trim() };
+        depo.yaz(DEPO.dersKonu, tum);
+        sayfaKapat(); gozlemCiz(); bildirimGoster("Konu güncellendi");
+      }),
+      el("div", "bosluk"), dugme("ikinciDugme", "Vazgeç", sayfaKapat));
+  });
+}
+
 // ---------- alt sayfa ve bildirim ----------
 let sayfaKapaninca = null;
 function sayfaAc(doldur, kapaninca) {
@@ -1070,6 +1335,17 @@ function gidenleriListeyeIsle(kayitlar) {
     degisti = true;
   });
   if (degisti) depo.yaz(DEPO.odevler, tum);
+  // ders gözlemleri
+  const ders = depo.oku(DEPO.dersGoz, {});
+  let dersDegisti = false;
+  kayitlar.forEach(k => {
+    const classId = k.veri && k.veri.classId;
+    if (!classId || (k.tur !== "dersGozlem" && k.tur !== "gozlemIptal")) return;
+    if (!ders[classId]) { if (k.tur === "dersGozlem") setTimeout(() => dersGozlemleriTazele(classId), 0); return; }
+    dersUygula(ders[classId], k, classId);
+    dersDegisti = true;
+  });
+  if (dersDegisti) depo.yaz(DEPO.dersGoz, ders);
 }
 
 async function kuyruguGonder() {
@@ -1138,7 +1414,7 @@ function cikisYap() {
     return;
   }
   if (!confirm("Bu telefondaki anahtar ve listeler silinsin mi? Tablodaki kayıtlar etkilenmez.")) return;
-  [DEPO.anahtar, DEPO.onbellek, DEPO.sonSinif, DEPO.odevler, DEPO.taslak, DEPO.sonKonu].forEach(k => depo.sil(k));
+  [DEPO.anahtar, DEPO.onbellek, DEPO.sonSinif, DEPO.odevler, DEPO.taslak, DEPO.sonKonu, DEPO.dersGoz, DEPO.dersKonu].forEach(k => depo.sil(k));
   durum.veri = null; durum.seciliSinif = null; durum.yigin = [];
   history.replaceState({ d: 0 }, "");
   girisGoster();
@@ -1161,6 +1437,10 @@ function baslat() {
   $("ozetDuzelt").addEventListener("click", () => { kontrolHazirla(durum.ozet.odevId); degistir({ e: "kontrol", id: durum.ozet.odevId }); });
   $("ozetListe").addEventListener("click", () => geri());
   $("perde").addEventListener("click", e => { if (e.target === $("perde")) sayfaKapat(); });
+  $("konuSerit").addEventListener("click", dersKonusuSayfasi);
+  $("cokluAnahtar").addEventListener("click", () => { durum.gozlemCoklu = !durum.gozlemCoklu; durum.gozlemSecili.clear(); gozlemCiz(); });
+  $("secimTemizle").addEventListener("click", () => { durum.gozlemSecili.clear(); gozlemCiz(); });
+  $("secimGozlem").addEventListener("click", () => { if (durum.gozlemSecili.size) gozlemEtiketSayfasi(Array.from(durum.gozlemSecili)); });
   $("aciklamaAc").addEventListener("click", () => { $("fAciklama").hidden = false; $("aciklamaAc").hidden = true; $("fAciklama").focus(); });
   $("fAd").addEventListener("input", () => $("fAd").classList.remove("hatali"));
   document.querySelectorAll("[data-cip]").forEach(b => b.addEventListener("click", () => {

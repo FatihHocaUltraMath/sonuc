@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.3">
+<link rel="stylesheet" href="takip.css?v=0.4">
 </head>
 <body>
 <div class="wrap">
@@ -132,6 +132,19 @@
     <div id="vIcerik"></div>
   </main>
 
+  <!-- Ekran: ders içi gözlem -->
+  <main id="ekran-gozlem" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <h2 class="bolumBaslik" id="gozlemBaslik"></h2>
+    <p class="altBilgi">Yalnızca dikkatinizi çeken anı kaydedin. Kaydı olmayan öğrenci “değerlendirilmedi” sayılır, “sorun yok” değil.</p>
+    <button class="konuSerit" type="button" id="konuSerit"></button>
+    <div class="araSatir"><span class="baslikK">Öğrenciye dokunun</span>
+      <button class="anahtar" type="button" id="cokluAnahtar" aria-pressed="false"><span class="top" aria-hidden="true"></span>Birden fazla öğrenci</button></div>
+    <div class="ogrIzgara" id="gozlemIzgara"></div>
+    <div class="grupBaslik" id="bugunBaslik"></div>
+    <div id="bugunListe"></div>
+  </main>
+
   <!-- Ekran: kayıt özeti -->
   <main id="ekran-ozet" hidden>
     <div class="kart ozetKart">
@@ -155,6 +168,13 @@
     <button class="anaDugme" type="button" id="kaydetDugme">Kontrolü Kaydet</button></div>
 </div>
 
+<!-- Ders gözleminde birden fazla öğrenci seçiliyken -->
+<div class="secimCubugu" id="secimCubugu" hidden>
+  <div class="secimIc"><span id="secimMetin"></span>
+    <button class="temizle" type="button" id="secimTemizle">Temizle</button>
+    <button class="anaDugme" type="button" id="secimGozlem">Gözlem seç</button></div>
+</div>
+
 <!-- Alt sayfa (soru) ve kısa bildirim -->
 <div class="perde" id="perde" hidden><div class="altSayfa" id="altSayfa" role="dialog" aria-modal="true"></div></div>
 <div class="bildirim" id="bildirim" hidden role="status"><span id="bildirimMetin"></span><button type="button" id="bildirimDugme">Geri al</button></div>
@@ -170,6 +190,6 @@
 </div>
 
 <script src="etiketler.js?v=0.1"></script>
-<script src="takip.js?v=0.3"></script>
+<script src="takip.js?v=0.4"></script>
 </body>
 </html>
