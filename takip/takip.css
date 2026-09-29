@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.4)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.5)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -290,6 +290,46 @@ body.secimVar{padding-bottom:calc(140px + env(safe-area-inset-bottom));}
 .etiket.ders:active{background:#F1F5F9;}
 .etiket .k{font-size:11px;color:#2563EB;font-weight:700;display:block;}
 .duzeldiDugme{max-width:48%;padding:4px 10px;white-space:normal;}
+
+/* ================= Aşama 4: öğrenci görünümü ================= */
+.ogrSatirKart{width:100%;display:flex;align-items:center;gap:10px;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;min-height:62px;cursor:pointer;}
+.ogrSatirKart .ad{flex:1;min-width:0;}
+.ogrSatirKart b{display:block;font-size:15px;color:var(--dark);}
+.ogrSatirKart small{display:block;font-size:12px;color:var(--gray);margin-top:2px;}
+.ogrSatirKart .ok{color:var(--gray);font-size:20px;}
+.acikIsaret{display:inline-block;background:var(--amber-acik);color:var(--amber);font-size:11px;font-weight:800;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle;}
+.sekmeler{display:flex;background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:3px;margin-bottom:12px;}
+.sekmeler button{flex:1;border:none;background:none;border-radius:9px;min-height:40px;font-weight:700;font-size:13.5px;color:var(--gray);cursor:pointer;}
+.sekmeler button.secili{background:var(--purple-acik);color:var(--dark);}
+.kartBaslik2{margin:0 0 10px;font-size:14.5px;font-weight:800;color:var(--dark);display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+.kartBaslik2 small{font-size:12px;color:var(--gray);font-weight:600;}
+summary.kartBaslik2{margin:0;cursor:pointer;min-height:32px;}
+.bos{font-size:13px;color:var(--gray);line-height:1.45;margin:0;}
+.odevSeridi{display:flex;gap:3px;margin:12px 0 4px;flex-wrap:wrap;}
+.odevSeridi span{width:26px;height:26px;border-radius:7px;display:grid;place-items:center;font-size:13px;background:#F1F5F9;}
+.odevSeridi span.T{background:var(--green-acik);} .odevSeridi span.E{background:var(--amber-acik);} .odevSeridi span.Y{background:var(--red-acik);}
+details.odevDetay summary{font-size:13px;font-weight:700;color:var(--purple);min-height:40px;display:flex;align-items:center;cursor:pointer;}
+.odevSatir2{display:flex;gap:8px;font-size:13px;padding:6px 0;border-top:1px solid var(--line);line-height:1.35;}
+.odevSatir2 .t{width:52px;flex:0 0 auto;color:var(--gray);font-size:12px;}
+.odevSatir2 .n{flex:1;min-width:0;} .odevSatir2 .n small{display:block;font-size:11.5px;color:var(--gray);}
+.grupAd{font-size:12px;font-weight:800;margin:12px 0 6px;}
+.grupAd.olumlu{color:var(--green);} .grupAd.dikkat{color:var(--red);} .grupAd.akademik{color:#2563EB;} .grupAd.gelistir{color:var(--amber);}
+.etiketSatir{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line);font-size:13.5px;line-height:1.35;}
+.grupAd + .etiketSatir, h5 + .etiketSatir{border-top:none;}
+.etiketSatir .e{width:22px;flex:0 0 auto;text-align:center;}
+.etiketSatir .m{flex:1;min-width:0;} .etiketSatir .m small{display:block;font-size:11.5px;color:var(--gray);margin-top:1px;}
+.etiketSatir .kez{font-size:12px;font-weight:800;color:var(--dark);background:#F1F5F9;border-radius:999px;padding:2px 8px;white-space:nowrap;}
+.durumRozet{font-size:11px;font-weight:800;border-radius:6px;padding:1px 6px;white-space:nowrap;}
+.durumRozet.acik{background:var(--amber-acik);color:var(--amber);}
+.durumRozet.duzeldi{background:var(--purple-acik);color:var(--dark);white-space:normal;}
+.konuBlok{border:1px solid #DBEAFE;border-radius:12px;padding:8px 10px;margin-bottom:6px;}
+.konuBlok h5{margin:0 0 2px;font-size:13px;color:#1E3A8A;}
+.veliSatir{font-size:13px;padding:6px 0;border-top:1px solid var(--line);}
+.kartBaslik2 + .veliSatir{border-top:none;}
+.zcGun{font-size:12px;font-weight:800;color:var(--gray);margin:12px 0 4px;}
+.zcSatir{display:flex;gap:8px;font-size:13px;padding:5px 0;line-height:1.35;}
+.zcSatir .ik{width:22px;text-align:center;flex:0 0 auto;}
+.zcSatir small{display:block;color:var(--gray);font-size:11.5px;}
 
 @media (min-width:700px){ body{padding-top:28px;} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }

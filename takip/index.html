@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.4">
+<link rel="stylesheet" href="takip.css?v=0.5">
 </head>
 <body>
 <div class="wrap">
@@ -145,6 +145,23 @@
     <div id="bugunListe"></div>
   </main>
 
+  <!-- Ekran: öğrenci görünümü — liste -->
+  <main id="ekran-ogrListe" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <h2 class="bolumBaslik" id="ogrListeBaslik"></h2>
+    <p class="altBilgi">Bir öğrenciye dokunun: ödevleri ve gözlemleri tek ekranda. Liste alfabetiktir; sıralama ya da puan yoktur. 📌 = henüz “düzeldi” denmemiş kayıt.</p>
+    <div id="ogrListeIcerik"></div>
+  </main>
+
+  <!-- Ekran: öğrenci görünümü — tek öğrenci -->
+  <main id="ekran-ogrenci" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Öğrenci listesi</button>
+    <h2 class="bolumBaslik" id="ogrAd"></h2>
+    <p class="altBilgi" id="ogrAlt"></p>
+    <div class="sekmeler"><button type="button" id="kapsamDonem">Bu dönem</button><button type="button" id="kapsamYil">Tüm yıl</button></div>
+    <div id="ogrIcerik"></div>
+  </main>
+
   <!-- Ekran: kayıt özeti -->
   <main id="ekran-ozet" hidden>
     <div class="kart ozetKart">
@@ -190,6 +207,6 @@
 </div>
 
 <script src="etiketler.js?v=0.1"></script>
-<script src="takip.js?v=0.4"></script>
+<script src="takip.js?v=0.5"></script>
 </body>
 </html>
