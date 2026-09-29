@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.2)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.3)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -159,10 +159,18 @@ textarea.girdi{padding:10px 12px;min-height:80px;resize:vertical;margin-top:4px;
 .lejant{display:flex;justify-content:flex-end;gap:4px;font-size:10.5px;color:var(--gray);padding:0 8px 4px;}
 .lejant span{width:44px;text-align:center;}
 .ogrListe{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;}
-.ogrSatir{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 12px;border-top:1px solid var(--line);min-height:58px;}
+.ogrSatir{display:flex;align-items:center;gap:8px;padding:7px 8px 7px 4px;border-top:1px solid var(--line);min-height:58px;}
 .ogrSatir:first-child{border-top:none;}
 .ogrSatir.istisna{background:#FFFBF5;}
-.ogrAd{flex:1;min-width:0;font-size:14.5px;font-weight:700;color:var(--dark);line-height:1.25;overflow-wrap:anywhere;}
+.ogrAd{flex:1;min-width:0;text-align:left;border:none;background:none;padding:6px 8px;border-radius:10px;min-height:48px;cursor:pointer;
+  font-size:14.5px;font-weight:700;color:var(--dark);line-height:1.25;overflow-wrap:anywhere;}
+.ogrAd:active{background:#F1F5F9;}
+.ogrAd small.ekle{color:var(--purple);}
+.etiketCipleri{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
+.etiketCipleri span{font-size:11px;font-weight:700;border-radius:6px;padding:1px 5px;}
+.e-olumlu{background:var(--green-acik);color:#166534;}
+.e-gelistir{background:var(--amber-acik);color:var(--amber);}
+.e-gelisim{background:var(--purple-acik);color:var(--dark);}
 .ogrAd small{display:block;font-weight:600;font-size:11.5px;color:var(--gray);}
 .ogrAd small.degisti{color:var(--purple);}
 .segment{display:flex;gap:4px;flex:0 0 auto;}
@@ -205,6 +213,37 @@ details.ozetGrup summary{font-size:13.5px;font-weight:700;color:var(--dark);min-
 .bildirim{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(122px + env(safe-area-inset-bottom));z-index:15;background:#1E293B;color:#fff;border-radius:12px;padding:10px 12px 10px 14px;font-size:13.5px;display:flex;gap:12px;align-items:center;max-width:92vw;}
 .bildirim button{border:none;background:none;color:#FDBA74;font-weight:800;min-height:36px;cursor:pointer;}
 button:focus-visible,.girdi:focus-visible{outline:3px solid var(--purple);outline-offset:2px;}
+
+/* ================= Aşama 2: gözlem seçimi + veli mesajları ================= */
+.altSayfa .alt{font-size:12.5px;color:var(--gray);margin:0 0 10px;}
+.etiketGrup{font-size:12px;font-weight:800;color:var(--gray);margin:12px 2px 6px;}
+.etiketIzgara{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.etiket{min-height:48px;border:1.5px solid var(--line);background:#fff;border-radius:12px;text-align:left;padding:6px 10px;font-size:13px;font-weight:600;line-height:1.25;display:flex;gap:6px;align-items:center;cursor:pointer;}
+.etiket.secili.olumlu{background:var(--green-acik);border-color:var(--green);color:#14532D;}
+.etiket.secili.gelistir{background:var(--amber-acik);border-color:#F59E0B;color:#78350F;}
+.acikKayit{display:flex;gap:8px;align-items:center;border:1.5px dashed #F59E0B;border-radius:12px;padding:8px 10px;margin-bottom:6px;}
+.acikKayit div{flex:1;font-size:13px;line-height:1.35;}
+.acikKayit small{display:block;color:var(--gray);font-size:11.5px;}
+.duzeldiDugme{border:1.5px solid var(--purple);background:#fff;color:var(--dark);border-radius:10px;padding:0 10px;min-height:40px;font-size:12.5px;font-weight:700;white-space:nowrap;cursor:pointer;}
+.duzeldiDugme.secili{background:var(--purple-acik);}
+
+.veliSerit{width:100%;text-align:left;display:flex;gap:12px;align-items:center;border:2px solid #25D366;background:#F0FDF4;border-radius:16px;padding:12px 14px;margin:12px 0 4px;min-height:64px;cursor:pointer;}
+.veliSerit b{display:block;color:#14532D;font-size:15px;}
+.veliSerit small{display:block;color:#166534;font-size:12.5px;margin-top:2px;}
+.veliSerit .ok{margin-left:auto;font-size:22px;color:#166534;}
+.ilerleme{display:flex;gap:4px;margin:4px 0 12px;}
+.ilerleme span{flex:1;height:6px;border-radius:3px;background:var(--line);}
+.ilerleme span.gitti{background:#25D366;}
+.ilerleme span.simdi{background:var(--orange);}
+.veliKimlik{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
+.veliKimlik b{font-size:17px;color:var(--dark);}
+.veliKimlik small{font-size:12.5px;color:var(--gray);}
+.mesaj{width:100%;min-height:340px;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:15px;line-height:1.5;background:#ECE5DD;color:#111;resize:vertical;font-family:inherit;}
+.mesaj:focus{outline:none;border-color:var(--purple);}
+.waDugme{width:100%;min-height:52px;border:none;border-radius:12px;background:#25D366;color:#fff;font-weight:800;font-size:15px;cursor:pointer;}
+.uyariKucuk{background:var(--amber-acik);color:var(--amber);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin-bottom:10px;}
+.bitti{text-align:center;padding:24px 12px;}
+.bitti .buyuk{font-size:40px;}
 
 @media (min-width:700px){ body{padding-top:28px;} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }

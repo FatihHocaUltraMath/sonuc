@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.2">
+<link rel="stylesheet" href="takip.css?v=0.3">
 </head>
 <body>
 <div class="wrap">
@@ -118,9 +118,18 @@
     <h2 class="bolumBaslik" id="kAd"></h2>
     <p class="altBilgi" id="kAlt"></p>
     <button class="tumuDugme" type="button" id="tumuDugme"></button>
-    <p class="ipucu">İstisnaları önce ya da sonra işaretleyebilirsiniz; bu düğme yalnızca <b>boş</b> satırları doldurur, işaretlediklerinize dokunmaz. Aynı düğmeye tekrar dokunmak işareti kaldırır.</p>
+    <p class="ipucu">İstisnaları önce ya da sonra işaretleyebilirsiniz; bu düğme yalnızca <b>boş</b> satırları doldurur, işaretlediklerinize dokunmaz. Aynı düğmeye tekrar dokunmak işareti kaldırır. Gözlem eklemek için öğrencinin <b>adına</b> dokunun.</p>
     <div class="lejant" aria-hidden="true"><span>✅ Tam</span><span>🟡 Eksik</span><span>❌ Yapmadı</span><span>⚪ Mazeret</span></div>
     <div class="ogrListe" id="ogrListe"></div>
+  </main>
+
+  <!-- Ekran: veli mesajları (sıradaki veli) -->
+  <main id="ekran-veli" hidden>
+    <button class="geriDugme" type="button" data-geri>‹ Ödev listesi</button>
+    <h2 class="bolumBaslik" id="veliBaslik"></h2>
+    <p class="altBilgi" id="vAlt"></p>
+    <div class="ilerleme" id="vIlerleme" aria-hidden="true"></div>
+    <div id="vIcerik"></div>
   </main>
 
   <!-- Ekran: kayıt özeti -->
@@ -161,6 +170,6 @@
 </div>
 
 <script src="etiketler.js?v=0.1"></script>
-<script src="takip.js?v=0.2"></script>
+<script src="takip.js?v=0.3"></script>
 </body>
 </html>

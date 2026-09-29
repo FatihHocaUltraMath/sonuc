@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.2 · Aşama 1: ödev oluşturma + hızlı ödev kontrolü)
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.3 · Aşama 2: ödev gözlemleri + 4 ödevde bir veli mesajı)
  *
  * Kalıcı verinin tek kaynağı UltraMat_Takip Google tablosudur. Telefonda yalnızca şunlar tutulur:
  *  - öğretmen anahtarı (her girişte sormamak için),
@@ -13,7 +13,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.2";
+const SURUM = "0.3";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu"
@@ -38,7 +38,8 @@ const durum = {
   kontrol: null,         // açık kontrol: { odevId, classId, kayitli, calisma }
   ozet: null,            // son kaydın özeti: { odevId, ilk, onceki }
   cikisOnayli: false,
-  form: null             // açık form: { id } (düzenleme) ya da { id: null } (yeni)
+  form: null,            // açık form: { id } (düzenleme) ya da { id: null } (yeni)
+  veliSira: 0            // veli mesajı ekranında sıradaki velinin yeri
 };
 
 // ---------- küçük yardımcılar ----------
@@ -127,7 +128,7 @@ async function api(islem, ek, anahtar) {
 function anahtarReddi(e) { return e instanceof SunucuHatasi && (e.kod === "anahtar" || e.kod === "anahtar_yok"); }
 
 // ---------- ekranlar ve gezinme ----------
-const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet"];
+const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli"];
 
 function ekranGoster(ad) {
   EKRANLAR.forEach(e => { $("ekran-" + e).hidden = e !== ad; });
@@ -172,6 +173,7 @@ function ciz() {
   else if (ust.e === "odevForm") odevFormCiz();
   else if (ust.e === "kontrol") kontrolCiz(true);
   else if (ust.e === "ozet") ozetCiz();
+  else if (ust.e === "veli") veliCiz();
   durumCubugunuCiz();
 }
 
@@ -285,6 +287,8 @@ function bolumCiz(ad) {
 function odevVerisi(classId) {
   const tum = depo.oku(DEPO.odevler, {});
   const v = kopya(tum[classId] || { odevler: [], kontrol: {}, yok: true });
+  v.gozlemler = v.gozlemler || [];
+  v.veli = v.veli || [];
   depo.oku(DEPO.kuyruk, []).forEach(k => yereleUygula(v, k, classId));
   return v;
 }
@@ -295,7 +299,7 @@ function yereleUygula(v, k, classId) {
   if (x.classId !== classId) return;
   if (k.tur === "odevOlustur") {
     if (!v.odevler.some(o => o.id === x.odevId)) {
-      v.odevler.push({ id: x.odevId, tarih: x.tarih, konu: x.konu || "", ad: x.ad, aciklama: x.aciklama || "", iptal: false, donemNo: donemBul(x.tarih).no });
+      v.odevler.push({ id: x.odevId, tarih: x.tarih, konu: x.konu || "", ad: x.ad, aciklama: x.aciklama || "", iptal: false, donemNo: donemBul(x.tarih).no, olusturma: k.eklenme || 0 });
     }
   } else if (k.tur === "odevGuncelle") {
     const o = v.odevler.find(o => o.id === x.odevId);
@@ -306,6 +310,17 @@ function yereleUygula(v, k, classId) {
   } else if (k.tur === "odevKontrol") {
     const m = v.kontrol[x.odevId] = v.kontrol[x.odevId] || {};
     (x.durumlar || []).forEach(d => { if (d.d) m[d.kod] = d.d; else delete m[d.kod]; });
+    if (x.gozlem) {
+      v.gozlemler = v.gozlemler || [];
+      const iptal = new Set(x.gozlem.iptal || []);
+      v.gozlemler = v.gozlemler.filter(g => !iptal.has(g.id));
+      (x.gozlem.ekle || []).forEach(g => {
+        if (!v.gozlemler.some(y => y.id === g.id)) v.gozlemler.push({ id: g.id, kod: g.kod, odevId: x.odevId, kategori: g.kategori, etiket: g.etiket, baglantiId: g.baglantiId || "" });
+      });
+    }
+  } else if (k.tur === "veliBilgi") {
+    v.veli = v.veli || [];
+    v.veli.push({ kod: x.kod, donemNo: x.donemNo, blokNo: x.blokNo });
   }
 }
 
@@ -320,7 +335,7 @@ async function odevleriTazele(classId) {
     if (sayac !== durum.gonderimSayaci) tekrar = true;      // bu arada kayıt gitti; liste eskimiş olabilir
     else {
       const tum = depo.oku(DEPO.odevler, {});
-      tum[classId] = { odevler: y.odevler || [], kontrol: y.kontrol || {}, alinma: Date.now() };
+      tum[classId] = { odevler: y.odevler || [], kontrol: y.kontrol || {}, gozlemler: y.gozlemler || [], veli: y.veli || [], alinma: Date.now() };
       depo.yaz(DEPO.odevler, tum);
       delete durum.odevHata[classId];
     }
@@ -367,6 +382,7 @@ function odevListeCiz() {
   if (v.yok && durum.odevHata[classId]) { kutu.appendChild(el("div", "kart bos", durum.odevHata[classId] + " İnternet gelince \"Listeyi yenile\"ye dokunun.")); }
   else if (durum.odevHata[classId]) kutu.appendChild(el("p", "ipucu", "Liste güncellenemedi; telefondaki son liste gösteriliyor."));
 
+  veliSeridi(kutu, classId);
   const liste = donemOdevleri(v);
   if (!liste.length && !v.yok) { kutu.appendChild(el("div", "kart bos", "Bu dönem henüz ödev yok. Yukarıdaki düğmeyle ilkini oluşturun.")); }
 
@@ -384,8 +400,11 @@ function odevListeCiz() {
       DURUM_SIRASI.forEach(d => dr.appendChild(el("span", "rozet", DURUM[d].emoji + " " + c[d])));
       const isaretsiz = sinif ? sinif.ogrenciler.filter(s => s.aktif && !k[s.kod]).length : 0;
       if (isaretsiz) dr.appendChild(el("span", "rozet b", isaretsiz + " işaretsiz"));
+      const gozSay = (v.gozlemler || []).filter(g => g.odevId === o.id && g.kategori !== "gelisim").length;
+      if (gozSay) dr.appendChild(el("span", "rozet", "🏷️ " + gozSay + " gözlem"));
     } else {
-      const tas = taslaklar[o.id] ? Object.keys(taslaklar[o.id]).length : 0;
+      const t = taslaklar[o.id];
+      const tas = t ? Object.keys(t.d || t).length : 0;
       dr.appendChild(tas ? el("span", "rozet tas", "✏️ Taslak: " + tas + "/" + ogrSay + " işaretli, kaydedilmedi")
                          : el("span", "rozet b", "Kontrol edilmedi"));
     }
@@ -489,14 +508,42 @@ function iptalSor() {
   });
 }
 
-// ---------- 3. hızlı kontrol ----------
+// ---------- 3. hızlı kontrol (+ ödev gözlemleri) ----------
+const ODEV_ETIKET = {};
+ETIKETLER.ODEV_GOZLEM.forEach(e => { ODEV_ETIKET[e.kod] = e; });
+const etiketBilgi = kod => ODEV_ETIKET[kod] || { kod, kategori: "", emoji: "•", ad: kod };
+
+/** Bu ödevde kayıtlı gözlemler: etiketler {kod: {etiket: gözlemId}}, düzeldiler {bağlantıId: gözlemId}. */
+function kayitliGozlemler(v, odevId) {
+  const etiket = {}, duzeldi = {};
+  (v.gozlemler || []).forEach(g => {
+    if (g.odevId !== odevId) return;
+    if (g.kategori === "gelisim") { if (g.baglantiId) duzeldi[g.baglantiId] = g.id; }
+    else (etiket[g.kod] = etiket[g.kod] || {})[g.etiket] = g.id;
+  });
+  return { etiket, duzeldi };
+}
+
 function kontrolHazirla(odevId) {
   const classId = durum.seciliSinif;
   const v = odevVerisi(classId);
   const kayitli = kopya(v.kontrol[odevId] || {});
-  const taslak = depo.oku(DEPO.taslak, {})[odevId];
+  let taslak = depo.oku(DEPO.taslak, {})[odevId] || null;
+  if (taslak && !taslak.d) taslak = { d: taslak, e: {}, z: {} };          // 0.2 taslağı
   const kayitliVar = Object.keys(kayitli).length > 0;
-  durum.kontrol = { odevId, classId, kayitli: kayitliVar ? kayitli : null, calisma: kayitliVar ? kopya(kayitli) : kopya(taslak || {}) };
+  const kg = kayitliGozlemler(v, odevId);
+  const etiketKume = {};
+  Object.keys(kg.etiket).forEach(kod => { etiketKume[kod] = {}; Object.keys(kg.etiket[kod]).forEach(e => { etiketKume[kod][e] = true; }); });
+  const duzeldiKume = {};
+  Object.keys(kg.duzeldi).forEach(b => { duzeldiKume[b] = true; });
+  durum.kontrol = {
+    odevId, classId,
+    kayitli: kayitliVar ? kayitli : null,
+    calisma: kayitliVar ? kopya(kayitli) : kopya((taslak && taslak.d) || {}),
+    gozKayitli: kg,
+    etiket: kayitliVar || !taslak ? etiketKume : kopya(taslak.e || {}),
+    duzeldi: kayitliVar || !taslak ? duzeldiKume : kopya(taslak.z || {})
+  };
 }
 
 function kontrolBaslat(odevId) {
@@ -511,14 +558,41 @@ function kontrolOgrencileri() {
   return sinif.ogrenciler.filter(o => o.aktif || (k.kayitli && k.kayitli[o.kod]) || k.calisma[o.kod]);
 }
 
-function duzeltmeBekliyor() {
-  const k = durum.kontrol;
-  if (!k || !k.kayitli) return false;
-  return fark(k.kayitli, k.calisma).length > 0;
-}
 function fark(a, b) {
   const kodlar = new Set(Object.keys(a || {}).concat(Object.keys(b || {})));
   return Array.from(kodlar).filter(kod => (a[kod] || "") !== (b[kod] || ""));
+}
+
+/** Gözlemlerde kayıtlıya göre ne değişti: eklenecek etiketler/düzeldiler, iptal edilecek gözlem kimlikleri. */
+function gozlemFarki() {
+  const k = durum.kontrol, kg = k.gozKayitli;
+  const ekle = [], iptal = [];
+  const kodlar = new Set(Object.keys(k.etiket).concat(Object.keys(kg.etiket)));
+  kodlar.forEach(kod => {
+    const simdi = k.etiket[kod] || {}, once = kg.etiket[kod] || {};
+    Object.keys(simdi).forEach(e => { if (simdi[e] && !once[e]) ekle.push({ tur: "etiket", kod, etiket: e }); });
+    Object.keys(once).forEach(e => { if (!simdi[e]) iptal.push(once[e]); });
+  });
+  Object.keys(k.duzeldi).forEach(b => { if (k.duzeldi[b] && !kg.duzeldi[b]) ekle.push({ tur: "duzeldi", baglantiId: b }); });
+  Object.keys(kg.duzeldi).forEach(b => { if (!k.duzeldi[b]) iptal.push(kg.duzeldi[b]); });
+  return { ekle, iptal };
+}
+function gozlemDegisti() { const f = gozlemFarki(); return f.ekle.length + f.iptal.length > 0; }
+
+function duzeltmeBekliyor() {
+  const k = durum.kontrol;
+  if (!k || !k.kayitli) return false;
+  return fark(k.kayitli, k.calisma).length > 0 || gozlemDegisti();
+}
+
+/** Öğrencinin önceki ödevlerden "geliştirmeli" gözlemleri: henüz düzelmemiş olanlar + bu ödevde düzeldi denenler. */
+function acikGelistirler(kod) {
+  const k = durum.kontrol, v = odevVerisi(k.classId);
+  const gozlemler = v.gozlemler || [];
+  const baskaOdevdeDuzeldi = new Set(gozlemler.filter(g => g.kategori === "gelisim" && g.odevId !== k.odevId).map(g => g.baglantiId));
+  return gozlemler.filter(g => g.kod === kod && g.kategori === "gelistir" && g.odevId !== k.odevId && !baskaOdevdeDuzeldi.has(g.id))
+    .map(g => Object.assign({ odev: v.odevler.find(o => o.id === g.odevId) }, g))
+    .filter(g => g.odev && !g.odev.iptal);
 }
 
 function kontrolCiz(ilkCizim) {
@@ -541,10 +615,23 @@ function kontrolCiz(ilkCizim) {
     const d = k.calisma[s.kod] || "";
     const once = k.kayitli ? (k.kayitli[s.kod] || "") : "";
     const satir = el("div", "ogrSatir" + (d && d !== "T" ? " istisna" : ""));
-    const ad = el("div", "ogrAd", s.ad);
+    const ad = dugme("ogrAd", null, () => etiketSayfasi(s.kod));
+    ad.appendChild(document.createTextNode(s.ad));
     if (k.kayitli && once !== d) ad.appendChild(el("small", "degisti", "değişti (önce: " + (once ? DURUM[once].ad : "boş") + ")"));
     else if (!s.aktif) ad.appendChild(el("small", "", "ayrıldı"));
     else if (!d) ad.appendChild(el("small", "", "işaretlenmedi"));
+    // gözlem çipleri
+    const secili = Object.keys(k.etiket[s.kod] || {}).filter(e => k.etiket[s.kod][e]);
+    const duzelen = acikGelistirler(s.kod).filter(g => k.duzeldi[g.id]);
+    if (secili.length || duzelen.length) {
+      const cipler = el("span", "etiketCipleri");
+      secili.forEach(e => { const b = etiketBilgi(e); cipler.appendChild(el("span", "e-" + b.kategori, b.emoji + " " + b.ad)); });
+      duzelen.forEach(g => cipler.appendChild(el("span", "e-gelisim", etiketBilgi(g.etiket).duzelme || "✓ Düzeldi")));
+      ad.appendChild(cipler);
+    } else if (s.aktif) {
+      const acik = acikGelistirler(s.kod).length;
+      ad.appendChild(el("small", "ekle", "＋ gözlem" + (acik ? " · 📌 açık kayıt var" : "")));
+    }
     const seg = el("div", "segment");
     seg.setAttribute("role", "group");
     seg.setAttribute("aria-label", s.ad);
@@ -571,12 +658,13 @@ function kontrolCiz(ilkCizim) {
   if (bos) sayac.appendChild(el("span", "bosSayi", "— " + bos + " boş"));
   const kd = $("kaydetDugme");
   kd.textContent = k.kayitli ? "Düzeltmeyi Kaydet" : "Kontrolü Kaydet";
-  kd.disabled = k.kayitli ? !duzeltmeBekliyor() : Object.keys(k.calisma).length === 0;
+  kd.disabled = k.kayitli ? !duzeltmeBekliyor() : (Object.keys(k.calisma).length === 0 && !gozlemDegisti());
 
   // İlk kontrol kaydedilene kadar telefonda taslak olarak saklanır
   if (!k.kayitli) {
     const taslak = depo.oku(DEPO.taslak, {});
-    if (Object.keys(k.calisma).length) taslak[k.odevId] = k.calisma; else delete taslak[k.odevId];
+    if (Object.keys(k.calisma).length || gozlemDegisti()) taslak[k.odevId] = { d: k.calisma, e: k.etiket, z: k.duzeldi };
+    else delete taslak[k.odevId];
     depo.yaz(DEPO.taslak, taslak);
   }
 }
@@ -586,6 +674,52 @@ function isaretle(kod, d) {
   if (k.calisma[kod] === d) delete k.calisma[kod];      // aynı düğmeye tekrar dokunmak işareti kaldırır
   else k.calisma[kod] = d;
   kontrolCiz(false);
+}
+
+/** Öğrencinin adına dokununca: bu ödev için gözlem seçimi + önceki ödevlerden açık kalanlar. */
+function etiketSayfasi(kod) {
+  const k = durum.kontrol;
+  const s = sinifBul(k.classId).ogrenciler.find(x => x.kod === kod);
+  const o = odevVerisi(k.classId).odevler.find(x => x.id === k.odevId);
+  sayfaAc(sy => {
+    sy.append(el("h3", "", s.ad), el("p", "alt", (o ? o.ad : "") + " · birden fazla seçebilirsiniz · hiçbiri zorunlu değil"));
+    const acik = acikGelistirler(kod);
+    if (acik.length) {
+      sy.appendChild(el("div", "etiketGrup", "Önceki ödevlerden açık kalan"));
+      acik.forEach(g => {
+        const b = etiketBilgi(g.etiket), isaretli = !!k.duzeldi[g.id];
+        const satir = el("div", "acikKayit");
+        const metin = el("div", "", b.emoji + " " + b.ad);
+        metin.appendChild(el("small", "", g.odev.ad + " · " + tarihYaz(g.odev.tarih)));
+        const dd = dugme("duzeldiDugme" + (isaretli ? " secili" : ""), isaretli ? "✓ İşaretlendi" : (b.duzelme || "✓ Düzeldi"), () => {
+          if (k.duzeldi[g.id]) delete k.duzeldi[g.id]; else k.duzeldi[g.id] = true;
+          etiketSayfasi(kod);
+        });
+        satir.append(metin, dd);
+        sy.appendChild(satir);
+      });
+      sy.appendChild(el("p", "alt", "Eski kayıt silinmez; bu ödevde düzeldiği yanına eklenir."));
+    }
+    [["olumlu", "Olumlu"], ["gelistir", "Geliştirilmeli"]].forEach(([kat, baslik]) => {
+      sy.appendChild(el("div", "etiketGrup", baslik));
+      const izgara = el("div", "etiketIzgara");
+      ETIKETLER.ODEV_GOZLEM.filter(e => e.kategori === kat && !e.emekli).forEach(e => {
+        const secili = !!(k.etiket[kod] && k.etiket[kod][e.kod]);
+        const b = dugme("etiket " + kat + (secili ? " secili" : ""), null, () => {
+          k.etiket[kod] = k.etiket[kod] || {};
+          if (k.etiket[kod][e.kod]) delete k.etiket[kod][e.kod]; else k.etiket[kod][e.kod] = true;
+          etiketSayfasi(kod);
+        });
+        b.setAttribute("aria-pressed", secili ? "true" : "false");
+        b.append(el("span", "", e.emoji), el("span", "", e.ad));
+        izgara.appendChild(b);
+      });
+      sy.appendChild(izgara);
+    });
+    const alt = el("div", "dugmeSatir");
+    alt.appendChild(dugme("anaDugme", "Tamam", sayfaKapat));
+    sy.appendChild(alt);
+  }, () => kontrolCiz(false));
 }
 
 function tumunuTam() {
@@ -600,7 +734,7 @@ function tumunuTam() {
 function kaydetBas() {
   const k = durum.kontrol;
   const bos = kontrolOgrencileri().filter(s => s.aktif && !k.calisma[s.kod]);
-  if (!bos.length) { kaydet(); return; }
+  if (!bos.length || !Object.keys(k.calisma).length) { kaydet(); return; }
   sayfaAc(sy => {
     sy.append(el("h3", "", bos.length + " öğrenci işaretlenmedi"),
       el("p", "", bos.map(s => s.ad).join(", ")),
@@ -617,10 +751,19 @@ function kaydet() {
   const ogrAd = {};
   sinifBul(k.classId).ogrenciler.forEach(s => { ogrAd[s.kod] = s.ad; });
   const durumlar = fark(once, k.calisma).map(kod => ({ kod, ad: ogrAd[kod] || "", d: k.calisma[kod] || "" }));
-  if (!durumlar.length) return;
-  if (!kuyrugaEkle("odevKontrol", { odevId: k.odevId, classId: k.classId, durumlar })) return;
+  const gf = gozlemFarki();
+  if (!durumlar.length && !gf.ekle.length && !gf.iptal.length) return;
+  const gozlemler = odevVerisi(k.classId).gozlemler || [];
+  const ekle = gf.ekle.map(x => {
+    if (x.tur === "etiket") return { id: yeniKimlik(), kod: x.kod, ad: ogrAd[x.kod] || "", kategori: etiketBilgi(x.etiket).kategori || "olumlu", etiket: x.etiket, baglantiId: "" };
+    const eski = gozlemler.find(g => g.id === x.baglantiId) || {};
+    return { id: yeniKimlik(), kod: eski.kod, ad: ogrAd[eski.kod] || "", kategori: "gelisim", etiket: ETIKETLER.DUZELDI_KODU, baglantiId: x.baglantiId };
+  }).filter(x => x.kod);
+  const oncekiBlok = veliBlogu(k.classId).tamam;
+  if (!kuyrugaEkle("odevKontrol", { odevId: k.odevId, classId: k.classId, durumlar, gozlem: { ekle, iptal: gf.iptal } })) return;
   const taslak = depo.oku(DEPO.taslak, {}); delete taslak[k.odevId]; depo.yaz(DEPO.taslak, taslak);
-  durum.ozet = { odevId: k.odevId, classId: k.classId, ilk: !k.kayitli, onceki: k.kayitli };
+  const b = veliBlogu(k.classId);
+  durum.ozet = { odevId: k.odevId, classId: k.classId, ilk: !k.kayitli, onceki: k.kayitli, yeniBlok: b.tamam > oncekiBlok ? b.tamam : 0 };
   kontrolHazirla(k.odevId);                                 // artık kayıtlı; "Düzelt" buradan başlar
   degistir({ e: "ozet", id: k.odevId });
 }
@@ -645,7 +788,8 @@ function ozetCiz() {
   const sinif = sinifBul(oz.classId);
   const ogr = sinif ? sinif.ogrenciler.filter(s => s.aktif || k[s.kod]) : [];
   const c = sayilar(k);
-  $("oBaslik").textContent = oz.ilk ? "Kontrol kaydedildi" : "Düzeltme kaydedildi";
+  const kontrolVar = Object.keys(k).length > 0;
+  $("oBaslik").textContent = oz.ilk ? (kontrolVar ? "Kontrol kaydedildi" : "Gözlemler kaydedildi") : "Düzeltme kaydedildi";
   $("oAlt").textContent = (o ? o.ad : "") + " · " + oz.classId + " · " + ogr.filter(s => s.aktif).length + " öğrenci";
 
   const sy = $("oSayilar");
@@ -660,26 +804,205 @@ function ozetCiz() {
     kutu.append(el(acilir ? "summary" : "h4", "", baslik), el("p", "", metin));
     g.appendChild(kutu);
   }
+  if (oz.yeniBlok) {
+    const kutu = el("div", "ozetGrup");
+    kutu.append(el("h4", "", "📨 Veli mesajları hazır"), el("p", "", "Bu dönem " + (oz.yeniBlok * 4) + " ödev kontrol edildi. Mesajlar ödev listesinin üstünde sizi bekliyor."));
+    g.appendChild(kutu);
+  }
   const adlar = f => ogr.filter(f).map(s => s.ad).join(", ");
   if (!oz.ilk && oz.onceki) {
     const degisen = ogr.filter(s => (oz.onceki[s.kod] || "") !== (k[s.kod] || ""));
     grup("✏️ Bu düzeltmede değişen", degisen.map(s => s.ad + ": " + (oz.onceki[s.kod] ? DURUM[oz.onceki[s.kod]].ad : "boş") + " → " + (k[s.kod] ? DURUM[k[s.kod]].ad : "boş")).join("\n"));
   }
-  const bos = adlar(s => s.aktif && !k[s.kod]);
-  if (!c.E && !c.Y && !c.M && !bos) grup("İstisna yok", "Herkes tam yapmış.");
+  const bos = kontrolVar ? adlar(s => s.aktif && !k[s.kod]) : "";
+  if (kontrolVar && !c.E && !c.Y && !c.M && !bos) grup("İstisna yok", "Herkes tam yapmış.");
   ["E", "Y", "M"].forEach(d => grup(DURUM[d].emoji + " " + DURUM[d].ad, adlar(s => k[s.kod] === d)));
   grup("— İşaretlenmedi (kontrol edilmedi)", bos);
-  grup("✅ Tam (" + c.T + ") · adları göster", adlar(s => k[s.kod] === "T"), true);
+  // gözlemler
+  const kg = kayitliGozlemler(v, oz.odevId);
+  const gozSatir = ogr.map(s => {
+    const e = Object.keys(kg.etiket[s.kod] || {}).map(x => { const b = etiketBilgi(x); return b.emoji + " " + b.ad; });
+    (v.gozlemler || []).filter(x => x.kategori === "gelisim" && x.odevId === oz.odevId).forEach(x => {
+      const eski = (v.gozlemler || []).find(y => y.id === x.baglantiId);
+      if (eski && eski.kod === s.kod) e.push(etiketBilgi(eski.etiket).duzelme || "✓ Düzeldi");
+    });
+    return e.length ? s.ad + ": " + e.join(", ") : "";
+  }).filter(Boolean);
+  grup("🏷️ Gözlemler", gozSatir.join("\n"));
+  if (kontrolVar) grup("✅ Tam (" + c.T + ") · adları göster", adlar(s => k[s.kod] === "T"), true);
+}
+
+// ---------- 5. veli mesajları (her 4 kontrol edilmiş ödevde bir) ----------
+/** Bu dönemin kontrol edilmiş ödevleri (eskiden yeniye) ve 4'lü bloklar. */
+function veliBlogu(classId) {
+  const v = odevVerisi(classId);
+  const donemNo = durum.veri && durum.veri.donem ? durum.veri.donem.no : 0;
+  const kontrollu = v.odevler
+    .filter(o => !o.iptal && (!donemNo || o.donemNo === donemNo) && Object.keys(v.kontrol[o.id] || {}).length)
+    .sort((a, b) => (a.tarih || "").localeCompare(b.tarih || "") || (a.olusturma || 0) - (b.olusturma || 0));
+  const tamam = Math.floor(kontrollu.length / 4);
+  return { v, donemNo, kontrollu, tamam, blok: tamam ? kontrollu.slice((tamam - 1) * 4, tamam * 4) : [] };
+}
+
+/** Son tamamlanan bloğun henüz gönderilmemiş velileri. */
+function veliSirasi(classId) {
+  const b = veliBlogu(classId);
+  const sinif = sinifBul(classId);
+  if (!b.tamam || !sinif) return Object.assign(b, { bekleyen: [], giden: [] });
+  const gidenKod = new Set((b.v.veli || []).filter(x => x.donemNo === b.donemNo && x.blokNo === b.tamam).map(x => x.kod));
+  const aktif = sinif.ogrenciler.filter(s => s.aktif);
+  return Object.assign(b, { bekleyen: aktif.filter(s => !gidenKod.has(s.kod)), giden: aktif.filter(s => gidenKod.has(s.kod)) });
+}
+
+function ayAraligi(t1, t2) {
+  const a = new Date(t1 + "T12:00:00"), b = new Date(t2 + "T12:00:00");
+  const ay = d => d.toLocaleDateString("tr-TR", { month: "long" });
+  return a.getMonth() === b.getMonth() && a.getFullYear() === b.getFullYear()
+    ? (a.getDate() === b.getDate() ? a.getDate() + " " + ay(b) : a.getDate() + "–" + b.getDate() + " " + ay(b))
+    : a.getDate() + " " + ay(a) + " – " + b.getDate() + " " + ay(b);
+}
+const kisaTarih = t => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+
+function veliMesaji(s, b) {
+  const v = b.v, blok = b.blok;
+  const bid = new Set(blok.map(o => o.id));
+  let m = (s.hitap ? "Merhaba " + s.hitap + "," : "Merhaba,") + "\n\n*" + s.ad + " · Matematik ödev takibi*\n_" +
+    ayAraligi(blok[0].tarih, blok[blok.length - 1].tarih) + " arasında verilen 4 ödev_\n\n";
+  m += blok.map(o => { const d = (v.kontrol[o.id] || {})[s.kod]; return (d ? DURUM[d].emoji : "▫️") + " " + o.ad + " (" + kisaTarih(o.tarih) + "): " + (d ? DURUM[d].ad : "kontrol edilmedi"); }).join("\n");
+  if (b.tamam > 1) {
+    const donem = b.kontrollu.slice(0, b.tamam * 4);
+    const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
+    donem.forEach(o => { const d = (v.kontrol[o.id] || {})[s.kod]; if (d) c[d]++; else yok++; });
+    const p = [donem.length + " ödev", c.T + " tam"];
+    if (c.E) p.push(c.E + " eksik"); if (c.Y) p.push(c.Y + " yapılmadı"); if (c.M) p.push(c.M + " mazeretli"); if (yok) p.push(yok + " kontrol edilmedi");
+    m += "\n\n*Dönem geneli:* " + p.join(" · ");
+  }
+  const gozlemler = v.gozlemler || [];
+  const bu = gozlemler.filter(g => g.kod === s.kod && bid.has(g.odevId) && g.kategori !== "gelisim");
+  const duzeldiOdev = {};
+  gozlemler.filter(g => g.kategori === "gelisim" && bid.has(g.odevId)).forEach(g => { duzeldiOdev[g.baglantiId] = true; });
+  const eskiDuzelen = gozlemler.filter(g => g.kod === s.kod && g.kategori === "gelistir" && !bid.has(g.odevId) && duzeldiOdev[g.id]);
+  if (bu.length || eskiDuzelen.length) {
+    m += "\n\n*Ödevlerinde gözlemlerim:*";
+    bu.filter(g => g.kategori === "olumlu").forEach(g => { const e = etiketBilgi(g.etiket); m += "\n" + e.emoji + " " + e.ad; });
+    bu.filter(g => g.kategori === "gelistir").concat(eskiDuzelen).forEach(g => {
+      const e = etiketBilgi(g.etiket);
+      m += "\n" + e.emoji + " " + e.ad + (duzeldiOdev[g.id] ? " → " + (e.duzelme || "✓ Düzeldi") : "");
+    });
+  }
+  return m + "\n\nBilginize sunarım.\n— Fatih Hoca ✍️";
+}
+
+/** Sunucudaki normalizeTelefon (karne-uret) ile aynı kural. */
+function telefonNormal(t) {
+  const ham = String(t || "").trim();
+  let r = ham.replace(/[^0-9]/g, "");
+  if (!r) return "";
+  if (ham.indexOf("+") === 0 || r.indexOf("00") === 0) return r.replace(/^00/, "");
+  r = r.replace(/^0/, "");
+  if (r.indexOf("90") === 0 && r.length > 10) return r;
+  return "90" + r;
+}
+
+function veliSeridi(kutu, classId) {
+  const b = veliSirasi(classId);
+  if (b.tamam && b.bekleyen.length) {
+    const d = dugme("veliSerit", null, () => { durum.veliSira = 0; ileri({ e: "veli" }); });
+    const metin = el("span");
+    metin.append(el("b", "", "📨 Veli mesajı zamanı"),
+      el("small", "", b.tamam + ". blok (" + b.tamam * 4 + " ödev) tamamlandı · " + b.bekleyen.length + " veli sırada" + (b.giden.length ? ", " + b.giden.length + " gönderildi" : "")));
+    d.append(metin, el("span", "ok", "›"));
+    kutu.appendChild(d);
+  } else if (b.kontrollu.length || b.v.odevler.length) {
+    kutu.appendChild(el("p", "ipucu", "📨 Sonraki veli mesajı " + (4 - b.kontrollu.length % 4) + " ödev daha kontrol edilince hazır olur."));
+  }
+}
+
+function veliCiz() {
+  const classId = durum.seciliSinif;
+  const b = veliSirasi(classId);
+  ekranGoster("veli");
+  $("veliBaslik").textContent = "Veli mesajları · " + classId;
+  const icerik = $("vIcerik");
+  icerik.innerHTML = "";
+  $("vIlerleme").innerHTML = "";
+  if (!b.tamam) { $("vAlt").textContent = ""; icerik.appendChild(el("div", "kart bos", "Bu dönem henüz 4 ödev kontrol edilmedi.")); return; }
+  $("vAlt").textContent = b.tamam + ". blok · " + ayAraligi(b.blok[0].tarih, b.blok[3].tarih) + " arası 4 ödev";
+  if (durum.veliSira >= b.bekleyen.length) durum.veliSira = 0;
+  const s = b.bekleyen[durum.veliSira];
+  const sinif = sinifBul(classId);
+  sinif.ogrenciler.filter(x => x.aktif).forEach(x => {
+    $("vIlerleme").appendChild(el("span", b.giden.some(g => g.kod === x.kod) ? "gitti" : (s && s.kod === x.kod ? "simdi" : "")));
+  });
+  if (!s) {
+    const k = el("div", "kart bitti");
+    k.append(el("div", "buyuk", "✅"), el("b", "", "Bu bloğun tüm mesajları gönderildi."),
+      el("p", "altBilgi", "Sonraki mesajlar 4 ödev daha kontrol edilince hazır olur."),
+      dugme("anaDugme", "Ödev listesine dön", () => geri()));
+    icerik.appendChild(k);
+    return;
+  }
+  const tel = telefonNormal(s.tel);
+  const kart = el("div", "kart");
+  const kim = el("div", "veliKimlik");
+  kim.append(el("b", "", s.ad), el("small", "", (durum.veliSira + 1) + "/" + b.bekleyen.length + " sırada · " + (tel ? "📞 " + s.tel : "telefon yok")));
+  kart.appendChild(kim);
+  if (!tel) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu yok. Mesajı kopyalayıp başka yoldan gönderebilir ya da bu veliyi atlayabilirsiniz."));
+  const alan = el("textarea", "mesaj");
+  alan.id = "mesajMetni";
+  alan.setAttribute("aria-label", "Mesaj");
+  alan.value = veliMesaji(s, b);
+  kart.append(alan, el("p", "ipucu", "Göndermeden önce metni burada değiştirebilirsiniz. *Yıldızlı* yazılar WhatsApp'ta kalın görünür."));
+  const dugmeler = el("div", "dugmeSatir");
+  const gonderdim = dugme("anaDugme", "✓ Gönderdim, sıradakine geç", () => veliGonderildi(s, b, alan.value));
+  gonderdim.hidden = true;
+  if (tel) dugmeler.appendChild(dugme("waDugme", "WhatsApp'ta aç", () => {
+    window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(alan.value), "_blank");
+    gonderdim.hidden = false;
+  }));
+  dugmeler.appendChild(dugme("ikinciDugme", "📋 Mesajı kopyala", async () => {
+    const ok = await panoyaKopyala(alan.value);
+    bildirimGoster(ok ? "Mesaj kopyalandı." : "Kopyalanamadı; metni basılı tutup kendiniz kopyalayın.");
+    gonderdim.hidden = false;
+  }));
+  dugmeler.appendChild(gonderdim);
+  dugmeler.appendChild(dugme("baglantiDugme", "Bu veliyi şimdilik atla ›", () => { durum.veliSira++; veliCiz(); }));
+  kart.appendChild(dugmeler);
+  icerik.appendChild(kart);
+}
+
+async function panoyaKopyala(metin) {
+  try { await navigator.clipboard.writeText(metin); return true; } catch (e) { /* eski yöntem */ }
+  try {
+    const t = el("textarea"); t.value = metin; t.style.position = "fixed"; t.style.opacity = "0";
+    document.body.appendChild(t); t.select(); const ok = document.execCommand("copy"); t.remove(); return ok;
+  } catch (e) { return false; }
+}
+
+function veliGonderildi(s, b, mesaj) {
+  const kayitId = yeniKimlik();
+  if (!kuyrugaEkle("veliBilgi", {
+    kayitId, classId: durum.seciliSinif, kod: s.kod, ad: s.ad, donemNo: b.donemNo, blokNo: b.tamam,
+    odevIdler: b.blok.map(o => o.id), mesaj
+  })) return;
+  bildirimGoster("“Veli bilgilendirildi” olarak kaydedildi.");
+  veliCiz();
 }
 
 // ---------- alt sayfa ve bildirim ----------
-function sayfaAc(doldur) {
+let sayfaKapaninca = null;
+function sayfaAc(doldur, kapaninca) {
   const sy = $("altSayfa");
   sy.innerHTML = "";
   doldur(sy);
+  sayfaKapaninca = kapaninca || null;
   $("perde").hidden = false;
 }
-function sayfaKapat() { $("perde").hidden = true; }
+function sayfaKapat() {
+  $("perde").hidden = true;
+  const f = sayfaKapaninca; sayfaKapaninca = null;
+  if (f) f();
+}
 
 let bildirimZamanlayici = null;
 function bildirimGoster(metin, geriAl) {

@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · servis çalışanı (sürüm 0.2)
+/* FatihHoca | UltraMat — Öğrenci Takip · servis çalışanı (sürüm 0.3)
  * İnternet varken her dosya her zaman sunucudan TAZE alınır (güncellemeler hemen gelir);
  * internet yokken son alınan kopya açılır. Kayıtlar (Google'a giden istekler) buraya hiç uğramaz. */
 const ONBELLEK = "fhTakip-sayfa-v1";
