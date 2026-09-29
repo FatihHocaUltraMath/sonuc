@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FFF7ED">
+<meta name="robots" content="noindex, nofollow">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Öğrenci Takip - FatihHoca | UltraMat</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+<link rel="stylesheet" href="takip.css?v=0.1">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="baslik">
+    <div>
+      <div class="marka">FatihHoca | <span>UltraMat</span></div>
+      <h1 class="uygulamaAdi">Öğrenci Takip</h1>
+    </div>
+    <div class="donemEtiketi" id="donemEtiketi"></div>
+  </header>
+
+  <!-- Ekran: giriş (yalnızca ilk açılışta ya da anahtar değişince) -->
+  <main id="ekran-giris" class="giris" hidden>
+    <div class="kart">
+      <h2 class="kartBaslik">Öğretmen girişi</h2>
+      <input type="password" id="anahtarInput" placeholder="Öğretmen anahtarı" autocomplete="current-password" aria-label="Öğretmen anahtarı">
+      <p class="ipucu">Bu telefonda hatırlanır. Telefon kaybolursa tablodaki menüden anahtarı yenileyin.</p>
+      <button class="anaDugme" id="girisDugme" type="button">Giriş yap</button>
+      <p class="hataMetni" id="girisHata" hidden></p>
+    </div>
+  </main>
+
+  <!-- Ekran: ana -->
+  <main id="ekran-ana" hidden>
+    <div class="uyari" id="uyariKutusu" hidden></div>
+
+    <section class="kart">
+      <h2 class="kartBaslik">Sınıf</h2>
+      <div class="sinifIzgara" id="sinifIzgara"></div>
+      <p class="bosDurum" id="sinifBos" hidden></p>
+    </section>
+
+    <div class="modulListe">
+      <button class="modulDugme ev" type="button" data-bolum="odev">
+        <span class="ikon" aria-hidden="true">📋</span>
+        <span><b>Ödev ve Çalışma Takibi</b><small>Kontrol, geçmiş, veli mesajı</small></span>
+      </button>
+      <button class="modulDugme ders" type="button" data-bolum="gozlem">
+        <span class="ikon" aria-hidden="true">🧑‍🏫</span>
+        <span><b>Ders İçi Gözlem</b><small>Dikkatinizi çeken anı kaydedin</small></span>
+      </button>
+    </div>
+    <div class="ikincilIzgara">
+      <button class="ikincilDugme" type="button" data-bolum="ogrenci">👤 Öğrenci görünümü</button>
+      <button class="ikincilDugme" type="button" data-bolum="rapor">📥 Excel · PDF</button>
+    </div>
+
+    <div class="altBaglantilar">
+      <button type="button" id="yenileDugme">Listeyi yenile</button>
+      <button type="button" id="cikisDugme">Bu telefondan çık</button>
+    </div>
+    <div class="surumBilgi" id="surumBilgi"></div>
+  </main>
+
+  <!-- Ekran: bölüm (Aşama 0'da yer tutucu) -->
+  <main id="ekran-bolum" hidden>
+    <button class="geriDugme" type="button" id="geriDugme">‹ Ana ekran</button>
+    <h2 class="bolumBaslik" id="bolumBaslik"></h2>
+    <div class="kart"><p class="bosDurum" id="bolumMetin"></p></div>
+  </main>
+
+</div>
+
+<!-- Alt çubuk: kayıtların gönderilme durumu -->
+<div class="durumCubugu" id="durumCubugu" hidden>
+  <div class="durumIc" id="durumIc">
+    <span class="nokta" aria-hidden="true"></span>
+    <span class="metin" id="durumMetin"></span>
+    <button type="button" id="tekrarDene" hidden>Tekrar dene</button>
+  </div>
+  <div class="durumAlt" id="durumAlt" hidden></div>
+</div>
+
+<script src="etiketler.js?v=0.1"></script>
+<script src="takip.js?v=0.1"></script>
+</body>
+</html>
