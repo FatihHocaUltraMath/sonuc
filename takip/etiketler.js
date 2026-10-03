@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · etiket kataloğu (sürüm 0.1)
+/* FatihHoca | UltraMat — Öğrenci Takip · etiket kataloğu (sürüm 0.2)
  *
  * Kayıtlara etiketin METNİ değil KODU yazılır. Bir etiketin adını ya da emojisini buradan
  * değiştirirseniz eski kayıtlar bozulmaz. Kodları (O_OZEN, D_KONUSMA …) DEĞİŞTİRMEYİN;
@@ -59,10 +59,10 @@ const ETIKETLER = Object.freeze({
 
   KATEGORI_ADLARI: {
     olumlu: "Olumlu",
-    dikkat: "Dikkat gerektiren",
+    dikkat: "Dikkat Gerektiren",
     gelistir: "Geliştirilmeli",
     akademik: "Akademik",
-    gelisim: "Sonradan düzelen"
+    gelisim: "Sonradan Düzelen"
   }
 });
 

@@ -11,15 +11,16 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.6">
+<link rel="stylesheet" href="takip.css?v=0.7">
 </head>
 <body>
 <div class="wrap">
 
   <header class="baslik">
     <div>
-      <div class="marka">FatihHoca | <span>UltraMat</span></div>
+      <div class="markaAd">FatihHoca | <em>UltraMat</em></div>
       <h1 class="uygulamaAdi">Öğrenci Takip</h1>
+      <div class="kapsam">Ödev Takibi · Ders İçi Gözlem · Raporlar</div>
     </div>
     <div class="donemEtiketi" id="donemEtiketi"></div>
   </header>
@@ -27,10 +28,11 @@
   <!-- Ekran: giriş (yalnızca ilk açılışta ya da anahtar değişince) -->
   <main id="ekran-giris" class="giris" hidden>
     <div class="kart">
-      <h2 class="kartBaslik">Öğretmen girişi</h2>
-      <input type="password" id="anahtarInput" placeholder="Öğretmen anahtarı" autocomplete="current-password" aria-label="Öğretmen anahtarı">
+      <h2 class="kartBaslik">Öğretmen Girişi</h2>
+      <label class="alan" for="anahtarInput">Öğretmen Anahtarı</label>
+      <input type="text" id="anahtarInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
       <p class="ipucu">Bu telefonda hatırlanır. Telefon kaybolursa tablodaki menüden anahtarı yenileyin.</p>
-      <button class="anaDugme" id="girisDugme" type="button">Giriş yap</button>
+      <button class="anaDugme" id="girisDugme" type="button">Giriş Yap</button>
       <p class="hataMetni" id="girisHata" hidden></p>
     </div>
   </main>
@@ -56,32 +58,32 @@
       </button>
     </div>
     <div class="ikincilIzgara">
-      <button class="ikincilDugme" type="button" data-bolum="ogrenci">👤 Öğrenci görünümü</button>
+      <button class="ikincilDugme" type="button" data-bolum="ogrenci">👤 Öğrenci Görünümü</button>
       <button class="ikincilDugme" type="button" data-bolum="rapor">📥 Excel · PDF</button>
     </div>
 
     <div class="altBaglantilar">
-      <button type="button" id="yenileDugme">Listeyi yenile</button>
-      <button type="button" id="cikisDugme">Bu telefondan çık</button>
+      <button type="button" id="yenileDugme">Listeyi Yenile</button>
+      <button type="button" id="cikisDugme">Bu Telefondan Çık</button>
     </div>
     <div class="surumBilgi" id="surumBilgi"></div>
   </main>
 
   <!-- Ekran: henüz yapılmamış bölümler için yer tutucu -->
   <main id="ekran-bolum" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ana Ekran</button>
     <h2 class="bolumBaslik" id="bolumBaslik"></h2>
     <div class="kart"><p class="bosDurum" id="bolumMetin"></p></div>
   </main>
 
   <!-- Ekran: ödev listesi -->
   <main id="ekran-odevListe" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ana Ekran</button>
     <h2 class="bolumBaslik" id="odevListeBaslik"></h2>
     <p class="altBilgi" id="odevListeAlt"></p>
-    <button class="anaDugme" type="button" id="yeniOdevDugme">＋ Yeni ödev</button>
+    <button class="anaDugme" type="button" id="yeniOdevDugme">＋ Yeni Ödev</button>
     <div id="odevListeIcerik"></div>
-    <div class="altBaglantilar"><button type="button" id="odevYenileDugme">Ödev listesini yenile</button></div>
+    <div class="altBaglantilar"><button type="button" id="odevYenileDugme">Ödev Listesini Yenile</button></div>
   </main>
 
   <!-- Ekran: yeni ödev / ödev bilgilerini düzenle -->
@@ -95,26 +97,26 @@
       <label class="alan" for="fKonu">Konu</label>
       <select class="girdi" id="fKonu"></select>
       <div class="konuNot" id="konuNot"></div>
-      <label class="alan" for="fAd">Ödevin kısa adı</label>
-      <input class="girdi" id="fAd" maxlength="60" placeholder="Ör. Kitap s. 18–21" autocomplete="off">
+      <label class="alan" for="fAd">Ödevin Kısa Adı</label>
+      <input class="girdi" id="fAd" maxlength="60" placeholder="Ör. Kitap s. 18–21" autocomplete="off" enterkeyhint="go">
       <div class="cipler">
         <button class="cip" type="button" data-cip="Kitap s. ">Kitap s.</button>
         <button class="cip" type="button" data-cip="Föy ">Föy</button>
         <button class="cip" type="button" data-cip="Test ">Test</button>
         <button class="cip" type="button" data-cip="Tekrar">Tekrar</button>
       </div>
-      <button class="baglantiDugme" type="button" id="aciklamaAc">＋ Açıklama ekle (isteğe bağlı)</button>
+      <button class="baglantiDugme" type="button" id="aciklamaAc">＋ Açıklama Ekle (isteğe bağlı)</button>
       <textarea class="girdi" id="fAciklama" maxlength="500" placeholder="Ör. 5, 7 ve 9. sorular zorunlu" hidden></textarea>
       <div class="dugmeSatir" id="formDugmeler"></div>
       <div class="merkez" id="iptalAlani" hidden>
-        <button class="tehlikeBaglanti" type="button" id="iptalDugme">Bu ödevi iptal et</button>
+        <button class="tehlikeBaglanti" type="button" id="iptalDugme">Bu Ödevi İptal Et</button>
       </div>
     </div>
   </main>
 
   <!-- Ekran: hızlı ödev kontrolü -->
   <main id="ekran-kontrol" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ödev listesi</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ödev Listesi</button>
     <h2 class="bolumBaslik" id="kAd"></h2>
     <p class="altBilgi" id="kAlt"></p>
     <button class="tumuDugme" type="button" id="tumuDugme"></button>
@@ -125,7 +127,7 @@
 
   <!-- Ekran: veli mesajları (sıradaki veli) -->
   <main id="ekran-veli" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ödev listesi</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ödev Listesi</button>
     <h2 class="bolumBaslik" id="veliBaslik"></h2>
     <p class="altBilgi" id="vAlt"></p>
     <div class="ilerleme" id="vIlerleme" aria-hidden="true"></div>
@@ -134,12 +136,12 @@
 
   <!-- Ekran: ders içi gözlem -->
   <main id="ekran-gozlem" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ana Ekran</button>
     <h2 class="bolumBaslik" id="gozlemBaslik"></h2>
     <p class="altBilgi">Yalnızca dikkatinizi çeken anı kaydedin. Kaydı olmayan öğrenci “değerlendirilmedi” sayılır, “sorun yok” değil.</p>
     <button class="konuSerit" type="button" id="konuSerit"></button>
     <div class="araSatir"><span class="baslikK">Öğrenciye dokunun</span>
-      <button class="anahtar" type="button" id="cokluAnahtar" aria-pressed="false"><span class="top" aria-hidden="true"></span>Birden fazla öğrenci</button></div>
+      <button class="anahtar" type="button" id="cokluAnahtar" aria-pressed="false"><span class="top" aria-hidden="true"></span>Birden Fazla Öğrenci</button></div>
     <div class="ogrIzgara" id="gozlemIzgara"></div>
     <div class="grupBaslik" id="bugunBaslik"></div>
     <div id="bugunListe"></div>
@@ -147,7 +149,7 @@
 
   <!-- Ekran: öğrenci görünümü — liste -->
   <main id="ekran-ogrListe" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ana Ekran</button>
     <h2 class="bolumBaslik" id="ogrListeBaslik"></h2>
     <p class="altBilgi">Bir öğrenciye dokunun: ödevleri ve gözlemleri tek ekranda. Liste alfabetiktir; sıralama ya da puan yoktur. 📌 = henüz “düzeldi” denmemiş kayıt.</p>
     <div id="ogrListeIcerik"></div>
@@ -155,46 +157,46 @@
 
   <!-- Ekran: öğrenci görünümü — tek öğrenci -->
   <main id="ekran-ogrenci" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Öğrenci listesi</button>
+    <button class="geriDugme" type="button" data-geri>‹ Öğrenci Listesi</button>
     <h2 class="bolumBaslik" id="ogrAd"></h2>
     <p class="altBilgi" id="ogrAlt"></p>
-    <div class="sekmeler"><button type="button" id="kapsamDonem">Bu dönem</button><button type="button" id="kapsamYil">Tüm yıl</button></div>
+    <div class="sekmeler"><button type="button" id="kapsamDonem">Bu Dönem</button><button type="button" id="kapsamYil">Tüm Yıl</button></div>
     <div id="ogrIcerik"></div>
-    <button class="ikinciDugme" type="button" id="ogrPdfDugme">📄 Bu öğrencinin PDF raporu</button>
+    <button class="ikinciDugme" type="button" id="ogrPdfDugme">📄 Bu Öğrencinin PDF Raporu</button>
   </main>
 
   <!-- Ekran: raporlar -->
   <main id="ekran-rapor" hidden>
-    <button class="geriDugme" type="button" data-geri>‹ Ana ekran</button>
+    <button class="geriDugme" type="button" data-geri>‹ Ana Ekran</button>
     <h2 class="bolumBaslik" id="raporBaslik"></h2>
     <p class="altBilgi">Raporlar telefondaki son bilgilerden hazırlanır. Puan, not ya da sıralama içermez.</p>
-    <div class="sekmeler"><button type="button" id="raporDonem">Bu dönem</button><button type="button" id="raporYil">Tüm yıl</button></div>
-    <button class="raporDugme" type="button" id="pdfDugme"><span class="ik">📄</span><span><b>Öğrenci raporu (PDF)</b><small>Bir öğrenci ya da tüm sınıf (her öğrenci ayrı sayfa). Veli görüşmesi, rehberlik, dosya için.</small></span></button>
-    <button class="raporDugme" type="button" id="excelDugme"><span class="ik">📊</span><span><b>Sınıf tablosu (Excel)</b><small>Ödev tablosu, gözlem sayıları, tüm kayıtlar ve veli mesajları; 4 sayfa. İnternet gerekir.</small></span></button>
+    <div class="sekmeler"><button type="button" id="raporDonem">Bu Dönem</button><button type="button" id="raporYil">Tüm Yıl</button></div>
+    <button class="raporDugme" type="button" id="pdfDugme"><span class="ik">📄</span><span><b>Öğrenci Raporu (PDF)</b><small>Bir öğrenci ya da tüm sınıf (her öğrenci ayrı sayfa). Veli görüşmesi, rehberlik, dosya için.</small></span></button>
+    <button class="raporDugme" type="button" id="excelDugme"><span class="ik">📊</span><span><b>Sınıf Tablosu (Excel)</b><small>Ödev tablosu, gözlem sayıları, tüm kayıtlar ve veli mesajları; 4 sayfa. İnternet gerekir.</small></span></button>
     <p class="ipucu merkez" id="raporDurum"></p>
   </main>
 
   <main id="ekran-raporPdf" hidden>
     <button class="geriDugme" type="button" data-geri>‹ Geri</button>
-    <h2 class="bolumBaslik">Öğrenci raporu (PDF)</h2>
+    <h2 class="bolumBaslik">Öğrenci Raporu (PDF)</h2>
     <p class="altBilgi" id="pdfAlt"></p>
     <div class="kart secenekKart">
       <select class="girdi" id="pOgr" aria-label="Öğrenci"></select>
-      <label class="satir"><input type="checkbox" id="pAkademik" checked><span>Akademik gözlemleri ekle<small>Konuya göre: zorlandığı, karıştırdığı kavramlar ve düzelenler.</small></span></label>
-      <label class="satir"><input type="checkbox" id="pDikkat"><span>Dikkat gerektiren gözlemleri ekle<small>Varsayılan kapalı. Konuşma, materyal eksikliği gibi davranış kayıtları.</small></span></label>
-      <label class="satir"><input type="checkbox" id="pOdevListe" checked><span>Ödev listesini tek tek yaz<small>Kapalıysa yalnızca sayılar.</small></span></label>
+      <label class="satir"><input type="checkbox" id="pAkademik" checked><span>Akademik Gözlemleri Ekle<small>Konuya göre: zorlandığı, karıştırdığı kavramlar ve düzelenler.</small></span></label>
+      <label class="satir"><input type="checkbox" id="pDikkat"><span>Dikkat Gerektiren Gözlemleri Ekle<small>Varsayılan kapalı. Konuşma, materyal eksikliği gibi davranış kayıtları.</small></span></label>
+      <label class="satir"><input type="checkbox" id="pOdevListe" checked><span>Ödev Listesini Tek Tek Yaz<small>Kapalıysa yalnızca sayılar.</small></span></label>
     </div>
-    <p class="ipucu">“PDF oluştur” deyince yazdırma ekranı açılır; yazıcı olarak <b>PDF olarak kaydet</b>i seçin (UltraMat karnelerindeki gibi).</p>
-    <button class="anaDugme" type="button" id="pdfOlusturDugme">📄 PDF oluştur</button>
-    <div class="grupBaslik">Kâğıttaki görünümü</div>
+    <p class="ipucu">“PDF Oluştur” deyince yazdırma ekranı açılır; yazıcı olarak <b>PDF olarak kaydet</b>i seçin (UltraMat karnelerindeki gibi).</p>
+    <button class="anaDugme" type="button" id="pdfOlusturDugme">📄 PDF Oluştur</button>
+    <div class="grupBaslik">Kâğıttaki Görünümü</div>
     <div class="a4Kutu" id="a4Kutu"><div id="a4Icerik"></div></div>
   </main>
 
   <main id="ekran-raporExcel" hidden>
     <button class="geriDugme" type="button" data-geri>‹ Raporlar</button>
-    <h2 class="bolumBaslik">Sınıf tablosu (Excel)</h2>
+    <h2 class="bolumBaslik">Sınıf Tablosu (Excel)</h2>
     <p class="altBilgi">Dosya adı: <b id="xAd"></b>. İndirilir; Excel ya da Google E-Tablolar ile açılır.</p>
-    <button class="anaDugme" type="button" id="excelIndirDugme">📊 Excel'i indir</button>
+    <button class="anaDugme" type="button" id="excelIndirDugme">📊 Excel'i İndir</button>
     <div class="grupBaslik">İçindekiler</div>
     <div class="excelOn"><div class="sayfalar" id="xSayfalar"></div><div class="tablo" id="xTablo"></div></div>
   </main>
@@ -210,7 +212,7 @@
     </div>
     <div class="dugmeSatir">
       <button class="ikinciDugme" type="button" id="ozetDuzelt">✏️ Düzelt</button>
-      <button class="anaDugme" type="button" id="ozetListe">Ödev listesine dön</button>
+      <button class="anaDugme" type="button" id="ozetListe">Ödev Listesine Dön</button>
     </div>
   </main>
 
@@ -229,24 +231,24 @@
 <div class="secimCubugu" id="secimCubugu" hidden>
   <div class="secimIc"><span id="secimMetin"></span>
     <button class="temizle" type="button" id="secimTemizle">Temizle</button>
-    <button class="anaDugme" type="button" id="secimGozlem">Gözlem seç</button></div>
+    <button class="anaDugme" type="button" id="secimGozlem">Gözlem Seç</button></div>
 </div>
 
 <!-- Alt sayfa (soru) ve kısa bildirim -->
 <div class="perde" id="perde" hidden><div class="altSayfa" id="altSayfa" role="dialog" aria-modal="true"></div></div>
-<div class="bildirim" id="bildirim" hidden role="status"><span id="bildirimMetin"></span><button type="button" id="bildirimDugme">Geri al</button></div>
+<div class="bildirim" id="bildirim" hidden role="status"><span id="bildirimMetin"></span><button type="button" id="bildirimDugme">Geri Al</button></div>
 
 <!-- Alt çubuk: kayıtların gönderilme durumu -->
 <div class="durumCubugu" id="durumCubugu" hidden>
   <div class="durumIc" id="durumIc">
     <span class="nokta" aria-hidden="true"></span>
     <span class="metin" id="durumMetin"></span>
-    <button type="button" id="tekrarDene" hidden>Tekrar dene</button>
+    <button type="button" id="tekrarDene" hidden>Tekrar Dene</button>
   </div>
   <div class="durumAlt" id="durumAlt" hidden></div>
 </div>
 
-<script src="etiketler.js?v=0.1"></script>
-<script src="takip.js?v=0.6"></script>
+<script src="etiketler.js?v=0.2"></script>
+<script src="takip.js?v=0.7"></script>
 </body>
 </html>

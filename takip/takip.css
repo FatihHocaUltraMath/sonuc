@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.6)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.7)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -33,8 +33,12 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;}
 
 /* ---- Başlık ---- */
 .baslik{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin:4px 2px 14px;}
-.marka{font-size:13px;font-weight:800;color:var(--dark);letter-spacing:.2px;}
-.marka span{color:var(--orange);}
+/* Marka satırı — Öğretmen Paneli ile aynı: "FatihHoca | UltraMat", UltraMat turuncu */
+.markaAd{font-size:12.5px;font-weight:800;color:var(--dark);letter-spacing:.2px;}
+.markaAd em{font-style:normal;color:#EA580C;}
+/* Kısa kapsam satırı yalnızca giriş ve ana ekranda (iç ekranlarda yer kaplamasın) */
+.kapsam{font-size:12px;color:var(--gray);margin-top:2px;display:none;}
+body[data-ekran="ana"] .kapsam, body[data-ekran="giris"] .kapsam{display:block;}
 .uygulamaAdi{margin:2px 0 0;font-size:21px;font-weight:800;color:var(--dark);}
 .donemEtiketi{font-size:12px;color:var(--gray);text-align:right;line-height:1.35;}
 
@@ -48,6 +52,7 @@ button{font:inherit;color:inherit;-webkit-tap-highlight-color:transparent;}
   font-size:16px;outline:none;background:#fff;
 }
 .giris input:focus{border-color:var(--purple);}
+.giris input:disabled{background:#F8FAFC;color:var(--gray);}
 .ipucu{font-size:12.5px;color:var(--gray);margin:8px 0 14px;line-height:1.45;}
 .anaDugme{
   width:100%;min-height:50px;border:none;border-radius:12px;cursor:pointer;
@@ -392,3 +397,36 @@ details.odevDetay summary{font-size:13px;font-weight:700;color:var(--purple);min
 
 @media (min-width:700px){ body{padding-top:28px;} }
 @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
+
+/* ---- Yükleme göstergesi (sürüm 0.7) — veli sayfası ve Öğretmen Paneli ile aynı: dönen simge + büyük harfli metin
+   + tek tek beliren noktalar + alt kenarda akan çizgi. Metin kodda büyük yazılır (CSS text-transform "İ"yi bozabiliyor). */
+button.yukleniyor{position:relative;overflow:hidden;opacity:1 !important;cursor:wait;}
+button .spin{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;
+  border-radius:50%;margin-right:10px;vertical-align:-3px;animation:yukSpin .8s linear infinite;}
+.ikinciDugme .spin,.altBaglantilar .spin{border-color:rgba(139,92,246,.25);border-top-color:var(--purple);}
+.altBaglantilar .spin{width:13px;height:13px;border-width:2px;margin-right:7px;vertical-align:-2px;}
+@keyframes yukSpin{to{transform:rotate(360deg)}}
+button .yukMetin{letter-spacing:1.5px;}
+button .yukNokta{display:inline-block;width:1.4em;text-align:left;}
+button .yukNokta::after{content:"";animation:yukNokta 1.2s steps(1) infinite;}
+@keyframes yukNokta{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+button .yukCizgi{position:absolute;left:-35%;bottom:0;height:3px;width:35%;border-radius:2px;
+  background:rgba(255,255,255,.75);animation:yukCizgi 1.3s ease-in-out infinite;pointer-events:none;}
+.ikinciDugme .yukCizgi,.altBaglantilar .yukCizgi{background:rgba(139,92,246,.55);}
+@keyframes yukCizgi{0%{left:-35%}100%{left:100%}}
+.altBaglantilar button.yukleniyor{text-decoration:none;color:var(--purple);font-weight:700;}
+
+/* ---- Aç-kapa metni: açılır bölümün başlığı açıkken "…Kapat / Gizle" der ---- */
+details:not([open]) > summary .acikMetin, details[open] > summary .kapaliMetin{display:none;}
+
+/* ---- Öğrenci görünümünde açılır-kapanır bölümler (durum tarayıcıda hatırlanır) ---- */
+details.bolumKart > summary{list-style:none;display:flex;align-items:center;gap:8px;margin:0;min-height:36px;cursor:pointer;user-select:none;}
+details.bolumKart > summary::-webkit-details-marker{display:none;}
+details.bolumKart > summary .bAd{flex:1 1 auto;}
+details.bolumKart > summary .bolumOzet{font-size:12px;font-weight:700;color:var(--gray);text-align:right;}
+details.bolumKart > summary .bolumOzet.ozetUyari{color:var(--amber);}
+details.bolumKart > summary .bolumOzet.ozetIyi{color:#15803D;}
+details.bolumKart > summary .bolumOk{width:8px;height:8px;border-right:2.5px solid #A78BFA;border-bottom:2.5px solid #A78BFA;
+  transform:rotate(45deg);margin:-4px 3px 0 4px;transition:transform .15s;flex:none;}
+details.bolumKart[open] > summary .bolumOk{transform:rotate(-135deg);margin-top:4px;}
+details.bolumKart[open] > summary{margin-bottom:10px;}
