@@ -1,7 +1,7 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · servis çalışanı (sürüm 0.7)
+/* FatihHoca | UltraMat — Öğrenci Takip · servis çalışanı (sürüm 0.8)
  * İnternet varken her dosya her zaman sunucudan TAZE alınır (güncellemeler hemen gelir);
  * internet yokken son alınan kopya açılır. Kayıtlar (Google'a giden istekler) buraya hiç uğramaz. */
-const ONBELLEK = "fhTakip-sayfa-v2";
+const ONBELLEK = "fhTakip-sayfa-v3";
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", e => e.waitUntil(
   caches.keys().then(adlar => Promise.all(adlar.filter(a => a !== ONBELLEK).map(a => caches.delete(a)))).then(() => self.clients.claim())));
