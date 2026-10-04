@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.8 · daha kullanışlı arayüz: kontrol ekranı, ana ekran durumları, arama)
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.8.2 · Özel Ders şubesi takipte gösterilmez)
  *
  * Kalıcı verinin tek kaynağı UltraMat_Takip Google tablosudur. Telefonda yalnızca şunlar tutulur:
  *  - öğretmen anahtarı (her girişte sormamak için),
@@ -13,7 +13,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.8";
+const SURUM = "0.8.2";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -294,8 +294,15 @@ function anaEkraniAc() {
   durumCubugunuCiz();
 }
 
-function aktifSiniflar() { return ((durum.veri && durum.veri.siniflar) || []).filter(s => s.ogrenciler.some(o => o.aktif)); }
-function sinifBul(classId) { return ((durum.veri && durum.veri.siniflar) || []).find(s => s.classId === classId) || null; }
+/** Takip sisteminde gösterilmeyen şubeler (ör. "Özel Ders"). Öğrenciler ana tabloda kalır; yalnızca burada görünmez. */
+const TAKIP_DISI_SUBE = ["özel ders"];
+function takipteGorunur(s) {
+  const sube = aramaMetni(s.sube || String(s.classId || "").replace(/^[^-]*-/, ""));
+  return TAKIP_DISI_SUBE.indexOf(sube) === -1;
+}
+function takipSiniflari() { return ((durum.veri && durum.veri.siniflar) || []).filter(takipteGorunur); }
+function aktifSiniflar() { return takipSiniflari().filter(s => s.ogrenciler.some(o => o.aktif)); }
+function sinifBul(classId) { return takipSiniflari().find(s => s.classId === classId) || null; }
 
 function anaEkraniCiz() {
   const v = durum.veri;
@@ -974,7 +981,7 @@ function veliBlogu(classId) {
     .filter(o => !o.iptal && (!donemNo || o.donemNo === donemNo) && Object.keys(v.kontrol[o.id] || {}).length)
     .sort((a, b) => (a.tarih || "").localeCompare(b.tarih || "") || (a.olusturma || 0) - (b.olusturma || 0));
   const tamam = Math.floor(kontrollu.length / 4);
-  return { v, donemNo, kontrollu, tamam, blok: tamam ? kontrollu.slice((tamam - 1) * 4, tamam * 4) : [] };
+  return { v, classId, donemNo, kontrollu, tamam, blok: tamam ? kontrollu.slice((tamam - 1) * 4, tamam * 4) : [] };
 }
 
 /** Son tamamlanan bloğun henüz gönderilmemiş velileri. */
@@ -1023,6 +1030,22 @@ function veliMesaji(s, b) {
       m += "\n" + e.emoji + " " + e.ad + (duzeldiOdev[g.id] ? " → " + (e.duzelme || "✓ Düzeldi") : "");
     });
   }
+  // Derste: yalnızca OLUMLU ders içi gözlemler (dikkat/akademik/düzeldi veliye gitmez).
+  // Aralık: önceki bloğun son ödev tarihinden sonra → bu bloğun son ödev tarihine kadar (bloklar çakışmaz).
+  const ders = dersVerisi(b.classId);
+  if (!ders.yok) {
+    const bas = b.tamam > 1 ? b.kontrollu[(b.tamam - 1) * 4 - 1].tarih : "";
+    const bit = blok[blok.length - 1].tarih;
+    const sayi = {};
+    ders.gozlemler.filter(g => g.kod === s.kod && g.kategori === "olumlu" && g.tarih > bas && g.tarih <= bit &&
+      (!b.donemNo || donemBul(g.tarih).no === b.donemNo))
+      .forEach(g => { sayi[g.etiket] = (sayi[g.etiket] || 0) + 1; });
+    const sira = ETIKETLER.DERS_GOZLEM.map(e => e.kod).filter(k => sayi[k]);
+    if (sira.length) {
+      m += "\n\n*Derste gözlemlerim:*";
+      sira.forEach(k => { const e = dersEtiket(k); m += "\n" + e.emoji + " " + e.ad + (sayi[k] > 1 ? " (" + sayi[k] + " kez)" : ""); });
+    }
+  }
   return m + "\n\nBilginize sunarım.\n— Fatih Hoca ✍️";
 }
 
@@ -1040,7 +1063,7 @@ function telefonNormal(t) {
 function veliSeridi(kutu, classId) {
   const b = veliSirasi(classId);
   if (b.tamam && b.bekleyen.length) {
-    const d = dugme("veliSerit", null, () => { durum.veliSira = 0; ileri({ e: "veli" }); });
+    const d = dugme("veliSerit", null, () => { durum.veliSira = 0; ileri({ e: "veli" }); dersGozlemleriTazele(classId); });
     const metin = el("span");
     metin.append(el("b", "", "📨 Veli Mesajı Zamanı"),
       el("small", "", b.tamam + ". blok (" + b.tamam * 4 + " ödev) tamamlandı · " + b.bekleyen.length + " veli sırada" + (b.giden.length ? ", " + b.giden.length + " gönderildi" : "")));
@@ -1085,6 +1108,8 @@ function veliCiz() {
   alan.id = "mesajMetni";
   alan.setAttribute("aria-label", "Mesaj");
   alan.value = veliMesaji(s, b);
+  durum.veliDuzenlendi = false;
+  alan.addEventListener("input", () => { durum.veliDuzenlendi = true; });
   kart.append(alan, el("p", "ipucu", "Göndermeden önce metni burada değiştirebilirsiniz. *Yıldızlı* yazılar WhatsApp'ta kalın görünür."));
   const dugmeler = el("div", "dugmeSatir");
   const gonderdim = dugme("anaDugme", "✓ Gönderdim, Sıradakine Geç", () => veliGonderildi(s, b, alan.value));
@@ -1173,6 +1198,7 @@ async function dersGozlemleriTazele(classId) {
   if (tekrar) { dersGozlemleriTazele(classId); return; }
   if (ekranAcik("gozlem")) gozlemCiz();
   if (anaAcik()) anaDurumlariCiz();
+  if (ekranAcik("veli") && !durum.veliDuzenlendi) veliCiz();   // mesaja derste gözlemler eklensin (elle düzenlenmediyse)
   ogrenciEkraniniYenile();
 }
 
