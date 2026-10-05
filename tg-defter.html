@@ -11,14 +11,17 @@
 *{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
 body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(circle at top left,#FED7AA 0%,transparent 35%),radial-gradient(circle at bottom right,#DDD6FE 0%,transparent 40%),#FFF7ED;}
 .kap{max-width:980px;margin:0 auto;padding:18px 14px 60px;}
-.bas{display:flex;align-items:center;gap:12px;margin-bottom:16px;}
-.marka{font-weight:900;font-size:20px;color:var(--dark);}
-.marka span{color:var(--orange);}
-.altBaslik{font-size:13px;color:var(--gray);font-weight:600;}
+/* Sayfa başlığı — Öğretmen Paneli ile aynı düzen: marka satırı, büyük başlık, kısa kapsam satırı */
+.panelBaslik{margin:2px 4px 16px;}
+.markaAd{letter-spacing:.2px;font-weight:800;color:#3B0764;} .markaAd em{font-style:normal;color:#EA580C;}
+.panelMarka{font-size:12.5px;}
+.panelBaslik h1{margin:2px 0 3px;color:var(--dark);font-size:24px;font-weight:900;letter-spacing:-.3px;line-height:1.15;}
+.panelAlt{font-size:12.5px;color:var(--gray);}
 .kart{background:#fff;border-radius:18px;padding:16px;box-shadow:0 8px 24px rgba(59,7,100,.07);margin-bottom:14px;}
 h2{margin:0 0 10px;font-size:17px;color:var(--dark);}
-input[type=text],input[type=password],input[type=number],select{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;color:var(--text);}
+input[type=text],input[type=number],select{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;color:var(--text);}
 input:focus,select:focus{outline:none;border-color:var(--purple);}
+input:disabled,select:disabled{background:var(--soft);color:var(--gray);}
 label.et{display:block;font-size:12.5px;font-weight:700;color:var(--gray);margin:8px 0 4px;}
 button{border:none;border-radius:12px;padding:11px 14px;font-size:14.5px;font-weight:800;cursor:pointer;}
 .ana{background:linear-gradient(90deg,var(--orange),var(--purple));color:#fff;}
@@ -26,11 +29,43 @@ button{border:none;border-radius:12px;padding:11px 14px;font-size:14.5px;font-we
 .ikincil.secili{border-color:var(--purple);background:#F5F3FF;}
 .tehlike{background:#FEF2F2;color:var(--red);border:1.5px solid #FECACA;}
 button:disabled{opacity:.5;cursor:not-allowed;}
+/* Yükleme göstergesi — veli sayfası (index.html) ve Öğretmen Paneli ile aynı: dönen simge + büyük harfli metin +
+   tek tek beliren noktalar + alt kenarda akan çizgi. Metin kodda büyük harfle yazılır (CSS text-transform "İ"yi bozabiliyor). */
+button.yukleniyor{position:relative;overflow:hidden;opacity:1;cursor:wait;}
+button .spin{display:inline-block;width:16px;height:16px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;
+  border-radius:50%;margin-right:10px;vertical-align:-3px;animation:panelSpin .8s linear infinite;}
+.ikincil .spin{border-color:rgba(139,92,246,.25);border-top-color:var(--purple);}
+.tehlike .spin{border-color:rgba(220,38,38,.25);border-top-color:var(--red);}
+@keyframes panelSpin{to{transform:rotate(360deg)}}
+button .yukMetin{letter-spacing:1.5px;}
+button .yukNokta{display:inline-block;width:1.4em;text-align:left;}
+button .yukNokta::after{content:"";animation:panelYukNokta 1.2s steps(1) infinite;}
+@keyframes panelYukNokta{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
+button .yukCizgi{position:absolute;left:-35%;bottom:0;height:3px;width:35%;border-radius:2px;
+  background:rgba(255,255,255,.75);animation:panelYukCizgi 1.3s ease-in-out infinite;pointer-events:none;}
+.ikincil .yukCizgi{background:rgba(139,92,246,.55);} .tehlike .yukCizgi{background:rgba(220,38,38,.45);}
+@keyframes panelYukCizgi{0%{left:-35%}100%{left:100%}}
+/* Açılır-kapanır bölümler — Öğretmen Paneli ile aynı görünüm; açık/kapalı durumu tarayıcıda hatırlanır */
+.bolum{background:#fff;border:1px solid #EDE9FE;border-radius:18px;margin:0 0 12px;overflow:hidden;box-shadow:0 8px 24px rgba(59,7,100,.05);}
+.bolum[open]{border-color:#DDD6FE;box-shadow:0 8px 24px rgba(59,7,100,.08);}
+.bolumBas{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:14px 16px;cursor:pointer;user-select:none;}
+.bolumBas::-webkit-details-marker{display:none;}
+.bolumBas:hover{background:#FAF5FF;}
+.bolumBas:focus-visible{outline:2px solid #A78BFA;outline-offset:-2px;border-radius:18px;}
+.bolumIkon{font-size:17px;width:22px;text-align:center;flex:none;}
+.bolumAd{font-weight:900;color:var(--dark);font-size:15px;}
+.bolumSag{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.bolumOzet{font-size:12.5px;font-weight:700;color:var(--gray);text-align:right;}
+.bolumOzet.ozetUyari{color:#B45309;} .bolumOzet.ozetIyi{color:#15803D;}
+.bolumOk{width:8px;height:8px;border-right:2.5px solid #A78BFA;border-bottom:2.5px solid #A78BFA;transform:rotate(45deg);margin:-4px 2px 0 0;transition:transform .15s;flex:none;}
+.bolum[open] .bolumOk{transform:rotate(-135deg);margin-top:4px;}
+.bolumIc{padding:6px 16px 16px;border-top:1px solid #F3E8FF;}
 button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:2px;}
 .satir{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
 .satir > *{flex:1 1 auto;}
 .durum{font-size:13.5px;font-weight:600;margin-top:8px;min-height:18px;}
 .durum.hata{color:var(--red);} .durum.ok{color:var(--green);}
+.durum:empty{min-height:0;margin:0;}   /* boş durum satırı kartın altında boşluk bırakmasın */
 .gizli{display:none !important;}
 .denemeKart{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;background:#fff;}
 .denemeKart:hover{border-color:var(--purple);}
@@ -59,20 +94,19 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
 </head>
 <body>
 <div class="kap">
-  <div class="bas">
-    <div>
-      <div class="marka">FatihHoca | <span>UltraMat</span></div>
-      <div class="altBaslik">TG Denemeleri Hata Defteri · Soru kütüphanesi</div>
-    </div>
+  <div class="panelBaslik">
+    <div class="markaAd panelMarka">FatihHoca | <em>UltraMat</em></div>
+    <h1>TG Denemeleri Soru Kütüphanesi</h1>
+    <div class="panelAlt">Denemeler · Toplu Yükleme · Soru Kesme</div>
   </div>
 
   <!-- GİRİŞ -->
   <div class="kart" id="girisKart">
-    <h2>Öğretmen girişi</h2>
-    <label class="et" for="anahtar">Öğretmen anahtarı</label>
-    <input type="password" id="anahtar" autocomplete="off">
-    <div class="satir" style="margin-top:10px"><button class="ana" id="baglanBtn">Kütüphaneyi aç</button></div>
-    <div class="durum" id="girisDurum"></div>
+    <h2>Öğretmen Girişi</h2>
+    <label class="et" for="anahtar">Öğretmen Anahtarı</label>
+    <input type="text" id="anahtar" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+    <div class="satir" style="margin-top:10px"><button class="ana" id="baglanBtn">Kütüphaneyi Aç</button></div>
+    <div class="durum" id="girisDurum" role="status" aria-live="polite"></div>
   </div>
 
   <!-- KÜTÜPHANE -->
@@ -80,16 +114,16 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
     <div class="kart">
       <div class="satir" style="justify-content:space-between">
         <h2 style="margin:0;flex:0 1 auto">Denemeler</h2>
-        <button class="ikincil" id="yeniDenemeAc" style="flex:0 0 auto">+ Yeni deneme</button>
+        <button class="ikincil" id="yeniDenemeAc" style="flex:0 0 auto" aria-expanded="false" aria-controls="yeniDenemeForm">+ Yeni Deneme</button>
       </div>
       <div id="yeniDenemeForm" class="gizli" style="margin-top:10px">
-        <label class="et" for="ydAd">Deneme adı</label>
-        <input type="text" id="ydAd" maxlength="120" placeholder="ör. X Yayınları TG-3">
+        <label class="et" for="ydAd">Deneme Adı</label>
+        <input type="text" id="ydAd" maxlength="120" placeholder="ör. X Yayınları TG-3" autocomplete="off" enterkeyhint="go">
         <label class="et" for="ydSinif">Sınıf</label>
         <select id="ydSinif"><option>8</option><option>7</option><option>6</option><option>5</option></select>
         <div class="satir" style="margin-top:10px"><button class="ana" id="ydKaydet">Kaydet</button><button class="ikincil" id="ydVazgec">Vazgeç</button></div>
       </div>
-      <div class="durum" id="kutDurum"></div>
+      <div class="durum" id="kutDurum" role="status" aria-live="polite"></div>
       <div id="denemeListesi" style="margin-top:10px"></div>
     </div>
   </div>
@@ -102,38 +136,48 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
         <button class="ikincil" id="geriBtn" style="flex:0 0 auto">← Kütüphane</button>
       </div>
       <div class="satir" style="margin-top:8px">
-        <button class="ikincil" id="dDuzenleAc" style="flex:0 0 auto">✏️ Adı / sınıfı düzelt</button>
-        <button class="tehlike" id="dSil" style="flex:0 0 auto">🗑️ Denemeyi sil</button>
+        <button class="ikincil" id="dDuzenleAc" style="flex:0 0 auto" aria-expanded="false" aria-controls="dDuzenleForm">✏️ Adı / Sınıfı Düzelt</button>
+        <button class="tehlike" id="dSil" style="flex:0 0 auto">🗑️ Denemeyi Sil</button>
       </div>
       <div id="dDuzenleForm" class="gizli" style="margin-top:8px">
-        <label class="et" for="ddAd">Deneme adı</label><input type="text" id="ddAd" maxlength="120">
+        <label class="et" for="ddAd">Deneme Adı</label><input type="text" id="ddAd" maxlength="120" autocomplete="off" enterkeyhint="go">
         <label class="et" for="ddSinif">Sınıf</label>
         <select id="ddSinif"><option>8</option><option>7</option><option>6</option><option>5</option></select>
         <div class="satir" style="margin-top:8px"><button class="ana" id="ddKaydet">Kaydet</button><button class="ikincil" id="ddVazgec">Vazgeç</button></div>
       </div>
-      <div class="durum" id="dDurum"></div>
+      <div class="durum" id="dDurum" role="status" aria-live="polite"></div>
       <div class="durum" id="eksikBilgi" style="color:#854F0B"></div>
-      <div class="soruIzgara" id="soruIzgara"></div>
     </div>
 
-    <div class="kart">
-      <h2>📦 Hazır soruları toplu yükle</h2>
+    <details class="bolum" data-bolum="tgSorular" open>
+      <summary class="bolumBas"><span class="bolumIkon" aria-hidden="true">🗂️</span><span class="bolumAd">Kütüphanedeki Sorular</span>
+        <span class="bolumSag"><span class="bolumOzet" id="ozetSorular"></span><span class="bolumOk" aria-hidden="true"></span></span></summary>
+      <div class="bolumIc"><div class="soruIzgara" id="soruIzgara"></div></div>
+    </details>
+
+    <details class="bolum" data-bolum="tgToplu" open>
+      <summary class="bolumBas"><span class="bolumIkon" aria-hidden="true">📦</span><span class="bolumAd">Hazır Soruları Toplu Yükle</span>
+        <span class="bolumSag"><span class="bolumOzet" id="ozetToplu"></span><span class="bolumOk" aria-hidden="true"></span></span></summary>
+      <div class="bolumIc">
       <div class="ipucu">Hazırlanmış soru görsellerini (ör. <b>10-B.png</b>, <b>12-A.png</b>) hepsini birlikte seç. Soru numarası ve doğru şık dosya adından, geniş/yarım bilgisi görselin genişliğinden okunur; kesme ve şık seçme gerekmez.</div>
-      <div class="satir"><button class="ana" id="topluBtn">📦 Görselleri seç</button></div>
+      <div class="satir"><button class="ana" id="topluBtn">📦 Görselleri Seç</button></div>
       <input type="file" id="topluInput" accept="image/png,image/jpeg,image/webp" multiple class="gizli">
-      <div class="durum" id="topluDurum"></div>
-    </div>
+      <div class="durum" id="topluDurum" role="status" aria-live="polite"></div>
+      </div>
+    </details>
 
-    <div class="kart">
-      <h2>Soru kes</h2>
+    <details class="bolum" data-bolum="tgKes">
+      <summary class="bolumBas"><span class="bolumIkon" aria-hidden="true">✂️</span><span class="bolumAd">Soru Kes</span>
+        <span class="bolumSag"><span class="bolumOzet" id="ozetKes"></span><span class="bolumOk" aria-hidden="true"></span></span></summary>
+      <div class="bolumIc">
       <div class="ipucu">Kitapçık sayfasını telefonun tarayıcı moduyla (Drive "Tara" ya da iPhone "Belgeleri Tara") çekmek en temiz sonucu verir. Sayfanın tamamı görünsün; yazı boyutu buna göre ayarlanır.</div>
       <div class="satir">
-        <button class="ikincil" id="kameraBtn">📷 Fotoğraf çek</button>
-        <button class="ikincil" id="dosyaBtn">📄 PDF / resim yükle</button>
+        <button class="ikincil" id="kameraBtn">📷 Fotoğraf Çek</button>
+        <button class="ikincil" id="dosyaBtn">📄 PDF / Resim Yükle</button>
         <input type="file" id="kameraInput" accept="image/*" capture="environment" class="gizli">
         <input type="file" id="dosyaInput" accept="application/pdf,image/*" multiple class="gizli">
       </div>
-      <div class="durum" id="yukDurum"></div>
+      <div class="durum" id="yukDurum" role="status" aria-live="polite"></div>
 
       <div id="sayfaAlan" class="gizli" style="margin-top:10px">
         <div class="satir" style="margin-bottom:8px">
@@ -150,37 +194,38 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
           <div>
             <div class="editorKap"><canvas id="editorCanvas"></canvas></div>
             <div class="satir" style="margin-top:8px">
-              <button class="ikincil" id="silgiBtn">🧽 Silgi</button>
-              <button class="ikincil" id="geriAlBtn">↶ Geri al</button>
+              <button class="ikincil" id="silgiBtn" aria-pressed="false">🧽 Silgi</button>
+              <button class="ikincil" id="geriAlBtn">↶ Geri Al</button>
             </div>
             <div id="silgiAyar" class="gizli">
-              <label class="et" for="silgiBoyut">Silgi büyüklüğü</label>
+              <label class="et" for="silgiBoyut">Silgi Büyüklüğü</label>
               <input type="range" id="silgiBoyut" min="6" max="60" value="22" style="width:100%">
             </div>
           </div>
           <div>
-            <label class="secenek"><input type="checkbox" id="zeminTemizle" checked> Zemini ve soluk izleri temizle</label>
-            <label class="secenek"><input type="checkbox" id="kalemSil"> Mavi / kırmızı / pembe kalem izlerini sil</label>
+            <label class="secenek"><input type="checkbox" id="zeminTemizle" checked> Zemini ve Soluk İzleri Temizle</label>
+            <label class="secenek"><input type="checkbox" id="kalemSil"> Mavi / Kırmızı / Pembe Kalem İzlerini Sil</label>
             <div class="ipucu">Kalem izi seçeneği, soruda mavi ya da kırmızı renkli şekil varsa onu da soldurabilir; sonucu kontrol et. Kurşun kalem izlerini silgiyle temizle.</div>
-            <label class="secenek"><input type="checkbox" id="genisMi"> Geniş soru (iki sütunu kaplar)</label>
-            <label class="et" for="soruNo">Soru no</label>
-            <input type="number" id="soruNo" min="1" max="200" value="1">
-            <label class="et">Doğru şık</label>
+            <label class="secenek"><input type="checkbox" id="genisMi"> Geniş Soru (iki sütunu kaplar)</label>
+            <label class="et" for="soruNo">Soru No</label>
+            <input type="number" id="soruNo" min="1" max="200" value="1" enterkeyhint="go">
+            <label class="et">Doğru Şık</label>
             <div class="sikler" id="sikler"><button class="ikincil">A</button><button class="ikincil">B</button><button class="ikincil">C</button><button class="ikincil">D</button></div>
             <div class="satir" style="margin-top:12px">
-              <button class="ana" id="kaydetBtn">Kütüphaneye kaydet</button>
+              <button class="ana" id="kaydetBtn">Kütüphaneye Kaydet</button>
               <button class="ikincil" id="vazgecBtn">Vazgeç</button>
             </div>
-            <div class="durum" id="kayDurum"></div>
+            <div class="durum" id="kayDurum" role="status" aria-live="polite"></div>
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </details>
   </div>
 </div>
 
 <script>
-// Code.gs ile aynı web uygulaması (karne-uret.html'deki API_URL).
+// Code.gs ile aynı web uygulaması (karne-uret.js'deki API_URL; v3.48'den beri karne-uret.html'den ayrı dosyada).
 const API_URL = "https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
 // Kesilen sorular, föydeki ana sorularla aynı ölçekte olsun: sayfa genişliği bu piksele getirilir (A4 ≈ 200 dpi'nin
 // karşılığı; kitapcik_kes.py'nin taranmış PDF yolundaki ölçekle uyumlu). Yarım sütun ≤ 690 px, geniş ≤ 1430 px.
@@ -194,6 +239,50 @@ let anahtar = "", denemeler = [], aktif = null, sayfalar = [], sayfaNo = 0, seci
 function durum(el, metin, tur){ el.textContent = metin || ""; el.className = "durum" + (tur ? " " + tur : ""); }
 function kacis(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
+// ---------------- ARAYÜZ YARDIMCILARI (Öğretmen Paneli v3.39 kurallarıyla) ----------------
+// Yükleme göstergesi: düğme "YÜKLENİYOR" (kayıtta "KAYDEDİLİYOR", silmede "SİLİNİYOR") olur ve kilitlenir; ilgili
+// kutular ve düğmeler de iş bitene kadar kilitli kalır (cevap beklenirken bilgi değiştirilemesin).
+function dugmeYukleniyor(dugme, acik, metin, kilitli){
+  if(acik){
+    dugme.dataset.eskiMetin = dugme.innerHTML;
+    dugme.innerHTML = '<span class="spin" aria-hidden="true"></span><span class="yukMetin">' + (metin || "YÜKLENİYOR") +
+      '</span><span class="yukNokta" aria-hidden="true"></span><span class="yukCizgi" aria-hidden="true"></span>';
+    dugme.classList.add("yukleniyor"); dugme.disabled = true; dugme.setAttribute("aria-busy", "true");
+  }else{
+    if(dugme.dataset.eskiMetin !== undefined) dugme.innerHTML = dugme.dataset.eskiMetin;
+    delete dugme.dataset.eskiMetin;
+    dugme.classList.remove("yukleniyor"); dugme.disabled = false; dugme.removeAttribute("aria-busy");
+  }
+  (kilitli || []).forEach(el => { if(el) el.disabled = acik; });
+}
+const yukleniyorMu = dugme => dugme.classList.contains("yukleniyor");
+// Enter tuşu: sayfada <form> yok; her kutu kendi düğmesini keydown ile çalıştırır. Kilitli (yüklenen) düğmeye
+// click() hiçbir şey yapmaz, yani yükleme sürerken Enter yok sayılır.
+function enterIle(kutu, is){ kutu.addEventListener("keydown", e => { if(e.key !== "Enter" || e.isComposing) return; e.preventDefault(); is(); }); }
+
+// Açılır-kapanır bölümler: açık/kapalı durumu Öğretmen Paneliyle aynı anahtarda (fhUltraMat_bolumler) hatırlanır.
+// Sayfanın kendi açtığı bölümler (karne-uret'ten "Eksik soruları kes" ile gelince) hatırlanan tercihi değiştirmez.
+const BOLUM_ANAHTARI = "fhUltraMat_bolumler", kendiAcilan = new Set();
+function bolumDurumlari(){ try{ return JSON.parse(localStorage.getItem(BOLUM_ANAHTARI) || "{}"); }catch(e){ return {}; } }
+document.querySelectorAll("details.bolum[data-bolum]").forEach(d => { const v = bolumDurumlari()[d.dataset.bolum]; if(v !== undefined) d.open = !!v; });
+document.addEventListener("toggle", e => {
+  const d = e.target, id = d && d.dataset && d.dataset.bolum; if(!id) return;
+  if(kendiAcilan.has(id)){ kendiAcilan.delete(id); return; }
+  try{ const o = bolumDurumlari(); o[id] = d.open; localStorage.setItem(BOLUM_ANAHTARI, JSON.stringify(o)); }catch(err){}
+}, true);
+function bolumuAc(id){ const d = document.querySelector(`details.bolum[data-bolum="${id}"]`); if(d && !d.open){ kendiAcilan.add(id); d.open = true; } }
+/** Kapalı başlıktaki kısa özet; tur: "uyari" (turuncu) | "iyi" (yeşil) */
+function bolumOzeti(elId, metin, tur){ const el = $(elId); el.textContent = metin || ""; el.className = "bolumOzet" + (tur === "uyari" ? " ozetUyari" : tur === "iyi" ? " ozetIyi" : ""); }
+function ozetleriGuncelle(){
+  if(!aktif) return;
+  const n = aktif.sorular.length, g = aktif.sorular.filter(x => x.genis).length;
+  if(eksikKuyruk.length) bolumOzeti("ozetSorular", `${n} soru · ${eksikKuyruk.length} eksik`, "uyari");
+  else bolumOzeti("ozetSorular", n ? `${n} soru` + (g ? ` · ${g} geniş` : "") : "henüz soru yok");
+  if(eksikKuyruk.length) bolumOzeti("ozetKes", `Sıradaki: Soru ${eksikKuyruk[0]}`, "uyari");
+  else bolumOzeti("ozetKes", sayfalar.length ? `${sayfalar.length} sayfa yüklü` : "");
+  if(!$("ozetToplu").textContent) bolumOzeti("ozetToplu", "ör. 10-B.png");
+}
+
 async function api(veri){
   const res = await fetch(API_URL, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" },
     body: JSON.stringify(Object.assign({ anahtar }, veri)) });
@@ -204,12 +293,14 @@ async function api(veri){
 // ---------------- GİRİŞ / KÜTÜPHANE ----------------
 try{ anahtar = sessionStorage.getItem("ekAnahtar") || ""; }catch(e){}
 if(anahtar){ $("anahtar").value = anahtar; baglan(); }
-$("baglanBtn").onclick = () => { anahtar = $("anahtar").value.trim(); baglan(); };
-$("anahtar").addEventListener("keydown", e => { if(e.key === "Enter"){ anahtar = $("anahtar").value.trim(); baglan(); } });
+function girisYap(){ if(yukleniyorMu($("baglanBtn"))) return; anahtar = $("anahtar").value.trim(); baglan(); }
+$("baglanBtn").onclick = girisYap;
+enterIle($("anahtar"), girisYap);
 
 async function baglan(){
-  if(!anahtar){ durum($("girisDurum"), "Anahtarı yaz.", "hata"); return; }
-  durum($("girisDurum"), "Bağlanılıyor…");
+  if(!anahtar){ durum($("girisDurum"), "Öğretmen Anahtarını yaz.", "hata"); return; }
+  durum($("girisDurum"), "");
+  dugmeYukleniyor($("baglanBtn"), true, "YÜKLENİYOR", [$("anahtar")]);
   try{
     const r = await api({ islem:"ekListe" });
     if(!r.ok){ durum($("girisDurum"), r.mesajTr || "Bağlanılamadı.", "hata"); return; }
@@ -224,11 +315,12 @@ async function baglan(){
       denemeAc(qd);
     }
   }catch(e){ durum($("girisDurum"), "Bağlantı hatası: " + e.message, "hata"); }
+  finally{ dugmeYukleniyor($("baglanBtn"), false, "", [$("anahtar")]); }
 }
 
 function listeCiz(){
   const kap = $("denemeListesi");
-  if(!denemeler.length){ kap.innerHTML = '<div class="kucuk">Henüz deneme yok. "+ Yeni deneme" ile başla.</div>'; return; }
+  if(!denemeler.length){ kap.innerHTML = '<div class="kucuk">Henüz deneme yok. "+ Yeni Deneme" ile başla.</div>'; return; }
   kap.innerHTML = denemeler.map(d => `<div class="denemeKart" data-id="${kacis(d.id)}" tabindex="0" role="button">
       <b>${kacis(d.ad)}</b><div class="kucuk">${kacis(d.sinif)}. sınıf · kütüphanede ${d.sorular.length} soru</div>
       <div>${d.sorular.map(s => `<span class="no">${s.no}</span>`).join("")}</div></div>`).join("");
@@ -238,25 +330,34 @@ function listeCiz(){
   });
 }
 
-$("yeniDenemeAc").onclick = () => { $("yeniDenemeForm").classList.remove("gizli"); $("ydAd").focus(); };
-$("ydVazgec").onclick = () => $("yeniDenemeForm").classList.add("gizli");
+// Aç-kapa: form açıkken düğme "Formu Kapat" olur.
+function yeniDenemeFormu(ac){
+  $("yeniDenemeForm").classList.toggle("gizli", !ac);
+  $("yeniDenemeAc").textContent = ac ? "Formu Kapat" : "+ Yeni Deneme"; $("yeniDenemeAc").setAttribute("aria-expanded", ac);
+  if(ac) $("ydAd").focus();
+}
+$("yeniDenemeAc").onclick = () => yeniDenemeFormu($("yeniDenemeForm").classList.contains("gizli"));
+$("ydVazgec").onclick = () => yeniDenemeFormu(false);
+enterIle($("ydAd"), () => $("ydKaydet").click());
 $("ydKaydet").onclick = async () => {
   const ad = $("ydAd").value.trim();
   if(!ad){ durum($("kutDurum"), "Deneme adını yaz.", "hata"); return; }
-  $("ydKaydet").disabled = true; durum($("kutDurum"), "Kaydediliyor…");
+  const kilitli = [$("ydAd"), $("ydSinif"), $("ydVazgec"), $("yeniDenemeAc")];
+  dugmeYukleniyor($("ydKaydet"), true, "KAYDEDİLİYOR", kilitli); durum($("kutDurum"), "");
   try{
     const r = await api({ islem:"ekDenemeEkle", ad, sinif:$("ydSinif").value });
     if(!r.ok){ durum($("kutDurum"), r.mesajTr, "hata"); return; }
-    denemeler = r.denemeler; $("ydAd").value = ""; $("yeniDenemeForm").classList.add("gizli");
+    denemeler = r.denemeler; $("ydAd").value = "";
     durum($("kutDurum"), "Deneme eklendi.", "ok"); listeCiz(); denemeAc(r.id);
   }catch(e){ durum($("kutDurum"), "Hata: " + e.message, "hata"); }
-  finally{ $("ydKaydet").disabled = false; }
+  finally{ dugmeYukleniyor($("ydKaydet"), false, "", kilitli); if(!$("kutDurum").classList.contains("hata")) yeniDenemeFormu(false); }
 };
 
 function denemeAc(id){
   aktif = denemeler.find(d => d.id === id); if(!aktif) return;
   $("kutuphaneEkran").classList.add("gizli"); $("denemeEkran").classList.remove("gizli");
-  $("dDuzenleForm").classList.add("gizli"); durum($("dDurum"), "");
+  duzeltFormu(false); durum($("dDurum"), "");
+  if(eksikKuyruk.length){ bolumuAc("tgSorular"); bolumuAc("tgKes"); }
   denemeCiz(); window.scrollTo(0, 0);
 }
 $("geriBtn").onclick = () => { $("denemeEkran").classList.add("gizli"); $("kutuphaneEkran").classList.remove("gizli"); listeCiz(); };
@@ -266,7 +367,7 @@ function denemeCiz(){
   $("dAlt").textContent = `${aktif.sinif}. sınıf · kütüphanede ${aktif.sorular.length} soru`;
   const izg = $("soruIzgara");
   if(!aktif.sorular.length){ izg.innerHTML = '<div class="kucuk">Bu denemeden henüz soru kesilmedi.</div>'; }
-  else izg.innerHTML = aktif.sorular.map(s => `<div class="soruKutu"><div class="ust"><span>Soru ${s.no} · ${kacis(s.dogru)}${s.genis ? " · geniş" : ""}</span>
+  else izg.innerHTML = aktif.sorular.map(s => `<div class="soruKutu"><div class="ust"><span>Soru ${s.no} · ${kacis(s.dogru)}${s.genis ? " · Geniş" : ""}</span>
       <button class="tehlike" data-no="${s.no}" aria-label="Soru ${s.no}'i sil">Sil</button></div>
       <img src="${kacis(s.gorsel.replace("sz=w1600","sz=w500"))}" alt="Soru ${s.no}" loading="lazy"></div>`).join("");
   izg.querySelectorAll("button[data-no]").forEach(b => b.onclick = async () => {
@@ -281,19 +382,25 @@ function denemeCiz(){
   if(!ham) $("soruNo").value = sonraki;
   $("eksikBilgi").classList.toggle("gizli", !eksikKuyruk.length);
   $("eksikBilgi").textContent = eksikKuyruk.length ? `Föy için kesilmesi gereken sorular: ${eksikKuyruk.join(", ")}. Sıradaki: Soru ${eksikKuyruk[0]}.` : "";
+  ozetleriGuncelle();
 }
 
 // ---------------- SAYFA YÜKLEME ----------------
 $("kameraBtn").onclick = () => $("kameraInput").click();
 $("dosyaBtn").onclick = () => $("dosyaInput").click();
-$("kameraInput").onchange = e => dosyalariYukle(e.target.files);
-$("dosyaInput").onchange = e => dosyalariYukle(e.target.files);
+$("kameraInput").onchange = e => dosyalariYukle(e.target.files, $("kameraBtn"));
+$("dosyaInput").onchange = e => dosyalariYukle(e.target.files, $("dosyaBtn"));
 
 function sinirla(w, h){ const k = Math.min(1, SAYFA_EN_BUYUK / Math.max(w, h)); return [Math.round(w * k), Math.round(h * k)]; }
 
-async function dosyalariYukle(liste){
+async function dosyalariYukle(liste, dugme){
   if(!liste || !liste.length) return;
-  durum($("yukDurum"), "Sayfalar hazırlanıyor…");
+  const diger = dugme === $("kameraBtn") ? $("dosyaBtn") : $("kameraBtn");
+  dugmeYukleniyor(dugme, true, "YÜKLENİYOR", [diger]); durum($("yukDurum"), "");
+  try{ await sayfalariHazirla(liste); }
+  finally{ dugmeYukleniyor(dugme, false, "", [diger]); }
+}
+async function sayfalariHazirla(liste){
   const yeni = [];
   try{
     for(const f of liste){
@@ -323,7 +430,7 @@ async function dosyalariYukle(liste){
   sayfalar = yeni; sayfaNo = 0; secim = null;
   $("kameraInput").value = ""; $("dosyaInput").value = "";
   durum($("yukDurum"), `${sayfalar.length} sayfa yüklendi.`, "ok");
-  $("sayfaAlan").classList.remove("gizli"); sayfaCiz();
+  $("sayfaAlan").classList.remove("gizli"); sayfaCiz(); ozetleriGuncelle();
 }
 
 function sayfaCiz(){
@@ -453,7 +560,8 @@ function kirpVeIsle(ilkKez){
 ["zeminTemizle", "kalemSil", "genisMi"].forEach(id => $(id).onchange = () => kirpVeIsle(false));
 
 // ---------------- SİLGİ ----------------
-$("silgiBtn").onclick = () => { silgiAcik = !silgiAcik; $("silgiBtn").classList.toggle("secili", silgiAcik); $("silgiAyar").classList.toggle("gizli", !silgiAcik); };
+$("silgiBtn").onclick = () => { silgiAcik = !silgiAcik; $("silgiBtn").classList.toggle("secili", silgiAcik); $("silgiAyar").classList.toggle("gizli", !silgiAcik);
+  $("silgiBtn").textContent = silgiAcik ? "🧽 Silgiyi Kapat" : "🧽 Silgi"; $("silgiBtn").setAttribute("aria-pressed", silgiAcik); };
 $("geriAlBtn").onclick = () => { const s = geriYigin.pop(); if(s) $("editorCanvas").getContext("2d").putImageData(s, 0, 0); };
 (function(){
   const c = $("editorCanvas"); let ciziyor = false, son = null;
@@ -473,12 +581,14 @@ $("sikler").querySelectorAll("button").forEach(b => b.onclick = () => {
 $("vazgecBtn").onclick = editorKapat;
 function editorKapat(){ ham = null; secim = null; $("editorAlan").classList.add("gizli"); $("secimKutu").classList.add("gizli"); durum($("kayDurum"), ""); }
 
+enterIle($("soruNo"), () => $("kaydetBtn").click());
 $("kaydetBtn").onclick = async () => {
   const no = parseInt($("soruNo").value, 10);
   if(!(no >= 1 && no <= 200)){ durum($("kayDurum"), "Soru numarasını yaz.", "hata"); return; }
   if(!dogruSik){ durum($("kayDurum"), "Doğru şıkkı seç.", "hata"); return; }
   if(aktif.sorular.some(s => s.no === no) && !confirm(`Soru ${no} kütüphanede zaten var. Yenisiyle değiştirilsin mi?`)) return;
-  $("kaydetBtn").disabled = true; durum($("kayDurum"), "Kaydediliyor…");
+  const kilitli = [$("soruNo"), $("vazgecBtn"), ...$("sikler").querySelectorAll("button")];
+  dugmeYukleniyor($("kaydetBtn"), true, "KAYDEDİLİYOR", kilitli); durum($("kayDurum"), "");
   try{
     const png = $("editorCanvas").toDataURL("image/png");
     const r = await api({ islem:"ekSoruKaydet", denemeID:aktif.id, no, dogru:dogruSik, genis:$("genisMi").checked, png });
@@ -487,29 +597,38 @@ $("kaydetBtn").onclick = async () => {
     editorKapat(); denemeCiz();
     $("soruNo").value = eksikKuyruk.length ? eksikKuyruk[0] : no + 1; dogruSik = ""; $("sikler").querySelectorAll("button").forEach(x => x.classList.remove("secili"));
     durum($("yukDurum"), eksikKuyruk.length ? `Soru ${no} kaydedildi. Sıradaki: Soru ${eksikKuyruk[0]}.`
-      : (new URLSearchParams(location.search).get("eksik") ? `Soru ${no} kaydedildi. Föy için gereken bütün sorular hazır; karne üretme sayfasında "Kütüphaneyi yenile"ye bas.` : `Soru ${no} kaydedildi. Sıradaki soruyu çerçevele.`), "ok");
+      : (new URLSearchParams(location.search).get("eksik") ? `Soru ${no} kaydedildi. Föy için gereken bütün sorular hazır; Öğretmen Panelinde TG Denemeleri Hata Defteri'ndeki "🔄 Yenile"ye bas.` : `Soru ${no} kaydedildi. Sıradaki soruyu çerçevele.`), "ok");
   }catch(e){ durum($("kayDurum"), "Hata: " + e.message, "hata"); }
-  finally{ $("kaydetBtn").disabled = false; }
+  finally{ dugmeYukleniyor($("kaydetBtn"), false, "", kilitli); }
 };
 
 // ---------------- DENEME DÜZELT / SİL ----------------
-$("dDuzenleAc").onclick = () => { $("ddAd").value = aktif.ad; $("ddSinif").value = aktif.sinif || "8"; $("dDuzenleForm").classList.remove("gizli"); $("ddAd").focus(); };
-$("ddVazgec").onclick = () => $("dDuzenleForm").classList.add("gizli");
+function duzeltFormu(ac){
+  if(ac){ $("ddAd").value = aktif.ad; $("ddSinif").value = aktif.sinif || "8"; }
+  $("dDuzenleForm").classList.toggle("gizli", !ac);
+  $("dDuzenleAc").textContent = ac ? "Formu Kapat" : "✏️ Adı / Sınıfı Düzelt"; $("dDuzenleAc").setAttribute("aria-expanded", ac);
+  if(ac) $("ddAd").focus();
+}
+$("dDuzenleAc").onclick = () => duzeltFormu($("dDuzenleForm").classList.contains("gizli"));
+$("ddVazgec").onclick = () => duzeltFormu(false);
+enterIle($("ddAd"), () => $("ddKaydet").click());
 $("ddKaydet").onclick = async () => {
   const ad = $("ddAd").value.trim();
   if(!ad){ durum($("dDurum"), "Deneme adı boş olamaz.", "hata"); return; }
-  $("ddKaydet").disabled = true;
+  const kilitli = [$("ddAd"), $("ddSinif"), $("ddVazgec"), $("dDuzenleAc")];
+  dugmeYukleniyor($("ddKaydet"), true, "KAYDEDİLİYOR", kilitli);
   try{
     const r = await api({ islem:"ekDenemeGuncelle", denemeID:aktif.id, ad, sinif:$("ddSinif").value });
     if(!r.ok){ durum($("dDurum"), r.mesajTr || "Kaydedilemedi.", "hata"); return; }
     denemeler = r.denemeler; aktif = denemeler.find(d => d.id === aktif.id);
-    $("dDuzenleForm").classList.add("gizli"); denemeCiz(); durum($("dDurum"), "Deneme bilgileri güncellendi.", "ok");
+    denemeCiz(); durum($("dDurum"), "Deneme bilgileri güncellendi.", "ok");
   }catch(e){ durum($("dDurum"), "Hata: " + e.message, "hata"); }
-  finally{ $("ddKaydet").disabled = false; }
+  finally{ dugmeYukleniyor($("ddKaydet"), false, "", kilitli); if($("dDurum").classList.contains("ok")) duzeltFormu(false); }
 };
 $("dSil").onclick = async () => {
   if(!confirm(`"${aktif.ad}" denemesi, kütüphanedeki ${aktif.sorular.length} sorusuyla birlikte silinsin mi? Bu işlem geri alınamaz.`)) return;
-  $("dSil").disabled = true;
+  const kilitli = [$("dDuzenleAc"), $("geriBtn")];
+  dugmeYukleniyor($("dSil"), true, "SİLİNİYOR", kilitli);
   try{
     let r = await api({ islem:"ekDenemeSil", denemeID:aktif.id });
     if(!r.ok && r.onayGerekli){
@@ -521,7 +640,7 @@ $("dSil").onclick = async () => {
     $("denemeEkran").classList.add("gizli"); $("kutuphaneEkran").classList.remove("gizli"); listeCiz();
     durum($("kutDurum"), "Deneme silindi.", "ok");
   }catch(e){ durum($("dDurum"), "Hata: " + e.message, "hata"); }
-  finally{ $("dSil").disabled = false; }
+  finally{ dugmeYukleniyor($("dSil"), false, "", kilitli); }
 };
 
 // ---------------- HAZIR SORULARI TOPLU YÜKLE (v2: dosya adı "10-B.png" → soru 10, doğru şık B) ----------------
@@ -547,7 +666,7 @@ $("topluInput").onchange = async e => {
   const cakisan = uygun.filter(u => aktif.sorular.some(s => s.no === u.no)).map(u => u.no);
   let liste = uygun;
   if(cakisan.length && !confirm(`Şu sorular kütüphanede zaten var: ${cakisan.join(", ")}.\n\nTamam: yenileriyle değiştir · İptal: bunları atla`)) liste = uygun.filter(u => cakisan.indexOf(u.no) === -1);
-  $("topluBtn").disabled = true;
+  dugmeYukleniyor($("topluBtn"), true, "YÜKLENİYOR");
   const hatali = [];
   for(let i = 0; i < liste.length; i++){
     const u = liste[i];
@@ -559,13 +678,14 @@ $("topluInput").onchange = async e => {
       denemeler = r.denemeler; aktif = denemeler.find(d => d.id === aktif.id);
     }catch(err){ hatali.push(`${u.no} (${err.message})`); }
   }
-  $("topluBtn").disabled = false; denemeCiz();
+  dugmeYukleniyor($("topluBtn"), false); denemeCiz();
   const tamam = liste.length - hatali.length;
   let m = `${tamam} soru kütüphaneye kaydedildi.`;
   if(liste.length < uygun.length) m += ` ${uygun.length - liste.length} soru zaten vardı, atlandı.`;
   if(atlanan.length) m += ` Adı tanınmayan dosyalar atlandı: ${atlanan.join(", ")}.`;
   if(hatali.length) m += ` Kaydedilemeyen: ${hatali.join(", ")}.`;
   durum($("topluDurum"), m, hatali.length || atlanan.length ? "hata" : "ok");
+  bolumOzeti("ozetToplu", hatali.length ? `${hatali.length} soru kaydedilemedi` : `Son yükleme: ${tamam} soru`, hatali.length ? "uyari" : "iyi");
 };
 </script>
 </body>

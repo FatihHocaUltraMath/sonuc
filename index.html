@@ -52,7 +52,7 @@
 
 *{
 box-sizing:border-box;
-font-family:"Segoe UI",Arial,sans-serif;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 
 
@@ -153,11 +153,13 @@ color:#475569;
 
 margin-top:12px;
 
-font-size:15px;
+font-size:15.5px;
 
 font-style:italic;
 
-color:#64748B;
+font-weight:600;
+
+color:#475569;   /* turuncu-krem zeminde okunsun */
 
 }
 
@@ -341,7 +343,7 @@ cursor:pointer;
   background:linear-gradient(135deg,#FFF7ED,#FAF5FF);border:1px solid #F3E8FF;}
 .kimlikSinavIkon{font-size:20px;line-height:1;}
 .kimlikSinav b{display:block;font-size:15px;font-weight:900;color:var(--dark);line-height:1.25;}
-.kimlikSinav small{display:block;font-size:11.5px;font-weight:700;color:#94A3B8;margin-top:2px;}
+.kimlikSinav small{display:block;font-size:11.5px;font-weight:700;color:#64748B;margin-top:2px;}
 .kimlikSinav small:empty{display:none;}
 
 
@@ -372,16 +374,17 @@ animation:spin .8s linear infinite;
 @keyframes spin{to{transform:rotate(360deg);}}
 /* Sorgu sürerken durum düğmenin kendisinde görünür (karne-uret ile aynı desen): parmağın/gözün olduğu yer. */
 #submitBtn:disabled{cursor:wait;opacity:.92;}
-#submitBtn{position:relative;overflow:hidden;}
-#submitBtn .spin{display:inline-block;width:17px;height:17px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;
+#submitBtn, .hdSecBtn, .moSecBtn{position:relative;overflow:hidden;}
+.hdSecBtn.yukleniyor:disabled, .moSecBtn.yukleniyor:disabled{opacity:1;cursor:wait;}   /* kayıt sürerken soluk değil, canlı görünsün */
+#submitBtn .spin, .hdSecBtn .spin, .moSecBtn .spin{display:inline-block;width:17px;height:17px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;
   border-radius:50%;margin-right:10px;vertical-align:-3px;animation:spin .8s linear infinite;}
 /* Yüklenirken: "YÜKLENİYOR" + noktalar tek tek belirir (. .. ...) + alt kenarda akan ince ışık çizgisi.
    Metin kodda doğrudan büyük harfle yazılır (CSS text-transform "İ"yi bazı cihazlarda "I" yapabiliyor). */
-#submitBtn .yukMetin{letter-spacing:1.5px;}
-#submitBtn .yukNokta{display:inline-block;width:1.4em;text-align:left;}
-#submitBtn .yukNokta::after{content:"";animation:yukNokta 1.2s steps(1) infinite;}
+#submitBtn .yukMetin, .hdSecBtn .yukMetin, .moSecBtn .yukMetin{letter-spacing:1.5px;}
+#submitBtn .yukNokta, .hdSecBtn .yukNokta, .moSecBtn .yukNokta{display:inline-block;width:1.4em;text-align:left;}
+#submitBtn .yukNokta::after, .hdSecBtn .yukNokta::after, .moSecBtn .yukNokta::after{content:"";animation:yukNokta 1.2s steps(1) infinite;}
 @keyframes yukNokta{0%{content:""}25%{content:"."}50%{content:".."}75%{content:"..."}}
-#submitBtn .yukCizgi{position:absolute;left:-35%;bottom:0;height:3px;width:35%;border-radius:2px;
+#submitBtn .yukCizgi, .hdSecBtn .yukCizgi, .moSecBtn .yukCizgi{position:absolute;left:-35%;bottom:0;height:3px;width:35%;border-radius:2px;
   background:rgba(255,255,255,.75);animation:yukCizgi 1.3s ease-in-out infinite;pointer-events:none;}
 @keyframes yukCizgi{0%{left:-35%}100%{left:100%}}
 @media (prefers-reduced-motion:reduce){ #submitBtn .spin, .loading .spin{animation-duration:2.4s;} #submitBtn .yukCizgi{animation-duration:3s;} }
@@ -487,8 +490,8 @@ linear-gradient(135deg,var(--purple),var(--orange));
 .scoreCard.parla::after{animation:kartParlama 1.1s ease-out .35s 1;}
 @keyframes kartParlama{0%{left:-60%;opacity:1}100%{left:130%;opacity:1}}
 /* Sahneleme: bölümler ekrana girdikçe aşağıdan süzülerek belirir */
-#resultCard > .belir{opacity:0;transform:translateY(18px);}
-#resultCard > .belir.belirdi{opacity:1;transform:none;
+.sahneBirim.belir{opacity:0;transform:translateY(18px);}
+.sahneBirim.belir.belirdi{opacity:1;transform:none;
   transition:opacity .6s ease,transform .6s cubic-bezier(.22,1,.36,1);transition-delay:var(--gecikme,0ms);}
 /* Grafik: son sınav noktasında nabız */
 .chartBox{position:relative;}
@@ -503,8 +506,8 @@ linear-gradient(135deg,var(--purple),var(--orange));
 /* ================= ROZET DOLABI ================= */
 .rozetBaslik{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
 .rozetSayac{font-size:13px;font-weight:800;color:var(--purple);white-space:nowrap;}
-.rozetDolabi{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;}
-.rozet{position:relative;text-align:center;padding:12px 4px 10px;border-radius:16px;background:#FFFBF5;border:1px solid #FDE7CF;}
+.rozetDolabi{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:4px;}
+.rozet{position:relative;min-width:0;overflow-wrap:anywhere;text-align:center;padding:12px 4px 10px;border-radius:16px;background:#FFFBF5;border:1px solid #FDE7CF;}
 .rozet.kilitli{background:#F8FAFC;border-color:#E2E8F0;}
 .rozetMadalya{position:relative;width:54px;height:54px;margin:0 auto 7px;border-radius:50%;display:flex;align-items:center;justify-content:center;
   font-size:27px;line-height:1;box-shadow:0 4px 10px rgba(59,7,100,.18), inset 0 -3px 0 rgba(0,0,0,.12), inset 0 2px 0 rgba(255,255,255,.45);}
@@ -517,9 +520,9 @@ linear-gradient(135deg,var(--purple),var(--orange));
 .rozetKilit{position:absolute;right:-3px;bottom:-3px;width:22px;height:22px;border-radius:50%;background:#FFFFFF;
   border:1px solid #E2E8F0;font-size:11px;display:flex;align-items:center;justify-content:center;}
 .rozetAd{font-size:12px;font-weight:900;color:var(--dark);line-height:1.2;}
-.rozet.kilitli .rozetAd{color:#94A3B8;}
+.rozet.kilitli .rozetAd{color:#64748B;}
 .rozetAlt{font-size:10.5px;font-weight:600;color:#64748B;line-height:1.3;margin-top:3px;}
-.rozet.kilitli .rozetAlt{color:#94A3B8;}
+.rozet.kilitli .rozetAlt{color:#64748B;}
 .rozetYeni{position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#F97316,#EC4899);color:#fff;
   font-size:9.5px;font-weight:900;letter-spacing:.6px;padding:3px 8px;border-radius:999px;box-shadow:0 3px 8px rgba(236,72,153,.35);white-space:nowrap;}
 .rozet.yeni{border-color:#FDBA74;background:#FFF7ED;}
@@ -612,7 +615,7 @@ linear-gradient(135deg,var(--purple),var(--orange));
 .paylasKapat{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;background:#F1F5F9;color:#475569;
   font-size:16px;line-height:1;padding:0;margin:0;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;}
 .paylasDugmeler.tekDugme .paylasIkincil{color:#fff;background:linear-gradient(135deg,var(--purple),var(--orange));}
-.paylasNot{font-size:11px;font-weight:600;color:#94A3B8;margin-top:10px;line-height:1.4;}
+.paylasNot{font-size:11px;font-weight:600;color:#64748B;margin-top:10px;line-height:1.4;}
 
 @keyframes rekorBelir{
   /* Önce rozetin yeri yumuşakça açılır (alttaki kartlar sıçramadan kayar), sonra rozet belirir */
@@ -682,8 +685,11 @@ font-weight:950;
 .dybSerit span:first-child{border-radius:999px 0 0 999px;}
 .dybSerit span:last-child{border-radius:0 999px 999px 0;}
 .dybSerit .d{background:#22C55E;} .dybSerit .y{background:#EF4444;} .dybSerit .b{background:#CBD5E1;}
-.durumKutular{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
-.durumKutu{border-radius:18px;padding:13px 8px 12px;text-align:center;border:1px solid;display:flex;flex-direction:column;align-items:center;}
+.durumKutular{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-top:12px;}
+/* v2.33 — bireysel öğrenci (özel ders vb.): sınıfla kıyas yok; sıralama kutusu ve sınıfa dair açıklamalar gizli */
+body.bireyselSayfa .durumKutu.sira, body.bireyselSayfa .siraPanel, body.bireyselSayfa .sadeceSinif{display:none !important;}
+body.bireyselSayfa .durumKutular{grid-template-columns:minmax(0,1fr);}   /* minmax(0,…): uzun bir başarı adı kutuyu dışarı itmesin */
+.durumKutu{min-width:0;border-radius:18px;padding:13px 8px 12px;text-align:center;border:1px solid;display:flex;flex-direction:column;align-items:center;}
 .durumKutu > small{font-size:12.5px;font-weight:800;}
 .durumDeger{display:flex;align-items:baseline;justify-content:center;gap:4px;margin-top:4px;min-height:34px;}
 .durumKutu strong{font-size:26px;font-weight:900;line-height:1.1;}
@@ -706,6 +712,42 @@ font-weight:950;
   font-size:12.5px;font-weight:800;color:#fff;}
 .netTrendCip:empty{display:none;}
 @media (max-width:345px){ .dybKutu strong{font-size:24px;} .durumKutu strong{font-size:22px;} .durumKutu.basari strong{font-size:16px;} }
+
+/* ================= SONUÇ SAYFASI DÜZENİ =================
+   Özet kartı + dört bölüm kartı + Nasıl Değerlendiriyoruz? Kartlar zeminde boşluklarla ayrılır (kart içinde
+   kart yok); her kartın başlığında numara, ad ve tek satırlık açıklama; içinde açılır bölümler. */
+.sonucAkis{display:flex;flex-direction:column;gap:18px;}
+.bolumKart{background:#fff;border-radius:28px;padding:20px 20px 4px;box-shadow:0 16px 40px rgba(139,92,246,.12);}
+.bolumKart.sade{background:rgba(255,255,255,.72);box-shadow:none;border:1px solid #EDE9FE;padding:2px 20px;}
+.bkBas{display:flex;align-items:center;gap:13px;padding-bottom:14px;border-bottom:2px solid #F3E8FF;}
+.bkNo{width:36px;height:36px;border-radius:12px;flex-shrink:0;display:grid;place-items:center;
+  background:linear-gradient(135deg,#8B5CF6,#F97316);color:#fff;font-weight:900;font-size:17px;box-shadow:0 5px 12px rgba(139,92,246,.28);}
+.bkMetin{min-width:0;}
+.bkAd{margin:0;font-size:21px;font-weight:900;color:var(--dark);line-height:1.15;letter-spacing:-.2px;}
+.bkAlt{margin-top:3px;font-size:13px;font-weight:600;color:var(--gray);line-height:1.3;}
+details.bolum + details.bolum{border-top:1px solid #F1EAFD;}
+.bolumBas.title{margin:0;font-size:inherit;}
+summary.bolumBas{list-style:none;display:flex;align-items:center;gap:12px;padding:15px 2px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;user-select:none;}
+summary.bolumBas::-webkit-details-marker{display:none;}
+summary.bolumBas:focus-visible{outline:3px solid #C4B5FD;outline-offset:2px;border-radius:14px;}
+.bolumIkon{width:40px;height:40px;border-radius:13px;flex-shrink:0;display:grid;place-items:center;font-size:20px;
+  background:#F5F3FF;border:1px solid #EDE9FE;}
+.bolumMetin{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+.bolumAd{font-size:17px;font-weight:900;color:var(--dark);line-height:1.2;}
+.bolumOzet{font-size:12.5px;font-weight:700;color:var(--gray);line-height:1.35;}
+.bolumOzet:empty{display:none;}
+details.bolum[open] > summary .bolumOzet:not(.hep){display:none;}   /* açıkken içerik zaten görünür */
+.bolumOk{width:30px;height:30px;border-radius:50%;flex-shrink:0;position:relative;background:#F5F3FF;
+  transition:transform .25s ease, background .2s ease;}
+.bolumOk::before{content:"";position:absolute;left:50%;top:44%;width:7px;height:7px;
+  border-right:2.5px solid var(--purple);border-bottom:2.5px solid var(--purple);transform:translate(-50%,-50%) rotate(45deg);}
+details.bolum[open] > summary .bolumOk{transform:rotate(180deg);background:#EDE9FE;}
+@media (hover:hover){ summary.bolumBas:hover .bolumOk{background:#EDE9FE;} }
+.bolumIc{padding:0 0 20px;}
+.bolumIc > :first-child{margin-top:0;}
+#ozetKart .moUstBolum .title{margin-top:20px;}
+@media (prefers-reduced-motion:reduce){ .bolumOk{transition:none;} }
 
 .title{
 
@@ -767,7 +809,7 @@ border:1px solid #FED7AA;
 .gsUst{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
 .gsAd{min-width:0;display:flex;flex-direction:column;gap:2px;}
 .gsAd b{font-size:14.5px;font-weight:900;color:var(--dark);line-height:1.3;}
-.gsAd small{font-size:12px;font-weight:600;color:#94A3B8;}
+.gsAd small{font-size:12px;font-weight:600;color:#64748B;}
 .gsNet{text-align:right;white-space:nowrap;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;}
 .gsNet b{font-size:21px;font-weight:900;color:var(--dark);line-height:1.1;}
 .gsNet small{font-size:11.5px;font-weight:700;color:var(--gray);}
@@ -782,7 +824,7 @@ border:1px solid #FED7AA;
 .gsCip.ust{background:#DCFCE7;color:#166534;}
 .gsCip.alt{background:#F1F5F9;color:#475569;}
 .gsCip.rozet{background:#F3E8FF;color:#6B21A8;}
-.gsCip.not{background:transparent;color:#94A3B8;padding-left:0;font-weight:700;}
+.gsCip.not{background:transparent;color:#64748B;padding-left:0;font-weight:700;}
 .gsIcerikSatir{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
 .gsIcerikSatir span{font-size:12px;font-weight:600;color:#475569;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:4px 8px;}
 .gsIcerikSatir b{color:var(--dark);font-weight:900;margin-left:2px;}
@@ -791,6 +833,8 @@ border:1px solid #FED7AA;
 .gsDokum summary::-webkit-details-marker{display:none;}
 .gsDokum summary::after{content:" ▾";}
 .gsDokum[open] summary::after{content:" ▴";}
+/* Arayüz kuralları (Öğretmen Paneli v3.39): aç-kapa metni yapılacak işi söyler — kapalıyken "Dökümü Gör", açıkken "Dökümü Gizle" */
+.gsDokum .acAcik{display:none;} .gsDokum[open] .acAcik{display:inline;} .gsDokum[open] .acKapali{display:none;}
 .gsDokumSatir{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;font-weight:600;color:#475569;padding:5px 0;border-bottom:1px dashed #E2E8F0;}
 .gsDokumSatir:last-child{border-bottom:none;}
 .gsDokumSatir b{color:var(--dark);font-weight:900;white-space:nowrap;}
@@ -828,7 +872,7 @@ margin:25px;
 
 font-size:12px;
 
-color:#94A3B8;
+color:#64748B;
 
 }
 
@@ -904,7 +948,7 @@ color:#94A3B8;
   font-weight: 700;
   margin-top: 5px;
 }
-.topicSinifOrt{color:#94A3B8;font-weight:600;}
+.topicSinifOrt{color:#64748B;font-weight:600;}
 .topicSurekliZayif{
   display:inline-block;
   background:#FEE2E2;color:#B91C1C;
@@ -920,14 +964,6 @@ color:#94A3B8;
   background:#F8FAFC;
   border-radius:10px;
   border:1px solid #E2E8F0;
-}
-.altKazanimBaslik{
-  font-size:10.5px;
-  font-weight:800;
-  color:#94A3B8;
-  text-transform:uppercase;
-  letter-spacing:.3px;
-  margin-bottom:6px;
 }
 .altKazanimRow{
   display:flex;
@@ -1009,6 +1045,7 @@ color:#94A3B8;
 }
 .gelisimMini{
   flex:1;
+  min-width:0;
   background:#FFF7ED;
   border:1px solid #FED7AA;
   border-radius:14px;
@@ -1023,11 +1060,11 @@ color:#94A3B8;
 .cpPlan{display:flex;flex-direction:column;gap:12px;}
 .cpUstEtiket{font-size:11.5px;font-weight:800;color:var(--purple);letter-spacing:.02em;}
 .cpNot{font-size:12.5px;font-weight:600;color:#475569;line-height:1.6;margin-top:6px;}
-.cpMini{font-size:11.5px;font-weight:600;color:#94A3B8;margin-top:6px;line-height:1.5;}
+.cpMini{font-size:11.5px;font-weight:600;color:#64748B;margin-top:6px;line-height:1.5;}
 .cpEtki{background:linear-gradient(145deg,#FAF5FF,#FFF7ED);border:1px solid #EDE9FE;border-radius:18px;padding:14px 15px;}
 .cpEtkiBaslik{font-size:15px;font-weight:900;color:var(--dark);line-height:1.4;margin-top:3px;}
 .cpEtkiSatir{display:flex;align-items:center;gap:10px;margin-top:11px;}
-.cpEtkiKutu{flex:1;background:#FFFFFF;border:1px solid #EDE9FE;border-radius:12px;padding:9px 8px;text-align:center;}
+.cpEtkiKutu{flex:1;min-width:0;background:#FFFFFF;border:1px solid #EDE9FE;border-radius:12px;padding:9px 8px;text-align:center;}
 .cpEtkiKutu b{display:block;font-size:21px;font-weight:900;color:var(--dark);line-height:1.2;}
 .cpEtkiKutu.son b{color:#7C3AED;}
 .cpEtkiKutu small{font-size:11px;font-weight:700;color:var(--gray);}
@@ -1061,7 +1098,7 @@ color:#94A3B8;
 .cpAdim.tamam .cpKutu{background:#10B981;border-color:#10B981;}
 .cpAdimMetin{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
 .cpAdimBaslik{font-size:14px;font-weight:800;color:var(--dark);line-height:1.4;}
-.cpAdim.tamam .cpAdimBaslik{color:#94A3B8;text-decoration:line-through;}
+.cpAdim.tamam .cpAdimBaslik{color:#64748B;text-decoration:line-through;}
 .cpAdimAciklama{font-size:12.5px;font-weight:600;color:#64748B;line-height:1.55;}
 .cpTarih{font-size:11.5px;font-weight:800;color:var(--purple);background:#F3E8FF;border-radius:999px;padding:2px 8px;margin-left:4px;text-decoration:none;display:inline-block;}
 .cpSorular{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
@@ -1070,7 +1107,7 @@ color:#94A3B8;
 .cpSoru{min-width:30px;height:30px;padding:0 8px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:var(--dark);background:#FFFFFF;border:1.5px solid #CBD5E1;border-radius:10px;text-decoration:none;}
 a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .cpVideo{font-size:10px;font-weight:900;color:#FFFFFF;background:#7C3AED;border-radius:8px;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;margin-left:-4px;}
-.cpDerste{display:block;font-size:12px;font-weight:700;color:#94A3B8;margin-top:7px;}
+.cpDerste{display:block;font-size:12px;font-weight:700;color:#64748B;margin-top:7px;}
 .cpKaynak{display:block;font-size:12px;font-weight:700;color:#475569;margin-top:5px;}
 .cpKaynak a{color:var(--purple);}
 .cpMentor{font-size:12.5px;font-weight:700;color:#065F46;background:#ECFDF5;border-radius:10px;padding:8px 11px;margin-top:6px;line-height:1.5;}
@@ -1097,7 +1134,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .cpAlt{font-size:12.5px;font-weight:600;color:#475569;line-height:1.6;padding:0 3px;}
 .cpVeli{border-top:1px solid #F1F5F9;padding-top:10px;}
 .cpVeli b{color:var(--dark);font-weight:900;}
-.cpSoluk{color:#94A3B8;}
+.cpSoluk{color:#64748B;}
 
 .tamamIyiKutu{
   background:#ECFDF5;border:1px solid #A7F3D0;color:#166534;
@@ -1254,7 +1291,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 
 /* "Nasıl Değerlendiriyoruz?" — madde madde, simgeli; Hata Defteri vurgulu */
 .metodolojiOzet{font-size:12px;color:var(--gray);font-weight:600;margin:-6px 0 4px;}
-.metodolojiAlan{margin-top:10px;display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text);line-height:1.6;}
+.metodolojiAlan{margin-top:10px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text);line-height:1.6;}
 .metodolojiAlan.hidden{display:none !important;}
 .metMadde{display:flex;gap:10px;align-items:flex-start;}
 .metMadde b{color:var(--dark);}
@@ -1317,7 +1354,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .spHedef b{color:#C2410C;}
 .spIlerle{height:8px;background:#FFEDD5;border-radius:999px;margin-top:6px;overflow:hidden;}
 .spIlerle span{display:block;height:100%;background:linear-gradient(90deg,#FB923C,#F97316);border-radius:999px;}
-.spDip{font-size:10.5px;color:#94A3B8;font-weight:600;margin-top:10px;text-align:center;}
+.spDip{font-size:10.5px;color:#64748B;font-weight:600;margin-top:10px;text-align:center;}
 .spKonfeti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:3;}
 .spKonfeti span{position:absolute;top:-12px;width:7px;height:11px;border-radius:2px;opacity:0;animation-name:spDus;animation-timing-function:cubic-bezier(.2,.6,.4,1);animation-fill-mode:forwards;}
 @keyframes spDus{0%{opacity:1;transform:translate(0,0) rotate(0);}100%{opacity:0;transform:translate(var(--kay),260px) rotate(var(--don));}}
@@ -1367,7 +1404,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .moBilet .moBiletHedef{font-size:21px;font-weight:900;color:var(--dark);margin-top:4px;line-height:1.25;padding-right:70px;}
 .moBilet .moBiletAlt{font-size:13px;margin-top:8px;line-height:1.5;}
 .moMuhur{position:absolute;right:12px;top:12px;transform:rotate(12deg);border:3px solid var(--green);color:var(--green);font-weight:900;font-size:13px;border-radius:10px;padding:3px 8px;letter-spacing:.5px;background:rgba(255,255,255,.75);}
-.moMuhur.bekle{border-color:#94A3B8;color:#64748B;}
+.moMuhur.bekle{border-color:#64748B;color:#64748B;}
 .moMuhur.damga{animation:moDamga .5s cubic-bezier(.2,1.6,.4,1) both;}
 @keyframes moDamga{0%{transform:rotate(12deg) scale(2.6);opacity:0;}100%{transform:rotate(12deg) scale(1);opacity:1;}}
 .moDegistir{background:none;border:none;color:var(--purple);font-weight:800;font-size:13px;margin:10px 0 0;cursor:pointer;padding:4px 0;width:auto;font-family:inherit;text-align:left;}
@@ -1395,6 +1432,15 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .hdOlcek .hdYol{position:absolute;left:0;right:0;top:18px;height:10px;border-radius:99px;background:linear-gradient(90deg,#FECACA 0%,#FDE68A 45%,#BBF7D0 72%,#A7F3D0 100%);}
 .hdOlcek .hdDurak{position:absolute;top:15px;width:2px;height:16px;background:#fff;transform:translateX(-1px);}
 .hdOlcek .hdDurakAd{position:absolute;top:33px;transform:translateX(-50%);font-size:10.5px;font-weight:800;color:var(--gray);white-space:nowrap;}
+/* Durak adları birbirine çok yakınsa (ör. LGS'de 14 ve 18 net) ikinci satıra iner; kenardan taşan ad içeri çekilir.
+   Yerleşim hdOlcekYerlestir() ile, çizimden sonra gerçek genişlikler ölçülerek yapılır. */
+.hdOlcek .hdDurakAd b{font-weight:900;color:#475569;}
+.hdOlcek.dar{height:62px;}
+.hdOlcek.dar .hdDurakAd{text-align:center;line-height:1.2;font-size:10px;}
+.hdOlcek.dar .hdDurakAd b{display:block;font-size:11.5px;}
+.hdOlcek.dar .hdAyrac{display:none;}
+.hdOlcek.ikiSatir{height:88px;}
+.hdOlcek .hdDurakAd.altSatir{top:60px;}
 .hdOlcek .hdNokta{position:absolute;top:16px;width:14px;height:14px;border-radius:50%;background:#94A3B8;border:2px solid white;transform:translateX(-50%);box-shadow:0 1px 3px rgba(0,0,0,.25);}
 .hdOlcek .hdSimdi{position:absolute;top:10px;width:26px;height:26px;border-radius:50%;background:var(--dark);border:3px solid white;transform:translateX(-50%);box-shadow:0 2px 6px rgba(59,7,100,.35);z-index:2;}
 .hdOlcek .hdBayrak{position:absolute;top:-8px;transform:translateX(-4px);font-size:22px;z-index:3;transition:left .35s ease;}
@@ -1464,7 +1510,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .dnBolum{margin-top:6px;}
 .dnRaf.hepsiKilit{grid-template-columns:repeat(3,1fr);grid-template-rows:auto;}
 .dnRaf.hepsiKilit .kilit{min-height:92px;}
-.dnKap{font-family:"Segoe UI",Arial,sans-serif;}
+.dnKap{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
 .dnRafBaslik{display:flex;justify-content:space-between;align-items:baseline;font-weight:900;font-size:18px;color:#3B0764;margin-bottom:12px;}
 .dnRafBaslik small{font-size:12px;color:#64748B;font-weight:700;}
 .dnRaf{display:grid;grid-template-columns:1.35fr 1fr;grid-template-rows:1fr 1fr;gap:10px;}
@@ -1483,8 +1529,8 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .dnKartAlt{position:relative;font-size:10.5px;font-weight:700;opacity:.8;margin-top:4px;}
 .dnOynat{position:absolute;right:10px;bottom:10px;width:28px;height:28px;border-radius:50%;background:#E9CB7A;color:#3B0764;display:grid;place-items:center;font-size:11px;box-shadow:0 0 0 0 rgba(233,203,122,.7);animation:dnNabiz 2s infinite;}
 @keyframes dnNabiz{0%{box-shadow:0 0 0 0 rgba(233,203,122,.7)}70%{box-shadow:0 0 0 12px rgba(233,203,122,0)}100%{box-shadow:0 0 0 0 rgba(233,203,122,0)}}
-.dnKart.kilit{background:repeating-linear-gradient(135deg,#F1F5F9 0 8px,#E8EDF3 8px 16px);color:#94A3B8;box-shadow:inset 0 0 0 1.5px #E2E8F0;justify-content:space-between;}
-.dnKart.kilit .dnKartUst{color:#94A3B8;}
+.dnKart.kilit{background:repeating-linear-gradient(135deg,#F1F5F9 0 8px,#E8EDF3 8px 16px);color:#64748B;box-shadow:inset 0 0 0 1.5px #E2E8F0;justify-content:space-between;}
+.dnKart.kilit .dnKartUst{color:#64748B;}
 .dnKilit{font-size:22px;opacity:.7;order:3;}
 .dnRaf .kilit .dnKartAlt{position:static;margin:0;flex-basis:100%;order:2;}
 .dnRaf .kilit{flex-wrap:wrap;align-content:center;gap:4px;}
@@ -1492,7 +1538,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .dnKart.yil .dnKartUst{color:#B8892B;}
 .dnRafNot{font-size:12px;color:#64748B;margin-top:12px;line-height:1.5;}
 /* hikâye */
-.dnHikaye{position:fixed;inset:0;z-index:9000;overflow:hidden;background:#0B0B1E;color:#fff;font-family:"Segoe UI",Arial,sans-serif;}
+.dnHikaye{position:fixed;inset:0;z-index:9000;overflow:hidden;background:#0B0B1E;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;}
 .dnBolut{position:absolute;left:12px;right:12px;top:12px;display:flex;gap:4px;z-index:4;}
 .dnBolut i{flex:1;height:3px;border-radius:9px;background:rgba(255,255,255,.3);overflow:hidden;}
 .dnBolut i b{display:block;height:100%;width:0;background:#fff;}
@@ -1663,11 +1709,11 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .gaMadde.ton-notr .gaIkon{background:#F5F3FF;color:#7C3AED;box-shadow:inset 0 0 0 1px #DDD6FE;}
 .gaMadde.ton-dikkat .gaIkon{background:#FFFBEB;color:#D97706;box-shadow:inset 0 0 0 1px #FDE68A;}
 .gaMetin{min-width:0;}
-.gaBaslik{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:900;letter-spacing:.9px;color:#94A3B8;margin-bottom:3px;}
+.gaBaslik{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:900;letter-spacing:.9px;color:#64748B;margin-bottom:3px;}
 .gaBaslik i{width:6px;height:6px;border-radius:50%;flex:none;}
 .gaMadde.ton-olumlu .gaBaslik i{background:#22C55E;} .gaMadde.ton-notr .gaBaslik i{background:#A78BFA;} .gaMadde.ton-dikkat .gaBaslik i{background:#F59E0B;}
-.gaMetin p{margin:0;font-size:14px;line-height:1.55;color:#334155;}
-.gaDipnot{margin:0;padding:10px 16px 13px;font-size:11px;font-weight:600;color:#94A3B8;border-top:1px solid #F4F1FB;background:#FCFBFF;}
+.gaMetin p{margin:0;font-size:15px;line-height:1.55;font-weight:500;color:#1E293B;}
+.gaDipnot{margin:0;padding:10px 16px 13px;font-size:11px;font-weight:600;color:#64748B;border-top:1px solid #F4F1FB;background:#FCFBFF;}
 
 .hnKart{position:relative;border-radius:20px;overflow:hidden;
   background:linear-gradient(180deg,#FFFDF9 0%,#FFFBF5 100%);border:1px solid #F5E6D3;
@@ -1678,10 +1724,10 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
   letter-spacing:.4px;background:linear-gradient(140deg,#7C3AED,#EC4899 60%,#F97316);box-shadow:0 0 0 3px #fff,0 0 0 4px #F5E6D3;}
 .hnKimlik{text-align:center;}
 .hnKimlik b{display:block;font-size:15px;font-weight:900;color:var(--dark);line-height:1.2;}
-.hnKimlik small{display:block;font-size:12px;font-weight:700;color:#A8927A;margin-top:1px;}
+.hnKimlik small{display:block;font-size:12px;font-weight:700;color:#7C6650;margin-top:1px;}
 .hnTirnak{margin-left:auto;align-self:flex-start;font:900 64px/0.8 Georgia,"Times New Roman",serif;color:#F3E3CF;margin-top:4px;}
 .hnGovde{padding:2px 18px 18px;}
-.hnGovde p{margin:0 0 11px;font-size:14.5px;line-height:1.65;color:#3F3A36;}
+.hnGovde p{margin:0 0 11px;font-size:15px;line-height:1.65;color:#3F3A36;}
 .hnGovde p.hnHitap{font-weight:900;color:var(--dark);margin-bottom:8px;}
 .hnGovde p.hnKapanis{font-weight:800;color:#5B21B6;margin:14px 0 0;}
 .hnOdak{margin:4px 0 14px;padding:12px 13px 13px;border-radius:14px;background:#fff;border:1px solid #EDE4F8;}
@@ -1693,7 +1739,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .hnOdakDolu{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,var(--purple),var(--orange));
   width:0;transition:width 1s cubic-bezier(.22,1,.36,1);}
 .hnOdakSinif{position:absolute;top:-4px;bottom:-4px;width:2px;margin-left:-1px;border-radius:2px;background:#334155;}
-.hnOdakAlt{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:11px;font-weight:700;color:#94A3B8;}
+.hnOdakAlt{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:11px;font-weight:700;color:#64748B;}
 .hnOdakAlt b{color:#475569;}
 .hnOdakAlt span{white-space:nowrap;}
 .hnOdakRozet{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:900;letter-spacing:.3px;background:#FEF3C7;color:#92400E;vertical-align:1px;}
@@ -1713,7 +1759,7 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .icOzetEtiketler span.sifir{opacity:.45;}
 .icOzetEtiketler i{width:9px;height:9px;border-radius:3px;display:inline-block;}
 .icOzetEtiketler b{color:var(--dark);font-weight:900;}
-.icOzetAlt{margin-top:8px;font-size:11px;font-weight:700;color:#94A3B8;}
+.icOzetAlt{margin-top:8px;font-size:11px;font-weight:700;color:#64748B;}
 .icAciklama{font-size:11.5px;font-weight:600;line-height:1.5;color:#64748B;margin:0 2px 8px;}
 .icTaraOrnek{display:inline-block;width:18px;height:8px;border-radius:3px;vertical-align:0;margin:0 2px 0 4px;
   background:repeating-linear-gradient(135deg,rgba(100,116,139,.35) 0 3px,transparent 3px 6px),#E2E8F0;}
@@ -1730,8 +1776,28 @@ a.cpSoru{border-color:#C4B5FD;color:#6D28D9;background:#FAF5FF;}
 .icTekrar{display:inline-block;background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA;font-size:10px;font-weight:800;padding:1px 7px;border-radius:7px;margin-left:6px;vertical-align:2px;white-space:nowrap;}
 .icAltSatir{border-left:3px solid transparent;}
 .icAltOran{flex:0 0 58px;display:flex;flex-direction:column;align-items:flex-end;line-height:1.1;font-variant-numeric:tabular-nums;}
-.icAltOran small{font-size:10px;font-weight:700;color:#94A3B8;margin-top:1px;}
+.icAltOran small{font-size:10px;font-weight:700;color:#64748B;margin-top:1px;}
 .icBos{font-size:13px;color:#64748B;background:#F8FAFC;border-radius:12px;padding:12px 14px;}
+/* ================= OKUNABİLİRLİK =================
+   Telefonda rahat okunsun diye en küçük yazı boyutları: cümleler en az 12 px, büyük harfli küçük etiketler
+   en az 11 px. Paylaşılan görsel kartlar (dönem kartı) ve sabit genişlikli şekillerin içindeki yazılar hariç.
+   İkincil yazılar #64748B (beyazda 4,8:1); daha açığı yalnızca süs için kullanılır. */
+.kimlikSinavUst, .gaOzetEtiket, .hnOdakEtiket{font-size:11px;}
+.gaBaslik{font-size:11.5px;}
+.gaDipnot, .hnOdakAlt, .icOzetAlt, .paylasNot, .spDip, .spAcik, .icMeta, .topicSub, .cpMini,
+.gelisimMini small, .rozetAlt, .dnKartAlt, .icColHeader, .cpEtkiKutu small{font-size:12px;}
+.icAltOran small{font-size:11px;}
+.guvenRozet, .hnOdakRozet, .icTekrar, .topicSurekliZayif{font-size:11px;}
+.footer{color:#475569;}
+.dnKart.kilit.yil .dnKartUst, .dnKart.kilit.yil .dnKartAlt{color:#8A6516;}
+/* Küçük mor ve turuncu yazılar bir ton koyu: vurgu rengi aynı kalır, okunurluk artar (çubuk, çerçeve ve zeminler değişmez). */
+.gaOzetEtiket, .cpUstEtiket, .rsEtiket, #cpIlerleme, .cpAc summary, .gsDokum summary, #hdYukseltBtn, .backLink, .kimlikSinavUst{color:#7C3AED;}
+.hnOdakEtiket{color:#C2410C;}
+.gsDyb .d{color:#15803D;}
+
+/* Dar ekranlar (≤360 px: iPhone SE, küçük Android'ler, yazı boyutu büyütülmüş telefonlar). Asıl kuralların
+   arkasından gelmesi için stil sayfasının sonunda. */
+@media (max-width:360px){ .card{padding:22px 16px;} .cpEtkiSatir{gap:6px;} .cpEtkiKutu{padding:9px 4px;} .cpEtkiKutu small{font-size:10.5px;} .gelisimMini{padding:10px 6px;} .gelisimBox{gap:7px;} .bolumKart{padding:18px 16px 4px;} .bolumKart.sade{padding:2px 16px;} .bolumAd{font-size:16px;} .bkAd{font-size:19px;} }
 </style>
 
 </head>
@@ -1757,7 +1823,7 @@ Matematik Gelişim Analiz Platformu
 
 
 <div class="slogan">
-"Nerede olduğunu gör, nereye ulaşacağını planla."
+Nerede olduğunu gör, nereye ulaşacağını planla.
 </div>
 
 
@@ -1784,7 +1850,7 @@ Sonucuna Ulaş
 Ad Soyad
 </label>
 
-<input id="studentNameInput" placeholder="Örn: Ali Kaya" autocomplete="name">
+<input id="studentNameInput" placeholder="Örn: Ali Kaya" autocomplete="name" enterkeyhint="next">
 
 
 <label for="studentCodeInput">
@@ -1792,7 +1858,7 @@ Ad Soyad
 </label>
 
 <div class="kodKutusu">
-<input id="studentCodeInput" class="gizliKod" maxlength="6" placeholder="••••••" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+<input id="studentCodeInput" class="gizliKod" maxlength="6" placeholder="••••••" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="go">
 <button type="button" id="kodGosterBtn" class="kodGoster" aria-label="Kodu göster" aria-pressed="false" title="Kodu göster">
 <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><line class="kodGosterCizgi" x1="3" y1="3" x2="21" y2="21"/></svg>
 </button>
@@ -1818,9 +1884,15 @@ SONUÇLARINI GÖR
 
 
 
-<div class="card hidden" id="resultCard">
+<!-- Sonuç sayfası düzeni (Öğretmen Paneli v3.39 arayüz kurallarına uyarlandı):
+     en üstte her zaman açık SONUÇ ÖZETİ kartı; altında dört BÖLÜM KARTI (1 Bu Sınav · 2 Sırada Ne Var ·
+     3 Yolculuğum · 4 Ödüllerim) ve en altta sade Nasıl Değerlendiriyoruz? kartı. Kartların içindeki her bölüm
+     tıklayınca açılır (details); kapalıyken adının altında kısa bir özet görünür. Hangi bölümün açık geleceğine
+     bolumleriHazirla() karar verir (yeni bir şey ya da beklenen bir seçim varsa açık gelir). Açık/kapalı durumu
+     bu sayfada HATIRLANMAZ: sayfa her sınavda bir kez okunur. -->
+<div class="sonucAkis hidden" id="resultCard">
 
-
+<div class="card ozetKart" id="ozetKart">
 <div id="uyumsuzlukArea"></div>
 
 <!-- Öğrenci kimlik başlığı: baş harfli rozet, ad, sınıf / tarih / sınav sayısı etiketleri ve sınavın okunur adı -->
@@ -1910,141 +1982,139 @@ SONUÇLARINI GÖR
 <div class="title"><span>🎯 Meydan Okuma Sonucun</span></div>
 <div id="moSonucAlani"></div>
 </div>
-
-<div class="title">
-📝 Gelişim Analizi
 </div>
 
+<section class="bolumKart" id="kartBuSinav" aria-labelledby="kartBuSinavAd">
+<header class="bkBas"><span class="bkNo" aria-hidden="true">1</span><div class="bkMetin"><h2 class="bkAd" id="kartBuSinavAd">Bu Sınav</h2><div class="bkAlt">Sonucun ne anlatıyor?</div></div></header>
+<details class="bolum" id="bolGelisimAnalizi" open>
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">📝</span><span class="bolumMetin"><span class="bolumAd">Gelişim Analizi</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div class="gaKart" id="analysisArea">
 <div class="gaOzet">Analiz hazırlanıyor...</div>
 </div>
-
-<div class="title">
-👨‍🏫 Fatih Hoca'nın Notu
 </div>
-
+</details>
+<details class="bolum" id="bolHocaNotu" open>
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">👨‍🏫</span><span class="bolumMetin"><span class="bolumAd">Fatih Hoca'nın Notu</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div class="hnKart" id="fatihNote">
 <div class="hnGovde"><p>Not hazırlanıyor...</p></div>
 </div>
-
-<div class="title">
-📚 İçerik Analizi
 </div>
+</details>
+<details class="bolum" id="bolIcerikAnalizi">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">📚</span><span class="bolumMetin"><span class="bolumAd">İçerik Analizi</span><span class="bolumOzet" id="icerikOzet"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div id="enGucluArea"></div>
-
 <div class="viewToggle" id="konuGorunumToggle">
   <button class="active" data-mod="son">Bu Sınavda</button>
   <button data-mod="kumulatif">Genel Durum</button>
 </div>
-
 <div class="note" id="topicAnalysis" style="background:transparent;border:none;padding:0;">
-
 İçerik analizi hazırlanıyor...
-
 </div>
-
-<button type="button" class="title titleToggle" id="distractorToggle">
-<span>🎯 Takıldığım Sorular</span>
-<span class="titleToggleHint" id="distractorToggleHint"><span class="ipucuMetin">Göster </span><span class="ipucuOk">▾</span></span>
-</button>
-
-<div class="takildimOzet" id="takildimOzet"></div>
-<div id="distractorArea" class="hidden" style="margin-top: 10px;">
+</div>
+</details>
+<details class="bolum" id="bolTakildim">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🧩</span><span class="bolumMetin"><span class="bolumAd">Takıldığım Sorular</span><span class="bolumOzet hep" id="takildimOzet"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
+<div id="distractorArea">
   Sorular hazırlanıyor...
 </div>
-
-<div class="bolumAyrac" aria-hidden="true"><span>SIRADA NE VAR</span></div>
-
-<div class="title">
-🎯 Önerilen Çalışma Planı
 </div>
+</details>
+</section>
 
-<div id="planArea" style="margin-top: 10px;">
+<section class="bolumKart" id="kartSirada" aria-labelledby="kartSiradaAd">
+<header class="bkBas"><span class="bkNo" aria-hidden="true">2</span><div class="bkMetin"><h2 class="bkAd" id="kartSiradaAd">Sırada Ne Var</h2><div class="bkAlt">Sıradaki sınava nasıl hazırlanırsın?</div></div></header>
+<details class="bolum" id="bolPlan" open>
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🧭</span><span class="bolumMetin"><span class="bolumAd">Önerilen Çalışma Planı</span><span class="bolumOzet" id="planOzet"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
+<div id="planArea">
   Çalışma planı hazırlanıyor...
 </div>
-
-<!-- v2.22 — 🎯 MEYDAN OKUMA · SEÇİM: Önerilen Çalışma Planı'nın hemen arkasında. Plan "neye çalışacağım?",
-     bu bölüm "sıradaki sınavda neyi başaracağım?" sorusunu yanıtlar. Sıradaki sınav yoksa gizli kalır. -->
-<div class="moBolum hidden" id="moBolumu">
-<div class="title moBaslik"><span>🎯 Meydan Okuma</span><span class="moEk" id="moEk"></span></div>
+</div>
+</details>
+<details class="bolum moBolum hidden" id="moBolumu">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🎯</span><span class="bolumMetin"><span class="bolumAd">Meydan Okuma</span><span class="bolumOzet hep" id="moEk"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div id="moSecimAlani"></div>
 </div>
+</details>
+</section>
 
-<div class="bolumAyrac" aria-hidden="true"><span>YOLCULUĞUM</span></div>
-
-<div class="title">
-📊 Matematik Gelişimim
-</div>
-
-
+<section class="bolumKart" id="kartYolculuk" aria-labelledby="kartYolculukAd">
+<header class="bkBas"><span class="bkNo" aria-hidden="true">3</span><div class="bkMetin"><h2 class="bkAd" id="kartYolculukAd">Yolculuğum</h2><div class="bkAlt">Sınavdan sınava nereye geldin?</div></div></header>
+<details class="bolum" id="bolGelisimim" open>
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">📊</span><span class="bolumMetin"><span class="bolumAd">Matematik Gelişimim</span><span class="bolumOzet" id="gelisimimOzet"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div class="chartBox">
-
 <canvas id="progressChart"></canvas>
 <div class="sonNoktaNabiz" id="sonNoktaNabiz" aria-hidden="true"></div>
-
 </div>
-
 <div id="chartHataArea"></div>
-
 <div id="gelisimDetay" style="margin-top:12px;"></div>
-
-<div class="title">
-📚 Geçmiş Sınavlarım
 </div>
-
-
-<div class="history" id="historyArea">
-
+</details>
+<details class="bolum" id="bolGecmis">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🗓️</span><span class="bolumMetin"><span class="bolumAd">Geçmiş Sınavlarım</span><span class="bolumOzet" id="gecmisOzet"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
+<div class="history" id="historyArea"></div>
 </div>
-
-<!-- v2.18 — 🏔️ HEDEFİM: yılın hedefi (8. sınıf LGS Hedefim, 5–7 Yıl Sonu Hedefim). Meydan Okuma'nın üstünde. -->
-<div class="hdBolum hidden" id="hedefBolumu">
-<div class="title moBaslik"><span id="hedefBaslik">🏔️ Hedefim</span><span class="moEk" id="hedefEk"></span></div>
+</details>
+<details class="bolum hdBolum hidden" id="hedefBolumu">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true"><span id="hedefIkon">🏔️</span></span><span class="bolumMetin"><span class="bolumAd"><span id="hedefBaslik">Hedefim</span></span><span class="bolumOzet" id="hedefEk"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div id="hedefAlani"></div>
 </div>
-
-<!-- v2.19 — 🗺️ MATEMATİK HARİTAM: yılın içerikleri bölgeler halinde, her biri öğrencinin birikmiş başarısıyla renkli. -->
-<div class="hrBolum hidden" id="haritaBolumu">
-<div class="title moBaslik"><span>🗺️ Matematik Haritam</span><span class="moEk" id="haritaEk"></span></div>
+</details>
+<details class="bolum hrBolum hidden" id="haritaBolumu">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🗺️</span><span class="bolumMetin"><span class="bolumAd">Matematik Haritam</span><span class="bolumOzet" id="haritaEk"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div id="haritaAlani"></div>
 </div>
+</details>
+</section>
 
-<div class="bolumAyrac" aria-hidden="true"><span>ÖDÜLLERİM</span></div>
-
-<div class="title rozetBaslik" id="rozetBolumu">
-<span>🏅 Rozet Dolabım</span><span class="rozetSayac" id="rozetSayac"></span>
-</div>
+<section class="bolumKart" id="kartOduller" aria-labelledby="kartOdullerAd">
+<header class="bkBas"><span class="bkNo" aria-hidden="true">4</span><div class="bkMetin"><h2 class="bkAd" id="kartOdullerAd">Ödüllerim</h2><div class="bkAlt">Kazandıkların ve sıradakiler</div></div></header>
+<details class="bolum" id="rozetBolumu">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🏅</span><span class="bolumMetin"><span class="bolumAd">Rozet Dolabım</span><span class="bolumOzet hep" id="rozetSayac"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div class="rozetSiradaki" id="rozetSiradaki"></div>
 <div class="rozetDolabi" id="rozetAlani"></div>
-
-<!-- v2.20 — 🗂️ KOLEKSİYONUM: dönem kartları (dönem sonunda açılır) ve Dönem Özetim hikâyesi -->
-<div class="dnBolum hidden" id="koleksiyonBolumu">
-<div class="title moBaslik"><span>🗂️ Koleksiyonum</span><span class="moEk" id="koleksiyonEk"></span></div>
+</div>
+</details>
+<details class="bolum dnBolum hidden" id="koleksiyonBolumu">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">🗂️</span><span class="bolumMetin"><span class="bolumAd">Koleksiyonum</span><span class="bolumOzet" id="koleksiyonEk"></span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
 <div class="dnRaf" id="koleksiyonRaf"></div>
 <div class="dnRafNot" id="koleksiyonNot"></div>
 </div>
+</details>
+</section>
 
-<button type="button" class="title titleToggle" id="metodolojiToggle">
-<span>ℹ️ Nasıl Değerlendiriyoruz?</span>
-<span class="titleToggleHint" id="metodolojiToggleHint"><span class="ipucuMetin">Göster </span><span class="ipucuOk">▾</span></span>
-</button>
-
-<div class="metodolojiOzet">Sonuçları nasıl yorumladığımızı, 🏔️ Hedefim'i, 🗺️ Haritam'ı, 🎯 Meydan Okuma'yı ve 📘 Hata Defteri'ni anlatır.</div>
-<div id="metodolojiArea" class="hidden metodolojiAlan">
+<section class="bolumKart sade" id="kartMetodoloji" aria-label="Nasıl Değerlendiriyoruz?">
+<details class="bolum" id="bolMetodoloji">
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">ℹ️</span><span class="bolumMetin"><span class="bolumAd">Nasıl Değerlendiriyoruz?</span><span class="bolumOzet hep">Sonuçları nasıl yorumladığımızı, Hedefim'i, Haritam'ı, Meydan Okuma'yı ve Hata Defteri'ni anlatır.</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<div class="bolumIc">
+<div id="metodolojiArea" class="metodolojiAlan">
   <div class="metMadde"><span class="metIkon">🔎</span><div><b>Az veriyle hüküm vermeyiz.</b> Tek bir sınav sonucu her şeyi anlatmaz. Bir konuda henüz yeterince soru gelmediyse bunu açıkça belirtiriz ("henüz emin olamayız" gibi).</div></div>
   <div class="metMadde"><span class="metIkon">📈</span><div><b>Gidişata bakarız.</b> Gelişim, tek bir sınava değil, sınavlar arasındaki gidişata bakılarak değerlendirilir. Bir sınav kötü geçmiş olabilir; asıl önemli olan genel yön.</div></div>
-  <div class="metMadde"><span class="metIkon">👥</span><div><b>Sınıf ortalaması bir yarış değildir.</b> Yalnızca bir referans noktasıdır; nerede olduğunu daha iyi anlaman için.</div></div>
+  <div class="metMadde sadeceSinif"><span class="metIkon">👥</span><div><b>Sınıf ortalaması bir yarış değildir.</b> Yalnızca bir referans noktasıdır; nerede olduğunu daha iyi anlaman için.</div></div>
   <div class="metMadde"><span class="metIkon">🛡️</span><div><b>Veri rozetleri.</b> "Az veri", "orta veri" ve "yeterli veri" rozetleri bir sonucun kaç soruya dayandığını gösterir. Az veriye dayanan sonuç henüz kesinleşmemiştir; birkaç sınav daha bekleriz.</div></div>
   <div class="metMadde"><span class="metIkon">🏔️</span><div><b>Hedefim.</b> Çocuğunuz yılın başında kendi uzun vadeli hedefini seçer. 8. sınıfta bu, LGS'de matematikten yapmak istediği nettir; 5–7. sınıfta yıl sonunda ulaşmak istediği Başarı Durumu'dur (İyi, Çok İyi, Mükemmel). Hedefe yaklaşma, son 3 sınavın ortalamasıyla izlenir; böylece tek bir sınav tabloyu değiştirmez. Hedef yıl içinde yükseltilebilir.</div></div>
   <div class="metMadde"><span class="metIkon">🗺️</span><div><b>Matematik Haritam.</b> Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış içerikler sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir. 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</div></div>
   <div class="metMadde"><span class="metIkon">🗂️</span><div><b>Koleksiyonum.</b> Her dönemin son iki haftasında çocuğunuzun dönem kartı açılır: dokunduğunuzda o dönemin hikâyesi (çözdüğü sorular, haritası, en güçlü içeriği, rozetleri, meydan okumaları, hedefi ve varsa Onur Belgesi madalyaları) kart kart oynar; sonunda paylaşılabilir bir dönem kartı hazırdır. Kartlar rafta kalır, yıl sonunda "Yılın Özeti" eklenir.</div></div>
-  <div class="metMadde"><span class="metIkon">🎯</span><div><b>Meydan Okuma.</b> Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></div>
+  <div class="metMadde sadeceSinif"><span class="metIkon">🎯</span><div><b>Meydan Okuma.</b> Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></div>
   <div class="metMadde metVurgu"><span class="metIkon">📘</span><div><b>Hata Defteri.</b> Her üç sınavda bir, bu sınavlarda yanlış yapılan ve boş bırakılan sorular öğrencinin adına hazırlanan bir föyde toplanır. Föy sınıfta verilir ya da size WhatsApp'tan PDF olarak gönderilir. Öğrenci soruları föyün üzerinde yeniden çözer, ardından cevap anahtarıyla kontrol eder ve her sorunun altına "Bu sefer doğru yaptım" ya da "Hâlâ zorlanıyorum" işaretler. Karekodlu sorularda çözüm videosunu izleyebilir, yapamadığı soruları okulda Fatih Hoca'ya sorar.<span class="metNot">Föy eve geldiğinde, çocuğunuzun cevap anahtarına bakmadan soruları çözmesine dikkat etmeniz yeterlidir.</span></div></div>
-  <div class="metMadde"><span class="metIkon">🎯</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara dayanır; rastgele soru sayısı önermeyiz. Sınıfın çoğunun yanlış yaptığı sorular plana yazılmaz, derste birlikte ele alınır. "Bu planın karşılığı" tahmini, bu içeriklerden sınavlarımızda ortalama kaç soru geldiğine göre hesaplanır.</div></div>
+  <div class="metMadde"><span class="metIkon">🧭</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara dayanır; rastgele soru sayısı önermeyiz.<span class="sadeceSinif"> Sınıfın çoğunun yanlış yaptığı sorular plana yazılmaz, derste birlikte ele alınır.</span> "Bu Planın Karşılığı" tahmini, bu içeriklerden sınavlarımızda ortalama kaç soru geldiğine göre hesaplanır.</div></div>
 </div>
+</div>
+</details>
+</section>
 
-<button id="backToLoginBtn" class="backLink" type="button">↩ Başka bir sonuç ara</button>
-
+<button id="backToLoginBtn" class="backLink" type="button">↩ Başka Bir Sonuç Ara</button>
 
 </div>
 
@@ -2235,12 +2305,19 @@ function sahneyiSifirla(){
   document.querySelectorAll(".confettiParcasi").forEach(function(p){ p.remove(); });
 }
 
+// Sahne birimleri: özet kartının her parçası, bölüm kartı başlıkları, her açılır bölüm, Nasıl
+// Değerlendiriyoruz? kartı ve sayfa sonu bağlantısı. Birimler sayfa yüklenirken bir kez işaretlenir.
+function sahneBirimleri(){
+  let kart = document.getElementById("resultCard");
+  return Array.from(kart.querySelectorAll("#ozetKart > *, .bolumKart > .bkBas, details.bolum, #backToLoginBtn"));
+}
+sahneBirimleri().forEach(function(o){ o.classList.add("sahneBirim"); });
+
 function sahneOlayiKaydet(el, fn){
   if(!el) return;
   let benimNo = sahneNo, asil = fn;
   fn = function(){ if(benimNo === sahneNo) asil(); };
-  let kart = document.getElementById("resultCard");
-  while(el && el.parentElement !== kart) el = el.parentElement;   // kartın doğrudan çocuğuna çık
+  el = el.closest(".sahneBirim");   // olayı, öğenin içinde bulunduğu sahne birimine bağla
   if(!el) return;
   if(!("IntersectionObserver" in window)){ fn(); return; }
   let liste = sahneOlaylari.get(el) || [];
@@ -2252,7 +2329,7 @@ function sahneyiBaslat(){
   let kart = document.getElementById("resultCard");
   if(sahneGozlemci){ sahneGozlemci.disconnect(); sahneGozlemci = null; }
   if(!("IntersectionObserver" in window)) return;
-  let ogeler = Array.from(kart.children);
+  let ogeler = sahneBirimleri().filter(function(o){ return !o.classList.contains("hidden"); });
   ogeler.forEach(function(o){ o.classList.remove("belirdi"); o.classList.add("belir"); o.style.removeProperty("--gecikme"); });
   sahneGozlemci = new IntersectionObserver(function(girdiler){
     let yeniler = girdiler.filter(function(g){ return g.isIntersecting; }).map(function(g){ return g.target; })
@@ -2265,7 +2342,13 @@ function sahneyiBaslat(){
       let olaylar = sahneOlaylari.get(o);
       if(olaylar){
         sahneOlaylari.delete(o);
-        setTimeout(function(){ olaylar.forEach(function(fn){ try{ fn(); }catch(e){ console.error("[UltraMat] Sahne olayı:", e); } }); }, gecikme + 120);
+        let calistir = function(ek){ setTimeout(function(){ olaylar.forEach(function(fn){ try{ fn(); }catch(e){ console.error("[UltraMat] Sahne olayı:", e); } }); }, ek); };
+        // Kapalı bir bölümün animasyonu (rozet dolabı, konfeti…) görünmeden boşa akmasın: bölüm açılınca oynar.
+        if(o.tagName === "DETAILS" && !o.open){
+          let benimNo = sahneNo;
+          let acilinca = function(){ if(!o.open) return; o.removeEventListener("toggle", acilinca); if(benimNo === sahneNo) calistir(220); };
+          o.addEventListener("toggle", acilinca);
+        } else calistir(gecikme + 120);
       }
     });
   }, { threshold: 0, rootMargin: "0px 0px -6% 0px" });   // uzun bölümler de ilk pikselleri ekrana girer girmez belirir
@@ -2429,7 +2512,14 @@ function meydanOkumaSerisi(s){
   return en;
 }
 
+/** v2.33 — sınıfla kıyas gerektiren rozetler; bireysel öğrencinin dolabında hiç görünmez. */
+const SINIF_ROZETLERI = ["ortalama", "podyum", "istikrar"];
+function bireyselMi(){ let s = sonGelenVeri; return !!(s && s.length && s[s.length - 1] && s[s.length - 1].bireysel); }
 function rozetTanimlari(sonSoru){
+  let tumu = rozetTanimlariTumu(sonSoru);
+  return bireyselMi() ? tumu.filter(function(r){ return SINIF_ROZETLERI.indexOf(r.id) === -1; }) : tumu;
+}
+function rozetTanimlariTumu(sonSoru){
   // Net eşikleri sınavın soru sayısına göre: 20 soruluk sınavda 5 / 10 / 15 net.
   let esik = function(oran){ return Math.round(sonSoru * oran * 100) / 100; };
   let netAdi = function(oran){ return sonSoru ? (esik(oran) + " Net") : ("%" + Math.round(oran*100) + " Net"); };
@@ -2559,7 +2649,7 @@ function dnHikayeKartlari(h){
   ekle(`<div class="dnK k6"><div class="dnPaylasKart"><span class="u"><span class="mk">FatihHoca | <em>UltraMat</em></span> · ${htmlKacis(h.ad.toLocaleUpperCase("tr-TR"))}</span><span class="a">${htmlKacis(ad)}</span>
       <span class="h">${dnMiniHarita(o.harita)}</span>
       <span class="r"><div><b>${o.soru}</b>soru</div><div><b>${kesfedilen}</b>bölge</div><div><b>${o.dogru}</b>doğru</div><div><b>${bayrak || filiz}</b>${bayrak ? "bayrak" : "filiz"}</div></span></div>
-    <button class="dnBtn" type="button" id="dnPaylasBtn">📸 Kartımı paylaş</button>
+    <button class="dnBtn" type="button" id="dnPaylasBtn">📸 Kartımı Paylaş</button>
     <div class="dnIpucu">${h.yil ? "Bu hikâye rafında kalır." : "Hikâye rafında kalır; yıl sonunda hepsini birlikte izleriz."}</div></div>`, 9);
   return { kartlar: kartlar, sureler: sureler };
 }
@@ -2659,7 +2749,8 @@ function haritaCiz(veri){
   let last = veri[veri.length - 1] || {}, h = last.harita;
   if(!h || !h.toplam){ bolum.classList.add("hidden"); return; }
   bolum.classList.remove("hidden");
-  document.getElementById("haritaEk").textContent = last.sinif ? (last.sinif + ". sınıf") : "";
+  document.getElementById("haritaEk").textContent = h.mufredatVar
+    ? ((h.toplam - h.sayilar.sis) + " / " + h.toplam + " bölge keşfedildi") : (h.toplam + " içerik keşfedildi");
   let tum = [];
   h.bolgeler.forEach(function(b){ b.icerikler.forEach(function(x){ tum.push(x); }); });
   if(!hrSecili || !tum.some(function(x){ return x.icerik === hrSecili; })){
@@ -2683,7 +2774,7 @@ function haritaCiz(veri){
           <span class="hrPetekAd">${htmlKacis(x.icerik)}</span></button>`;
       }).join("")}</div></div>`;
   }).join("");
-  let lejant = `<div class="hrLejant"><span><i style="background:#FEF3C7;border:2px solid #F59E0B"></i>Keşifte</span><span><i style="background:#DCFCE7;border:2px solid #4ADE80"></i>Filizleniyor</span><span><i style="background:#22C55E"></i>Sağlam</span><span><i style="background:#FDE68A;border:2px solid #F59E0B"></i>Usta</span><span><i style="background:repeating-linear-gradient(90deg,#DCFCE7 0 3px,#fff 3px 5px);border:1px solid #CBD5E1"></i>Az soru</span></div>`;
+  let lejant = `<div class="hrLejant"><span><i style="background:#FEF3C7;border:2px solid #F59E0B"></i>Keşifte</span><span><i style="background:#DCFCE7;border:2px solid #4ADE80"></i>Filizleniyor</span><span><i style="background:#22C55E"></i>Sağlam</span><span><i style="background:#FDE68A;border:2px solid #F59E0B"></i>Usta</span><span><i style="background:repeating-linear-gradient(90deg,#DCFCE7 0 3px,#fff 3px 5px);border:1px solid #CBD5E1"></i>Az Soru</span></div>`;
   let secili = tum.filter(function(x){ return x.icerik === hrSecili; })[0];
   document.getElementById("haritaAlani").innerHTML = ust + `<div class="hrOzet">${ozet}</div>` + bolgeler + lejant + hrDetayHtml(secili, h);
   document.querySelectorAll("#haritaAlani .hrPetek").forEach(function(b){
@@ -2718,26 +2809,68 @@ function hdYuzde(p){ return Math.max(0, Math.min(100, Number(p) || 0)); }
 function hdOlcekHtml(h, bayrakPuan){
   let e = h.esikler || {}, duraklar = [["İyi", e.iyi], ["Çok İyi", e.cokIyi], ["Mükemmel", e.mukemmel]];
   return `<div class="hdOlcek" aria-hidden="true"><div class="hdYol"></div>
-    ${duraklar.map(function(d){ return `<i class="hdDurak" style="left:${hdYuzde(d[1])}%"></i><span class="hdDurakAd" style="left:${hdYuzde(d[1])}%">${h.tur === "lgs" ? (hdSayi(d[1] / 5) + " · ") : ""}${d[0]}</span>`; }).join("")}
+    ${duraklar.map(function(d){ return `<i class="hdDurak" style="left:${hdYuzde(d[1])}%"></i><span class="hdDurakAd" style="left:${hdYuzde(d[1])}%">${h.tur === "lgs" ? `<b>${hdSayi(d[1] / 5)}</b><span class="hdAyrac"> · </span>` : ""}<span>${d[0]}</span></span>`; }).join("")}
     ${(h.simdi.sinavlar || []).map(function(s){ return `<span class="hdNokta" style="left:${hdYuzde(s.puan)}%" title="${htmlKacis(s.sinav)}"></span>`; }).join("")}
     <span class="hdSimdi" style="left:${hdYuzde(h.simdi.puan)}%"></span>
     ${bayrakPuan !== null && bayrakPuan !== undefined ? `<span class="hdBayrak" style="left:${hdYuzde(bayrakPuan)}%">🚩</span>` : ""}</div>`;
 }
+
+// Ölçekteki durak adlarının üst üste binmesini önler. Sırayla üç düzen denenir, sığan ilki kullanılır:
+// (1) tek satır "14 · Çok İyi"; (2) dar ekranda sayı üstte, ad altta (ad, durağın tam altında kalır);
+// (3) o da sığmazsa çakışan ad bir alt satıra iner. Kenardan taşan ad her zaman ölçeğin içine çekilir.
+function hdOlcekYerlestir(kok){
+  kok.querySelectorAll(".hdOlcek").forEach(function(o){
+    let W = o.clientWidth; if(!W) return;
+    let adlar = Array.from(o.querySelectorAll(".hdDurakAd"));
+    let dene = function(altSatirIzni){
+      let sonSag = [-Infinity, -Infinity], cakisma = false, ikinci = false;
+      adlar.forEach(function(a){ a.classList.remove("altSatir"); a.style.transform = ""; });
+      adlar.forEach(function(a){
+        let w = a.offsetWidth, sol = parseFloat(a.style.left) / 100 * W - w / 2, kay = 0;
+        if(sol < 0) kay = -sol; else if(sol + w > W) kay = W - (sol + w);
+        sol += kay;
+        let satir = 0;
+        if(sol < sonSag[0] + 4){ cakisma = true; if(altSatirIzni){ satir = 1; ikinci = true; a.classList.add("altSatir"); } }
+        a.style.transform = "translateX(calc(-50% + " + kay + "px))";
+        sonSag[satir] = sol + w;
+      });
+      o.classList.toggle("ikiSatir", ikinci);
+      return !cakisma || altSatirIzni;
+    };
+    o.classList.remove("dar");
+    if(dene(false)) return;
+    o.classList.add("dar");
+    if(dene(false)) return;
+    dene(true);
+  });
+}
+
+window.addEventListener("resize", function(){ let a = document.getElementById("hedefAlani"); if(a) hdOlcekYerlestir(a); });
 
 function hedefimCiz(veri, yeniSecildi){
   let bolum = document.getElementById("hedefBolumu");
   let last = veri[veri.length - 1] || {}, h = last.hedefim;
   if(!h || !h.simdi){ bolum.classList.add("hidden"); return; }
   bolum.classList.remove("hidden");
-  document.getElementById("hedefBaslik").textContent = h.tur === "lgs" ? "🎓 LGS Hedefim" : "🏔️ Yıl Sonu Hedefim";
-  document.getElementById("hedefEk").textContent = h.tur === "lgs" ? "Matematik · 20 soru" : (h.sinif + ". sınıf");
+  document.getElementById("hedefIkon").textContent = h.tur === "lgs" ? "🎓" : "🏔️";
+  document.getElementById("hedefBaslik").textContent = h.tur === "lgs" ? "LGS Hedefim" : "Yıl Sonu Hedefim";
+  document.getElementById("hedefEk").textContent = hdOzetMetni(h);
   let alan = document.getElementById("hedefAlani");
   alan.innerHTML = (!h.hedef || hdYukseltModu) ? hdSecimHtml(h) : hdKartHtml(h, yeniSecildi);
+  hdOlcekYerlestir(alan);
+  requestAnimationFrame(function(){ hdOlcekYerlestir(alan); });   // kart o an gizliyse ölçüm görünür olunca yapılır
   hdOlaylariBagla(h);
   if(h.hedef && h.yeniUlasti && !hdKonfetiGosterildi){
     hdKonfetiGosterildi = true;
     sahneOlayiKaydet(bolum, function(){ setTimeout(function(){ konfetiPatlat(); try{ if(navigator.vibrate) navigator.vibrate([30, 60, 45]); }catch(e){} }, 400); });
   }
+}
+
+// Bölüm kapalıyken başlığın altında görünen tek satır
+function hdOzetMetni(h){
+  if(!h.hedef) return "Henüz hedef seçmedin";
+  if(h.ulasti) return h.hedef.metin + " · ulaştın 🏔️";
+  return h.hedef.metin + " · " + hdSayi(hdNet(h, h.hedef.hedefPuan) - hdNet(h, h.simdi.puan)) + " net kaldı";
 }
 
 function hdSimdiMetni(h){
@@ -2757,7 +2890,7 @@ function hdSecimHtml(h){
         : `<p class="moGiris">Yılın sonunda <b>Başarı Durumun</b> ne olsun? Sonuç sayfandaki Başarı Durumu kutusuyla aynı basamaklar.</p>`);
   if(!sec.length){
     return `${giris}<div class="moBosKart">👑 Zaten en yüksek hedeftesin. Bu seviyeyi korumak şimdi en büyük meydan okuman.</div>
-      ${hdYukseltModu ? `<button type="button" class="moDegistir" id="hdVazgecBtn">Geri dön</button>` : ""}`;
+      ${hdYukseltModu ? `<button type="button" class="moDegistir" id="hdVazgecBtn">Geri Dön</button>` : ""}`;
   }
   let kart = function(x){
     let hedefSatir, aciklama;
@@ -2773,12 +2906,12 @@ function hdSecimHtml(h){
       <span class="hdIkon" aria-hidden="true">${x.ikon}</span><span class="hdTik" aria-hidden="true">✓</span>
       <div class="hdAd">${htmlKacis(x.ad)}</div><div class="hdHedef">${hedefSatir}</div><div class="hdAciklama">${aciklama}</div></button>`;
   };
-  let dugme = hdKaydediliyor ? "Kaydediliyor…" : (secilen ? ("🚩 Hedefim: " + (h.tur === "lgs" ? (secilen.net20 + " net") : secilen.ad)) : "Bir hedef seç");
+  let dugme = hdKaydediliyor ? yukGostergeHtml("KAYDEDİLİYOR") : (secilen ? ("🚩 Hedefim: " + (h.tur === "lgs" ? (secilen.net20 + " net") : secilen.ad)) : "Bir Hedef Seç");
   return `${giris}
     <div class="hdDurum"><div class="hdUst">Şu an</div><div class="hdDeger">${sm.deger}</div><div class="hdAlt">${sm.alt}</div></div>
     ${hdOlcekHtml(h, secilen ? secilen.hedefPuan : (hdYukseltModu ? h.hedef.hedefPuan : null))}
     ${sec.map(kart).join("")}
-    <button type="button" class="hdSecBtn" id="hdSecBtn" ${secilen && !hdKaydediliyor ? "" : "disabled"}>${dugme}</button>
+    <button type="button" class="hdSecBtn${hdKaydediliyor ? " yukleniyor" : ""}" id="hdSecBtn" ${secilen && !hdKaydediliyor ? "" : "disabled"}${hdKaydediliyor ? ' aria-busy="true"' : ""}>${dugme}</button>
     ${hdYukseltModu ? `<button type="button" class="moDegistir" id="hdVazgecBtn">Vazgeç, hedefim kalsın</button>` : ""}
     <div id="hdHataAlani"></div>
     <div class="moDipnot">Hedefini yıl içinde istediğin zaman yükseltebilirsin.</div>`;
@@ -2805,7 +2938,7 @@ function hdKartHtml(h, yeniSecildi){
       ${hdOlcekHtml(h, hd.hedefPuan)}
       ${govde}
     </div>
-    ${(h.secenekler && h.secenekler.length) ? `<button type="button" class="moDegistir" id="hdYukseltBtn">⬆ Hedefimi yükselt</button>` : ""}`;
+    ${(h.secenekler && h.secenekler.length) ? `<button type="button" class="moDegistir" id="hdYukseltBtn">⬆ Hedefimi Yükselt</button>` : ""}`;
 }
 
 function hdOlaylariBagla(h){
@@ -2827,8 +2960,7 @@ async function hdSecimGonder(){
   hdKaydediliyor = true; hedefimYenidenCiz();
   let hataMetni = null;
   try{
-    let url = API_URL + "?hedefSec=1&isim=" + encodeURIComponent(moGiris.isim) + "&kod=" + encodeURIComponent(moGiris.kod) + "&secenek=" + encodeURIComponent(hdSecili);
-    let yanit = await fetchZamanAsimli(url, 20000);
+    let yanit = await apiIstek({ hedefSec: "1", isim: moGiris.isim, kod: moGiris.kod, secenek: hdSecili }, 20000);
     let veri = JSON.parse(await yanit.text());
     if(veri && veri.ok && veri.hedefim){
       let last = sonGelenVeri && sonGelenVeri[sonGelenVeri.length - 1];
@@ -2869,7 +3001,11 @@ function meydanOkumaCiz(veri, damga){
   ust.classList.toggle("hidden", !sonuc);
   document.getElementById("moSonucAlani").innerHTML = sonuc ? moSonucHtml(sonuc, veri, last) : "";
   bolum.classList.toggle("hidden", !sir);
-  document.getElementById("moEk").textContent = sir ? (sinavKisaAdi(sir.sinavAdi) + " · " + sir.tarihMetni) : "";
+  let moTarih = sir ? (sinavKisaAdi(sir.sinavAdi) + " · " + sir.tarihMetni) : "";
+  let moT = sir && sir.secim ? (MO_TUR[sir.secim.tur] || MO_TUR.kalkan) : null;
+  document.getElementById("moEk").textContent = !sir ? ""
+    : moT ? (moT.ikon + " " + sir.secim.metin + " · " + moTarih)
+    : (sir.acik ? "Seçimini bekliyor · " + moTarih : moTarih);
   let secimAlani = document.getElementById("moSecimAlani");
   secimAlani.innerHTML = sir ? moSiradakiHtml(sir, !!sonuc, damga) : "";
   moOlaylariBagla(sir);
@@ -2995,7 +3131,7 @@ function moSiradakiHtml(sir, sonucVar, damga){
     ${kart("kalkan", `<div class="moHedef">${htmlKacis(k.metin)}</div><div class="moAciklama">${kalkanAciklama}</div>`)}
     ${nisanciKart}
     ${kart("roket", `<div class="moHedef">${htmlKacis(r.metin)}</div><div class="moAciklama">${roketAciklama}</div>`)}
-    <button type="button" class="moSecBtn" id="moSecBtn" ${t && !moKaydediliyor ? "" : "disabled"}>${moKaydediliyor ? "Kaydediliyor…" : (t ? `${t.ikon} ${t.ad}${t.ek} seçiyorum` : "Bir meydan okuma seç")}</button>
+    <button type="button" class="moSecBtn${moKaydediliyor ? " yukleniyor" : ""}" id="moSecBtn" ${t && !moKaydediliyor ? "" : "disabled"}${moKaydediliyor ? ' aria-busy="true"' : ""}>${moKaydediliyor ? yukGostergeHtml("KAYDEDİLİYOR") : (t ? `${t.ikon} ${t.ad}${t.ek} seçiyorum` : "Bir Meydan Okuma Seç")}</button>
     ${sir.secim ? `<button type="button" class="moDegistir" id="moVazgecBtn">Vazgeç, önceki seçimim kalsın</button>` : ""}
     <div id="moHataAlani"></div>
     <div class="moDipnot">Sıralamayla ilgisi yok: yalnızca kendinle yarışıyorsun.</div>`;
@@ -3030,10 +3166,9 @@ async function moSecimGonder(sir){
   moKaydediliyor = true; meydanOkumaYenidenCiz();
   let hataMetni = null;
   try{
-    let url = API_URL + "?moSec=1&isim=" + encodeURIComponent(moGiris.isim) + "&kod=" + encodeURIComponent(moGiris.kod) +
-      "&sinavID=" + encodeURIComponent(sir.sinavID) + "&tur=" + encodeURIComponent(moSeciliTur) +
-      (moSeciliTur === "nisanci" ? ("&icerik=" + encodeURIComponent(moSeciliIcerik || "")) : "");
-    let yanit = await fetchZamanAsimli(url, 20000);
+    let mo = { moSec: "1", isim: moGiris.isim, kod: moGiris.kod, sinavID: sir.sinavID, tur: moSeciliTur };
+    if(moSeciliTur === "nisanci") mo.icerik = moSeciliIcerik || "";
+    let yanit = await apiIstek(mo, 20000);
     let veri = JSON.parse(await yanit.text());
     if(veri && veri.ok && veri.siradaki){
       let last = sonGelenVeri && sonGelenVeri[sonGelenVeri.length - 1];
@@ -3069,7 +3204,7 @@ function rozetDolabiniCiz(sinavlar){
   let rozetler = rozetleriHesapla(sinavlar);
   let kazanilan = rozetler.filter(function(r){ return r.kazanildi; }).length;
   let yeniSay = rozetler.filter(function(r){ return r.yeni; }).length;
-  document.getElementById("rozetSayac").innerText = kazanilan + " / " + rozetler.length + (yeniSay ? ("  ·  " + yeniSay + " yeni") : "");
+  document.getElementById("rozetSayac").innerText = kazanilan + " / " + rozetler.length + " rozet" + (yeniSay ? ("  ·  " + yeniSay + " yeni") : "");
   siradakiRozetiCiz(sinavlar, rozetler);
   alan.classList.remove("oyna"); alan.classList.add("hazir");
   alan.innerHTML = rozetler.map(function(r, i){
@@ -3124,7 +3259,7 @@ function siradakiRozetiCiz(sinavlar, rozetler){
   if(!secilen) secilen = adaylar[0];
   let il = secilenIlerleme;
   kutu.innerHTML = `<div class="rsUst"><span class="rsEmoji" data-grup="${secilen.grup}">${secilen.emoji}</span>
-      <span class="rsMetin"><small>Sıradaki rozetin</small><b>${htmlKacis(secilen.ad)}</b></span>
+      <span class="rsMetin"><small>Sıradaki Rozetin</small><b>${htmlKacis(secilen.ad)}</b></span>
       ${il ? `<span class="rsEtiket">${htmlKacis(il.etiket)}</span>` : ""}</div>
     ${il ? `<div class="rsCubuk"><span style="width:${Math.round(Math.min(1, il.oran) * 100)}%"></span></div>` : ""}
     <div class="rsAciklama">${htmlKacis(il ? il.aciklama : (secilen.sart + "."))}</div>`;
@@ -3189,8 +3324,9 @@ function okumaOlc(){
   basliklar.forEach(function(b, i){
     if(i > t.bolumSira && b.getBoundingClientRect().top < sinir){
       t.bolumSira = i;
-      let ad = b.querySelector("span:not(.titleToggleHint):not(.ipucuMetin):not(.ipucuOk):not(.rozetSayac)");
-      t.bolum = (ad ? ad.textContent : b.textContent).replace(/\s+/g, " ").trim().slice(0, 60);
+      let ad = b.querySelector(".bolumAd"), ikon = b.querySelector(".bolumIkon");
+      if(ad) t.bolum = ((ikon ? ikon.textContent + " " : "") + ad.textContent).replace(/\s+/g, " ").trim().slice(0, 60);
+      else t.bolum = b.textContent.replace(/\s+/g, " ").trim().slice(0, 60);
     }
   });
 }
@@ -3508,6 +3644,7 @@ function basariKutusunuBoya(etiket){
   document.getElementById("successArea").innerText = etiket || "-";
   kutu.style.background = r ? r.bg : ""; kutu.style.borderColor = r ? r.kenar : ""; kutu.style.color = r ? r.fg : "";
   document.getElementById("successArea").style.color = r ? r.fg : "";
+  requestAnimationFrame(basariAdiniSigdir);
   ikon.innerText = r ? r.ikon : ""; ikon.style.background = r ? r.fg : "";
   document.getElementById("successNote").innerText = r ? r.not : "";
 }
@@ -3627,6 +3764,10 @@ function konuIkon(konu){
 // (#loading) yalnızca yanıt YAVAS_YANIT_MS'yi aşarsa "sayfayı kapatma" uyarısı olarak çıkar; hızlı yanıtta hiç görünmez.
 const YAVAS_YANIT_MS = 6000;
 let yavasYanitZamanlayici = null, submitBtnMetni = null;
+// Arayüz kuralları (Öğretmen Paneli v3.39): aynı gösterge, kayıt düğmelerinde de ("KAYDEDİLİYOR"). Metin kodda büyük harfle yazılır.
+function yukGostergeHtml(metin){
+  return '<span class="spin" aria-hidden="true"></span><span class="yukMetin">' + metin + '</span><span class="yukNokta" aria-hidden="true"></span><span class="yukCizgi" aria-hidden="true"></span>';
+}
 function setLoading(durum){
   sorguSuruyor = durum;
   let dugme = document.getElementById("submitBtn"), yavas = document.getElementById("loading");
@@ -3634,12 +3775,13 @@ function setLoading(durum){
   clearTimeout(yavasYanitZamanlayici);
   yavas.classList.add("hidden");
   if(durum){
-    dugme.innerHTML = '<span class="spin" aria-hidden="true"></span><span class="yukMetin">YÜKLENİYOR</span><span class="yukNokta" aria-hidden="true"></span><span class="yukCizgi" aria-hidden="true"></span>';
+    dugme.innerHTML = yukGostergeHtml("YÜKLENİYOR");
     yavasYanitZamanlayici = setTimeout(function(){ if(sorguSuruyor) yavas.classList.remove("hidden"); }, YAVAS_YANIT_MS);
   }else{
     dugme.innerHTML = submitBtnMetni;
   }
   dugme.disabled = durum;
+  if(durum) dugme.setAttribute("aria-busy", "true"); else dugme.removeAttribute("aria-busy");
   // Sorgu sürerken ad/kod kutuları da kilitlenir: yanıt beklenirken bilgiler değiştirilip
   // ikinci bir istek başlatılamasın. (Mobilde kilitlenen kutu klavyeyi de kapatır.)
   document.getElementById("studentNameInput").disabled = durum;
@@ -3696,11 +3838,11 @@ function sonucEkraniKurulamadi(err){
 
 // fetch'e yerleşik bir zaman aşımı yok; sunucu yanıt vermezse kullanıcı süresiz
 // "getiriliyor..." ekranında kalmasın diye AbortController ile bunu ekliyoruz.
-async function fetchZamanAsimli(url, zamanAsimiMs){
+async function fetchZamanAsimli(url, zamanAsimiMs, secenek){
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), zamanAsimiMs);
   try{
-    const response = await fetch(url, { signal: controller.signal });
+    const response = await fetch(url, Object.assign({}, secenek || {}, { signal: controller.signal }));
     clearTimeout(timeoutId);
     return response;
   }catch(err){
@@ -3712,6 +3854,13 @@ async function fetchZamanAsimli(url, zamanAsimiMs){
     }
     throw err;
   }
+}
+
+// v2.36 (Code.gs) — Ad Soyad ve Giriş Kodu adres satırında (URL) değil, isteğin gövdesinde (POST) gider: Google'ın
+// istek kayıtlarına, tarayıcı eklentilerine ve ara sunuculara düşmez. Gövde düz metin JSON (CORS ön kontrolü yok).
+function apiIstek(parametreler, zamanAsimiMs){
+  return fetchZamanAsimli(API_URL, zamanAsimiMs, { method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" },
+    body: JSON.stringify(Object.assign({ kanal: "istek" }, parametreler)) });
 }
 
 async function getResult(){
@@ -3744,8 +3893,7 @@ const istekNo = ++sonIstekNo;
 let hamMetin;
 try{
 
-  let url = API_URL + "?isim=" + encodeURIComponent(name) + "&kod=" + encodeURIComponent(code);
-  let response = await fetchZamanAsimli(url, 20000);
+  let response = await apiIstek({ isim: name, kod: code }, 20000);
 
   if(!response.ok){
     if(istekNo !== sonIstekNo) return;
@@ -3847,7 +3995,11 @@ let adParca = String(last.isim || "").trim().split(/\s+/).filter(Boolean);
 document.getElementById("kimlikAvatar").textContent = ((adParca[0] || "").charAt(0) + (adParca.length > 1 ? adParca[adParca.length - 1].charAt(0) : "")).toLocaleUpperCase("tr-TR");
 const IKON_KEP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>';
 const IKON_TAKVIM = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M16 3v4M8 3v4M3 10h18"/></svg>';
-document.getElementById("classArea").innerHTML = IKON_KEP + "<span>" + htmlKacis(last.sube ? (last.sinif + "-" + last.sube) : (last.sinif + ". Sınıf")) + "</span>";
+// v2.33: bireysel öğrencide (özel ders vb.) Şube bir etikettir: "8. Sınıf · LGS Hazırlık"; sıralama ve sınıf kıyası yok
+document.body.classList.toggle("bireyselSayfa", !!last.bireysel);
+document.getElementById("classArea").innerHTML = IKON_KEP + "<span>" + htmlKacis(last.bireysel
+  ? (last.sinif + ". Sınıf" + (last.sube ? " · " + last.sube : ""))
+  : (last.sube ? (last.sinif + "-" + last.sube) : (last.sinif + ". Sınıf"))) + "</span>";
 let t = sinavTarihiMetni(last);
 let tUzun = tarihUzunYaz(t);
 document.getElementById("kimlikTarih").innerHTML = tUzun ? (IKON_TAKVIM + "<span>" + htmlKacis(tUzun) + "</span>") : "";
@@ -3859,7 +4011,7 @@ document.getElementById("kimlikKod").textContent = sinavEslesme ? sinavKod : "";
 document.getElementById("rankArea").innerText = last.sira ? (last.sira + ".") : "-";
 document.getElementById("participationArea").innerText = (last.sira && last.katilim) ? ("/ " + last.katilim) : "";
 document.getElementById("rankPercentileArea").innerHTML = (last.katilim ? `<span class="siraKatilim">${htmlKacis(last.katilim)} öğrenci içinde</span>` : "") +
-  (last.yuzdelikDilim ? `<span class="siraDilim">İlk %${htmlKacis(last.yuzdelikDilim)}</span>` : "");
+  ((last.yuzdelikDilim && Number(last.yuzdelikDilim) <= 50) ? `<span class="siraDilim">İlk %${htmlKacis(last.yuzdelikDilim)}</span>` : "");   // v2.34: yalnızca ilk yarı
 basariKutusunuBoya(last.basari);
 try{ siraKutusunuHazirla(sonGelenVeri); }catch(e){ console.error("[UltraMat] Sıralama paneli hazırlanamadı:", e); }
 document.getElementById("katilimNotuArea").innerText = last.katilimNotu || "";
@@ -3979,10 +4131,69 @@ konuAnaliziniGuvenliCiz();
 bolumuGuvenliCiz("Çalışma planı", "planArea", function(){ createCalismaPlani(last); });
 bolumuGuvenliCiz("Takıldığım sorular", "distractorArea", function(){ createDistractorAnalysis(last); });
 bolumuGuvenliCiz("Açılır başlıklar", null, acilirBasliklariSigdir);   // kart görünür olduğu için artık ölçülebilir
+bolumuGuvenliCiz("Bölüm özetleri", null, function(){ bolumleriHazirla(sonGelenVeri); });
 sahneyiBaslat();   // bölümler ekrana girdikçe sırayla belirsin (sinematik açılış)
 bolumuGuvenliCiz("Okuma takibi", null, function(){ okumaTakibiniBaslat(last.oturum); });
 
 }
+
+// ================= BÖLÜMLER =================
+// Her sonuç ekranında: (1) kapalı bölümlerin başlığı altındaki kısa özetler yazılır; (2) hangi bölümün açık
+// geleceğine karar verilir. Sabit açık: Gelişim Analizi, Fatih Hoca'nın Notu, Önerilen Çalışma Planı,
+// Matematik Gelişimim. Duruma göre açık: Meydan Okuma (seçim yapılabiliyorsa), Hedefim (henüz seçilmediyse ya
+// da hedefe yeni ulaşıldıysa), Rozet Dolabım (bu sınavda yeni rozet varsa), Koleksiyonum (açılmış bir dönem
+// kartı varsa). Geri kalanı kapalı gelir. Durum hatırlanmaz.
+const BOLUM_SABIT_ACIK = ["bolGelisimAnalizi", "bolHocaNotu", "bolPlan", "bolGelisimim"];
+function bolumleriHazirla(veri){
+  let last = veri[veri.length - 1] || {};
+  basariAdiniSigdir();   // sonuç kartı artık görünür; ölçüm yapılabilir
+  let yaz = function(id, metin){ let el = document.getElementById(id); if(el) el.textContent = metin || ""; };
+
+  let konular = last.konular || [];
+  if(konular.length){
+    let guclu = konular.filter(function(k){ return icBant(k.yuzde).ad === "Güçlü"; }).length;
+    let zayif = konular.filter(function(k){ return icBant(k.yuzde).ad === "Çalışılmalı"; }).length;
+    yaz("icerikOzet", [konular.length + " içerik", guclu ? guclu + " güçlü" : "", zayif ? zayif + " çalışılmalı" : ""].filter(Boolean).join(" · "));
+  } else yaz("icerikOzet", "");
+
+  let ilerleme = document.getElementById("cpIlerleme");
+  yaz("planOzet", ilerleme ? ilerleme.textContent : "");
+
+  let g = last.gelisim;
+  yaz("gelisimimOzet", !g ? "" : (g.sinavSayisi < 2 ? "İlk sınav" :
+    ((g.egilim === "artan" ? "▲ Yükseliyor" : g.egilim === "azalan" ? "▼ Düşüyor" : "— Durağan") + " · " + g.sinavSayisi + " sınav")));
+  yaz("gecmisOzet", veri.length + " sınav · son: " + String(last.net).replace(".", ",").replace("-", "−") + " net");
+
+  let siradaki = document.querySelector("#rozetSiradaki .rsMetin b"), sayac = document.getElementById("rozetSayac");
+  if(siradaki && sayac && !/sıradaki/.test(sayac.textContent)) sayac.textContent += " · sıradaki: " + siradaki.textContent;
+
+  let k = last.koleksiyon;
+  if(k && k.donemler){
+    let acikSay = k.donemler.filter(function(d){ return d.acik && d.ozet; }).length;
+    let bekleyen = k.donemler.filter(function(d){ return !(d.acik && d.ozet); })[0];
+    yaz("koleksiyonEk", acikSay ? (acikSay + " dönem kartın hazır · dokun, hikâyeni izle")
+      : bekleyen ? (bekleyen.ad + " kartın " + (bekleyen.acilisMetni ? bekleyen.acilisMetni + " civarı" : "dönem sonunda") + " açılır")
+      : (k.yil || ""));
+  }
+
+  let acik = {};
+  BOLUM_SABIT_ACIK.forEach(function(id){ acik[id] = true; });
+  let sir = last.meydanOkumaSiradaki;
+  if(sir && sir.acik && !sir.secim) acik.moBolumu = true;
+  let h = last.hedefim;
+  if(h && h.simdi && (!h.hedef || h.yeniUlasti)) acik.hedefBolumu = true;
+  if(/yeni/.test(document.getElementById("rozetSayac").textContent)) acik.rozetBolumu = true;
+  if(document.querySelector("#koleksiyonRaf .dnKart.acik")) acik.koleksiyonBolumu = true;
+  document.querySelectorAll("#resultCard details.bolum").forEach(function(d){ d.open = !!acik[d.id]; });
+}
+
+// Grafik kapalı bir bölümde yeniden boyutlanamaz; bölüm açılınca genişliğini yeniden ölçsün.
+document.getElementById("bolGelisimim").addEventListener("toggle", function(){
+  if(this.open && typeof chartNesnesi !== "undefined" && chartNesnesi) try{ chartNesnesi.resize(); }catch(e){}
+});
+document.getElementById("hedefBolumu").addEventListener("toggle", function(){
+  if(this.open) hdOlcekYerlestir(document.getElementById("hedefAlani"));
+});
 
 // Konu analizi hem ilk açılışta hem de "Bu Sınavda / Genel Durum" düğmesine her basışta
 // yeniden çizildiği için korumalı çağrı tek bir yerde tutuluyor.
@@ -4053,7 +4264,7 @@ function showHistory(data){
       icerikHtml = `<div class="gsIcerikSatir">${icerikler.map(function(k){ return `<span>${htmlKacis(k.konu)} <b>${k.dogru}/${k.soru}</b></span>`; }).join("")}</div>`;
     } else if(icerikler.length){
       let sirali = icerikler.slice().sort(function(p, q){ return (q.dogru / (q.soru || 1)) - (p.dogru / (p.soru || 1)) || q.soru - p.soru; });
-      icerikHtml = `<details class="gsDokum"><summary>${icerikler.length} içerik · dökümü gör</summary>
+      icerikHtml = `<details class="gsDokum"><summary>${icerikler.length} içerik · <span class="acKapali">Dökümü Gör</span><span class="acAcik">Dökümü Gizle</span></summary>
         ${sirali.map(function(k){ return `<div class="gsDokumSatir"><span>${htmlKacis(k.konu)}</span><b>${k.dogru}/${k.soru}</b></div>`; }).join("")}</details>`;
     }
     return `<div class="gsKart${i === data.length - 1 ? " son" : ""}">
@@ -4200,10 +4411,10 @@ document.getElementById("konuGorunumToggle").addEventListener("click", function(
 // v3: Dört renk bandı — sistemin "yeterli" eşiği (%70, çalışma planı) ile uyumlu:
 //   <50 Çalışılmalı (kırmızı) · 50–69 Gelişiyor (turuncu) · 70–89 İyi (mavi) · 90+ Güçlü (yeşil)
 const IC_BANTLAR = [
-  { alt:90, ad:"Güçlü",       renk:"#16A34A", zemin:"#F0FDF4", kenar:"#86EFAC" },
-  { alt:70, ad:"İyi",         renk:"#2563EB", zemin:"#EFF6FF", kenar:"#93C5FD" },
-  { alt:50, ad:"Gelişiyor",   renk:"#D97706", zemin:"#FFFBEB", kenar:"#FCD34D" },
-  { alt:-1, ad:"Çalışılmalı", renk:"#DC2626", zemin:"#FEF2F2", kenar:"#FCA5A5" }
+  { alt:90, ad:"Güçlü",       renk:"#16A34A", yazi:"#15803D", zemin:"#F0FDF4", kenar:"#86EFAC" },
+  { alt:70, ad:"İyi",         renk:"#2563EB", yazi:"#1D4ED8", zemin:"#EFF6FF", kenar:"#93C5FD" },
+  { alt:50, ad:"Gelişiyor",   renk:"#D97706", yazi:"#B45309", zemin:"#FFFBEB", kenar:"#FCD34D" },
+  { alt:-1, ad:"Çalışılmalı", renk:"#DC2626", yazi:"#B91C1C", zemin:"#FEF2F2", kenar:"#FCA5A5" }
 ];
 function icBant(y){ y = Number(y) || 0; return IC_BANTLAR.find(b => y >= b.alt) || IC_BANTLAR[3]; }
 function icYuzde(y){ return "%" + Math.round(Number(y) || 0); }
@@ -4287,7 +4498,7 @@ function renderKonuAnalizi(){
       <div class="icSatir">
         <div class="icIkon" style="background:${bant.renk}">${konuIkon(k.konu)}</div>
         <div class="icGovde">
-          <div class="icUst"><span class="icAd">${htmlKacis(k.konu)}${tekrarHtml}</span><span class="icOran" style="color:${bant.renk}">${icYuzde(k.yuzde)}</span></div>
+          <div class="icUst"><span class="icAd">${htmlKacis(k.konu)}${tekrarHtml}</span><span class="icOran" style="color:${bant.yazi || bant.renk}">${icYuzde(k.yuzde)}</span></div>
           <div class="progress">
             ${aralikHtml}
             <div class="progressBar" style="width:0%;background:${bant.renk};" data-hedef-genislik="${k.yuzde}"></div>
@@ -4312,9 +4523,9 @@ function renderKonuAnalizi(){
 // Üstte "Bu planın karşılığı" (Hedefine Etkisi) ve varsa Hata Profili; altta Plan Sözleşmesi (eğer–o zaman planı +
 // takvim). İşaretlenen adımlar ve sözleşme, okuma takibindeki oturumla Plan_Takibi'ne gider; cihazda da saklanır.
 const PLAN_ANLAR = [
-  { id:"okuldan dönünce", etiket:"Okuldan dönünce", saat:"160000" },
-  { id:"ödevlerimi bitirince", etiket:"Ödevlerimi bitirince", saat:"190000" },
-  { id:"akşam yemeğinden sonra", etiket:"Akşam yemeğinden sonra", saat:"203000" }
+  { id:"okuldan dönünce", etiket:"Okuldan Dönünce", saat:"160000" },
+  { id:"ödevlerimi bitirince", etiket:"Ödevlerimi Bitirince", saat:"190000" },
+  { id:"akşam yemeğinden sonra", etiket:"Akşam Yemeğinden Sonra", saat:"203000" }
 ];
 const AY_ADLARI = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
 const GUN_ADLARI = ["Pazar","Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi"];
@@ -4365,7 +4576,7 @@ function planEtkiHtml(etki, icerikSayisi, sinif){
     if(etki.hedef && etki.hedef.metin) hedefSatiri = `Yıl hedefin: ${htmlKacis(etki.hedef.metin)}.`;
   }
   return `<div class="cpEtki">
-    <div class="cpUstEtiket">Bu planın karşılığı</div>
+    <div class="cpUstEtiket">Bu Planın Karşılığı</div>
     <div class="cpEtkiBaslik">Bu ${icerikSayisi} içerik oturursa ${olcuYeri} yaklaşık ${aralik} net kazanırsın.</div>
     ${kutular}
     ${hedefSatiri ? `<div class="cpNot">${hedefSatiri}</div>` : ""}
@@ -4376,13 +4587,16 @@ function planEtkiHtml(etki, icerikSayisi, sinif){
 function planHataProfiliHtml(hp){
   if(!hp) return "";
   let nolar = (hp.sorular || []).slice(0, 6), noMetni = nolar.length ? (" (" + nolar.join(", ") + ". sorular)") : "";
-  let metin = hp.tur === "dikkat"
+  // v2.31 sunucu (yontem: "seviye"): dikkat, öğrencinin KENDİ seviyesine göre beklenen sorulardaki yanlışlardır
+  let metin = hp.tur === "dikkat" && hp.yontem === "seviye"
+    ? `Son sınavdaki ${hp.sayi} yanlışın, senin seviyende doğru yapman beklenen sorulardaydı${noMetni}. Buralarda sorun konu bilgisi değil, dikkat olabilir: soruyu sonuna kadar oku, işlemini kontrol et.`
+    : hp.tur === "dikkat"
     ? `Son sınavda ${hp.sayi} soruyu, sınıfın çoğunun doğru yaptığı sorularda kaybettin${noMetni}. Buralarda sorun konu değil, dikkat olabilir: soruyu sonuna kadar oku, işlemini kontrol et.`
     : hp.tur === "sure"
     ? `Boş bıraktığın sorulardan ${hp.sayi} tanesi sınavın son bölümünde. Süre yetişmemiş olabilir: önce emin olduğun soruları çöz, zorlara sonra dön.`
     : `Son sınavdaki ${hp.sayi} yanlışında, sınıfta en çok seçilen yanlış şıkkı seçtin${noMetni}. Bunlar sınıfça sık yapılan yanılgılar; derste de üzerinde duracağız.`;
-  let baslik = hp.tur === "dikkat" ? "Puan kaybın: dikkat" : hp.tur === "sure" ? "Puan kaybın: süre" : "Puan kaybın: ortak tuzaklar";
-  return `<div class="cpProfil"><div class="cpUstEtiket">Hata profilin</div><div class="cpProfilBaslik">${baslik}</div><div class="cpNot">${htmlKacis(metin)}</div></div>`;
+  let baslik = hp.tur === "dikkat" ? "Puan Kaybın: Dikkat" : hp.tur === "sure" ? "Puan Kaybın: Süre" : "Puan Kaybın: Ortak Tuzaklar";
+  return `<div class="cpProfil"><div class="cpUstEtiket">Hata Profilin</div><div class="cpProfilBaslik">${baslik}</div><div class="cpNot">${htmlKacis(metin)}</div></div>`;
 }
 
 function planAdimHtml(id, baslik, aciklamaHtml){
@@ -4461,7 +4675,7 @@ function planKartHtml(k, ilk){
     <div class="cpCubuk" role="img" aria-label="Doğru oranı yüzde ${oran}"><span style="width:${Math.max(2, oran)}%"></span></div>
     ${sinavSatiri ? `<div class="cpMini">${htmlKacis(sinavSatiri)}</div>` : ""}
     ${cipler.length ? `<div class="cpCipler">${cipler.join("")}</div>` : ""}
-    ${ilk ? govde : `<details class="cpAc"><summary>Ne yapmalı · ${ozet}</summary>${govde}</details>`}
+    ${ilk ? govde : `<details class="cpAc"><summary>Ne Yapmalı · ${ozet}</summary>${govde}</details>`}
   </div>`;
 }
 
@@ -4472,9 +4686,9 @@ function planSozlesmeHtml(){
     if(t) t.setDate(t.getDate() + 3);
     let an = (PLAN_ANLAR.find(function(a){ return a.id === s.an; }) || {}).id || s.an;
     return `<div class="cpSozlesme kurulu">
-      <div class="cpSozBaslik">✍️ Plan sözleşmen</div>
+      <div class="cpSozBaslik">✍️ Plan Sözleşmen</div>
       <div class="cpSozOzet"><b>${b ? planTarihMetni(b) : ""}, ${htmlKacis(an)}</b> sorularını yeniden çözüyorsun.<br><b>${t ? planTarihMetni(t) : ""}</b> aynı soruları bakmadan tekrar çözüyorsun.</div>
-      <div class="cpSozDugmeler"><button type="button" class="cpDugme ana" id="cpTakvim">📅 Takvime ekle</button><button type="button" class="cpDugme" id="cpDegistir">Değiştir</button></div>
+      <div class="cpSozDugmeler"><button type="button" class="cpDugme ana" id="cpTakvim">📅 Takvime Ekle</button><button type="button" class="cpDugme" id="cpDegistir">Değiştir</button></div>
       <div class="cpSozBilgi" id="cpSozBilgi"></div>
     </div>`;
   }
@@ -4492,13 +4706,13 @@ function planSozlesmeHtml(){
     ozet = `<div class="cpSozOzet"><b>${planTarihMetni(b)}, ${htmlKacis(planDurum.secAn)}</b> sorularını yeniden çözüyorsun.<br><b>${planTarihMetni(t)}</b> aynı soruları bakmadan tekrar çözüyorsun.</div>`;
   }
   return `<div class="cpSozlesme">
-    <div class="cpSozBaslik">✍️ Plan sözleşmen</div>
+    <div class="cpSozBaslik">✍️ Plan Sözleşmen</div>
     <div class="cpNot">Ne zaman yapacağına şimdiden karar vermek, planı gerçekten yapma ihtimalini artırır.</div>
     <div class="cpSozEtiket">Hangi gün başlıyorsun?</div><div class="cpSecimler">${gunler.join("")}</div>
     <div class="cpSozEtiket">O gün ne zaman?</div><div class="cpSecimler">${anlar}</div>
     ${ozet}
     <div class="cpSozBilgi" id="cpSozBilgi"></div>
-    <div class="cpSozDugmeler"><button type="button" class="cpDugme ana" id="cpKaydet">Sözleşmemi kaydet</button><button type="button" class="cpDugme" id="cpTakvim">📅 Takvime ekle</button></div>
+    <div class="cpSozDugmeler"><button type="button" class="cpDugme ana" id="cpKaydet">Sözleşmemi Kaydet</button><button type="button" class="cpDugme" id="cpTakvim">📅 Takvime Ekle</button></div>
   </div>`;
 }
 
@@ -4744,7 +4958,7 @@ function siraPanelHtml(veriler){
   } else {
     let tum = yol.length > 6 && siraPanelYol === "tum";
     let gorunen = tum ? yol : yol.slice(-6);
-    yolHtml += (yol.length > 6 ? `<div class="spSek"><button type="button" data-y="son6" aria-pressed="${!tum}">Son 6 sınav</button><button type="button" data-y="tum" aria-pressed="${tum}">Tüm yıl (${yol.length})</button></div>` : "")
+    yolHtml += (yol.length > 6 ? `<div class="spSek"><button type="button" data-y="son6" aria-pressed="${!tum}">Son 6 Sınav</button><button type="button" data-y="tum" aria-pressed="${tum}">Tüm Yıl (${yol.length})</button></div>` : "")
       + `<div class="spAcik">Sınıf içindeki yerin (yüzdelik dilim; yukarı çıktıkça daha iyi)</div>`
       + siraCizgiSvg(gorunen, !tum);
     let enIyi = yol.reduce(function(a, b){ return siraSayi(b.yuzdelikDilim) < siraSayi(a.yuzdelikDilim) ? b : a; });
@@ -4887,7 +5101,7 @@ function createDistractorAnalysis(data) {
   let bilgi = videolu
     ? `<div class="tkBilgi">▶ işaretli sorularda Fatih Hoca'nın çözüm videosunu izleyebilirsin. Bu soruların hepsi, üç sınavda bir gelen 📘 Hata Defteri'nde de olacak.</div>`
     : `<div class="tkBilgi">Bu soruların hepsi, üç sınavda bir gelen 📘 Hata Defteri'nde de olacak.</div>`;
-  let azNot = sinifGoster ? "" : `<div class="tkBilgi">Bu sınava az kişi katıldığı için sınıf karşılaştırması gösterilmiyor.</div>`;
+  let azNot = (sinifGoster || data.bireysel) ? "" : `<div class="tkBilgi">Bu sınava az kişi katıldığı için sınıf karşılaştırması gösterilmiyor.</div>`;
   container.innerHTML = bilgi + `<div class="tkListe">${kartlar}</div>` + azNot;
 }
 function ekYuzde(n){   // "%25'i", "%40'ı", "%100'ü", "%0'ı" …
@@ -4911,12 +5125,19 @@ document.getElementById("kodGosterBtn").addEventListener("click", function(){
   kutu.focus();   // telefonda klavye kapanmasın, yazmaya devam edilebilsin
 });
 
-// Enter tuşuyla giriş yapabilme (mobil klavyede kolaylık)
+// Enter tuşu (telefonda klavyedeki "İleri" / "Git") — Öğretmen Paneli v3.39 kurallarıyla:
+// • Ad kutusunda: kod zaten 6 haneyse doğrudan giriş yapılır, değilse kod kutusuna geçilir.
+// • Kod kutusunda: giriş yapılır. Yükleme sürerken basılan Enter'ı getResult zaten yok sayar.
+// • Klavye henüz kelimeyi tamamlamadan (isComposing; Android'de Gboard) basılan Enter yok sayılır.
 document.getElementById("studentCodeInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter") getResult();
+  if(e.key !== "Enter" || e.isComposing) return;
+  e.preventDefault(); getResult();
 });
 document.getElementById("studentNameInput").addEventListener("keydown", function(e){
-  if(e.key === "Enter") document.getElementById("studentCodeInput").focus();
+  if(e.key !== "Enter" || e.isComposing) return;
+  e.preventDefault();
+  if(/^[0-9]{6}$/.test(document.getElementById("studentCodeInput").value.trim())) getResult();
+  else document.getElementById("studentCodeInput").focus();
 });
 
 document.getElementById("backToLoginBtn").addEventListener("click", function(){
@@ -4924,6 +5145,7 @@ document.getElementById("backToLoginBtn").addEventListener("click", function(){
   sahneyiSifirla();
   if(chartNesnesi){ chartNesnesi.destroy(); chartNesnesi = null; }
   sonGelenVeri = null;
+  document.body.classList.remove("bireyselSayfa");   // v2.33
   moGiris = null;
   document.getElementById("resultCard").classList.add("hidden");
   document.getElementById("loginCard").classList.remove("hidden");
@@ -4935,30 +5157,7 @@ document.getElementById("backToLoginBtn").addEventListener("click", function(){
   document.getElementById("studentNameInput").focus();
 });
 
-// Açılır başlıkların ipucu iki parçadır: yazı ("Detayları Göster ") ve ok ("▾"). Telefonda yalnızca ok
-// görünür (CSS), bu yüzden ikisi ayrı güncellenir.
-function ipucuGuncelle(ipucu, metin, ok){
-  ipucu.querySelector(".ipucuMetin").textContent = metin;
-  ipucu.querySelector(".ipucuOk").textContent = ok;
-}
-
-// Soru Bazlı Çeldirici Analizi: varsayılan kapalı, tıklayınca açılıp kapanıyor
-document.getElementById("distractorToggle").addEventListener("click", function(){
-  let alan = document.getElementById("distractorArea");
-  let ipucu = document.getElementById("distractorToggleHint");
-  let acikMi = !alan.classList.contains("hidden");
-  alan.classList.toggle("hidden");
-  ipucuGuncelle(ipucu, acikMi ? "Detayları Göster " : "Detayları Gizle ", acikMi ? "▾" : "▴");
-});
-
-// Nasıl Değerlendiriyoruz?: aynı açılır/kapanır davranış
-document.getElementById("metodolojiToggle").addEventListener("click", function(){
-  let alan = document.getElementById("metodolojiArea");
-  let ipucu = document.getElementById("metodolojiToggleHint");
-  let acikMi = !alan.classList.contains("hidden");
-  alan.classList.toggle("hidden");
-  ipucuGuncelle(ipucu, acikMi ? "Göster " : "Gizle ", acikMi ? "▾" : "▴");
-});
+// Takıldığım Sorular ve Nasıl Değerlendiriyoruz? artık diğer bölümler gibi <details>; ayrı aç-kapa işleyicisi gerekmez.
 
 // Üst bölüm (başlık, alt başlık, slogan) her ekranda TEK SATIR görünsün diye:
 // her satır önce tek satır olarak ölçülür; sığıyorsa CSS'teki boyutu aynen kalır, sığmıyorsa (dar
@@ -4972,6 +5171,23 @@ const TEK_SATIR_OGELERI = [
   { secici: ".brand .subtitle", enKucuk: 12 },
   { secici: ".brand .slogan",   enKucuk: 11 }
 ];
+
+// Başarı Durumu kutusundaki ad ("Geliştirilmeli" gibi tek ve uzun bir kelime) dar telefonlarda kutuya
+// sığmazsa, simgesiyle birlikte sığacak kadar küçültülür (en az 12px). Sığıyorsa CSS'teki boyut aynen kalır.
+function basariAdiniSigdir(){
+  let ad = document.getElementById("successArea"), kutu = document.getElementById("successBox");
+  if(!ad || !kutu || !kutu.clientWidth) return;
+  ad.style.fontSize = "";
+  let ikon = document.getElementById("successIcon");
+  let ikonGen = (ikon && ikon.offsetWidth) ? ikon.offsetWidth + 4 : 0;
+  let cs = getComputedStyle(kutu);
+  let bos = kutu.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - ikonGen - 2;
+  let gen = ad.scrollWidth;
+  if(gen > bos){
+    let yeni = Math.floor(parseFloat(getComputedStyle(ad).fontSize) * bos / gen * 10) / 10 - 0.2;
+    ad.style.fontSize = Math.max(12, yeni) + "px";
+  }
+}
 
 function ustBolumuTekSatiraSigdir(){
   TEK_SATIR_OGELERI.forEach(function(oge){
@@ -5021,7 +5237,7 @@ let ustBolumSigdirmaBekleyen = false;
 window.addEventListener("resize", function(){   // telefon yan çevrilince ya da pencere boyutu değişince
   if(ustBolumSigdirmaBekleyen) return;
   ustBolumSigdirmaBekleyen = true;
-  requestAnimationFrame(function(){ ustBolumSigdirmaBekleyen = false; ustBolumuTekSatiraSigdir(); acilirBasliklariSigdir(); });
+  requestAnimationFrame(function(){ ustBolumSigdirmaBekleyen = false; ustBolumuTekSatiraSigdir(); acilirBasliklariSigdir(); basariAdiniSigdir(); });
 });
 
 </script>
