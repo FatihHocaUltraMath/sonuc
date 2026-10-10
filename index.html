@@ -5020,10 +5020,13 @@ function linkDurumunuGoster(metin, tur){ let d = document.getElementById("linkDu
     if(document.getElementById("linkDurum").classList.contains("hazir")) linkDurumunuGizle();   // veli bilgileri değiştirdi
   });
 });
-(function kisiselLinkiOku(){
+// Telefonda WhatsApp çoğu zaman linki, siteyi daha önce açtığı AYNI sekmeye gönderir. Adres yalnızca "#" sonrasında
+// değiştiği için tarayıcı sayfayı yeniden yüklemez (yalnızca "hashchange" olur); bu yüzden link hem açılışta hem de
+// hashchange'te okunur. Sekmede sonuç ekranı açıksa önce giriş ekranına dönülür (kardeşin linki gibi).
+function kisiselLinkiOku(){
   if(!/^#g=/.test(location.hash)) return;   // yalnızca kişisel link (#ogretmen vb. başka işlere dokunmaz)
   let m = String(location.hash).match(/^#g=([A-Za-z0-9_-]{8,600})$/);
-  try{ history.replaceState({ um: 0 }, "", location.pathname + location.search); }catch(e){}   // adresten ve geçmişten sil
+  try{ history.replaceState({ um: gecmisKonum }, "", location.pathname + location.search); }catch(e){}   // adresten sil
   if(!m) return;
   let v;
   try{
@@ -5033,6 +5036,12 @@ function linkDurumunuGoster(metin, tur){ let d = document.getElementById("linkDu
   }catch(e){ console.warn("[UltraMat] Link okunamadı."); return; }
   let isim = String((v && v.i) || "").trim(), kod = String((v && v.k) || "").trim(), zaman = Number(v && v.t);
   if(!isim || isim.length > 100 || !/^[0-9]{6}$/.test(kod) || !(zaman > 0)) return;
+  if(!document.getElementById("resultCard").classList.contains("hidden")){   // aynı sekmede sonuç açıktı
+    geriYigini = []; girisEkraninaDon(false); gecmisiEsitle();
+  }
+  if(sorguSuruyor) return;
+  document.getElementById("studentNameInput").value = "";   // yeni link = yeni giriş; eski yazılanlar kalmasın
+  document.getElementById("studentCodeInput").value = "";
   linkDurumunuGoster("Giriş bilgilerin hazırlanıyor…", "bekliyor");
   apiIstek({ linkKontrol: true, isim: isim, kod: kod, linkZaman: zaman }, 15000)
     .then(function(r){ return r.ok ? r.json() : null; })
@@ -5045,7 +5054,9 @@ function linkDurumunuGoster(metin, tur){ let d = document.getElementById("linkDu
       } else linkDurumunuGizle();
     })
     .catch(function(){ linkDurumunuGizle(); });
-})();
+}
+kisiselLinkiOku();
+window.addEventListener("hashchange", kisiselLinkiOku);
 
 // ================= 🔍 ÖĞRETMEN OLARAK BAK (Code.gs v2.46, Öğretmen Paneli v3.57) =================
 // Panel bu sayfayı yeni sekmede ".../sonuc/#ogretmen" ile açar. Sayfa hazır olunca panele haber verir; panel öğrencinin
