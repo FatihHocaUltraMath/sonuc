@@ -79,6 +79,17 @@ body{
 .panelBaslik h1{margin:2px 0 3px;color:var(--dark);font-size:24px;font-weight:900;letter-spacing:-.3px;line-height:1.15;}
 .panelAlt{font-size:12.5px;color:var(--gray);}
 .topBar input:disabled{background:#F8FAFC;color:var(--gray);}
+/* v3.55: Öğretmen Anahtarı yazarken gizli (••••) — veli sayfasındaki giriş koduyla aynı göz düğmesi.
+   type="password" kullanılmadı: tarayıcı "şifreyi kaydet" diye sormasın. */
+.topBar .kodKutusu{position:relative;margin-bottom:10px;}
+.topBar .kodKutusu input{margin-bottom:0;padding-right:54px;}
+.gizliKod{-webkit-text-security:disc;text-security:disc;}
+.topBar button.kodGoster{position:absolute;top:50%;right:2px;transform:translateY(-50%);width:44px;height:40px;margin:0;padding:0;
+  display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:var(--gray);box-shadow:none;cursor:pointer;}
+.topBar button.kodGoster:hover,.topBar button.kodGoster[aria-pressed="true"]{color:var(--orange);}
+.topBar button.kodGoster:focus-visible{outline:2px solid var(--orange);outline-offset:1px;}
+.topBar button.kodGoster[aria-pressed="true"] .kodGosterCizgi{display:none;}
+.topBar button.kodGoster:disabled{opacity:.5;cursor:not-allowed;}
 /* v3.32: Sınavı Aç ve TG düğmesi yüklenirken — veli sayfasıyla (index.html) aynı gösterge:
    dönen simge + "YÜKLENİYOR" + tek tek beliren noktalar + alt kenarda akan çizgi.
    Metin kodda büyük harfle yazılır (CSS text-transform "İ"yi bazı cihazlarda "I" yapabiliyor). */
@@ -246,8 +257,7 @@ body{
 .takipSayi small{display:block;font-size:10.5px;font-weight:800;margin-top:2px;}
 .takipSayi.secili{border-color:var(--dark);box-shadow:0 0 0 2px rgba(59,7,100,.12);}
 .takipSayi[data-suzgec="hepsi"]{color:var(--dark);}
-.takipSayi[data-suzgec="inceledi"]{color:#166534;background:#F0FDF4;}
-.takipSayi[data-suzgec="gozatti"]{color:#1E40AF;background:#EFF6FF;}
+.takipSayi[data-suzgec="goruldu"]{color:#166534;background:#F0FDF4;}
 .takipSayi[data-suzgec="acilmadi"]{color:#92400E;background:#FFFBEB;}
 .moOzet{background:white;border:1px solid #FED7AA;border-radius:16px;padding:14px 16px;margin:0 0 14px;}
 .moOzet h3{margin:0 0 8px;font-size:15px;color:var(--dark);}
@@ -279,19 +289,61 @@ body{
 .shMentorBtn{border:1.5px solid #FDE047;background:white;color:#854D0E;border-radius:999px;padding:2px 8px;font-size:11.5px;font-weight:800;cursor:pointer;width:auto;}
 .shMentorBtn.aktif{background:#FACC15;border-color:#FACC15;color:#422006;}
 .mnOgrSatir{margin-top:6px;font-size:12px;font-weight:700;padding:7px 10px;border-radius:10px;background:#FEF9C3;color:#854D0E;border:1px solid #FDE047;}
+/* v3.53 — bu sınavda kazanılan rozetler (Code.gs v2.41, Rozetler sayfası) */
+.rzOgrSatir{margin-top:6px;font-size:12px;font-weight:700;padding:7px 10px;border-radius:10px;background:#F3E8FF;color:#6B21A8;border:1px solid #E9D5FF;}
 .hdSifirlaBtn{margin-left:auto;background:white;border:1px solid #CBD5E1;color:#475569;border-radius:8px;padding:3px 8px;font-size:11.5px;font-weight:800;cursor:pointer;width:auto;}
 .takipAlt{font-size:11.5px;color:var(--gray);font-weight:600;margin-top:9px;line-height:1.5;}
 .takipYenile:disabled{opacity:.6;cursor:default;}
 .takipYenileDurum{font-size:11.5px;color:var(--dark);font-weight:700;margin-top:6px;}
 .takipYenileDurum:empty{display:none;}
+/* v3.49 — Gönderim Modu */
+.gmCubuk{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FFF7ED,#F5F3FF);border:1px solid #FED7AA;border-radius:14px;padding:12px 14px;margin:4px 0 12px;}
+.gmCubuk.bitti{background:#F0FDF4;border-color:#BBF7D0;}
+.gmCubukSol{flex:1;min-width:0;}
+.gmCubukBaslik{font-weight:900;color:var(--dark);font-size:14px;}
+.gmCubukMetin{font-size:12.5px;color:var(--text);font-weight:600;margin-top:3px;line-height:1.45;}
+.gmIlerleme{height:6px;background:#E2E8F0;border-radius:6px;overflow:hidden;margin-top:8px;}
+.gmIlerleme i{display:block;height:100%;background:linear-gradient(90deg,var(--orange),var(--purple));border-radius:6px;}
+.gmBaslat{flex:none;border:0;border-radius:11px;padding:10px 14px;font-weight:800;font-size:13px;color:white;background:linear-gradient(90deg,var(--orange),var(--purple));cursor:pointer;}
+.gmBaslat.ikincil{background:white;color:var(--dark);border:1px solid #E2E8F0;}
+.gmPanel{position:fixed;right:16px;bottom:16px;width:380px;max-width:calc(100vw - 32px);max-height:calc(100vh - 32px);overflow:auto;background:white;border:1px solid #E2E8F0;border-radius:18px;box-shadow:0 18px 50px rgba(59,7,100,.22);padding:14px;z-index:900;}
+.gmUst{display:flex;align-items:center;gap:8px;color:var(--dark);font-size:14px;}
+.gmUst span{margin-left:auto;font-size:12px;font-weight:700;color:var(--gray);}
+.gmKapat{border:0;background:#F1F5F9;border-radius:8px;width:28px;height:28px;font-size:13px;cursor:pointer;color:var(--gray);}
+.gmOgr{margin:14px 0 10px;}
+.gmSayac{font-size:11px;font-weight:800;letter-spacing:.04em;color:var(--orange);text-transform:uppercase;}
+.gmAd{font-size:20px;font-weight:900;color:var(--dark);margin-top:2px;}
+.gmTamamRozet{font-size:11px;font-weight:800;color:#166534;background:#DCFCE7;border-radius:20px;padding:2px 8px;vertical-align:middle;}
+.gmBilgi{font-size:12.5px;color:var(--gray);font-weight:600;margin-top:2px;}
+.gmAdimlar{display:flex;flex-direction:column;gap:7px;}
+.gmAdim{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid #E2E8F0;background:white;border-radius:12px;padding:10px 12px;font-weight:800;font-size:13.5px;color:var(--text);cursor:pointer;}
+.gmAdim small{margin-left:auto;font-size:11px;font-weight:700;color:var(--gray);}
+.gmAdim .gmIsaret{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:12px;background:#F1F5F9;color:var(--gray);}
+.gmAdim.sonraki{border-color:var(--purple);background:#F5F3FF;color:var(--dark);box-shadow:0 0 0 3px rgba(139,92,246,.15);}
+.gmAdim.sonraki .gmIsaret{background:var(--purple);color:white;}
+.gmAdim.tamam{background:#F0FDF4;border-color:#BBF7D0;color:#166534;}
+.gmAdim.tamam .gmIsaret{background:#16A34A;color:white;}
+.gmAdim.istege:not(.tamam){border-style:dashed;}
+.gmAdim:disabled{opacity:.6;cursor:default;}
+.gmBildirim{font-size:12px;font-weight:700;line-height:1.5;margin-top:10px;padding:8px 10px;border-radius:10px;background:#F8FAFC;color:var(--text);}
+.gmBildirim:empty{display:none;}
+.gmBildirim.ok{background:#F0FDF4;color:#166534;}
+.gmBildirim.uyari{background:#FFFBEB;color:#92400E;}
+.gmBildirim.hata{background:#FEF2F2;color:#B91C1C;}
+.gmAlt{display:flex;gap:8px;margin-top:12px;}
+.gmGez{border:1px solid #E2E8F0;background:white;border-radius:11px;padding:10px 12px;font-weight:800;font-size:13px;color:var(--dark);cursor:pointer;}
+.gmGez:disabled{opacity:.45;cursor:default;}
+.gmSonraki{flex:1;border:1px solid #E2E8F0;background:white;border-radius:11px;padding:10px 12px;font-weight:800;font-size:13px;color:var(--gray);cursor:pointer;}
+.gmSonraki.hazir{border:0;color:white;background:linear-gradient(90deg,var(--orange),var(--purple));}
+.gmBitis{text-align:center;font-size:18px;font-weight:900;color:var(--dark);padding:22px 6px 6px;line-height:1.5;}
+.gmBitis small{display:block;font-size:12.5px;font-weight:600;color:var(--gray);line-height:1.5;margin-top:6px;}
+@media print{.gmPanel,.gmCubuk{display:none !important;}}
+
 .takipSatir{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:12px;font-weight:700;padding:7px 10px;border-radius:10px;}
-.takipSatir.inceledi{background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;}
-.takipSatir.gozatti{background:#EFF6FF;color:#1E40AF;border:1px solid #BFDBFE;}
+.takipSatir.goruldu{background:#F0FDF4;color:#166534;border:1px solid #BBF7D0;}
 .takipSatir.acilmadi{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A;}
 .takipSatir .takipDetay{font-weight:600;opacity:.9;}
 .takipSatir .takipBolum{font-weight:600;opacity:.85;flex-basis:100%;font-size:11.5px;}
-.takipSatir .takipPlan{opacity:1;color:#6D28D9;}
-.takipPlanOzet{color:#6D28D9;}
 .ogrenciSatir.gizli{display:none;}
 
 /* ================= SEKMELER + SINAV ANALİZİ (v3.2) ================= */
@@ -432,6 +484,57 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
 .kaliteAltBaslik small{font-weight:700;color:var(--gray);margin-left:6px;font-size:11.5px;}
 .kaliteBant{display:flex;gap:2px;height:26px;border-radius:8px;overflow:hidden;}
 .kaliteBant span{display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:800;color:#1E293B;white-space:nowrap;overflow:hidden;min-width:20px;}
+/* v3.52 — 💡 Neden Yanlış? notları (Code.gs v2.40) */
+.nyKapsam{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+.nyKapsam b{font-size:26px;font-weight:900;color:#C2410C;}
+.nyKapsam b.iyi{color:#15803D;}
+.nyKapsam span{font-size:12.5px;font-weight:700;color:var(--gray);}
+.nyKapsam .nyKapsamSag{margin-left:auto;}
+.nyCubuk{height:8px;background:#F1F5F9;border-radius:4px;margin:6px 0 10px;overflow:hidden;}
+.nyCubuk i{display:block;height:100%;background:#86EFAC;border-radius:4px;}
+.nyFiltre{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0;}
+.nyMesaj{font-size:12.5px;font-weight:800;color:#6D28D9;background:#F5F3FF;border-radius:10px;padding:7px 10px;margin-bottom:8px;}
+.nyListe{display:flex;flex-direction:column;gap:8px;}
+.nySatir{border:1px solid #EDE9FE;border-radius:12px;padding:9px 11px;background:#fff;}
+.nySatir.tuzak{background:#FFF7ED;border-color:#FED7AA;}
+.nySatir.duzen{border:2px solid var(--purple);}
+.nyUst{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;}
+.nyEt{background:var(--dark);color:#fff;border-radius:6px;padding:1px 7px;font-weight:900;}
+.nyKonu{color:var(--gray);font-weight:700;}
+.nyTuzak{background:#C2410C;color:#fff;font-size:10.5px;font-weight:900;padding:1px 6px;border-radius:6px;}
+.nySayi{margin-left:auto;font-weight:900;color:#475569;}
+.nySatir.tuzak .nySayi{color:#C2410C;}
+.nyMetin{font-size:14px;line-height:1.55;font-weight:600;color:var(--dark);margin:6px 0;}
+.nyBos{font-size:12.5px;font-weight:700;color:#94A3B8;margin:6px 0;}
+.nyAlan{width:100%;box-sizing:border-box;margin:7px 0 4px;font:inherit;font-size:14px;line-height:1.5;border:1px solid #DDD6FE;border-radius:10px;padding:8px 10px;resize:vertical;}
+.nyDugmeler{display:flex;gap:6px;align-items:center;justify-content:flex-end;flex-wrap:wrap;}
+.nySayac{font-size:11.5px;color:var(--gray);font-weight:700;margin-right:auto;}
+.nyTaslak{margin-right:auto;font-size:11px;font-weight:800;background:#EDE9FE;color:#6D28D9;border-radius:999px;padding:3px 9px;}
+.nyOnayli{margin-right:auto;font-size:11.5px;font-weight:900;color:#15803D;}
+.nyDugme{border:none;background:var(--dark);color:#fff;font:inherit;font-size:12px;font-weight:800;border-radius:999px;padding:6px 13px;cursor:pointer;}
+.nyDugme.ince{background:#fff;color:var(--dark);border:1px solid #DDD6FE;}
+.nyDugme.genis{padding:9px 18px;font-size:13px;}
+.nyAlt{text-align:center;margin-top:12px;}
+
+/* v3.51 — ölçüm modeli (Code.gs v2.39) */
+.olKart{padding-bottom:4px !important;}
+.olKutular{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;}
+.olKutu{background:#F8FAFC;border-radius:12px;padding:10px 11px;}
+.olKutuEt{font-size:11.5px;font-weight:800;color:var(--gray);}
+.olKutuDeger{font-size:24px;font-weight:900;color:var(--dark);line-height:1.15;margin:2px 0 3px;}
+.olKutuDeger small{font-size:12px;font-weight:800;}
+.olKutuAlt{font-size:11px;font-weight:700;color:var(--gray);}
+.olGrafik{position:relative;display:flex;align-items:flex-end;gap:8px;height:128px;padding:0 34px 0 4px;border-bottom:1px solid #E2E8F0;overflow-x:auto;}
+.olCizgi{position:absolute;left:0;right:0;bottom:calc(22px + 63px);border-top:1.5px dashed #94A3B8;pointer-events:none;}
+.olCizgi span{position:absolute;right:0;top:-15px;font-size:10.5px;font-weight:800;color:var(--gray);}
+.olCubuk{flex:1 0 26px;max-width:64px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;}
+.olCubuk span{font-size:10.5px;font-weight:800;color:#475569;margin-bottom:2px;}
+.olCubuk i{display:block;width:70%;border-radius:5px 5px 0 0;}
+.olCubuk b{display:block;height:22px;line-height:22px;font-size:10.5px;font-weight:700;color:var(--gray);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.olCubuk.secili i{outline:2px solid var(--purple);outline-offset:1px;}
+.olCubuk.secili b, .olCubuk.secili span{color:var(--purple);font-weight:900;}
+.istTablo tr.olSecili td{background:#FAF5FF;}
+.istTablo tr.olGri td{color:#94A3B8;}
 .kaliteSoru{border:1px solid #DDD6FE;background:white;color:var(--dark);border-radius:8px;min-width:30px;padding:3px 6px;font-weight:900;cursor:pointer;}
 .kaliteSoru:hover{background:#F5F3FF;}
 .istTablo td.kaliteNeden{font-size:12px;color:var(--gray);font-weight:600;white-space:normal;min-width:220px;line-height:1.4;}
@@ -1069,7 +1172,12 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
     <div class="uyari">Bu sayfa sadece senin kullanman içindir, linkini velilerle paylaşma (veli telefon numaralarını ve öğrenci giriş kodlarını gösteriyor).</div>
     <form onsubmit="return false;">
       <input type="text" id="sinavIdInput" placeholder="Sınav ID (örn: D801)" aria-label="Sınav ID" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
-      <input type="text" id="anahtarInput" placeholder="Öğretmen Anahtarı" aria-label="Öğretmen Anahtarı" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+      <div class="kodKutusu">
+        <input type="text" id="anahtarInput" class="gizliKod" placeholder="Öğretmen Anahtarı" aria-label="Öğretmen Anahtarı" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+        <button type="button" id="anahtarGosterBtn" class="kodGoster" aria-label="Anahtarı göster" aria-pressed="false" title="Anahtarı göster">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><line class="kodGosterCizgi" x1="3" y1="3" x2="21" y2="21"/></svg>
+        </button>
+      </div>
       <button type="button" id="getirBtn" onclick="listeGetir()">Sınavı Aç</button>
     </form>
     <div class="durum" id="durum" role="status" aria-live="polite"></div>
@@ -1087,7 +1195,7 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
   <div id="ekPanel" class="ekPanel" hidden></div>
   <div id="liste"></div>
 
-  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.47 (05.10.2026) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
+  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.55 (10.10.2026) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
 
 </div>
 
@@ -1329,6 +1437,7 @@ function dugmeYukleniyor(dugme, durum){
   let kilit = panelYuklemeSayisi > 0;
   document.getElementById("sinavIdInput").disabled = kilit;
   document.getElementById("anahtarInput").disabled = kilit;
+  document.getElementById("anahtarGosterBtn").disabled = kilit;
 }
 
 async function listeGetir(){
@@ -1375,6 +1484,14 @@ async function listeGetir(){
     moSiradakiSinif = (data && !Array.isArray(data) && data.meydanOkumaSiradaki) ? data.meydanOkumaSiradaki : null;   // v3.28 (Code.gs v2.17)
     donemBilgisi = (data && !Array.isArray(data) && data.donem) ? data.donem : null;   // v3.31 (Code.gs v2.20)
     egitimYili = (data && !Array.isArray(data) && data.egitimYili) ? data.egitimYili : "";
+    // v3.51 (Code.gs v2.39): ölçüm modeli — seçilen sınavın ve sınıf düzeyinin bütün sınavlarının KR-20 / hata payı / düzeltmesi
+    olcumDestek = !!(data && !Array.isArray(data) && ("olcum" in data || Array.isArray(data.olcumSinavlar)));
+    olcumBilgi = olcumDestek ? (data.olcum || null) : null;
+    olcumSinavlar = olcumDestek && Array.isArray(data.olcumSinavlar) ? data.olcumSinavlar : [];
+    // v3.52 (Code.gs v2.40): Neden Yanlış? notları (taslaklar dahil); alan yoksa sunucu eski, bölüm gösterilmez
+    nyDestek = !!(data && !Array.isArray(data) && data.nedenYanlisNotlari && typeof data.nedenYanlisNotlari === "object");
+    nyNotlar = nyDestek ? data.nedenYanlisNotlari : {};
+    nyDuzenlenen = null; nyMesaj = "";
     if(liste === null){ durum.innerHTML = "Sunucudan beklenmeyen bir yanıt geldi. Lütfen daha sonra tekrar dene."; return; }
 
     veriSorunlariKutusu(sorunlar);
@@ -1407,6 +1524,7 @@ async function listeGetir(){
     }
     liste.forEach((ogrenci, idx) => olustur(ogrenci, idx));
     bekleyenGonderimleriAktar(liste);   // v3.48
+    gmKapat(); gonderimModuOzeti();     // v3.49
 
   }catch(err){
     durum.innerHTML = err && err.isTimeout
@@ -1518,7 +1636,7 @@ function panelleriKur(ogrenciSayisi, sinifSayisi, bireyselSayisi){
   let odul = document.createElement("div");
   odul.id = "odulPaneli"; odul.className = "sekmePaneli"; odul.setAttribute("role", "tabpanel"); odul.setAttribute("aria-labelledby", "sekme_odul");
   // v3.33: bölümlerin yerleri (yuvalar) baştan açılır; böylece hangi bölüm önce çizilirse çizilsin sıra sabit kalır
-  karne.innerHTML = grupHtml("Sınav Takibi", "yuvaTakip,yuvaMeydan,yuvaHedef", true)
+  karne.innerHTML = `<div id="yuvaGonderim"></div>` + grupHtml("Sınav Takibi", "yuvaTakip,yuvaMeydan,yuvaHedef", true)
     + `<div id="yuvaTakip"></div><div id="yuvaMeydan"></div><div id="yuvaHedef"></div>`
     + (sinifSayisi ? grupHtml(`Öğrenci Karneleri (${sinifSayisi})`) : "") + `<div id="sinifKarneler"></div>`
     + (bireyselSayisi ? grupHtml(`Bireysel Öğrenciler (${bireyselSayisi})`) + `<div class="bireyselNot">Sınıfla kıyaslanmazlar: karnelerinde sıralama yok, net karşılaştırması kendi önceki sınavlarına göre. Sınav analizine, ödüllere ve sınıf haritasına girmezler.</div>` : "") + `<div id="bireyselKarneler"></div>`;
@@ -1724,6 +1842,7 @@ function analiziCiz(){
     + (S ? bolumHtml("subeKarsilastirmasi", "🏫", "Şube Karşılaştırması", subeKarsilastirmasiOzeti(S), subeKarsilastirmasiHtml(S), false) : "")
     + (A.sorular.length ? grupHtml("Sorular") : "")
     + bolumHtml("soruAnalizi", "🗺️", "Soru Analizi", oz.soru, soruAnaliziHtml(A), false)
+    + (nyDestek && A.sorular.length ? bolumHtml("nedenYanlis", "💡", "Neden Yanlış? Notları", nyOzet(), `<div id="nyKap">${nyIcerikHtml()}</div>`, false) : "")
     + (A.sorular.length ? bolumHtml("sinavKalitesi", "📏", "Sınavın Kalitesi", sinavKalitesiOzeti(K), sinavKalitesiHtml(A, K), false) : "")
     + grupHtml("Öğrenciler")
     + bolumHtml("siralama", "🏆", "Sıralama ve İstatistikler", oz.sira, istatistikHtml(A, secili), false);
@@ -1742,6 +1861,7 @@ function analiziCiz(){
   yarinDersteBagla(icerik);
   icerik.querySelectorAll(".kaliteSoru").forEach(function(b){ b.onclick = function(){ soruyaGit(icerik, b.getAttribute("data-no")); }; });
   soruAnaliziBagla(icerik, A);
+  nyBagla(icerik);
 }
 
 
@@ -1752,9 +1872,24 @@ function analiziCiz(){
 //  · ⚠️ Dikkat gerektirenler · 🚫 Sınava girmeyenler (Code.gs v2.13).
 // Tablo başlığına tıklayınca o sütuna göre sıralanır; "📋 Tabloyu Kopyala" Sheets/Excel'e yapıştırmaya hazır kopyalar.
 let katilmayanlar = [];                 // sunucudan (Code.gs v2.13)
+let olcumDestek = false, olcumBilgi = null, olcumSinavlar = [];   // v3.51 — sunucudan (Code.gs v2.39 ölçüm modeli)
+let nyDestek = false, nyNotlar = {}, nyFiltre = "bekleyen", nyDuzenlenen = null, nyMesaj = "", nyMesgul = false;   // v3.52
 let istGorunum = "net", istSiralama = null;
 
 function istSayi(x){ let n = Number(x); return isNaN(n) ? null : n; }
+/** v3.51 — sayı, Türkçe ondalık ve işaretle: +4,1 · −3,4 */
+function olcumSayi(x, isaret){
+  let v = Math.round(Number(x) * 10) / 10;
+  if(!isFinite(v)) return "–";
+  return (isaret && v > 0 ? "+" : v < 0 ? "−" : "") + String(Math.abs(v)).replace(".", ",");
+}
+/** v3.51 — Gelişim tablosunun Düzeltilmiş Değişim hücresi (Code.gs v2.39 degisim: fark, hata, yon) */
+function duzDegisimHtml(r){
+  if(!r.karsilastirilabilir) return `<span class="istGri">Karşılaştırmaya girmiyor</span>`;
+  if(!r.dz) return `<span class="istGri">– · İlk karşılaştırılabilir</span>`;
+  let y = { artis: ["istArti", "▲ ", "Belirgin Artış"], dusus: ["istEksi", "▼ ", "Belirgin Düşüş"], ayni: ["istGri", "", "Aynı"] }[r.dz.yon] || ["istGri", "", "Aynı"];
+  return `<span class="${y[0]}">${y[1]}${olcumSayi(r.dz.fark, true)}</span> <span class="istGri">±${olcumSayi(r.dz.hata)}</span> <span class="${y[0]}">· ${y[2]}</span>`;
+}
 function istDegisimHtml(d, ondalik){
   if(d === null || d === undefined) return `<span class="istGri">—</span>`;
   let v = ondalik ? Math.round(d * 100) / 100 : d;
@@ -1837,7 +1972,9 @@ function istSatirlari(liste, A){
     let surekli = (o.konularKumulatif || []).filter(function(k){ return k.surekliZayif; }).map(function(k){ return k.konu; });
     let takip = typeof takipDurumu === "function" ? takipDurumu(o) : "bilinmiyor";
     let isaretler = [];
-    if(onceki !== null && net !== null && net - onceki <= -3) isaretler.push({ t: "Net düşüşü " + Math.round((net - onceki) * 100) / 100, r: "kirmizi" });
+    let dz = olcumDestek ? (o.degisim || null) : null;   // v3.51: önceki karşılaştırılabilir sınava göre (düzeltilmiş net)
+    if(olcumDestek){ if(dz && dz.yon === "dusus") isaretler.push({ t: "Belirgin düşüş (" + olcumSayi(dz.fark, true) + " düz. net)", r: "kirmizi" }); }
+    else if(onceki !== null && net !== null && net - onceki <= -3) isaretler.push({ t: "Net düşüşü " + Math.round((net - onceki) * 100) / 100, r: "kirmizi" });
     if(net !== null && A.n >= 5 && sapma > 0 && net < ort - sapma) isaretler.push({ t: "Sınıf ortalamasının belirgin altında", r: "kirmizi" });
     if(surekli.length >= 2) isaretler.push({ t: surekli.length + " içerikte sürekli zayıf", r: "turuncu" });
     if(t && b / t >= 0.3) isaretler.push({ t: "Çok boş (%" + Math.round(b / t * 100) + ")", r: "turuncu" });
@@ -1852,7 +1989,8 @@ function istSatirlari(liste, A){
       o: o, ad: String(o.isim || "").trim(), sube: String(o.sube || "").trim(), d: d, y: y, b: b, t: t, net: net, puan: istSayi(o.puan),
       sira: sira, oSira: oSira, onceki: onceki, degisim: (onceki !== null && net !== null) ? Math.round((net - onceki) * 100) / 100 : null,
       siraDegisim: (sira !== null && oSira !== null) ? oSira - sira : null,
-      rekor: rekor !== null && net !== null && net > rekor, ilkSinav: onceki === null,
+      rekor: olcumDestek ? !!o.olcumRekor : (rekor !== null && net !== null && net > rekor), ilkSinav: onceki === null,
+      karsilastirilabilir: !!o.karsilastirilabilir, dz: dz, duzDegisim: dz ? Number(dz.fark) : null,
       kayip: Math.round(y / 3 * 100) / 100, basari: o.basari || "", surekli: surekli, takip: takip, isaretler: isaretler,
       sp: sp, spFark: sp ? Math.round(sp.fark) : null,
       ht: ht, htDikkat: ht ? ht.dikkat.length : null, htBilgi: ht ? ht.bilgi.length : null, htTur: ht ? ht.tur : "", htUyum: ht && ht.mci !== null ? Math.round(ht.mci * 100) / 100 : null,
@@ -1895,6 +2033,19 @@ function istatistikHtml(A, liste){
       { b: "Puan", k: "puan", sinif: "orta", h: function(r){ return r.puan; } },
       { b: "Başarı", k: "basari", h: function(r){ let c = basariRenkleri(r.basari); return `<span class="istCip" style="background:${c.bg};color:${c.fg}">${htmlKacis(r.basari || "-")}</span>`; } }
     ]), satirlar, { k: "net", azalan: true });
+  } else if(istGorunum === "gelisim" && olcumDestek){
+    // v3.51 (Code.gs v2.39): gelişim kararı düzeltilmiş netle ve belirginlik kuralıyla verilir (veli sayfasıyla aynı)
+    let girmez = olcumBilgi && !olcumBilgi.karsilastirilabilir;
+    aciklama = "Ham Değişim: bir önceki sınavdaki nete göre. <b>Düzeltilmiş Değişim:</b> sınavların zorluğu dengelenerek, öğrencinin bir önceki karşılaştırılabilir sınavına göre (20 soruya göre net). Fark iki sınavın birleşik hata payını (±) aşmıyorsa \"Aynı\" sayılır; veli sayfası da böyle gösterir. 🏅 rekor veli sayfasındaki rekorla aynı kuralla gelir. Ayın Gelişeni seçerken buradan bakabilirsin."
+      + (girmez ? ` <span class="istGri">Bu sınava ${olcumBilgi.katilim} sınıf öğrencisi girdi (eşik ${olcumBilgi.minKatilim || 10}); sınav karşılaştırmalara girmediği için düzeltilmiş değişim ve rekor hesaplanmaz.</span>` : "");
+    icerik = istTablo([adSut].concat(subeSut).concat([
+      { b: "Önceki Net", k: "onceki", sinif: "orta", h: function(r){ return r.ilkSinav ? `<span class="istGri">ilk sınavı</span>` : r.onceki; } },
+      { b: "Bu Net", k: "net", sinif: "orta", h: function(r){ return `<b>${r.net}</b>`; } },
+      { b: "Ham Değişim", k: "degisim", sinif: "orta", h: function(r){ return istDegisimHtml(r.degisim, true); } },
+      { b: "Düzeltilmiş Değişim", k: "duzDegisim", h: function(r){ return duzDegisimHtml(r); } },
+      { b: "Sıra", k: "sira", sinif: "orta", h: function(r){ return (r.oSira ? r.oSira + " → " : "") + (r.sira || "-"); } },
+      { b: "Sıra Değişimi", k: "siraDegisim", sinif: "orta", h: function(r){ return istDegisimHtml(r.siraDegisim, false); } }
+    ]), satirlar, { k: "duzDegisim", azalan: true });
   } else if(istGorunum === "gelisim"){
     aciklama = "Önceki sınava göre net ve sıra değişimi. 🏅 rekor: öğrencinin şimdiye kadarki en yüksek neti. Ayın Gelişeni seçerken buradan bakabilirsin.";
     icerik = istTablo([adSut].concat(subeSut).concat([
@@ -1966,7 +2117,7 @@ function istatistikHtml(A, liste){
     icerik = `<div class="istTabloKap"><table class="istTablo istHarita"><thead><tr>${bas}</tr></thead><tbody>${sat}${alt}</tbody></table></div>`;
   } else if(istGorunum === "dikkat"){
     let dikkat = satirlar.filter(function(r){ return r.isaretler.length; }).sort(function(a, b){ return b.isaretler.length - a.isaretler.length || a.ad.localeCompare(b.ad, "tr"); });
-    aciklama = "Birden fazla işareti olan öğrenci üstte. Ölçütler: 3+ net düşüşü, sınıf ortalamasının bir standart sapma altı (5+ kişide), 2+ içerikte sürekli zayıflık, %30+ boş, yanlış > doğru, veli karneyi açmadı.";
+    aciklama = "Birden fazla işareti olan öğrenci üstte. Ölçütler: " + (olcumDestek ? "belirgin düşüş (düzeltilmiş netle, hata payını aşan)" : "3+ net düşüşü") + ", sınıf ortalamasının bir standart sapma altı (5+ kişide), 2+ içerikte sürekli zayıflık, %30+ boş, yanlış > doğru, veli karneyi açmadı.";
     icerik = !dikkat.length ? `<div class="kbMeta">Bu sınavda dikkat gerektiren bir durum görünmüyor. 🎉</div>`
       : `<div class="istDikkatListe">${dikkat.map(function(r){ return `<div class="istDikkat"><b>${htmlKacis(r.ad)}</b>${sube ? ` <span class="istGri">${htmlKacis(r.sube)}</span>` : ""} <span class="istGri">· ${r.net} net</span>
           <div class="istEtiketler">${r.isaretler.map(function(x){ return `<span class="istEtiket ${x.r}">${htmlKacis(x.t)}</span>`; }).join("")}</div></div>`; }).join("")}</div>`;
@@ -2127,15 +2278,29 @@ function odulAdaylari(liste){
   let N = function(x){ let v = Number(x); return x === null || x === undefined || isNaN(v) ? null : v; };
   let fmt = function(x){ return String(Math.round(x * 100) / 100).replace(".", ","); };
   let olcutler = [];
+  // v3.51 (Code.gs v2.39): rekor ve net artışı, veli sayfasıyla aynı kuralla (düzeltilmiş net + belirginlik)
+  if(olcumDestek){
+    olcutler.push({ id: "rekor", ad: "🏅 Kendi Rekorunu Kıranlar", aday: liste.filter(function(o){ return !!o.olcumRekor && N(o.duzNet) !== null && N(o.oncekiEnYuksekDuzNet) !== null; })
+      .map(function(o){ let d = N(o.duzNet), e = N(o.oncekiEnYuksekDuzNet);
+        return { o: o, detay: `Düz. ${fmt(e)} → ${fmt(d)} net (ham ${fmt(N(o.net))})`, neden: `kendi rekorunu kırdı`, nedenAd: `kendi rekorunu kırması`, puan: d - e }; }) });
+    olcutler.push({ id: "artis", ad: "📈 Netini En Çok Artıranlar", aday: liste.filter(function(o){ return o.degisim && o.degisim.yon === "artis"; })
+      .map(function(o){ let d = N(o.degisim.fark);
+        return { o: o, detay: `+${fmt(d)} düz. net` + (N(o.oncekiNet) !== null ? ` (ham ${fmt(N(o.oncekiNet))} → ${fmt(N(o.net))})` : ""), neden: `bir önceki sınavına göre belirgin bir yükseliş gösterdi`, nedenAd: `bir önceki sınavına göre belirgin bir yükseliş göstermesi`, puan: d }; }) });
+  } else {
   // 🏅 Kişisel rekor
   olcutler.push({ id: "rekor", ad: "🏅 Kendi Rekorunu Kıranlar", aday: liste.filter(function(o){ let n = N(o.net), r = N(o.oncekiEnYuksekNet); return n !== null && r !== null && n > r; })
     .map(function(o){ return { o: o, detay: `${fmt(N(o.oncekiEnYuksekNet))} → ${fmt(N(o.net))} net`, neden: `kendi rekorunu kırarak ${fmt(N(o.net))} nete ulaştı`, nedenAd: `kendi rekorunu kırarak ${fmt(N(o.net))} nete ulaşması`, puan: N(o.net) - N(o.oncekiEnYuksekNet) }; }) });
   // 📈 En çok net artıran
   olcutler.push({ id: "artis", ad: "📈 Netini En Çok Artıranlar", aday: liste.filter(function(o){ let n = N(o.net), p = N(o.oncekiNet); return n !== null && p !== null && n - p >= 1; })
     .map(function(o){ let d = N(o.net) - N(o.oncekiNet); return { o: o, detay: `+${fmt(d)} net (${fmt(N(o.oncekiNet))} → ${fmt(N(o.net))})`, neden: `bir önceki sınava göre netini ${fmt(d)} artırdı`, nedenAd: `bir önceki sınava göre netini ${fmt(d)} artırması`, puan: d }; }) });
+  }
   // 🛡️ Yanlışlarını azaltan
-  olcutler.push({ id: "dikkat", ad: "🛡️ Yanlışlarını En Çok Azaltanlar", aday: liste.filter(function(o){ let a = N(o.oncekiYanlis), b = N(o.yanlis); return a !== null && b !== null && a - b >= 2; })
-    .map(function(o){ let a = N(o.oncekiYanlis), b = N(o.yanlis); return { o: o, detay: `${a} → ${b} yanlış`, neden: `yanlış sayısını ${yuzdeEkSade(a, "den")} ${yuzdeEkSade(b, "e")} indirdi`, nedenAd: `yanlış sayısını ${yuzdeEkSade(a, "den")} ${yuzdeEkSade(b, "e")} indirmesi`, puan: a - b }; }) });
+  // v3.53 (Code.gs v2.41): Dikkatli rozetiyle aynı kural — yanlış en az 2 azalır VE doğru en fazla 1 düşer; soru sayısı
+  // farklıysa önceki sınav yeni sınavın uzunluğuna ölçeklenir (o.dikkatli sunucudan). Alan yoksa (eski Code.gs) eski kural.
+  let dikkatOk = function(o){ let a = N(o.oncekiYanlis), b = N(o.yanlis); if(a === null || b === null) return false;
+    return ("dikkatli" in o) ? !!(o.dikkatli && o.dikkatli.tamam) : a - b >= 2; };
+  olcutler.push({ id: "dikkat", ad: "🛡️ Yanlışlarını En Çok Azaltanlar", aday: liste.filter(dikkatOk)
+    .map(function(o){ let a = N(o.oncekiYanlis), b = N(o.yanlis); return { o: o, detay: `${a} → ${b} yanlış`, neden: `yanlış sayısını ${yuzdeEkSade(a, "den")} ${yuzdeEkSade(b, "e")} indirdi`, nedenAd: `yanlış sayısını ${yuzdeEkSade(a, "den")} ${yuzdeEkSade(b, "e")} indirmesi`, puan: (o.dikkatli && N(o.dikkatli.fark) !== null) ? N(o.dikkatli.fark) : a - b }; }) });
   // 🧩 Bir içerik çerçevesinin bütün soruları
   olcutler.push({ id: "icerik", ad: "🧩 Bir İçeriğin Bütün Sorularını Doğru Yapanlar", aday: liste.map(function(o){
       let tam = (o.konular || []).filter(function(k){ return (k.soruSayisi || 0) >= 2 && k.dogruSayisi === k.soruSayisi; }).sort(function(a, b){ return b.soruSayisi - a.soruSayisi; });
@@ -2190,6 +2355,128 @@ function odulOnerileriHtml(A, liste){
     <div class="istAciklama">Ödül gelişime ve çabaya bağlı olsun, sıralamaya değil. Bu sınav hangi ölçütü ödüllendireceğine sen karar ver; öğrenciler önceden bilmesin ki ödül gerçekten sürpriz olsun. "✨ ilk ödülü olur" işaretli öğrencilere öncelik verebilirsin. Verdiğin her ödül "Oduller" sayfasına kaydedilir.</div>
     ${bolumler}
   </div>`;
+}
+
+// ================= 💡 NEDEN YANLIŞ? NOTLARI (v3.52; Code.gs v2.40) =================
+// Her yanlış şık için öğrenciye "bu şık neden yanlış" diyen tek cümle. Not soruya bağlıdır (bütün şubeler ve sonraki
+// yıllar için bir kez yazılır, bir kez onaylanır). Öğrenciye yalnızca ONAYLI notlar gider; taslaklar Soru_Haritasi'nda
+// bekler. Liste, o sınavda en az bir öğrencinin seçtiği yanlış şıklardan oluşur ve notu kaç öğrencinin göreceğine göre
+// sıralanır (şube seçiminden bağımsız: not bütün sınavın). Kapsam = onaylı notu olan yanlış cevapların oranı.
+const NY_EN_UZUN = 160;
+function nyNot(no, sik){ let x = nyNotlar[String(no)]; return x && x[sik] ? x[sik] : null; }
+/** Sınavdaki bütün yanlış cevaplar (bireyseller dahil; bütün şubeler) → [{no, sik, sayi, konu, altKazanim, tuzak}] */
+function nyKalemleri(){
+  let say = {}, bilgi = {}, toplamYanlis = 0, sinifSay = {};
+  analizListesi.forEach(function(o){
+    (o.sorular || []).forEach(function(q){
+      if(!bilgi[q.no]) bilgi[q.no] = { konu: q.konu || "", altKazanim: q.altKazanim || "", dogruSik: q.dogruSik };
+      if(q.durum !== "Yanlis" || !q.ogrenciSik) return;
+      let k = q.no + "|" + q.ogrenciSik;
+      say[k] = (say[k] || 0) + 1; toplamYanlis++;
+      if(!o.bireysel){ sinifSay[q.no] = sinifSay[q.no] || {}; sinifSay[q.no][q.ogrenciSik] = (sinifSay[q.no][q.ogrenciSik] || 0) + 1; }
+    });
+  });
+  // tuzak: panelin Soru Analizi'ndeki kuralla, sınavın tamamında
+  let tuzakSik = {};
+  try { sinavAnaliziHesapla(analizListesi).sorular.forEach(function(q){ if(q.tuzak) tuzakSik[q.no] = q.tuzak.sik; }); } catch(e){}
+  let kalemler = Object.keys(say).map(function(k){
+    let p = k.split("|"), no = Number(p[0]), b = bilgi[no] || {};
+    return { no: no, sik: p[1], sayi: say[k], konu: b.konu, altKazanim: b.altKazanim, tuzak: tuzakSik[no] === p[1], not: nyNot(no, p[1]) };
+  }).sort(function(a, b){ return b.sayi - a.sayi || a.no - b.no || a.sik.localeCompare(b.sik); });
+  let kapsanan = kalemler.reduce(function(t, x){ return t + (x.not && x.not.onayli ? x.sayi : 0); }, 0);
+  return { kalemler: kalemler, toplamYanlis: toplamYanlis, kapsanan: kapsanan,
+    onayli: kalemler.filter(function(x){ return x.not && x.not.onayli; }).length };
+}
+function nyOzet(){
+  let K = nyKalemleri();
+  if(!K.toplamYanlis) return { metin: "Yanlış cevap yok", tur: "iyi" };
+  let yuzde = Math.round(K.kapsanan / K.toplamYanlis * 100);
+  return { metin: `%${yuzde} hazır · ${K.onayli}/${K.kalemler.length} not onaylı`, tur: yuzde >= 80 ? "iyi" : "uyari" };
+}
+function nyIcerikHtml(){
+  let K = nyKalemleri();
+  if(!K.toplamYanlis) return `<div class="istGri">Bu sınavda yanlış cevap yok; yazılacak not yok.</div>`;
+  let yuzde = Math.round(K.kapsanan / K.toplamYanlis * 100);
+  let bekleyen = K.kalemler.filter(function(x){ return !(x.not && x.not.onayli); });
+  let gorunen = nyFiltre === "hepsi" ? K.kalemler : bekleyen;
+  let onaylanabilir = gorunen.filter(function(x){ return x.not && x.not.metin && !x.not.onayli; });
+  let satir = function(x){
+    let n = x.not, anahtar = x.no + "|" + x.sik, duzen = nyDuzenlenen === anahtar;
+    let ust = `<div class="nyUst"><span class="nyEt">S${x.no} · ${htmlKacis(x.sik)}</span><span class="nyKonu">${htmlKacis(x.konu || "")}${x.altKazanim && x.altKazanim !== x.konu ? " · " + htmlKacis(x.altKazanim) : ""}</span>${x.tuzak ? `<span class="nyTuzak">tuzak</span>` : ""}<span class="nySayi">${x.sayi} öğrenci</span></div>`;
+    if(duzen){
+      let m = n ? n.metin : "";
+      return `<div class="nySatir duzen${x.tuzak ? " tuzak" : ""}" data-ny="${anahtar}">${ust}
+        <textarea class="nyAlan" maxlength="${NY_EN_UZUN}" rows="3" placeholder="Bu şıkka genelde … sanarak ulaşılır. Oysa …  ya da  Bu şık olamaz: …">${htmlKacis(m)}</textarea>
+        <div class="nyDugmeler"><span class="nySayac">${m.length} / ${NY_EN_UZUN}</span>
+          ${n && n.onayli ? `<button type="button" class="nyDugme ince" data-nyislem="onaykaldir">Onayı Kaldır</button>` : ""}
+          <button type="button" class="nyDugme ince" data-nyislem="vazgec">Vazgeç</button>
+          <button type="button" class="nyDugme" data-nyislem="kaydet">Kaydet ve Onayla</button></div></div>`;
+    }
+    let govde = n && n.metin ? `<div class="nyMetin">${htmlKacis(n.metin)}</div>` : `<div class="nyBos">Henüz not yok.</div>`;
+    let durum = n && n.onayli ? `<span class="nyOnayli">Onaylı ✓</span>` : n && n.metin ? `<span class="nyTaslak">Taslak</span>` : "";
+    let dugmeler = n && n.metin
+      ? `<button type="button" class="nyDugme ince" data-nyislem="duzelt">Düzelt</button>` + (n.onayli ? "" : `<button type="button" class="nyDugme" data-nyislem="uygun">Uygun</button>`)
+      : `<button type="button" class="nyDugme ince" data-nyislem="duzelt">+ Not Yaz</button>`;
+    return `<div class="nySatir${x.tuzak ? " tuzak" : ""}" data-ny="${anahtar}">${ust}${govde}<div class="nyDugmeler">${durum}${dugmeler}</div></div>`;
+  };
+  return `<div class="nyKapsam"><b class="${yuzde >= 80 ? "iyi" : ""}">%${yuzde}</b><span>yanlış cevapların kartı hazır</span><span class="nyKapsamSag">${K.onayli} / ${K.kalemler.length} not onaylı</span></div>
+    <div class="nyCubuk"><i style="width:${yuzde}%"></i></div>
+    <div class="istAciklama">Öğrenci bir soruyu yanlış yaptığında, seçtiği şıkkın <b>onaylı</b> notunu "💡 Neden Yanlış?" kartı olarak görür; taslaklar öğrenciye gitmez. Liste, notu kaç öğrencinin göreceğine göre sıralı (bütün şubeler). Not soruya bağlıdır: bir kez onaylanır, aynı soru başka sınavda kullanılırsa yine geçerlidir. Notlar Soru_Haritasi'nın "Neden Yanlış" sütunlarında durur.</div>
+    <div class="nyFiltre"><button type="button" class="istSekme" aria-pressed="${nyFiltre === "bekleyen"}" data-nyfiltre="bekleyen">Onay Bekleyenler (${bekleyen.length})</button><button type="button" class="istSekme" aria-pressed="${nyFiltre === "hepsi"}" data-nyfiltre="hepsi">Tümü (${K.kalemler.length})</button></div>
+    ${nyMesaj ? `<div class="nyMesaj">${htmlKacis(nyMesaj)}</div>` : ""}
+    <div class="nyListe">${gorunen.length ? gorunen.map(satir).join("") : `<div class="nyMesaj" style="color:#15803D;background:#F0FDF4">🎉 Seçilen bütün yanlış şıkların notu onaylı.</div>`}</div>
+    ${onaylanabilir.length ? `<div class="nyAlt"><button type="button" class="nyDugme genis" data-nyislem="hepsiniOnayla">Ekrandaki ${onaylanabilir.length} Taslağı Onayla</button></div>` : ""}`;
+}
+function nyYenile(){
+  let kap = document.getElementById("nyKap");
+  if(kap) kap.innerHTML = nyIcerikHtml();
+  let d = document.querySelector('details.bolum[data-bolum="nedenYanlis"] .bolumOzet');
+  if(d) d.outerHTML = bolumOzetHtml(nyOzet());
+}
+async function nyKaydet(kalemler, basariMesaji){
+  if(nyMesgul) return;
+  nyMesgul = true; nyMesaj = "Kaydediliyor…"; nyYenile();
+  try{
+    let res = await apiIstek({ nedenYanlisKaydet: "1", anahtar: ogretmenAnahtari(), nySinav: sonListeSinavID || "", nyNotlar: JSON.stringify(kalemler) }, 25000);
+    let d = await jsonOku(res);
+    if(d && d.ok){ nyNotlar = d.notlar || nyNotlar; nyDuzenlenen = null; nyMesaj = basariMesaji; }
+    else nyMesaj = (d && (d.mesajTr || (d.hata === "Yetkisiz" ? "Öğretmen anahtarı geçersiz." : ""))) || "Kaydedilemedi, tekrar dene.";
+  }catch(e){ console.warn("[UltraMat] Neden Yanlış notu kaydedilemedi:", e); nyMesaj = "Bağlantı kurulamadı; not kaydedilmedi."; }
+  nyMesgul = false; nyYenile();
+}
+function nyBagla(kok){
+  let kap = kok.querySelector("#nyKap");
+  if(!kap || kap.dataset.bagli) return;
+  kap.dataset.bagli = "1";
+  kap.addEventListener("input", function(e){
+    if(!e.target.classList.contains("nyAlan")) return;
+    let s = e.target.closest(".nySatir").querySelector(".nySayac");
+    if(s) s.textContent = e.target.value.length + " / " + NY_EN_UZUN;
+  });
+  kap.addEventListener("click", function(e){
+    let f = e.target.closest("[data-nyfiltre]");
+    if(f){ nyFiltre = f.getAttribute("data-nyfiltre"); nyMesaj = ""; nyYenile(); return; }
+    let b = e.target.closest("[data-nyislem]");
+    if(!b || nyMesgul) return;
+    let islem = b.getAttribute("data-nyislem"), satir = b.closest(".nySatir");
+    let anahtar = satir ? satir.getAttribute("data-ny") : "", p = anahtar.split("|"), no = Number(p[0]), sik = p[1];
+    if(islem === "duzelt"){ nyDuzenlenen = anahtar; nyMesaj = ""; nyYenile(); let a = kap.querySelector(".nySatir.duzen .nyAlan"); if(a){ a.focus(); a.setSelectionRange(a.value.length, a.value.length); } return; }
+    if(islem === "vazgec"){ nyDuzenlenen = null; nyYenile(); return; }
+    if(islem === "uygun"){ nyKaydet([{ no: no, sik: sik, onay: true }], `S${no} · ${sik} onaylandı.`); return; }
+    if(islem === "onaykaldir"){ nyKaydet([{ no: no, sik: sik, onay: false }], `S${no} · ${sik} notunun onayı kaldırıldı; öğrenciye gitmeyecek.`); return; }
+    if(islem === "kaydet"){
+      let m = satir.querySelector(".nyAlan").value.replace(/\s+/g, " ").trim();
+      nyKaydet([{ no: no, sik: sik, metin: m, onay: !!m }], m ? `S${no} · ${sik} kaydedildi ve onaylandı.` : `S${no} · ${sik} notu silindi.`);
+      return;
+    }
+    if(islem === "hepsiniOnayla"){
+      let K = nyKalemleri(), gorunen = nyFiltre === "hepsi" ? K.kalemler : K.kalemler.filter(function(x){ return !(x.not && x.not.onayli); });
+      let liste = gorunen.filter(function(x){ return x.not && x.not.metin && !x.not.onayli; }).map(function(x){ return { no: x.no, sik: x.sik, onay: true }; });
+      if(!liste.length) return;
+      if(!confirm(liste.length + " taslak onaylanacak ve öğrencilere gidecek. Hepsini okudun mu?")) return;
+      nyKaydet(liste, liste.length + " not onaylandı.");
+    }
+  });
 }
 
 async function odulKaydetSunucu(o, tur, neden){
@@ -2862,7 +3149,15 @@ function yarinDersteAdaylari(A, liste){
         return `${htmlKacis(ad(o))} (%${Math.round(x.beklenen)} → %${Math.round(x.konum)})`; }).join(", ") + (surprizDusen.length > 4 ? ` ve ${surprizDusen.length - 4} kişi daha` : "") + ".",
       dugme: "Sürprizleri Aç", hedef: "ist:surpriz" });
   }
-  // dusus (ham net; sürpriz verisi yoksa)
+  // dusus (sürpriz verisi yoksa). v3.51: ölçüm modeli varsa belirgin düşüş (düzeltilmiş net), yoksa ham 3+ net
+  if(olcumDestek){
+    let bdusen = SPy.size ? [] : liste.filter(function(o){ return o.degisim && o.degisim.yon === "dusus"; })
+      .sort(function(x, y){ return Number(x.degisim.fark) - Number(y.degisim.fark); });
+    if(bdusen.length) aday.push({ tur: "dusus", puan: 50 + Math.min(bdusen.length, 10), ikon: "🤝", baslik: "Birebir Konuş",
+      neden: `Bir önceki karşılaştırılabilir sınavına göre belirgin düşüş yaşayanlar (zorluk dengelenerek): ` + bdusen.slice(0, 4).map(function(o){ return `${htmlKacis(ad(o))} (${olcumSayi(o.degisim.fark, true)} düz. net)`; }).join(", ") + (bdusen.length > 4 ? ` ve ${bdusen.length - 4} kişi daha` : "") + ".",
+      dugme: "Gelişimi Aç", hedef: "ist:gelisim" });
+    return aday.sort(function(a, b){ return b.puan - a.puan; });
+  }
   let dusen = SPy.size ? [] : liste.filter(function(o){ let a = Number(o.oncekiNet), b = Number(o.net); return o.oncekiNet !== null && o.oncekiNet !== undefined && o.oncekiNet !== "" && !isNaN(a) && !isNaN(b) && a - b >= 3; })
     .sort(function(x, y){ return (Number(y.oncekiNet) - Number(y.net)) - (Number(x.oncekiNet) - Number(x.net)); });
   if(dusen.length){
@@ -3036,12 +3331,29 @@ function sinavKalitesiHesapla(A, liste){
   });
   let bant = { "Çok Kolay": 0, "Kolay": 0, "Orta": 0, "Zor": 0, "Çok Zor": 0 };
   sorular.forEach(function(q){ let y = q.yuzde; bant[y >= 90 ? "Çok Kolay" : y >= 70 ? "Kolay" : y >= 30 ? "Orta" : y >= 10 ? "Zor" : "Çok Zor"]++; });
-  let duzey = kat === null ? null : kat >= 0.80 ? { ad: "İyi", renk: "#15803D", bg: "#DCFCE7" } : kat >= 0.70 ? { ad: "Kabul Edilebilir", renk: "#1D4ED8", bg: "#DBEAFE" }
-    : kat >= 0.60 ? { ad: "Sınırda", renk: "#92400E", bg: "#FEF3C7" } : { ad: "Zayıf", renk: "#B91C1C", bg: "#FEE2E2" };
+  // v3.51: etiketler Code.gs olcumKr20Etiketi ile aynı (Güçlü / Yeterli / Sınırlı / Zayıf)
+  let duzey = kat === null ? null : kr20Duzey(kat);
   return { yeterli: true, n: n, k: k, kr20: kat, sd: sd, sem: kat !== null ? sd * Math.sqrt(Math.max(0, 1 - kat)) : null, ortZorluk: ort(sorular.map(function(q){ return q.yuzde; })),
     maddeler: maddeler, bant: bant, duzey: duzey };
 }
+/** v3.51 — KR-20 etiketi ve renkleri; eşikler Code.gs olcumKr20Etiketi ile aynı */
+const KR20_RENK = { "Güçlü": { renk: "#15803D", bg: "#DCFCE7", cubuk: "#86EFAC" }, "Yeterli": { renk: "#1D4ED8", bg: "#DBEAFE", cubuk: "#93C5FD" },
+  "Sınırlı": { renk: "#92400E", bg: "#FEF3C7", cubuk: "#FCD34D" }, "Zayıf": { renk: "#B91C1C", bg: "#FEE2E2", cubuk: "#FCA5A5" } };
+function kr20Duzey(kat){
+  let ad = kat >= 0.80 ? "Güçlü" : kat >= 0.70 ? "Yeterli" : kat >= 0.60 ? "Sınırlı" : "Zayıf";
+  return { ad: ad, renk: KR20_RENK[ad].renk, bg: KR20_RENK[ad].bg };
+}
+/** v3.51 — sunucunun ölçümü bölüm başlığında kullanılacak mı? (Tüm Şubeler seçiliyken ve Code.gs v2.39 yanıt verdiyse) */
+function olcumBaslikta(){ return olcumDestek && !!olcumBilgi && analizSube === "hepsi"; }
 function sinavKalitesiOzeti(K){
+  if(olcumBaslikta()){
+    let b = olcumBilgi;
+    if(!b.karsilastirilabilir) return { metin: `Az Katılım (${b.katilim}) · Karşılaştırmaya Girmiyor`, tur: "uyari" };
+    if(b.kr20 === null || b.kr20 === undefined) return { metin: "KR-20 Hesaplanamadı", tur: "uyari" };
+    let d = K.yeterli && K.maddeler ? K.maddeler.filter(function(m){ return m.dusuruyor; }).length : 0;
+    return { metin: `KR-20 ${sayiTr(Number(b.kr20).toFixed(2))} · ${b.kr20Etiket}${b.zor ? " · Zor Sınav" : ""}${d ? ` · ${d} soru kontrol` : ""}`,
+      tur: b.kr20 >= 0.70 && !b.zor && !d ? "iyi" : "uyari" };
+  }
   if(!K.yeterli) return `Yeterli veri yok (${K.n} öğrenci)`;
   if(K.kr20 === null) return "Hesaplanamadı";
   let d = K.maddeler.filter(function(m){ return m.dusuruyor; }).length;
@@ -3049,6 +3361,73 @@ function sinavKalitesiOzeti(K){
 }
 function sinavKalitesiHtml(A, K){
   if(!A.sorular.length) return "";
+  return olcumKartHtml() + sinavKalitesiYerelHtml(A, K);
+}
+
+// ================= 📐 ÖLÇÜM MODELİ (v3.51; Code.gs v2.39) =================
+// Sunucu, sınıf düzeyinin tamamı için (bireyseller hariç) her sınavın KR-20'sini, hata payını (20 soruya göre net) ve
+// zorluk düzeltmesini hesaplar; veli sayfasındaki gelişim çipi, rekor, eğilim, grafik ve Hedefim bunlarla karar verir.
+// Panel bu sayıları yeniden hesaplamaz, olduğu gibi gösterir (tek kaynak). 10 kişinin altındaki sınavın KR-20'si gösterilmez.
+function olcumKartHtml(){
+  if(!olcumDestek || !olcumBilgi) return "";
+  let b = olcumBilgi, esik = b.minKatilim || 10;
+  let duzey = String((analizListesi[0] && analizListesi[0].sinif) || "").trim();
+  let f2 = function(x){ return x === null || x === undefined ? "–" : sayiTr(Number(x).toFixed(2)); };
+  let ust;
+  if(!b.karsilastirilabilir){
+    ust = `<div class="anNot" style="margin-top:0">Bu sınava ${b.katilim} sınıf öğrencisi girdi (eşik ${esik}). Sınav, veli sayfasındaki gelişim karşılaştırmalarına (çip, rekor, eğilim, grafik, Hedefim) girmez; panelde de düzeltilmiş değişim ve rekor hesaplanmaz. Bu kadar az kişide KR-20 çok oynak olduğu için gösterilmiyor.</div>`;
+  } else {
+    let r = b.kr20 === null || b.kr20 === undefined ? null : KR20_RENK[b.kr20Etiket] || null;
+    let kutu = function(etiket, deger, alt, renk){ return `<div class="olKutu"><div class="olKutuEt">${etiket}</div><div class="olKutuDeger"${renk ? ` style="color:${renk}"` : ""}>${deger}</div>${alt}</div>`; };
+    ust = `<div class="olKutular">
+        ${kutu("Güvenirlik (KR-20)", f2(b.kr20), r ? `<span class="istCip" style="background:${r.bg};color:${r.renk}">${htmlKacis(b.kr20Etiket)}</span>` : `<div class="olKutuAlt">Hesaplanamadı</div>`, r ? r.renk : "")}
+        ${kutu("Hata Payı", `±${olcumSayi(b.hata20)} <small>net</small>`, `<div class="olKutuAlt">20 soruya göre</div>`)}
+        ${kutu("Zorluk Düzeltmesi", b.duzeltme === null || b.duzeltme === undefined ? "–" : `${olcumSayi(b.duzeltme, true)} <small>net</small>`, `<div class="olKutuAlt">ortalama öğrenciye</div>`, b.duzeltme >= 1 ? "#C2410C" : "")}
+        ${kutu("Karşılaştırma", "Giriyor", `<div class="olKutuAlt">${b.katilim} öğrenci, eşik ${esik}</div>`, "#15803D")}
+      </div>`
+      + (b.zor ? `<div class="anNot">Zor sınav: velilere "Bu sınav sınıfın geneli için zordu" notu gidiyor. Başarı Durumu ham puandan hesaplanmaya devam ediyor.</div>` : "")
+      + `<div class="kbMeta">Hata payı: bir öğrencinin iki sınav arasındaki farkı iki sınavın birleşik hata payını aşmıyorsa veli sayfasında "aynı" görünür. Düzeltme: bu sınavda ortalama bir öğrencinin netine eklenen miktar (artı = sınav zordu).</div>`;
+  }
+  return `<div class="anKart olKart">
+    <div class="kaliteAltBaslik" style="margin-top:0">Bu Sınav Karşılaştırmalarda <small>${duzey ? duzey + ". sınıfın tamamı" : "sınıf düzeyinin tamamı"}, ${b.katilim} öğrenci (bireyseller hariç)</small></div>
+    ${ust}
+    ${olcumSinavlarHtml(duzey)}
+  </div>`;
+}
+/** v3.51 — sınıf düzeyinin bütün sınavları: KR-20 çubukları (0,70 çizgisiyle) ve tablo */
+function olcumSinavlarHtml(duzey){
+  if(!olcumSinavlar.length) return "";
+  let f2 = function(x){ return x === null || x === undefined ? "–" : sayiTr(Number(x).toFixed(2)); };
+  let secili = function(x){ return String(x.sinavID) === String(sonListeSinavID); };
+  let kisa = function(x){ let a = String(x.sinav || x.sinavID || ""), p = a.split("-"); return p.length > 1 ? p[p.length - 1] : a; };
+  let cubuklar = olcumSinavlar.map(function(x){
+    let var_ = x.karsilastirilabilir && x.kr20 !== null && x.kr20 !== undefined;
+    let h = var_ ? Math.max(3, Math.min(1, Math.max(0, Number(x.kr20))) * 90) : 4;
+    let renk = var_ ? (KR20_RENK[x.kr20Etiket] || KR20_RENK["Zayıf"]).cubuk : "#E2E8F0";
+    return `<div class="olCubuk${secili(x) ? " secili" : ""}" title="${htmlKacis(x.sinav || x.sinavID)}${x.tarihMetni ? " · " + htmlKacis(x.tarihMetni) : ""}${var_ ? " · KR-20 " + f2(x.kr20) : " · az katılım"}">
+      <span>${var_ ? f2(x.kr20) : "–"}</span><i style="height:${h}px;background:${renk}"></i><b>${htmlKacis(kisa(x))}</b></div>`;
+  }).join("");
+  let olcekSay = olcumSinavlar.filter(function(x){ return x.karsilastirilabilir; }).length;
+  let satir = function(x){
+    let k = x.karsilastirilabilir, r = k && x.kr20 !== null && x.kr20 !== undefined ? KR20_RENK[x.kr20Etiket] : null;
+    let durum = !k ? `<span class="istGri">Az Katılım</span>` : x.zor ? `<b style="color:#C2410C">Zor</b>` : `<span style="color:#15803D;font-weight:800">Giriyor</span>`;
+    return `<tr class="${secili(x) ? "olSecili" : ""}${k ? "" : " olGri"}"><td>${secili(x) ? "<b>" : ""}${htmlKacis(x.sinav || x.sinavID)}${secili(x) ? "</b>" : ""}${x.tarihMetni ? ` <span class="istGri">${htmlKacis(x.tarihMetni)}</span>` : ""}</td>
+      <td class="orta">${x.katilim}</td><td class="orta">${olcumSayi(x.ort20)}</td>
+      <td class="orta">${r ? `<span class="istCip" style="background:${r.bg};color:${r.renk}">${f2(x.kr20)} · ${htmlKacis(x.kr20Etiket)}</span>` : "–"}</td>
+      <td class="orta">${k ? "±" + olcumSayi(x.hata20) : "–"}</td>
+      <td class="orta"${k && x.duzeltme >= 1 ? ` style="color:#C2410C;font-weight:800"` : ""}>${k && x.duzeltme !== null && x.duzeltme !== undefined ? olcumSayi(x.duzeltme, true) : "–"}</td>
+      <td class="orta">${durum}</td></tr>`;
+  };
+  return `<div class="kaliteAltBaslik">Sınavlar Arası Güvenirlik <small>${duzey ? duzey + ". sınıf, " : ""}${olcumSinavlar.length} sınav</small></div>
+    <div class="olGrafik"><div class="olCizgi"><span>0,70</span></div>${cubuklar}</div>
+    <div class="istTabloKap" style="margin-top:10px"><table class="istTablo"><thead><tr><th>Sınav</th><th class="orta">Katılım</th><th class="orta">Ort. Net*</th><th class="orta">KR-20</th><th class="orta">Hata Payı</th><th class="orta">Düzeltme</th><th class="orta">Durum</th></tr></thead>
+      <tbody>${olcumSinavlar.map(satir).join("")}</tbody></table></div>
+    <div class="kbMeta">*20 soruya göre. Ölçek, ${olcekSay} karşılaştırılabilir sınavın ortalamasıdır; yeni sınav eklendikçe düzeltmeler biraz kayabilir, ama öğrencinin kendi sınavları arasındaki sıra ve rekor kararları değişmez. 10 kişinin altındaki sınavlar hiçbir karşılaştırmaya girmez.</div>`;
+}
+
+function sinavKalitesiYerelHtml(A, K){
+  let sunucu = olcumBaslikta() && olcumBilgi.karsilastirilabilir && olcumBilgi.kr20 !== null && olcumBilgi.kr20 !== undefined;
+  let subeAd = analizSube === "hepsi" ? "" : ((String((analizListesi[0] && analizListesi[0].sinif) || "").trim() ? String(analizListesi[0].sinif).trim() + "-" : "") + analizSube);
   if(!K.yeterli) return `<div class="anKart"><div class="anBaslik"><h3>Sınavın Kalitesi</h3></div>
     <div class="kbMeta">Güvenirlik hesabı için sınava en az ${KALITE_MIN_OGRENCI} öğrencinin girmiş olması gerekir (şu an ${K.n}). Daha az öğrenciyle katsayı çok oynak çıkar ve yanıltır.</div></div>`;
   if(K.kr20 === null) return `<div class="anKart"><div class="anBaslik"><h3>Sınavın Kalitesi</h3></div><div class="kbMeta">Bütün öğrenciler aynı sayıda soruyu doğru yaptığı için katsayı hesaplanamadı.</div></div>`;
@@ -3069,18 +3448,24 @@ function sinavKalitesiHtml(A, K){
       <td class="orta" style="color:${zayifR(m) ? "#B91C1C" : "inherit"};font-weight:800">${f2(m.r)}</td>
       <td class="orta">${f2(m.cikarilirsa)}${m.dusuruyor ? ` <span class="istArti">▲</span>` : ""}</td><td class="kaliteNeden">${neden}</td></tr>`;
   };
-  let az = K.n < 30 ? `<div class="anNot">${K.n} öğrenciyle katsayı yaklaşık bir değerdir; birkaç sınavın değerlerine birlikte bakmak daha sağlıklı.</div>` : "";
+  let az = K.n < 30 && !sunucu ? `<div class="anNot">${K.n} öğrenciyle katsayı yaklaşık bir değerdir; birkaç sınavın değerlerine birlikte bakmak daha sağlıklı.</div>` : "";
+  // v3.51: Tüm Şubeler seçiliyken KR-20 ve hata payı üstteki sunucu kartında; burada yalnızca soru düzeyi analiz.
+  // Şube seçiliyken başlık bu şubenin KR-20'sidir, altında sınavın tamamının (sunucu) değeri yazar.
+  let tamami = olcumDestek && olcumBilgi && olcumBilgi.karsilastirilabilir && olcumBilgi.kr20 !== null && olcumBilgi.kr20 !== undefined && subeAd
+    ? `<div class="kbMeta"><b>Sınavın tamamında ${sayiTr(Number(olcumBilgi.kr20).toFixed(2))} (${htmlKacis(olcumBilgi.kr20Etiket)}).</b> Veli sayfasındaki karşılaştırmalar sınavın tamamının değerini kullanır.</div>` : "";
   return `<div class="anKart">
-    <div class="anBaslik"><h3>Sınavın Kalitesi</h3><small>${K.n} öğrenci · ${K.k} soru</small></div>
+    ${sunucu ? `<div class="kaliteAltBaslik" style="margin-top:4px">Soruların Katkısı <small>${K.n} öğrenci · ${K.k} soru</small></div>`
+      : `<div class="anBaslik"><h3>Sınavın Kalitesi</h3><small>${subeAd ? htmlKacis(subeAd) + " şubesi · " : ""}${K.n} öğrenci · ${K.k} soru</small></div>
     <div class="kaliteUst">
-      <div class="kaliteKat"><div class="kaliteEtiket">Güvenirlik (KR-20)</div><div class="kaliteDeger" style="color:${K.duzey.renk}">${f2(K.kr20)}</div>
+      <div class="kaliteKat"><div class="kaliteEtiket">${subeAd ? htmlKacis(subeAd) + " Şubesinde KR-20" : "Güvenirlik (KR-20)"}</div><div class="kaliteDeger" style="color:${K.duzey.renk}">${f2(K.kr20)}</div>
         <span class="istCip" style="background:${K.duzey.bg};color:${K.duzey.renk}">${K.duzey.ad}</span></div>
       <div class="kaliteAciklama">
         <div class="kaliteOlcek"><i style="left:${olcek}%"></i><span style="left:60%">0,60</span><span style="left:70%">0,70</span><span style="left:80%">0,80</span></div>
         <div class="kbMeta">Soruların aynı beceriyi ne kadar tutarlı ölçtüğü. Sınıf içi sınavlarda 0,70 ve üstü kabul edilebilir, 0,80 ve üstü iyidir.</div>
         <div class="kbMeta"><b>Ölçme hatası ±${f2(K.sem)} doğru.</b> İki öğrencinin doğru sayısı arasındaki bu kadarlık fark şans payı içinde kalır; sıralamada yan yana olanları birbirinden kesin ayırmaz.</div>
+        ${tamami}
       </div>
-    </div>
+    </div>`}
     <div class="kaliteAltBaslik">Zorluk Dağılımı <small>ortalama doğru oranı %${Math.round(K.ortZorluk)}</small></div>
     <div class="kaliteBant">${bantSerit}</div>
     <div class="kbMeta" style="margin-top:4px">Ayırt edici bir sınavda soruların çoğu orta zorlukta (%30–69) olur. Çok kolay ve çok zor sorular güvenirliğe az katkı verir; ama konunun temelini yoklamak için birkaç kolay soru bilinçli bir tercih olabilir.</div>
@@ -4095,26 +4480,138 @@ function gonderildiUIGuncelle(idx, waBtn){
   waBtn.classList.add("btnWaGonderildi");
 }
 
+// ================= 📨 GÖNDERİM MODU (v3.49) =================
+// Velilere tek tek gönderim için sıralı akış: ekranda yalnızca SIRADAKİ öğrenci durur; adımlar (1. ilk mesaj, 2. karne,
+// 3. son mesaj, föy zamanıysa 4. hata defteri) sırayla işaretlenir, "Sıradaki" bir sonraki gönderilmemiş veliye geçer.
+// Uzun listede kaydırma, adım atlama ve yanlış veliye yapıştırma riskini azaltır. Düğmeler öğrenci satırındaki düğmelerin
+// aynısını çalıştırır (aynı mesajlar, aynı WhatsApp davranışı). 1. adım sunucudaki gönderim kaydından, 2–4. adımlar bu
+// tarayıcıdaki işaretlerden okunur (yalnızca senin yerin; veliye giden hiçbir şeyi etkilemez).
+let gmDurum = null;   // { sira:[idx], konum, gozlemci }
+function gmTelefonVar(o){ return !!(o.veliTelefon && !telefonCokKisaMi(o.veliTelefon)); }
+function gmAdimAnahtari(o){ return "fhUltraMat_gonderimAdim::" + o.sinavID + "::" + o.isim + "::" + o.veliTelefon; }
+function gmAdimlar(o){ try{ return JSON.parse(localStorage.getItem(gmAdimAnahtari(o)) || "{}") || {}; }catch(e){ return {}; } }
+function gmAdimIsaretle(o, adim){ let a = gmAdimlar(o); a[adim] = new Date().toISOString(); try{ localStorage.setItem(gmAdimAnahtari(o), JSON.stringify(a)); }catch(e){} }
+function gmAdimTamam(o, adim){ return adim === 1 ? ilkMesajGonderildiMi(o) : !!gmAdimlar(o)[adim]; }
+function gmFoyZamani(){ return !!(hdBlok && hdBlok.sira >= hdBlok.boyut); }
+function gmTamam(o){ return gmAdimTamam(o, 1) && gmAdimTamam(o, 2) && gmAdimTamam(o, 3); }
+function gmSira(){ let s = []; sonListe.forEach(function(o, idx){ if(gmTelefonVar(o)) s.push(idx); }); return s; }
+
+/** Karneler sekmesinin en üstündeki gönderim çubuğu. */
+function gonderimModuOzeti(){
+  let yuva = document.getElementById("yuvaGonderim");
+  if(!yuva || !sonListe.length) return;
+  let sira = gmSira(), biten = sira.filter(function(i){ return gmTamam(sonListe[i]); }).length;
+  let telefonsuz = sonListe.length - sira.length, kalan = sira.length - biten;
+  let yuzde = sira.length ? Math.round(biten / sira.length * 100) : 0;
+  let dugme = !sira.length ? "" : kalan === 0
+    ? `<button type="button" class="gmBaslat ikincil" id="gmBaslat">Listeyi Gözden Geçir</button>`
+    : `<button type="button" class="gmBaslat" id="gmBaslat">${biten ? "Kaldığın Yerden Devam Et" : "Gönderime Başla"}</button>`;
+  yuva.innerHTML = `<div class="gmCubuk${kalan === 0 && sira.length ? " bitti" : ""}">
+    <div class="gmCubukSol"><div class="gmCubukBaslik">📨 Gönderim Modu</div>
+      <div class="gmCubukMetin">${!sira.length ? "Veli telefonu kayıtlı öğrenci yok." : kalan === 0 ? `✅ ${sira.length} velinin hepsine gönderildi.` : `<b>${biten}/${sira.length}</b> veliye gönderildi · <b>${kalan}</b> veli bekliyor`}${telefonsuz ? ` · ${telefonsuz} öğrencinin telefonu eksik` : ""}</div>
+      ${sira.length ? `<div class="gmIlerleme"><i style="width:${yuzde}%"></i></div>` : ""}</div>
+    ${dugme}</div>`;
+  let b = document.getElementById("gmBaslat");
+  if(b) b.onclick = function(){ gmAc(); };
+}
+
+function gmAc(){
+  let sira = gmSira();
+  if(!sira.length) return;
+  let ilk = sira.findIndex(function(i){ return !gmTamam(sonListe[i]); });
+  gmDurum = { sira: sira, konum: ilk === -1 ? 0 : ilk, gozlemci: null };
+  let p = document.getElementById("gmPanel");
+  if(!p){ p = document.createElement("div"); p.id = "gmPanel"; p.className = "gmPanel"; p.setAttribute("role", "dialog"); p.setAttribute("aria-label", "Gönderim Modu"); document.body.appendChild(p); }
+  gmCiz();
+}
+function gmKapat(){
+  if(gmDurum && gmDurum.gozlemci) gmDurum.gozlemci.disconnect();
+  gmDurum = null;
+  let p = document.getElementById("gmPanel"); if(p) p.remove();
+}
+function gmCiz(){
+  let p = document.getElementById("gmPanel");
+  if(!p || !gmDurum) return;
+  if(gmDurum.gozlemci){ gmDurum.gozlemci.disconnect(); gmDurum.gozlemci = null; }
+  let sira = gmDurum.sira, biten = sira.filter(function(i){ return gmTamam(sonListe[i]); }).length;
+  let ust = `<div class="gmUst"><b>📨 Gönderim Modu</b><span>${biten}/${sira.length} gönderildi</span><button type="button" class="gmKapat" id="gmKapat" aria-label="Kapat">✕</button></div>
+    <div class="gmIlerleme"><i style="width:${sira.length ? Math.round(biten / sira.length * 100) : 0}%"></i></div>`;
+  if(gmDurum.konum >= sira.length){
+    p.innerHTML = ust + `<div class="gmBitis">🎉 Liste bitti.${biten < sira.length ? `<br><small>${sira.length - biten} velide eksik adım var; "Baştan" ile dönüp tamamlayabilirsin.</small>` : `<br><small>Bütün velilere gönderildi.</small>`}</div>
+      <div class="gmAlt"><button type="button" class="gmGez" id="gmBastan">↺ Baştan</button><button type="button" class="gmSonraki" id="gmBitir">Kapat</button></div>`;
+    document.getElementById("gmKapat").onclick = gmKapat;
+    document.getElementById("gmBitir").onclick = gmKapat;
+    document.getElementById("gmBastan").onclick = function(){ gmDurum.konum = 0; gmCiz(); };
+    return;
+  }
+  let idx = sira[gmDurum.konum], o = sonListe[idx];
+  let adimlar = [
+    { no: 1, ad: "İlk Mesajı Gönder" },
+    { no: 2, ad: whatsappHedefi() === "masaustu" ? "Karneyi Kopyala + Sohbeti Aç" : "Karneyi Kopyala" },
+    { no: 3, ad: whatsappHedefi() === "masaustu" ? "Son Mesajı Gönder" : "Son Mesajı Kopyala" }
+  ];
+  if(gmFoyZamani()) adimlar.push({ no: 4, ad: "Hata Defterini Gönder (" + hdFoyAdi() + ")", istege: true });
+  let siradakiAdim = adimlar.find(function(a){ return !a.istege && !gmAdimTamam(o, a.no); });
+  let veli = [o.veliHitap ? String(o.veliHitap) : "", String(o.veliTelefon || "")].filter(Boolean).join(" · ");
+  p.innerHTML = ust + `
+    <div class="gmOgr"><div class="gmSayac">${gmDurum.konum + 1}. veli / ${sira.length}</div>
+      <div class="gmAd">${htmlKacis(String(o.isim || "").trim())}${gmTamam(o) ? ` <span class="gmTamamRozet">✓ Gönderildi</span>` : ""}</div>
+      <div class="gmBilgi">${htmlKacis(sinifEtiketi(o))}${veli ? " · Veli: " + htmlKacis(veli) : ""}</div></div>
+    <div class="gmAdimlar">${adimlar.map(function(a){
+      let tamam = gmAdimTamam(o, a.no), sonraki = siradakiAdim && siradakiAdim.no === a.no;
+      return `<button type="button" class="gmAdim${tamam ? " tamam" : ""}${sonraki ? " sonraki" : ""}${a.istege ? " istege" : ""}" data-adim="${a.no}">
+        <span class="gmIsaret">${tamam ? "✓" : a.no}</span><span>${htmlKacis(a.ad)}</span>${tamam ? `<small>tekrar</small>` : ""}</button>`;
+    }).join("")}</div>
+    <div class="gmBildirim" id="gmBildirim" aria-live="polite"></div>
+    <div class="gmAlt"><button type="button" class="gmGez" id="gmOnceki"${gmDurum.konum === 0 ? " disabled" : ""}>← Önceki</button>
+      <button type="button" class="gmSonraki${gmTamam(o) ? " hazir" : ""}" id="gmSonraki">${gmTamam(o) ? "Sıradaki Veli →" : "Atla →"}</button></div>`;
+  document.getElementById("gmKapat").onclick = gmKapat;
+  document.getElementById("gmOnceki").onclick = function(){ if(gmDurum.konum > 0){ gmDurum.konum--; gmCiz(); } };
+  document.getElementById("gmSonraki").onclick = function(){ gmIlerle(); };
+  p.querySelectorAll(".gmAdim").forEach(function(b){ b.onclick = function(){ gmAdimCalistir(o, idx, Number(b.getAttribute("data-adim")), b); }; });
+  // Satırdaki bildirim (ör. "Karne panoda — Ctrl+V") panelde de görünsün
+  let kaynak = document.getElementById("durum_" + idx), hedef = document.getElementById("gmBildirim");
+  let aktar = function(){ if(!hedef) return; hedef.className = "gmBildirim " + (kaynak ? kaynak.className.replace("satirDurum", "").trim() : ""); hedef.textContent = kaynak ? kaynak.textContent : ""; };
+  if(kaynak && window.MutationObserver){ gmDurum.gozlemci = new MutationObserver(aktar); gmDurum.gozlemci.observe(kaynak, { childList: true, characterData: true, subtree: true, attributes: true }); }
+  aktar();
+}
+/** Bir sonraki gönderimi bitmemiş veliye geçer (yoksa listenin sonuna). */
+function gmIlerle(){
+  let s = gmDurum.sira, k = gmDurum.konum + 1;
+  while(k < s.length && gmTamam(sonListe[s[k]])) k++;
+  gmDurum.konum = k;
+  gmCiz();
+}
+async function gmAdimCalistir(o, idx, adim, dugme){
+  let kimlik = { 1: "wa_", 2: "kopya_", 3: "waDetay_", 4: "hdGonder_" }[adim];
+  let satirDugmesi = document.getElementById(kimlik + idx);
+  if(!satirDugmesi || satirDugmesi.disabled) return;
+  dugme.disabled = true;
+  try{
+    if(adim === 2) await karneyiKopyala(o, idx);
+    else if(adim === 4) await hataDefteriniVeliyeGonder(o, idx);
+    else { satirDugmesi.click(); await new Promise(function(r){ setTimeout(r, 350); }); }
+    let d = document.getElementById("durum_" + idx);
+    let basarili = !(d && d.classList.contains("hata"));
+    if(adim === 4) basarili = basarili && !!(d && d.textContent.indexOf(".pdf") !== -1);
+    if(basarili && adim !== 1) gmAdimIsaretle(o, adim);
+  }finally{
+    gonderimModuOzeti();
+    if(gmDurum) gmCiz();
+  }
+}
+
 // ================= VELİ TAKİBİ (v3.1) =================
-// Code.gs (v2.7) öğretmen listesindeki her öğrenciye "goruntuleme" ekler: {goruldu, sayi, ilk, son, toplamSure (sn),
-// enYuksekOkuma (%), enDerinBolum}. Durum: açılmadı / göz attı / inceledi. "İnceledi" = toplam en az 2 dk YA DA sayfanın
-// en az %70'i okunmuş. Eski sunucu bu alanı göndermezse takip bölümü hiç çizilmez (karne akışı etkilenmez).
-const TAKIP_INCELEDI_SANIYE = 120, TAKIP_INCELEDI_ORAN = 70;
+// v3.50 (Code.gs v2.37) — Yalnızca "görüldü": öğretmen listesindeki her öğrenciye goruntuleme: {goruldu, sayi, ilk, son}
+// gelir (veli giriş yapıp sonucu açtı mı, kaç kez, en son ne zaman). Sayfada geçen süre ve nereye kadar okunduğu
+// artık ölçülmüyor. Eski sunucu bu alanı göndermezse takip bölümü hiç çizilmez (karne akışı etkilenmez).
 let takipSuzgeci = "hepsi";
 let sonListe = [], sonListeSinavID = "", takipYenileniyor = false;   // v3.48
 
 function takipDurumu(o){
   let g = o && o.goruntuleme;
   if(!g) return "bilinmiyor";
-  if(!g.goruldu) return "acilmadi";
-  return ((g.toplamSure || 0) >= TAKIP_INCELEDI_SANIYE || (g.enYuksekOkuma || 0) >= TAKIP_INCELEDI_ORAN) ? "inceledi" : "gozatti";
-}
-function takipSureMetni(sn){
-  sn = Math.round(sn || 0);
-  if(sn < 60) return sn + " sn";
-  if(sn < 600){ let d = Math.floor(sn / 60), k = sn % 60; return d + " dk" + (k ? (" " + k + " sn") : ""); }   // 90 sn → "1 dk 30 sn" (yuvarlama ölçütü yanıltmasın)
-  let dk = Math.round(sn / 60);
-  return dk < 60 ? (dk + " dk") : (Math.floor(dk / 60) + " sa " + (dk % 60) + " dk");
+  return g.goruldu ? "goruldu" : "acilmadi";
 }
 function takipTarihMetni(iso){
   if(!iso) return "";
@@ -4127,55 +4624,29 @@ function takipSatiriHtml(o, idx){
   let durum = takipDurumu(o), g = o.goruntuleme;
   if(durum === "bilinmiyor") return "";
   if(durum === "acilmadi") return `<div class="takipSatir acilmadi" id="takip_${idx}"><span>⏳ Henüz açılmadı</span></div>`;   // v3.41: hatırlatma kaldırıldı
-  let ikon = durum === "inceledi" ? "📖 İnceledi" : "👀 Göz attı";
-  let detay = [takipTarihMetni(g.son), takipSureMetni(g.toplamSure), "%" + Math.round(g.enYuksekOkuma || 0) + " okundu", g.sayi > 1 ? (g.sayi + " kez açıldı") : ""].filter(Boolean).join(" · ");
-  return `<div class="takipSatir ${durum}" id="takip_${idx}"><span>${ikon}</span><span class="takipDetay">${htmlKacis(detay)}</span>
-    ${g.enDerinBolum ? `<span class="takipBolum">En son okunan bölüm: ${htmlKacis(g.enDerinBolum)}</span>` : ""}${planTakipHtml(o)}</div>`;
-}
-
-// v3.x (Code.gs v2.23) — Önerilen Çalışma Planı takibi: öğrencinin plan sözleşmesi (başlangıç günü + an) ve
-// sayfada işaretlediği adımlar. Eski sunucu planTakip göndermezse satır çizilmez.
-function planTakipTarihi(t){ let m = String(t || "").match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? (m[3] + "." + m[2]) : ""; }
-function planTakipHtml(o){
-  let p = o && o.planTakip;
-  if(!p || !p.toplam) return "";
-  let soz = p.sozlesme ? `sözleşme ${planTakipTarihi(p.baslangic)} (${htmlKacis(p.an || "")}), tekrar ${planTakipTarihi(p.tekrar)}` : "sözleşme yok";
-  return `<span class="takipBolum takipPlan">🎯 Plan: ${soz} · ${p.tamam}/${p.toplam} adım işaretlendi</span>`;
-}
-
-
-function planOzetiHtml(liste){
-  let planli = liste.filter(function(o){ return o.planTakip && o.planTakip.toplam; });
-  if(!planli.length) return "";
-  let soz = planli.filter(function(o){ return o.planTakip.sozlesme; }).length;
-  let adimli = planli.filter(function(o){ return o.planTakip.tamam > 0; }).length;
-  return `<div class="takipAlt takipPlanOzet">🎯 Çalışma planı: <b>${soz}/${planli.length}</b> öğrenci sözleşme kurdu · <b>${adimli}</b> öğrenci en az bir adımı işaretledi.</div>`;
+  let detay = [takipTarihMetni(g.son), g.sayi > 1 ? (g.sayi + " kez açıldı") : ""].filter(Boolean).join(" · ");
+  return `<div class="takipSatir ${durum}" id="takip_${idx}"><span>✅ Görüldü</span><span class="takipDetay">${htmlKacis(detay)}</span></div>`;
 }
 
 function veliTakibiOzeti(liste, durumMetni){
   let listeEl = document.getElementById("karnePaneli");
   let durumlar = liste.map(takipDurumu);
   if(durumlar.every(function(d){ return d === "bilinmiyor"; })) return;   // eski sunucu: takip bilgisi yok
-  let say = { inceledi:0, gozatti:0, acilmadi:0 };
+  let say = { goruldu:0, acilmadi:0 };
   durumlar.forEach(function(d){ if(say[d] !== undefined) say[d]++; });
-  let n = liste.length, acan = say.inceledi + say.gozatti;
-  let sureler = liste.filter(function(o){ return o.goruntuleme && o.goruntuleme.goruldu; }).map(function(o){ return o.goruntuleme.toplamSure || 0; });
-  let ortSure = sureler.length ? sureler.reduce(function(a, b){ return a + b; }, 0) / sureler.length : 0;
+  let n = liste.length, acan = say.goruldu;
   let yuzde = function(x){ return n ? (x / n * 100) : 0; };
   let secili = function(s){ return takipSuzgeci === s ? " secili" : ""; };   // v3.48: yenilemede seçili süzgeç korunur
   let kutu = document.createElement("div");
   kutu.className = "takipOzet"; kutu.id = "takipOzet";
   kutu.innerHTML = `<div class="takipOzetUst"><h3>👁️ Veli Takibi · ${acan}/${n} açtı</h3><button class="takipYenile" id="takipYenile" type="button">🔄 Yenile</button></div>
-    <div class="takipCubuk" aria-hidden="true"><span style="width:${yuzde(say.inceledi)}%;background:#22C55E"></span><span style="width:${yuzde(say.gozatti)}%;background:#60A5FA"></span></div>
+    <div class="takipCubuk" aria-hidden="true"><span style="width:${yuzde(say.goruldu)}%;background:#22C55E"></span></div>
     <div class="takipSayilar">
       <button type="button" class="takipSayi${secili("hepsi")}" data-suzgec="hepsi"><b>${n}</b><small>Tümü</small></button>
-      <button type="button" class="takipSayi${secili("inceledi")}" data-suzgec="inceledi"><b>${say.inceledi}</b><small>📖 İnceledi</small></button>
-      <button type="button" class="takipSayi${secili("gozatti")}" data-suzgec="gozatti"><b>${say.gozatti}</b><small>👀 Göz attı</small></button>
+      <button type="button" class="takipSayi${secili("goruldu")}" data-suzgec="goruldu"><b>${say.goruldu}</b><small>✅ Görüldü</small></button>
       <button type="button" class="takipSayi${secili("acilmadi")}" data-suzgec="acilmadi"><b>${say.acilmadi}</b><small>⏳ Açılmadı</small></button>
     </div>
-    ${planOzetiHtml(liste)}
-    <div class="takipAlt">Açanların ortalama inceleme süresi: <b>${acan ? takipSureMetni(ortSure) : "-"}</b>. "İnceledi": en az 2 dk ya da sayfanın en az %70'i.
-      Süreler yaklaşıktır (telefon aniden kapanırsa son dakikalar eksik kalabilir). Kutulara dokunarak listeyi süzebilirsin.</div>
+    <div class="takipAlt">"Görüldü": veli giriş yapıp sonucu açtı. Sayfada ne kadar kalındığı ya da nereye kadar okunduğu ölçülmez. Kutulara dokunarak listeyi süzebilirsin.</div>
     <div class="takipYenileDurum" id="takipYenileDurum" role="status" aria-live="polite">${htmlKacis(durumMetni || "")}</div>`;
   bolumeYerlestir("yuvaTakip", "veliTakibi", "👁️", "Veli Takibi",
     { metin: `${acan}/${n} açtı` + (say.acilmadi ? ` · ${say.acilmadi} açılmadı` : ""), tur: say.acilmadi ? "uyari" : "iyi" }, kutu, false);
@@ -4192,7 +4663,7 @@ function veliTakibiOzeti(liste, durumMetni){
   document.getElementById("takipYenile").onclick = function(){ veliTakibiniYenile(); };
 }
 
-// v3.48 — Yenile artık bütün paneli baştan çizmez: yalnızca okuma/plan/gönderim bilgileri sunucudan yeniden alınır;
+// v3.48 — Yenile artık bütün paneli baştan çizmez: yalnızca görüldü/plan/gönderim bilgileri sunucudan yeniden alınır;
 // Veli Takibi özeti ve öğrenci satırlarındaki takip satırları yerinde güncellenir. Açık sekme, seçili süzgeç, açık
 // önizlemeler, sayfadaki konum ve satır bildirimleri olduğu gibi kalır.
 function takipEslesmeAnahtari(o){ return [String(o.isim || "").trim(), String(o.sube || ""), String(o.girisKodu || "").trim()].join("|"); }
@@ -4215,7 +4686,7 @@ async function veliTakibiniYenile(){
       let y = harita[takipEslesmeAnahtari(o)];
       if(!y) return;
       let eskiDurum = takipDurumu(o);
-      o.goruntuleme = y.goruntuleme; o.planTakip = y.planTakip;
+      o.goruntuleme = y.goruntuleme;
       if(y.gonderim && !o.gonderim) o.gonderim = y.gonderim;
       if(takipDurumu(o) !== eskiDurum) degisen++;
       takipSatiriniGuncelle(o, idx);
@@ -4224,6 +4695,7 @@ async function veliTakibiniYenile(){
     mesaj = "🔄 " + p(s.getHours()) + ":" + p(s.getMinutes()) + " itibarıyla güncel" + (degisen ? (" · " + degisen + " öğrencinin durumu değişti") : " · değişiklik yok") + ".";
     veliTakibiOzeti(sonListe, mesaj);
     takipSuzgeciniUygula();
+    gonderimModuOzeti(); if(gmDurum) gmCiz();   // v3.49
   }catch(err){
     mesaj = "⚠️ Yenilenemedi: " + hataMetni(err);
     let d = document.getElementById("takipYenileDurum");
@@ -4588,6 +5060,13 @@ function yillikYazdir(ogr, sinifAd, not){
 // Her öğrencide "harita" (seçilen sınava kadarki havuzlanmış başarıyla). Mentor adayı: bir içerikte 👑 Usta olanlar.
 // Mentor yapma/kaldırma kararı öğretmenin; veli sayfasında başka öğrencinin adı görünmez.
 const SH_SEV = [["usta","👑 Usta","#FACC15"],["saglam","🌳 Sağlam","#22C55E"],["filiz","🌱 Filiz","#86EFAC"],["kesif","🏕️ Keşifte","#FCD34D"]];
+// v3.53 (Code.gs v2.41) — bu sınavda kazanılan rozetler. Rozetler sayfasından okunur: "⚡ Sonuçları Hazırla"dan ya da
+// velinin girişinden sonra güncellenir. Alan yoksa (eski Code.gs) satır çıkmaz.
+function rozetSatiriHtml(o){
+  let r = o.buSinavRozetleri;
+  if(!Array.isArray(r) || !r.length) return "";
+  return `<div class="rzOgrSatir">🏅 Bu sınavda kazandı: ${r.map(function(x){ return htmlKacis(x.emoji + " " + x.ad); }).join(", ")}</div>`;
+}
 function mentorSatiriHtml(o){
   let h = o.harita; if(!h) return "";
   let m = [];
@@ -4743,6 +5222,7 @@ function olustur(o, idx){
     ${moSatiriHtml(o)}
     ${hedefSatiriHtml(o, idx)}
     ${mentorSatiriHtml(o)}
+    ${rozetSatiriHtml(o)}
     <div class="aksiyonlar" style="margin-top:10px;">
       <button class="btnOnizle" id="onizle_${idx}">👁️ Önizle</button>
       <button class="btnOnizle btnHdTek" id="hd_${idx}" title="Bu öğrencinin hata defterini yazdır / PDF">📘 Hata Defteri</button>
@@ -4806,6 +5286,7 @@ function olustur(o, idx){
       whatsappAc(telefon, mesaj);
       ilkMesajGonderildiIsaretle(o);
       gonderildiUIGuncelle(idx, waBtn);
+      gonderimModuOzeti();   // v3.49
     };
     waDetayBtn.onclick = async function(){
       satirBildirimiTemizle(idx);
@@ -4820,7 +5301,7 @@ function olustur(o, idx){
       // hücre sonunda fark edilmeyen bir boşluk bu yüzden mesajı bozmasın.
       let adSoyad = String(o.isim || "").trim();
       let girisKodu = String(o.girisKodu || "").trim();
-      let mesaj2 = `*Giriş Bilgileri*\n${KISI_EMOJI} Ad Soyad: *${adSoyad}*\n${ANAHTAR_EMOJI} Giriş Kodu: *${girisKodu}*\n\n${KILIT_EMOJI} _Giriş kodu öğrencimize özeldir. Lütfen kimseyle paylaşmayınız._\n\n${LINK_EMOJI} ${SITE_ADRESI}`;
+      let mesaj2 = `*Giriş Bilgileri*\n${KISI_EMOJI} Ad Soyad: *${adSoyad}*\n${ANAHTAR_EMOJI} Giriş Kodu: *${girisKodu}*\n\n${KILIT_EMOJI} _Giriş kodu öğrencimize özeldir, lütfen kimseyle paylaşmayınız. Sonuçlar yalnızca çocuğunuzun matematik gelişimini takip etmek için tarafımca saklanır ve sizin dışınızda kimseyle paylaşılmaz._\n\n${LINK_EMOJI} ${SITE_ADRESI}`;
       if(whatsappHedefi() === "masaustu"){
         whatsappAc(normalizeTelefon(o.veliTelefon), mesaj2);
         satirBildirimi(idx, "✅ Son mesaj WhatsApp'ta yazı kutusunda hazır — Enter'a bas.", "ok", BILDIRIM_SURESI_MS);
@@ -5101,6 +5582,19 @@ function enterIleAc(){
   }
   listeGetir();
 }
+// v3.55: Öğretmen Anahtarı göster/gizle (göz düğmesi). Anahtar varsayılan olarak gizlidir.
+function anahtarGoster(goster){
+  let kutu = document.getElementById("anahtarInput"), btn = document.getElementById("anahtarGosterBtn");
+  kutu.classList.toggle("gizliKod", !goster);
+  btn.setAttribute("aria-pressed", goster ? "true" : "false");
+  let etiket = goster ? "Anahtarı gizle" : "Anahtarı göster";
+  btn.setAttribute("aria-label", etiket); btn.title = etiket;
+}
+document.getElementById("anahtarGosterBtn").addEventListener("click", function(){
+  let kutu = document.getElementById("anahtarInput");
+  anahtarGoster(kutu.classList.contains("gizliKod"));
+  kutu.focus();   // telefonda klavye kapanmasın
+});
 ["sinavIdInput", "anahtarInput"].forEach(function(kimlik){
   document.getElementById(kimlik).addEventListener("keydown", function(e){
     if(e.key !== "Enter" || e.isComposing) return;
