@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.9">
+<link rel="stylesheet" href="takip.css?v=0.10">
 </head>
 <body>
 <div class="wrap">
@@ -101,7 +101,7 @@
       <label class="alan" for="fKonu">Konu</label>
       <select class="girdi" id="fKonu"></select>
       <input class="girdi konuYeni" id="fKonuYeni" maxlength="80" placeholder="Ör. LGS çıkmış sorular" aria-label="Müfredat dışı konu" autocomplete="off" enterkeyhint="next" hidden>
-      <div class="konuKapsam" id="konuKapsam" hidden></div>
+      <div class="maddeAlan" id="konuMaddeAlan" hidden><label class="alan">İçerik (isteğe bağlı · birden fazla seçilebilir)</label><div class="maddeler" id="konuMaddeler"></div></div>
       <div class="konuNot" id="konuNot"></div>
       <label class="alan" for="fAd">Ödevin Kısa Adı</label>
       <input class="girdi" id="fAd" maxlength="60" placeholder="Ör. Kitap s. 18–21" autocomplete="off" enterkeyhint="go">
@@ -254,6 +254,6 @@
 </div>
 
 <script src="etiketler.js?v=0.4"></script>
-<script src="takip.js?v=0.9"></script>
+<script src="takip.js?v=0.10"></script>
 </body>
 </html>

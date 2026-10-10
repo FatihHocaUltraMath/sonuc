@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.9)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.10)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -597,3 +597,10 @@ button.kodGoster:disabled{opacity:.5;cursor:not-allowed;}
 .tarihAnahtar small{display:block;font-size:12px;font-weight:400;color:var(--gray);}
 .secenekKart label.satir.ilk{border-top:none;padding-top:0;}
 .a4 .kps{display:block;font-size:10px;color:#64748B;margin-top:1px;}
+
+/* ---- 0.10: İçerik maddeleri (seçilebilir düğmeler) ---- */
+.maddeAlan{margin-top:8px;}
+.maddeler{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+.cip.madde{min-height:40px;height:auto;padding:7px 12px;border-radius:14px;text-align:left;line-height:1.3;white-space:normal;max-width:100%;}
+.cip.madde.secili{background:var(--purple);border-color:var(--purple);color:#fff;}
+.cip.madde.secili::before{content:"✓ ";font-weight:800;}
