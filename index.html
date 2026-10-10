@@ -401,12 +401,19 @@ line-height:1.6;
 }
 .errorBox b{display:block;margin-bottom:4px;font-size:14px;}
 /* Kişisel link (Code.gs v2.45): kutular linkten dolarken ve dolunca giriş kartında kısa durum satırı */
-.linkDurum{margin-top:12px;padding:10px 14px;border-radius:14px;font-size:13.5px;font-weight:600;line-height:1.5;}
-.linkDurum.bekliyor{background:#F5F3FF;color:var(--gray);}
-.linkDurum.hazir{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;}
+.linkDurum{display:flex;align-items:center;gap:10px;margin-top:14px;padding:13px 16px;border-radius:14px;font-size:15px;font-weight:700;line-height:1.45;}
+.linkDurum.bekliyor{background:#EDE9FE;border:1.5px solid #C4B5FD;color:#4C1D95;}
+.linkDurum.hazir{background:#ECFDF5;border:1.5px solid #6EE7B7;color:#065F46;}
+.linkDurum .ldSimge{flex:none;display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;}
+.linkDurum.bekliyor .ldSimge{border:3px solid #C4B5FD;border-top-color:#7C3AED;border-radius:50%;animation:spin .8s linear infinite;width:18px;height:18px;}
+.linkDurum.hazir .ldSimge{border-radius:50%;background:#10B981;color:#fff;font-size:13px;font-weight:800;}
 /* Öğretmen olarak bak (Code.gs v2.46): sonuç ekranının başında yalnızca öğretmenin gördüğü şerit */
 .ogretmenSeridi{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:#1E1B4B;color:#fff;font-size:13px;line-height:1.5;}
 .ogretmenSeridi b{color:#FDBA74;}
+
+/* Grafik kütüphanesi girişten sonra hâlâ yoldaysa grafik yerinde görünen kısa satır */
+.grafikYukleniyor{display:flex;align-items:center;gap:8px;margin-top:8px;padding:10px 14px;border-radius:12px;background:#F5F3FF;color:#475569;font-size:13px;font-weight:600;}
+.grafikDonen{flex:none;width:14px;height:14px;border:2px solid #C4B5FD;border-top-color:#8B5CF6;border-radius:50%;animation:spin .8s linear infinite;}
 
 /* Sonuç ekranında tek bir bölüm çizilemediğinde, o bölümün yerine çıkan küçük uyarı.
    Diğer bölümler normal görünmeye devam eder. */
@@ -2204,17 +2211,39 @@ SONUÇLARINI GÖR
   </div>
 </div>
 
-<!-- Chart.js 4.4.4 — paketteki gerçek dosya (chart.umd.js zaten küçültülmüş; ".min.js" pakette yok,
-     jsDelivr onu anlık üretiyordu). integrity: tarayıcı dosyayı çalıştırmadan önce içeriğini doğrular;
-     uyuşmazsa çalıştırmaz ve sayfa "Grafik şu an yüklenemedi" notuyla devam eder. Özet, npm'deki resmî
-     paketten (paket özeti npm kaydıyla birebir doğrulanarak) hesaplandı. Sürüm değişirse bu özet de
-     yeniden hesaplanmalı: openssl dgst -sha384 -binary chart.umd.js | openssl base64 -A -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js"
-        integrity="sha384-G436+Z2nlA8+PNoeRvWdxKbvOf8E/y+lYxqht2iBwNHTQDV5CJr3+AGVj8fGZi5t"
-        crossorigin="anonymous"></script>
+<!-- Chart.js 4.4.4 artık burada <script src> ile YÜKLENMİYOR: ana kodun başında arka planda yüklenir (aşağıda
+     CHARTJS_ADRES). Eskiden bu etiket ana kodun önündeydi; dosya inene kadar "SONUÇLARINI GÖR" düğmesi ve kişisel
+     link çalışmıyordu. -->
 
 <script>
 
+
+// ---- GRAFİK KÜTÜPHANESİ (Chart.js) — ARKA PLANDA YÜKLEME ----
+// Grafik yalnızca girişten sonra (Yolculuğum) gerekir. Kütüphane sayfayı bekletmeden yüklenir; giriş düğmesi ve
+// kişisel link anında çalışır. Giriş yapıldığında henüz inmediyse grafik yerinde "Grafik yükleniyor…" yazar ve
+// kütüphane gelince grafik kendiliğinden çizilir.
+// integrity: tarayıcı dosyayı çalıştırmadan önce içeriğini doğrular; uyuşmazsa çalıştırmaz (→ "yüklenemedi" notu).
+// Özet npm'deki resmî paketten hesaplandı ("chart.umd.js" zaten küçültülmüş; ".min.js" pakette yok). Sürüm
+// değişirse özet yeniden hesaplanmalı: openssl dgst -sha384 -binary chart.umd.js | openssl base64 -A
+const CHARTJS_ADRES = "https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.js";
+const CHARTJS_OZET = "sha384-G436+Z2nlA8+PNoeRvWdxKbvOf8E/y+lYxqht2iBwNHTQDV5CJr3+AGVj8fGZi5t";
+const GRAFIK_BEKLEME_MS = 20000;            // girişten sonra en çok bu kadar beklenir; sonra "yüklenemedi" notu
+let grafikKutuphanesi = "yukleniyor";       // "yukleniyor" | "hazir" | "yok"
+let grafikBekleyen = null;                  // kütüphane gelince çağrılacak çizim (yalnızca en sonuncusu)
+function grafikKutuphanesiSonuclandi(durum){
+  grafikKutuphanesi = (durum === "hazir" && window.Chart) ? "hazir" : "yok";
+  if(grafikKutuphanesi === "yok") console.error("[UltraMat] Chart.js yüklenemedi.");
+  let f = grafikBekleyen; grafikBekleyen = null;
+  if(f) f();
+}
+(function(){
+  if(window.Chart){ grafikKutuphanesi = "hazir"; return; }
+  let s = document.createElement("script");
+  s.src = CHARTJS_ADRES; s.integrity = CHARTJS_OZET; s.crossOrigin = "anonymous"; s.async = true;
+  s.onload = function(){ grafikKutuphanesiSonuclandi("hazir"); };
+  s.onerror = function(){ grafikKutuphanesiSonuclandi("yok"); };
+  document.head.appendChild(s);
+})();
 
 const API_URL="https://script.google.com/macros/s/AKfycbxh0Rv69xsEA_xdYPFbuCcR7MfRYQ4keE301jHR69iVYEpDgxZ3h1Ep0ZuqdEZqRfW74A/exec";
 
@@ -4144,6 +4173,8 @@ function showHistory(data){
 }
 
 
+const GRAFIK_YUKLENEMEDI_NOTU = `<div class="bolumHataKutusu">⚠️ Grafik şu an yüklenemedi. Netlerinin sınav sınav listesini aşağıdaki "Geçmiş Sınavlarım" bölümünde görebilirsin.</div>`;
+
 function createChart(data){
   let chartHataAlani = document.getElementById("chartHataArea");
   chartHataAlani.innerHTML = "";
@@ -4152,12 +4183,35 @@ function createChart(data){
   let grafikKutusu = document.getElementById("progressChart").closest(".chartBox");
   if(grafikKutusu) grafikKutusu.classList.remove("hidden");
 
+  // Kütüphane henüz yolda: grafik kutusu yerine kısa bir "yükleniyor" satırı; gelince bu fonksiyon aynı veriyle
+  // yeniden çağrılır (bu arada giriş ekranına dönüldüyse ya da başka bir sonuç açıldıysa çizilmez). En çok
+  // GRAFIK_BEKLEME_MS beklenir; sonra "yüklenemedi" notu çıkar, kütüphane yine de gelirse grafik notun yerini alır.
+  if(!window.Chart && grafikKutuphanesi === "yukleniyor"){
+    if(grafikKutusu) grafikKutusu.classList.add("hidden");
+    let notA = document.getElementById("grafikNot"); if(notA) notA.innerHTML = "";
+    chartHataAlani.innerHTML = `<div class="grafikYukleniyor" role="status"><span class="grafikDonen" aria-hidden="true"></span>Grafik yükleniyor…</div>`;
+    let bekleyenVeri = data;
+    let gecikmeZamani = setTimeout(function(){
+      if(sonGelenVeri !== bekleyenVeri || window.Chart) return;
+      chartHataAlani.innerHTML = GRAFIK_YUKLENEMEDI_NOTU;
+    }, GRAFIK_BEKLEME_MS);
+    grafikBekleyen = function(){
+      clearTimeout(gecikmeZamani);
+      if(sonGelenVeri !== bekleyenVeri) return;          // bu sonuç ekranı artık açık değil
+      bolumuGuvenliCiz("Gelişim grafiği", "chartHataArea", function(){
+        try{ createChart(bekleyenVeri); }
+        catch(err){ let k = document.querySelector(".chartBox"); if(k) k.classList.add("hidden"); throw err; }
+      });
+    };
+    return;
+  }
+
   // Grafik kütüphanesi (Chart.js) internetten yüklenir; yüklenemediyse grafik alanı eskiden
   // sessizce boş kalıyordu. Artık kısa bir not çıkıyor — Geçmiş Sınavlarım listesi aynı bilgiyi veriyor.
   if(!window.Chart){
     console.error("[UltraMat] Chart.js yüklenemedi; gelişim grafiği çizilmedi.");
     if(grafikKutusu) grafikKutusu.classList.add("hidden");   // boş kutu yerine yalnızca not görünsün
-    chartHataAlani.innerHTML = `<div class="bolumHataKutusu">⚠️ Grafik şu an yüklenemedi. Netlerinin sınav sınav listesini aşağıdaki "Geçmiş Sınavlarım" bölümünde görebilirsin.</div>`;
+    chartHataAlani.innerHTML = GRAFIK_YUKLENEMEDI_NOTU;
     return;
   }
 
@@ -5014,7 +5068,13 @@ document.getElementById("backToLoginBtn").addEventListener("click", function(){
 // Veli bir kez girdikten sonra aynı link kutuları doldurmaz; her yeni sınav mesajındaki yeni link yine bir kez doldurur.
 // Veli bu sırada kutulara yazmaya başladıysa ya da kontrol başarısız olursa hiçbir şey değişmez (elle giriş her zaman açık).
 function linkDurumunuGizle(){ let d = document.getElementById("linkDurum"); if(d){ d.hidden = true; d.textContent = ""; } }
-function linkDurumunuGoster(metin, tur){ let d = document.getElementById("linkDurum"); d.className = "linkDurum " + tur; d.textContent = metin; d.hidden = false; }
+function linkDurumunuGoster(metin, tur){
+  let d = document.getElementById("linkDurum"); d.className = "linkDurum " + tur; d.textContent = "";
+  let simge = document.createElement("span"); simge.className = "ldSimge"; simge.setAttribute("aria-hidden", "true");
+  if(tur === "hazir") simge.textContent = "✓";
+  let yazi = document.createElement("span"); yazi.textContent = metin;
+  d.appendChild(simge); d.appendChild(yazi); d.hidden = false;
+}
 ["studentNameInput", "studentCodeInput"].forEach(function(id){
   document.getElementById(id).addEventListener("input", function(){
     if(document.getElementById("linkDurum").classList.contains("hazir")) linkDurumunuGizle();   // veli bilgileri değiştirdi
@@ -5050,7 +5110,7 @@ function kisiselLinkiOku(){
       let girisAcik = !document.getElementById("loginCard").classList.contains("hidden");
       if(c && c.doldur === true && girisAcik && !sorguSuruyor && !ad.value.trim() && !kk.value.trim()){
         ad.value = isim; kk.value = kod; kodGoster(false);
-        linkDurumunuGoster("✓ Giriş bilgilerin hazır. Sonuçlarını görmek için aşağıdaki düğmeye dokun.", "hazir");
+        linkDurumunuGoster("Giriş bilgilerin hazır. Sonuçlarını görmek için aşağıdaki düğmeye dokun.", "hazir");
       } else linkDurumunuGizle();
     })
     .catch(function(){ linkDurumunuGizle(); });
