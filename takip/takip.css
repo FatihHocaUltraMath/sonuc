@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.8)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.9)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -571,3 +571,29 @@ input[type=search].girdi{-webkit-appearance:none;appearance:none;padding-left:40
   .sutunBaslik .ikinciKopya{display:flex;}
   .ogrIzgara{grid-template-columns:repeat(5,minmax(0,1fr));}
 }
+
+/* ---- 0.9: anahtar gizli yazılır (veli sayfasındaki giriş koduyla aynı göz düğmesi) ---- */
+.kodKutusu{position:relative;}
+.giris .kodKutusu input{padding-right:58px;}
+.gizliKod{-webkit-text-security:disc;text-security:disc;}
+button.kodGoster{position:absolute;top:50%;right:4px;transform:translateY(-50%);width:44px;height:44px;margin:0;padding:0;
+  display:flex;align-items:center;justify-content:center;border:none;border-radius:12px;background:transparent;color:var(--gray);cursor:pointer;}
+button.kodGoster:hover,button.kodGoster[aria-pressed="true"]{color:var(--orange);}
+button.kodGoster[aria-pressed="true"] .kodGosterCizgi{display:none;}
+button.kodGoster:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ---- 0.9: Mufredat kapsamı ve müfredat dışı konu ---- */
+.konuYeni{margin-top:8px;}
+.konuKapsam{font-size:12.5px;color:#1E3A8A;background:#EFF6FF;border:1px solid #DBEAFE;border-radius:10px;padding:7px 10px;margin-top:6px;line-height:1.4;}
+.odevKapsam{font-size:12px;color:var(--gray);margin-top:1px;line-height:1.35;}
+.kapsamSatir{margin:0 0 4px;font-size:12px;color:var(--gray);line-height:1.35;}
+.konuSerit small.kapsamSatir{margin:1px 0 0;}
+.etiket .k{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:600;line-height:1.25;}
+
+/* ---- 0.9: ders içi gözlem tarihleri göster/gizle ---- */
+.tarihAnahtar{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1.5px solid var(--line);border-radius:12px;
+  padding:10px 12px;margin-bottom:12px;font-size:14px;font-weight:600;line-height:1.35;min-height:48px;cursor:pointer;}
+.tarihAnahtar input{width:22px;height:22px;margin:0;accent-color:var(--purple);flex:0 0 auto;}
+.tarihAnahtar small{display:block;font-size:12px;font-weight:400;color:var(--gray);}
+.secenekKart label.satir.ilk{border-top:none;padding-top:0;}
+.a4 .kps{display:block;font-size:10px;color:#64748B;margin-top:1px;}

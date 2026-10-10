@@ -1,4 +1,5 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.8.2 · Özel Ders şubesi takipte gösterilmez)
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.9 · Mufredat kapsamı · müfredat dışı ödev konusu ·
+ *   ders içi gözlem tarihlerini göster/gizle · anahtar gizli yazılır)
  *
  * Kalıcı verinin tek kaynağı UltraMat_Takip Google tablosudur. Telefonda yalnızca şunlar tutulur:
  *  - öğretmen anahtarı (her girişte sormamak için),
@@ -13,11 +14,12 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.8.2";
+const SURUM = "0.9";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
-  dersGoz: "fhTakip_dersGozlem", dersKonu: "fhTakip_dersKonu"
+  dersGoz: "fhTakip_dersGozlem", dersKonu: "fhTakip_dersKonu",
+  tarih: "fhTakip_tarihGoster"   // 0.9 — raporlarda ders içi gözlem tarihleri: { donem, goster }
 };
 const ZAMAN_ASIMI_MS = 25000;
 const TEKRAR_DENEME_MS = 30000;
@@ -256,6 +258,16 @@ function girisGoster(mesaj) {
   }
 }
 
+/** Anahtar göster/gizle (göz düğmesi) — veli sayfasındaki giriş koduyla aynı. Anahtar varsayılan olarak gizlidir.
+ *  type="password" kullanılmadı: tarayıcı "şifreyi kaydet" diye sormasın. */
+function anahtarGoster(goster) {
+  const kutu = $("anahtarInput"), btn = $("anahtarGosterBtn");
+  kutu.classList.toggle("gizliKod", !goster);
+  btn.setAttribute("aria-pressed", goster ? "true" : "false");
+  const etiket = goster ? "Anahtarı gizle" : "Anahtarı göster";
+  btn.setAttribute("aria-label", etiket); btn.title = etiket;
+}
+
 async function girisYap() {
   const anahtar = $("anahtarInput").value.trim();
   const d = $("girisDugme");
@@ -263,11 +275,12 @@ async function girisYap() {
   if (!anahtar) { girisGoster("Öğretmen Anahtarını yazın."); return; }
   if (!apiAyarliMi()) { girisGoster(); return; }
   $("girisHata").hidden = true;
-  dugmeYukleniyor(d, true, "YÜKLENİYOR", [$("anahtarInput")]);
+  dugmeYukleniyor(d, true, "YÜKLENİYOR", [$("anahtarInput"), $("anahtarGosterBtn")]);
   try {
     const veri = await api("baslangic", null, anahtar);
     depo.yaz(DEPO.anahtar, anahtar);
     $("anahtarInput").value = "";
+    anahtarGoster(false);                     // bir sonraki girişte anahtar yine gizli başlasın
     veriyiKabulEt(veri);
     durum.yigin = [];
     history.replaceState({ d: 0 }, "");
@@ -277,7 +290,7 @@ async function girisYap() {
     if (e instanceof SunucuHatasi) girisGoster(e.kod === "anahtar" ? "Anahtar kabul edilmedi. Tablodaki anahtarla aynı olduğundan emin olun." : e.message);
     else girisGoster("Sunucuya ulaşılamadı. İnternet bağlantısını kontrol edip tekrar deneyin.");
   } finally {
-    dugmeYukleniyor(d, false, "", [$("anahtarInput")]);
+    dugmeYukleniyor(d, false, "", [$("anahtarInput"), $("anahtarGosterBtn")]);
   }
 }
 
@@ -303,6 +316,39 @@ function takipteGorunur(s) {
 function takipSiniflari() { return ((durum.veri && durum.veri.siniflar) || []).filter(takipteGorunur); }
 function aktifSiniflar() { return takipSiniflari().filter(s => s.ogrenciler.some(o => o.aktif)); }
 function sinifBul(classId) { return takipSiniflari().find(s => s.classId === classId) || null; }
+
+// ---------- 0.9: Mufredat kapsamı ----------
+/** Sınıf düzeyinin Mufredat konuları (İçerik Çerçevesi). */
+function mufredatKonulari(classId) {
+  const sinif = sinifBul(classId);
+  return (durum.veri && durum.veri.konular && sinif && durum.veri.konular[sinif.sinif]) || [];
+}
+/** İçeriğin Mufredat'taki kapsamı (hücrede yazıldığı gibi). Müfredat dışı konu ya da eski sunucu → "". */
+function kapsamBul(classId, icerik) {
+  if (!icerik) return "";
+  const sinif = sinifBul(classId), k = durum.veri && durum.veri.kapsamlar;
+  return (k && sinif && k[sinif.sinif] && k[sinif.sinif][icerik]) || "";
+}
+/** Gözlemlerde içerik yerine görünen metin: kapsam varsa kapsam, yoksa içeriğin kendisi. */
+function konuEtiketi(classId, icerik) { return kapsamBul(classId, icerik) || icerik || ""; }
+
+// ---------- 0.9: ders içi gözlem tarihleri (raporlar ve Öğrenci Görünümü) ----------
+// Ders gözlemine girildiği günün tarihi yazılır; toplu girişte bu, dersin günü olmayabilir. Bu yüzden
+// 1. dönemde varsayılan kapalı, 2. dönemden itibaren açık; elle değiştirilen seçim o dönem boyunca hatırlanır.
+// Ödev tarihleri (ödev gözlemleri de ödevin tarihini taşır) her zaman görünür.
+function donemAnahtari() {
+  const v = durum.veri || {};
+  return (v.egitimYili || "") + "/" + (v.donem ? v.donem.no : 0);
+}
+function gozlemTarihiGoster() {
+  const k = depo.oku(DEPO.tarih, null);
+  if (k && k.donem === donemAnahtari()) return !!k.goster;
+  const no = durum.veri && durum.veri.donem ? durum.veri.donem.no : 0;
+  return no !== 1;
+}
+function gozlemTarihiAyarla(goster) { depo.yaz(DEPO.tarih, { donem: donemAnahtari(), goster: !!goster }); }
+/** Bu kaydın tarihi gösterilsin mi? Yalnızca ders içi kayıtlar (ve onlara bağlı "düzeldi") gizlenebilir. */
+const tarihGorunur = (g, tg) => g.baglam !== "ders" || tg;
 
 function anaEkraniCiz() {
   const v = durum.veri;
@@ -516,6 +562,8 @@ function odevListeCiz() {
     const ust = el("div", "odevUst");
     ust.append(el("span", "odevAd", o.ad), el("span", "odevTarih", tarihYaz(o.tarih)));
     b.append(ust, el("div", "odevKonu", o.konu || "Konu yok"));
+    const kps = kapsamBul(classId, o.konu);
+    if (kps) b.appendChild(el("div", "odevKapsam", kps));
     const dr = el("div", "odevDurum");
     if (kontrollu) {
       const k = v.kontrol[o.id], c = sayilar(k);
@@ -539,6 +587,33 @@ function odevListeCiz() {
 }
 
 // ---------- 2. yeni ödev / düzenleme ----------
+const KONU_YENI = "__yeni__";   // konu listesindeki "Müfredat dışı: yeni konu yaz…" seçeneği
+
+/** Bu sınıf düzeyinde (ör. bütün 8. sınıflarda) daha önce yazılmış müfredat dışı konular; en son kullanılan önce.
+ *  Ayrıca saklanmaz: telefondaki ödev listelerinden okunur. */
+function mufredatDisiKonular(classId) {
+  const sinif = sinifBul(classId);
+  if (!sinif) return [];
+  const konular = mufredatKonulari(classId);
+  const idler = Object.keys(depo.oku(DEPO.odevler, {})).filter(c => { const x = sinifBul(c); return x && x.sinif === sinif.sinif; });
+  if (idler.indexOf(classId) === -1) idler.push(classId);
+  const son = {};
+  idler.forEach(c => odevVerisi(c).odevler.forEach(o => {
+    if (!o.konu || o.iptal || konular.indexOf(o.konu) !== -1) return;
+    const t = o.tarih || "";
+    if (son[o.konu] === undefined || son[o.konu] < t) son[o.konu] = t;
+  }));
+  return Object.keys(son).sort((a, b) => son[b].localeCompare(son[a]) || a.localeCompare(b, "tr"));
+}
+
+/** Konu seçilince: kapsamı gösterir; "yeni konu yaz" seçildiyse yazı kutusunu açar. */
+function konuSecimiDegisti() {
+  const deger = $("fKonu").value, yeni = deger === KONU_YENI;
+  $("fKonuYeni").hidden = !yeni;
+  const kps = yeni ? "" : kapsamBul(durum.seciliSinif, deger);
+  $("konuKapsam").hidden = !kps;
+  $("konuKapsam").textContent = kps ? "Kapsam: " + kps : "";
+}
 function formAc(id) {
   durum.form = { id: id || null };
   ileri({ e: "odevForm" });
@@ -554,15 +629,26 @@ function odevFormCiz() {
   $("formAlt").textContent = classId + " için";
 
   $("fTarih").value = o ? o.tarih : bugunMetni();
-  const konular = (durum.veri.konular && sinif && durum.veri.konular[sinif.sinif]) || [];
+  const konular = mufredatKonulari(classId);
+  const disi = mufredatDisiKonular(classId);
   const sonKonu = depo.oku(DEPO.sonKonu, {})[classId];
-  const secili = o ? o.konu : (konular.indexOf(sonKonu) !== -1 ? sonKonu : (konular[0] || ""));
+  const bilinen = k => konular.indexOf(k) !== -1 || disi.indexOf(k) !== -1;
+  const secili = o ? o.konu : (sonKonu && bilinen(sonKonu) ? sonKonu : (konular[0] || ""));
   const sec = $("fKonu");
   sec.innerHTML = "";
-  konular.forEach(k => { const op = el("option", "", k); op.value = k; sec.appendChild(op); });
-  if (o && o.konu && konular.indexOf(o.konu) === -1) { const op = el("option", "", o.konu); op.value = o.konu; sec.appendChild(op); }
-  const yok = el("option", "", "— Konu Yok (genel tekrar vb.)"); yok.value = ""; sec.appendChild(yok);
+  const grup = ad => { const g = el("optgroup"); g.label = ad; sec.appendChild(g); return g; };
+  const ekle = (hedef, metin, deger) => { const op = el("option", "", metin); op.value = deger; hedef.appendChild(op); };
+  const gM = konular.length ? grup("Müfredat") : sec;
+  konular.forEach(k => ekle(gM, k, k));
+  if (disi.length) { const g = grup("Müfredat Dışı (daha önce yazdıklarınız)"); disi.forEach(k => ekle(g, k, k)); }
+  const gD = grup("Diğer");
+  ekle(gD, "✏️ Müfredat dışı: yeni konu yaz…", KONU_YENI);
+  ekle(gD, "— Konu Yok (genel tekrar vb.)", "");
   sec.value = secili;
+  if (sec.value !== secili) sec.selectedIndex = 0;
+  $("fKonuYeni").value = "";
+  $("fKonuYeni").classList.remove("hatali");
+  konuSecimiDegisti();
   $("konuNot").textContent = o ? "" : (konular.length
     ? (sonKonu && secili === sonKonu ? "Bu sınıfta en son kullandığınız konu seçili geldi." : "Konular Müfredat sayfasından.")
     : "Müfredat sayfasında bu sınıf düzeyi için konu bulunamadı.");
@@ -586,7 +672,14 @@ function formKaydet(hemenKontrol) {
   const classId = durum.seciliSinif;
   const ad = $("fAd").value.replace(/\s+/g, " ").trim();
   if (!ad) { $("fAd").classList.add("hatali"); $("fAd").focus(); bildirimGoster("Ödeve kısa bir ad yazın."); return; }
-  const konu = $("fKonu").value;
+  let konu = $("fKonu").value;
+  if (konu === KONU_YENI) {
+    konu = $("fKonuYeni").value.replace(/\s+/g, " ").trim();
+    if (!konu) { $("fKonuYeni").classList.add("hatali"); $("fKonuYeni").focus(); bildirimGoster("Müfredat dışı konuyu yazın."); return; }
+    // Aynı adı farklı yazımla ikinci kez açmasın (ör. "lgs deneme" ↔ "LGS Deneme")
+    const ayni = mufredatKonulari(classId).concat(mufredatDisiKonular(classId)).find(k => aramaMetni(k) === aramaMetni(konu));
+    if (ayni) konu = ayni;
+  }
   const tarih = $("fTarih").value || bugunMetni();
   const aciklama = $("fAciklama").value.trim();
   if (konu) { const sk = depo.oku(DEPO.sonKonu, {}); sk[classId] = konu; depo.yaz(DEPO.sonKonu, sk); }
@@ -842,7 +935,7 @@ function etiketSayfasi(kod) {
     [["olumlu", "Olumlu"], ["gelistir", "Geliştirilmeli"]].forEach(([kat, baslik]) => {
       sy.appendChild(el("div", "etiketGrup", baslik));
       const izgara = el("div", "etiketIzgara");
-      ETIKETLER.ODEV_GOZLEM.filter(e => e.kategori === kat && !e.emekli).forEach(e => {
+      ETIKETLER.ODEV_GOZLEM.filter(e => e.kategori === kat && (!e.emekli || !!(k.etiket[kod] && k.etiket[kod][e.kod]))).forEach(e => {
         const secili = !!(k.etiket[kod] && k.etiket[kod][e.kod]);
         const b = dugme("etiket " + kat + (secili ? " secili" : ""), null, () => {
           k.etiket[kod] = k.etiket[kod] || {};
@@ -1206,8 +1299,7 @@ async function dersGozlemleriTazele(classId) {
 function dersKonusu(classId) {
   const kayit = depo.oku(DEPO.dersKonu, {})[classId];
   if (kayit && kayit.konu !== undefined) return kayit;
-  const sinif = sinifBul(classId);
-  const konular = (durum.veri.konular && sinif && durum.veri.konular[sinif.sinif]) || [];
+  const konular = mufredatKonulari(classId);
   const son = depo.oku(DEPO.sonKonu, {})[classId];
   return { konu: son || konular[0] || "", alt: "" };
 }
@@ -1233,8 +1325,10 @@ function gozlemCiz() {
   const serit = $("konuSerit");
   serit.innerHTML = "";
   const metin = el("span");
-  metin.append(el("b", "", "Bugünün Konusu: " + (k.konu || "seçilmedi")),
-    el("small", "", (k.alt ? "Alt Konu: " + k.alt + " · " : "") + "💡 ❓ ve akademik gözlemler bu konuya bağlanır"));
+  const kps = kapsamBul(classId, k.konu);
+  metin.append(el("b", "", "Bugünün Konusu: " + (k.konu || "seçilmedi")));
+  if (kps) metin.appendChild(el("small", "kapsamSatir", "Kapsam: " + kps));
+  metin.appendChild(el("small", "", (k.alt ? "Alt Konu: " + k.alt + " · " : "") + "💡 ❓ ve akademik gözlemler bu konuya bağlanır"));
   serit.append(metin, el("span", "deg", "Değiştir"));
 
   $("cokluAnahtar").classList.toggle("acik", durum.gozlemCoklu);
@@ -1293,11 +1387,11 @@ function gozlemCiz() {
         const eski = v.gozlemler.find(y => y.id === g.baglantiId);
         const e = eski ? dersEtiket(eski.etiket) : null;
         ne.appendChild(document.createTextNode(" · " + (e && e.duzelme ? e.duzelme : "✓ Düzeldi")));
-        if (e) alt = e.emoji + " " + e.ad + (e.konuyaBaglanir && eski.konu ? " · " + eski.konu : "");
+        if (e) alt = e.emoji + " " + e.ad + (e.konuyaBaglanir && eski.konu ? " · " + konuEtiketi(classId, eski.konu) : "");
       } else {
         const e = dersEtiket(g.etiket);
         ne.appendChild(document.createTextNode(" · " + e.emoji + " " + e.ad));
-        if (g.konu) alt = g.konu + (g.altKonu ? " · " + g.altKonu : "");
+        if (g.konu) alt = konuEtiketi(classId, g.konu) + (g.altKonu ? " · " + g.altKonu : "");
       }
       if (alt) ne.appendChild(el("small", "", alt));
       satir.append(el("span", "saat", saat), ne, dugme("", "Geri Al", () => gozlemGeriAl([g.id], "Gözlem geri alındı")));
@@ -1346,7 +1440,7 @@ function gozlemEtiketSayfasi(kodlar) {
           const e = dersEtiket(g.etiket);
           const satir = el("div", "acikKayit");
           const m = el("div", "", e.emoji + " " + e.ad);
-          m.appendChild(el("small", "", tarihYaz(g.tarih) + (g.konu ? " · " + g.konu : "")));
+          m.appendChild(el("small", "", tarihYaz(g.tarih) + (g.konu ? " · " + konuEtiketi(classId, g.konu) : "")));
           satir.append(m, dugme("duzeldiDugme", e.duzelme || "✓ Düzeldi", () => dersDuzeldi(g, adlar[g.kod])));
           sy.appendChild(satir);
         });
@@ -1358,7 +1452,7 @@ function gozlemEtiketSayfasi(kodlar) {
       ETIKETLER.DERS_GOZLEM.filter(e => e.kategori === kat && !e.emekli).forEach(e => {
         const b = dugme("etiket ders " + kat, null, () => dersGozlemKaydet(kodlar, e, adlar));
         const yazi = el("span", "", e.ad);
-        if (e.konuyaBaglanir && konu.konu) yazi.appendChild(el("span", "k", konu.konu));
+        if (e.konuyaBaglanir && konu.konu) yazi.appendChild(el("span", "k", konuEtiketi(classId, konu.konu)));
         b.append(el("span", "", e.emoji), yazi);
         izgara.appendChild(b);
       });
@@ -1401,8 +1495,7 @@ function gozlemGeriAl(idler, mesaj) {
 
 function dersKonusuSayfasi() {
   const classId = durum.seciliSinif;
-  const sinif = sinifBul(classId);
-  const konular = (durum.veri.konular && sinif && durum.veri.konular[sinif.sinif]) || [];
+  const konular = mufredatKonulari(classId);
   const k = dersKonusu(classId);
   sayfaAc(sy => {
     sy.append(el("h3", "", "Bugünün Konusu · " + classId),
@@ -1413,9 +1506,13 @@ function dersKonusuSayfasi() {
     if (k.konu && konular.indexOf(k.konu) === -1) { const o = el("option", "", k.konu); o.value = k.konu; sec.appendChild(o); }
     const yok = el("option", "", "— Konu Yok"); yok.value = ""; sec.appendChild(yok);
     sec.value = k.konu || "";
+    const kpsKutu = el("div", "konuKapsam");
+    const kpsYaz = () => { const x = kapsamBul(classId, sec.value); kpsKutu.textContent = x ? "Kapsam: " + x : ""; kpsKutu.hidden = !x; };
+    sec.addEventListener("change", kpsYaz);
+    kpsYaz();
     const l2 = el("label", "alan", "Alt Konu (isteğe bağlı)"); l2.htmlFor = "dkAlt";
     const alt = el("input", "girdi"); alt.id = "dkAlt"; alt.maxLength = 60; alt.placeholder = "Ör. Negatif üs"; alt.value = k.alt || "";
-    sy.append(l1, sec, l2, alt, el("div", "bosluk"),
+    sy.append(l1, sec, kpsKutu, l2, alt, el("div", "bosluk"),
       dugme("anaDugme", "Kaydet", () => {
         const tum = depo.oku(DEPO.dersKonu, {});
         const yeniKonu = sec.value;
@@ -1471,6 +1568,20 @@ function ogrenciVerisi(classId, kapsam) {
 
 const gozEtiket = g => g.baglam === "ders" ? dersEtiket(g.etiket) : etiketBilgi(g.etiket);
 const ACIK_KATEGORILER = { dikkat: 1, akademik: 1, gelistir: 1 };
+
+/** Aynı etiketin kayıtları (eskiden yeniye) için kısa ayrıntı: tarih (gösterilebiliyorsa) ve konuya bağlı
+ *  ders gözleminde kapsam. Ör. "12 Eki, 19 Eki" · "12 Eki · Açıları ölçme…; 19 Eki · …" · tarih gizliyse "Açıları ölçme…". */
+function etiketAyrintisi(liste, classId, tg) {
+  const konulu = liste.some(g => g.baglam === "ders" && g.konu);
+  const parca = liste.map(g => {
+    const p = [];
+    if (tarihGorunur(g, tg)) p.push(kisaGun(g.tarih));
+    if (g.baglam === "ders" && g.konu) p.push(konuEtiketi(classId, g.konu) + (g.altKonu ? " · " + g.altKonu : ""));
+    return p.join(" · ");
+  }).filter(Boolean);
+  const tarihsiz = liste.every(g => !tarihGorunur(g, tg));
+  return (tarihsiz ? Array.from(new Set(parca)) : parca).join(konulu ? "; " : ", ");
+}
 
 function ogrListeCiz() {
   const classId = durum.seciliSinif;
@@ -1529,11 +1640,13 @@ function ogrenciCiz() {
   $("kapsamYil").classList.toggle("secili", kapsam === "yil");
   $("kapsamDonem").setAttribute("aria-pressed", kapsam === "donem" ? "true" : "false");
   $("kapsamYil").setAttribute("aria-pressed", kapsam === "yil" ? "true" : "false");
+  $("ogrTarih").checked = gozlemTarihiGoster();
   const kutu = $("ogrIcerik");
   kutu.innerHTML = "";
   const ov = ogrenciVerisi(classId, kapsam);
   if (ov.yukleniyor) { kutu.appendChild(iskelet(3, "kartlar buyuk")); return; }
   const kapsamMetni = kapsam === "donem" ? "Bu dönem" : "Bu yıl";
+  const tg = gozlemTarihiGoster();
 
   // Her kart açılır-kapanır bir bölüm: kapalı başlıkta kısa özet (açık kayıt turuncu, gönderilen yeşil);
   // açık/kapalı durumu hatırlanır. ozet() kart dolduktan sonra çağrılır.
@@ -1579,7 +1692,8 @@ function ogrenciCiz() {
       const d = (kontrol[o.id] || {})[s.kod];
       const sat = el("div", "odevSatir2");
       const n = el("span", "n", o.ad);
-      n.appendChild(el("small", "", o.konu || "Konu yok"));
+      const kps = kapsamBul(classId, o.konu);
+      n.appendChild(el("small", "", (o.konu || "Konu yok") + (kps ? " · " + kps : "")));
       sat.append(el("span", "t", kisaGun(o.tarih)), n, el("span", "", d ? DURUM[d].emoji + " " + DURUM[d].ad : "kontrol edilmedi"));
       det.appendChild(sat);
     });
@@ -1595,7 +1709,8 @@ function ogrenciCiz() {
       const e = gozEtiket(l[0]);
       const sat = el("div", "etiketSatir");
       const m = el("span", "m", e.ad);
-      m.appendChild(el("small", "", l.map(g => kisaGun(g.tarih)).join(", ")));
+      const ay = etiketAyrintisi(l, classId, tg);
+      if (ay) m.appendChild(el("small", "", ay));
       if (ACIK_KATEGORILER[l[0].kategori]) {
         const acik = l.filter(g => !ov.duzeldiHaritasi[g.id]).length, duz = l.length - acik;
         const dr = el("small");
@@ -1641,12 +1756,14 @@ function ogrenciCiz() {
     Object.keys(konular).forEach(k => {
       const blok = el("div", "konuBlok");
       blok.appendChild(el("h5", "", "📘 " + k));
+      const kps = kapsamBul(classId, k);
+      if (kps) blok.appendChild(el("p", "kapsamSatir", kps));
       konular[k].sort((a, b) => (a.tarih || "").localeCompare(b.tarih || "")).forEach(g => {
         const e = gozEtiket(g), dz = ov.duzeldiHaritasi[g.id];
         const sat = el("div", "etiketSatir");
         const m = el("span", "m", e.ad + (g.altKonu ? " · " + g.altKonu : ""));
-        const alt = el("small", "", kisaGun(g.tarih) + " · ");
-        alt.appendChild(dz ? el("span", "durumRozet duzeldi", (e.duzelme || "✓ Düzeldi") + " (" + kisaGun(dz.tarih) + ")") : el("span", "durumRozet acik", "📌 açık"));
+        const alt = el("small", "", tg ? kisaGun(g.tarih) + " · " : "");
+        alt.appendChild(dz ? el("span", "durumRozet duzeldi", (e.duzelme || "✓ Düzeldi") + (tg ? " (" + kisaGun(dz.tarih) + ")" : "")) : el("span", "durumRozet acik", "📌 açık"));
         m.appendChild(alt);
         sat.append(el("span", "e", e.emoji), m);
         blok.appendChild(sat);
@@ -1660,7 +1777,7 @@ function ogrenciCiz() {
   const gonderilen = ov.veli.filter(x => x.kod === s.kod).sort((a, b) => (a.donemNo - b.donemNo) || (a.blokNo - b.blokNo));
   gonderilen.forEach(x => {
     vk.appendChild(el("div", "veliSatir", "✅ " + (kapsam === "yil" && x.donemNo ? x.donemNo + ". dönem · " : "") + x.blokNo + ". blok mesajı gönderildi" +
-      (x.zaman ? " · " + new Date(x.zaman).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : "")));
+      (x.zaman && tg ? " · " + new Date(x.zaman).toLocaleDateString("tr-TR", { day: "numeric", month: "short" }) : "")));
   });
   const sira = veliSirasi(classId);
   if (sira.tamam && sira.bekleyen.some(x => x.kod === s.kod)) vk.appendChild(el("div", "veliSatir", "⏳ " + sira.tamam + ". blok mesajı henüz gönderilmedi"));
@@ -1672,28 +1789,32 @@ function ogrenciCiz() {
   const olaylar = [];
   ov.kontrollu.forEach(o => {
     const d = (kontrol[o.id] || {})[s.kod];
-    olaylar.push({ t: o.tarih, z: 0, ik: d ? DURUM[d].emoji : "·", m: "Ödev: " + o.ad, alt: d ? DURUM[d].ad : "kontrol edilmedi" });
+    olaylar.push({ t: o.tarih, z: 0, ik: d ? DURUM[d].emoji : "·", m: "Ödev: " + o.ad, alt: d ? DURUM[d].ad : "kontrol edilmedi", gorunur: true });
   });
   ov.gozlemler.filter(g => g.kod === s.kod).forEach(g => {
     if (g.kategori === "gelisim") {
       const eski = ov.tumGozlemler.find(x => x.id === g.baglantiId);
       const e = eski ? gozEtiket(eski) : null;
-      olaylar.push({ t: g.tarih, z: g.zaman || 1, ik: "✓", m: e ? (e.duzelme || "✓ Düzeldi").replace(/^✓\s*/, "") : "Düzeldi", alt: e ? e.emoji + " " + e.ad : "" });
+      olaylar.push({ t: g.tarih, z: g.zaman || 1, ik: "✓", m: e ? (e.duzelme || "✓ Düzeldi").replace(/^✓\s*/, "") : "Düzeldi", alt: e ? e.emoji + " " + e.ad : "", gorunur: tarihGorunur(g, tg) });
     } else {
       const e = gozEtiket(g);
       olaylar.push({ t: g.tarih, z: g.zaman || 1, ik: e.emoji, m: e.ad,
-        alt: (g.baglam === "odev" ? "Ödev gözlemi · " + g.odev.ad : "Ders") + (g.baglam === "ders" && g.konu ? " · " + g.konu + (g.altKonu ? " · " + g.altKonu : "") : "") });
+        alt: (g.baglam === "odev" ? "Ödev gözlemi · " + g.odev.ad : "Ders") + (g.baglam === "ders" && g.konu ? " · " + konuEtiketi(classId, g.konu) + (g.altKonu ? " · " + g.altKonu : "") : ""),
+        gorunur: tarihGorunur(g, tg) });
     }
   });
   olaylar.sort((a, b) => (b.t || "").localeCompare(a.t || "") || b.z - a.z);
   const det = kart("🗓️ Zaman Çizelgesi", "takipOgrZaman", false);
   det.ozet(olaylar.length + " kayıt");
   let gun = "";
+  // Tarihler gizliyken gün başlıkları yazılmaz; sıra yine yeniden eskiye. Ödev kayıtlarının tarihi satırda kalır.
+  if (!tg && olaylar.length) det.appendChild(el("p", "ipucu", "Ders içi gözlem tarihleri gizli; kayıtlar yeniden eskiye sıralı."));
   olaylar.forEach(o => {
-    if (o.t !== gun) { gun = o.t; det.appendChild(el("div", "zcGun", uzunGun(o.t))); }
+    if (tg && o.t !== gun) { gun = o.t; det.appendChild(el("div", "zcGun", uzunGun(o.t))); }
     const sat = el("div", "zcSatir");
     const m = el("span", "", o.m);
-    if (o.alt) m.appendChild(el("small", "", o.alt));
+    const alt = [o.alt, !tg && o.gorunur ? kisaGun(o.t) : ""].filter(Boolean).join(" · ");
+    if (alt) m.appendChild(el("small", "", alt));
     sat.append(el("span", "ik", o.ik), m);
     det.appendChild(sat);
   });
@@ -1768,6 +1889,7 @@ function pdfSecenekleri() {
 
 function raporPdfCiz() {
   ekranGoster("raporPdf");
+  $("pTarih").checked = gozlemTarihiGoster();
   $("pdfAlt").textContent = durum.seciliSinif + " · " + raporKapsamAdi(durum.raporKapsam);
   const kutu = $("a4Icerik");
   kutu.innerHTML = pdfSayfalari();
@@ -1789,12 +1911,13 @@ function pdfSayfalari() {
   const secim = $("pOgr").value;
   const ogr = raporOgrencileri().filter(s => secim === "*" || s.kod === secim);
   const ov = ogrenciVerisi(durum.seciliSinif, durum.raporKapsam);
-  const secenek = { akademik: $("pAkademik").checked, dikkat: $("pDikkat").checked, liste: $("pOdevListe").checked };
+  const secenek = { akademik: $("pAkademik").checked, dikkat: $("pDikkat").checked, liste: $("pOdevListe").checked, tarih: gozlemTarihiGoster() };
   return ogr.map(s => pdfSayfasi(s, ov, secenek)).join("");
 }
 
 function pdfSayfasi(s, ov, secenek) {
-  const kod = s.kod, kontrol = ov.v.kontrol;
+  const kod = s.kod, kontrol = ov.v.kontrol, classId = durum.seciliSinif, tg = secenek.tarih;
+  const kpsHtml = icerik => { const x = kapsamBul(classId, icerik); return x ? '<span class="kps">' + escHtml(x) + "</span>" : ""; };
   const kapsamMetni = durum.raporKapsam === "donem" ? "Bu dönemde" : "Bu yıl";
   const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
   ov.kontrollu.forEach(o => { const d = (kontrol[o.id] || {})[kod]; if (d) c[d]++; else yok++; });
@@ -1814,7 +1937,8 @@ function pdfSayfasi(s, ov, secenek) {
         if (acik) dr += ' <span class="rozet acik">' + acik + " açık</span>";
         if (duz) dr += ' <span class="rozet duz">' + escHtml(e.duzelme || "✓ Düzeldi") + (duz > 1 ? " ×" + duz : "") + "</span>";
       }
-      return "<li>" + e.emoji + " " + escHtml(e.ad) + " — " + l.length + ' kez <span class="silik">(' + l.map(g => kisaGun(g.tarih)).join(", ") + ")</span>" + dr + "</li>";
+      const ay = etiketAyrintisi(l, classId, tg);
+      return "<li>" + e.emoji + " " + escHtml(e.ad) + " — " + l.length + " kez" + (ay ? ' <span class="silik">(' + escHtml(ay) + ")</span>" : "") + dr + "</li>";
     }).join("");
   }
 
@@ -1831,7 +1955,7 @@ function pdfSayfasi(s, ov, secenek) {
     if (secenek.liste) {
       h += "<table><thead><tr><th>Tarih</th><th>Ödev</th><th>Konu</th><th>Durum</th></tr></thead><tbody>" +
         ov.kontrollu.map(o => { const d = (kontrol[o.id] || {})[kod];
-          return "<tr><td>" + kisaGun(o.tarih) + "</td><td>" + escHtml(o.ad) + "</td><td>" + escHtml(o.konu || "") + "</td><td>" + (d ? DURUM[d].emoji + " " + DURUM[d].ad : "kontrol edilmedi") + "</td></tr>"; }).join("") +
+          return "<tr><td>" + kisaGun(o.tarih) + "</td><td>" + escHtml(o.ad) + "</td><td>" + escHtml(o.konu || "") + kpsHtml(o.konu) + "</td><td>" + (d ? DURUM[d].emoji + " " + DURUM[d].ad : "kontrol edilmedi") + "</td></tr>"; }).join("") +
         "</tbody></table>";
     }
   }
@@ -1852,11 +1976,11 @@ function pdfSayfasi(s, ov, secenek) {
   if (secenek.akademik && ak.length) {
     const konular = {};
     ak.forEach(g => { const k = g.konu || "Konu belirtilmemiş"; (konular[k] = konular[k] || []).push(g); });
-    h += '<div class="g a">Akademik · konulara göre</div><table><thead><tr><th>Konu</th><th>Gözlem</th><th>Tarih</th><th>Durum</th></tr></thead><tbody>' +
+    h += '<div class="g a">Akademik · konulara göre</div><table><thead><tr><th>Konu</th><th>Gözlem</th>' + (tg ? "<th>Tarih</th>" : "") + "<th>Durum</th></tr></thead><tbody>" +
       Object.keys(konular).map(k => konular[k].sort((a, b) => (a.tarih || "").localeCompare(b.tarih || "")).map((g, i) => {
         const e = gozEtiket(g), dz = ov.duzeldiHaritasi[g.id];
-        return "<tr><td>" + (i ? "" : escHtml(k)) + "</td><td>" + e.emoji + " " + escHtml(e.ad) + (g.altKonu ? " · " + escHtml(g.altKonu) : "") + "</td><td>" + kisaGun(g.tarih) + "</td><td>" +
-          (dz ? '<span class="rozet duz">' + escHtml(e.duzelme || "✓ Düzeldi") + " (" + kisaGun(dz.tarih) + ")</span>" : '<span class="rozet acik">açık</span>') + "</td></tr>";
+        return "<tr><td>" + (i ? "" : escHtml(k) + kpsHtml(k)) + "</td><td>" + e.emoji + " " + escHtml(e.ad) + (g.altKonu ? " · " + escHtml(g.altKonu) : "") + "</td>" + (tg ? "<td>" + kisaGun(g.tarih) + "</td>" : "") + "<td>" +
+          (dz ? '<span class="rozet duz">' + escHtml(e.duzelme || "✓ Düzeldi") + (tg ? " (" + kisaGun(dz.tarih) + ")" : "") + "</span>" : '<span class="rozet acik">açık</span>') + "</td></tr>";
       }).join("")).join("") + "</tbody></table>";
   }
   if (secenek.dikkat && di.length) h += '<div class="g d">Dikkat gerektiren</div><ul>' + grupla(di) + "</ul>";
@@ -1901,7 +2025,8 @@ function excelSayfalari() {
   (sinif ? sinif.ogrenciler : []).forEach(s => { adlar[s.kod] = s.ad; });
 
   // 1. Ödevler
-  const odevler = { ad: "Ödevler", bas: ["Öğrenci"].concat(ov.kontrollu.map(o => noktaliTarih(o.tarih) + " · " + o.ad), ["Tam", "Eksik", "Yapılmadı", "Mazeretli", "Kontrol Edilmedi"]), satir: [], renk: [] };
+  const tg = gozlemTarihiGoster();
+  const odevler = { ad: "Ödevler", ilkBaslik: true, bas: ["Öğrenci"].concat(ov.kontrollu.map(o => noktaliTarih(o.tarih) + " · " + o.ad), ["Tam", "Eksik", "Yapılmadı", "Mazeretli", "Kontrol Edilmedi"]), satir: [], renk: [] };
   ogr.forEach(s => {
     const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
     const hucre = ov.kontrollu.map(o => { const d = (kontrol[o.id] || {})[s.kod]; if (d) c[d]++; else yok++; return d || ""; });
@@ -1909,7 +2034,15 @@ function excelSayfalari() {
     odevler.renk.push([""].concat(hucre));
   });
 
-  // 2. Gözlem sayıları
+  // 2. Ödev listesi (0.9): her ödevin tarihi, içeriği ve kapsamı; sınıfın durum sayıları
+  const odevListesi = { ad: "Ödev Listesi", bas: ["Tarih", "Ödev", "İçerik Çerçevesi", "Kapsam", "Açıklama", "Tam", "Eksik", "Yapılmadı", "Mazeretli", "Kontrol Edilmedi"], satir: [] };
+  ov.kontrollu.forEach(o => {
+    const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
+    ogr.forEach(s => { const d = (kontrol[o.id] || {})[s.kod]; if (d) c[d]++; else yok++; });
+    odevListesi.satir.push([noktaliTarih(o.tarih), o.ad, o.konu || "", kapsamBul(durum.seciliSinif, o.konu), o.aciklama || "", c.T, c.E, c.Y, c.M, yok]);
+  });
+
+  // 3. Gözlem sayıları
   const etiketler = [];
   const gorulen = {};
   ov.gozlemler.filter(g => g.kategori !== "gelisim").forEach(g => {
@@ -1919,43 +2052,46 @@ function excelSayfalari() {
     const e = gozEtiket(g);
     etiketler.push({ anahtar, ad: (g.baglam === "odev" ? "Ödev · " : "Ders · ") + e.emoji + " " + e.ad });
   });
-  const gozlem = { ad: "Gözlem Sayıları", bas: ["Öğrenci"].concat(etiketler.map(x => x.ad), ["Açık Kayıt"]), satir: [] };
+  const gozlem = { ad: "Gözlem Sayıları", ilkBaslik: true, bas: ["Öğrenci"].concat(etiketler.map(x => x.ad), ["Açık Kayıt"]), satir: [] };
   ogr.forEach(s => {
     const benim = ov.gozlemler.filter(g => g.kod === s.kod && g.kategori !== "gelisim");
     const acik = ov.tumGozlemler.filter(g => g.kod === s.kod && ACIK_KATEGORILER[g.kategori] && !ov.duzeldiHaritasi[g.id]).length;
     gozlem.satir.push([s.ad].concat(etiketler.map(x => benim.filter(g => g.baglam + ":" + g.etiket === x.anahtar).length || ""), [acik || ""]));
   });
 
-  // 3. Tüm kayıtlar
-  const tum = { ad: "Tüm Kayıtlar", bas: ["Tarih", "Öğrenci", "Tür", "Kayıt", "Konu", "Alt Konu", "Durum"], satir: [] };
-  const siraliSatir = [];
+  // 4. Tüm kayıtlar — tarihler gizliyse ders içi kayıtların tarih hücresi boş kalır (sıra yine kronolojik)
+  const kps = icerik => kapsamBul(durum.seciliSinif, icerik);
+  const tum = { ad: "Tüm Kayıtlar", bas: ["Tarih", "Öğrenci", "Tür", "Kayıt", "Konu", "Kapsam", "Alt Konu", "Durum"], satir: [] };
+  const siraliSatir = [];   // [tarih, tarih görünür mü, …sütunlar]
   ov.kontrollu.forEach(o => ogr.forEach(s => {
     const d = (kontrol[o.id] || {})[s.kod];
-    siraliSatir.push([o.tarih, s.ad, "Ödev kontrolü", o.ad, o.konu || "", "", d ? DURUM[d].ad : "kontrol edilmedi"]);
+    siraliSatir.push([o.tarih, true, s.ad, "Ödev kontrolü", o.ad, o.konu || "", kps(o.konu), "", d ? DURUM[d].ad : "kontrol edilmedi"]);
   }));
   ov.gozlemler.forEach(g => {
     if (!adlar[g.kod]) return;
     if (g.kategori === "gelisim") {
       const eski = ov.tumGozlemler.find(x => x.id === g.baglantiId);
       const e = eski ? gozEtiket(eski) : null;
-      siraliSatir.push([g.tarih, adlar[g.kod], "Düzeldi", e ? (e.duzelme || "✓ Düzeldi") + " (" + e.ad + ")" : "✓ Düzeldi", eski && eski.baglam === "ders" ? eski.konu || "" : "", "", ""]);
+      const konu = eski && eski.baglam === "ders" ? eski.konu || "" : "";
+      siraliSatir.push([g.tarih, tarihGorunur(g, tg), adlar[g.kod], "Düzeldi", e ? (e.duzelme || "✓ Düzeldi") + " (" + e.ad + ")" : "✓ Düzeldi", konu, kps(konu), "", ""]);
     } else {
       const e = gozEtiket(g);
-      siraliSatir.push([g.tarih, adlar[g.kod], g.baglam === "odev" ? "Ödev gözlemi" : "Ders gözlemi", e.emoji + " " + e.ad,
-        g.baglam === "odev" ? (g.odev ? g.odev.konu || "" : "") : g.konu || "", g.altKonu || "",
+      const konu = g.baglam === "odev" ? (g.odev ? g.odev.konu || "" : "") : g.konu || "";
+      siraliSatir.push([g.tarih, tarihGorunur(g, tg), adlar[g.kod], g.baglam === "odev" ? "Ödev gözlemi" : "Ders gözlemi", e.emoji + " " + e.ad,
+        konu, kps(konu), g.altKonu || "",
         ACIK_KATEGORILER[g.kategori] ? (ov.duzeldiHaritasi[g.id] ? "düzeldi" : "açık") : ""]);
     }
   });
   siraliSatir.sort((a, b) => (a[0] || "").localeCompare(b[0] || ""));
-  tum.satir = siraliSatir.map(r => [noktaliTarih(r[0])].concat(r.slice(1)));
+  tum.satir = siraliSatir.map(r => [r[1] ? noktaliTarih(r[0]) : ""].concat(r.slice(2)));
 
-  // 4. Veli mesajları
-  const veli = { ad: "Veli Mesajları", bas: ["Öğrenci", "Dönem", "Blok", "Gönderilme"], satir: [] };
+  // 5. Veli mesajları (gönderilme günü de sonradan girilen bir tarih olduğu için ders gözlemleriyle birlikte gizlenir)
+  const veli = { ad: "Veli Mesajları", ilkBaslik: true, bas: ["Öğrenci", "Dönem", "Blok"].concat(tg ? ["Gönderilme"] : []), satir: [] };
   ov.veli.filter(x => adlar[x.kod]).sort((a, b) => (a.donemNo - b.donemNo) || (a.blokNo - b.blokNo) || (a.zaman || 0) - (b.zaman || 0)).forEach(x => {
-    veli.satir.push([adlar[x.kod], x.donemNo ? x.donemNo + ". Dönem" : "", x.blokNo + ". blok", x.zaman ? new Date(x.zaman).toLocaleDateString("tr-TR") : ""]);
+    veli.satir.push([adlar[x.kod], x.donemNo ? x.donemNo + ". Dönem" : "", x.blokNo + ". blok"].concat(tg ? [x.zaman ? new Date(x.zaman).toLocaleDateString("tr-TR") : ""] : []));
   });
 
-  return [odevler, gozlem, tum, veli];
+  return [odevler, odevListesi, gozlem, tum, veli];
 }
 
 function excelDosyaAdi() {
@@ -1965,6 +2101,7 @@ function excelDosyaAdi() {
 
 function raporExcelCiz() {
   ekranGoster("raporExcel");
+  $("xTarih").checked = gozlemTarihiGoster();
   $("xAd").textContent = excelDosyaAdi();
   const S = excelSayfalari();
   const sekme = $("xSayfalar");
@@ -1974,7 +2111,7 @@ function raporExcelCiz() {
   let h = "<table><thead><tr>" + s.bas.map(b => "<th>" + escHtml(b) + "</th>").join("") + "</tr></thead><tbody>";
   s.satir.forEach((r, ri) => {
     h += "<tr>" + r.map((c, i) => {
-      if (i === 0 && durum.excelSayfa < 2) return "<th>" + escHtml(c) + "</th>";
+      if (i === 0 && s.ilkBaslik) return "<th>" + escHtml(c) + "</th>";
       const renk = s.renk ? s.renk[ri][i] : "";
       return '<td class="' + (typeof c === "number" || s.renk ? "o " : "") + (renk || "") + '">' + escHtml(c) + "</td>";
     }).join("") + "</tr>";
@@ -2190,9 +2327,11 @@ function cikisYap() {
     return;
   }
   if (!confirm("Bu telefondaki anahtar ve listeler silinsin mi? Tablodaki kayıtlar etkilenmez.")) return;
-  [DEPO.anahtar, DEPO.onbellek, DEPO.sonSinif, DEPO.odevler, DEPO.taslak, DEPO.sonKonu, DEPO.dersGoz, DEPO.dersKonu].forEach(k => depo.sil(k));
+  [DEPO.anahtar, DEPO.onbellek, DEPO.sonSinif, DEPO.odevler, DEPO.taslak, DEPO.sonKonu, DEPO.dersGoz, DEPO.dersKonu, DEPO.tarih].forEach(k => depo.sil(k));
   durum.veri = null; durum.seciliSinif = null; durum.yigin = [];
   history.replaceState({ d: 0 }, "");
+  $("anahtarInput").value = "";
+  anahtarGoster(false);
   girisGoster();
 }
 
@@ -2200,6 +2339,11 @@ function cikisYap() {
 function baslat() {
   $("girisDugme").addEventListener("click", girisYap);
   $("anahtarInput").addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); girisYap(); } });
+  $("anahtarGosterBtn").addEventListener("click", () => {
+    const kutu = $("anahtarInput");
+    anahtarGoster(kutu.classList.contains("gizliKod"));
+    kutu.focus();   // telefonda klavye kapanmasın, yazmaya devam edilebilsin
+  });
   // Ödev adında Enter: formun ana düğmesi (Ödevi Oluştur / Değişiklikleri Kaydet)
   $("fAd").addEventListener("keydown", e => {
     if (e.key !== "Enter" || e.isComposing) return;
@@ -2232,6 +2376,10 @@ function baslat() {
   $("pdfDugme").addEventListener("click", pdfAc);
   $("excelDugme").addEventListener("click", excelAc);
   ["pOgr", "pAkademik", "pDikkat", "pOdevListe"].forEach(id => $(id).addEventListener("change", raporPdfCiz));
+  // 0.9: ders içi gözlem tarihleri — üç yerde aynı ayar (Öğrenci Görünümü, PDF, Excel)
+  $("pTarih").addEventListener("change", () => { gozlemTarihiAyarla($("pTarih").checked); raporPdfCiz(); });
+  $("xTarih").addEventListener("change", () => { gozlemTarihiAyarla($("xTarih").checked); raporExcelCiz(); });
+  $("ogrTarih").addEventListener("change", () => { gozlemTarihiAyarla($("ogrTarih").checked); ogrenciCiz(); });
   $("pdfOlusturDugme").addEventListener("click", pdfOlustur);
   $("excelIndirDugme").addEventListener("click", excelIndir);
   window.addEventListener("resize", () => { if (ekranAcik("raporPdf")) olcekle(); });
@@ -2240,6 +2388,14 @@ function baslat() {
   $("secimGozlem").addEventListener("click", () => { if (durum.gozlemSecili.size) gozlemEtiketSayfasi(Array.from(durum.gozlemSecili)); });
   $("aciklamaAc").addEventListener("click", () => { $("fAciklama").hidden = false; $("aciklamaAc").hidden = true; $("fAciklama").focus(); });
   $("fAd").addEventListener("input", () => $("fAd").classList.remove("hatali"));
+  $("fKonu").addEventListener("change", () => {
+    konuSecimiDegisti();
+    const yeni = $("fKonu").value === KONU_YENI;
+    $("konuNot").textContent = yeni ? "Yazdığınız konu, bu sınıf düzeyindeki sonraki ödevlerde listede hazır gelir." : "";
+    if (yeni) $("fKonuYeni").focus();
+  });
+  $("fKonuYeni").addEventListener("input", () => $("fKonuYeni").classList.remove("hatali"));
+  $("fKonuYeni").addEventListener("keydown", e => { if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); $("fAd").focus(); } });
   document.querySelectorAll("[data-cip]").forEach(b => b.addEventListener("click", () => {
     const f = $("fAd"), c = b.dataset.cip;
     f.value = c.endsWith(" ") ? c : (f.value.trim() ? f.value.trim() + " – " + c : c);

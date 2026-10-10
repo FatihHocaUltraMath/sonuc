@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · etiket kataloğu (sürüm 0.3 · ders içi gözlem 30 etiket)
+/* FatihHoca | UltraMat — Öğrenci Takip · etiket kataloğu (sürüm 0.4 · birbirine çok yakın 7 etiket emekli: ders içi 24, ödev 9 etiket seçilebilir)
  *
  * Kayıtlara etiketin METNİ değil KODU yazılır. Bir etiketin adını ya da emojisini buradan
  * değiştirirseniz eski kayıtlar bozulmaz. Kodları (O_OZEN, D_KONUSMA …) DEĞİŞTİRMEYİN;
@@ -31,7 +31,7 @@ const ETIKETLER = Object.freeze({
     { kod: "G_DUZEN",   kategori: "gelistir", emoji: "📝", ad: "Daha düzenli çalışmalı", duzelme: "✓ Daha düzenli" },
     { kod: "G_ISLEM",   kategori: "gelistir", emoji: "🧮", ad: "İşlem hatalarına dikkat", duzelme: "✓ İşlemlerde düzeldi" },
     { kod: "G_KONTROL", kategori: "gelistir", emoji: "🔍", ad: "Çözümlerini kontrol etmeli", duzelme: "✓ Kontrol ediyor" },
-    { kod: "G_EKSIK",   kategori: "gelistir", emoji: "📌", ad: "Eksiklerini tamamlamalı", duzelme: "✓ Tamamladı" }
+    { kod: "G_EKSIK",   kategori: "gelistir", emoji: "📌", ad: "Eksiklerini tamamlamalı", duzelme: "✓ Tamamladı", emekli: true }
   ],
 
   // Ders içi gözlem (seçici kayıt: gözlem yok = değerlendirilmedi)
@@ -43,22 +43,22 @@ const ETIKETLER = Object.freeze({
     { kod: "D_CABA",      kategori: "olumlu",   emoji: "💪", ad: "Çaba gösterdi" },
     { kod: "D_GELISIM",   kategori: "olumlu",   emoji: "📈", ad: "Gelişim gösteriyor" },
     { kod: "D_YARDIM",    kategori: "olumlu",   emoji: "🤝", ad: "Arkadaşına yardımcı oldu" },
-    { kod: "D_ANLATIM",   kategori: "olumlu",   emoji: "🗣️", ad: "Çözümünü açıkça anlattı", konuyaBaglanir: true },
-    { kod: "D_HIZLI",     kategori: "olumlu",   emoji: "⚡", ad: "Soruları hızlı ve doğru çözdü", konuyaBaglanir: true },
+    { kod: "D_ANLATIM",   kategori: "olumlu",   emoji: "🗣️", ad: "Çözümünü açıkça anlattı", konuyaBaglanir: true, emekli: true },
+    { kod: "D_HIZLI",     kategori: "olumlu",   emoji: "⚡", ad: "Soruları hızlı ve doğru çözdü", konuyaBaglanir: true, emekli: true },
     { kod: "D_KAVRADI",   kategori: "olumlu",   emoji: "🏆", ad: "Konuyu çok iyi kavradı", konuyaBaglanir: true },
     { kod: "D_ZIHIN",     kategori: "olumlu",   emoji: "🧮", ad: "Zihinden işlemlerde başarılı" },
-    { kod: "D_ISTEKLI",   kategori: "olumlu",   emoji: "😊", ad: "Derse ilgili ve istekli" },
+    { kod: "D_ISTEKLI",   kategori: "olumlu",   emoji: "😊", ad: "Derse ilgili ve istekli", emekli: true },
     { kod: "D_DEFTER",    kategori: "olumlu",   emoji: "📐", ad: "Defteri düzenli" },
     { kod: "D_KONUSMA",   kategori: "dikkat",   emoji: "💬", ad: "Ders sırasında konuşuyor", duzelme: "✓ Sonradan düzeldi" },
     { kod: "D_ODAKSIZ",   kategori: "dikkat",   emoji: "👀", ad: "Derse odaklanmıyor", duzelme: "✓ Sonradan düzeldi" },
     { kod: "D_MATERYAL",  kategori: "dikkat",   emoji: "📚", ad: "Ders materyali eksik", duzelme: "✓ Sonradan düzeldi" },
     { kod: "D_KATILMAMA", kategori: "dikkat",   emoji: "✏️", ad: "Çalışmaya katılmıyor", duzelme: "✓ Sonradan düzeldi" },
     { kod: "D_OLUMSUZ",   kategori: "dikkat",   emoji: "⚠️", ad: "Dersi/arkadaşlarını olumsuz etkiliyor", duzelme: "✓ Sonradan düzeldi" },
-    { kod: "D_ILGISIZ",   kategori: "dikkat",   emoji: "🔇", ad: "Derse ilgisiz", duzelme: "✓ Sonradan düzeldi" },
-    { kod: "D_BOLUYOR",   kategori: "dikkat",   emoji: "📣", ad: "Dersi sık sık bölüyor", duzelme: "✓ Sonradan düzeldi" },
+    { kod: "D_ILGISIZ",   kategori: "dikkat",   emoji: "🔇", ad: "Derse ilgisiz", duzelme: "✓ Sonradan düzeldi", emekli: true },
+    { kod: "D_BOLUYOR",   kategori: "dikkat",   emoji: "📣", ad: "Dersi sık sık bölüyor", duzelme: "✓ Sonradan düzeldi", emekli: true },
     { kod: "D_UYARI",     kategori: "dikkat",   emoji: "🙈", ad: "Uyarılara rağmen devam ediyor", duzelme: "✓ Sonradan düzeldi" },
     { kod: "D_DEFTERYOK", kategori: "dikkat",   emoji: "📓", ad: "Defter tutmuyor", duzelme: "✓ Sonradan düzeldi" },
-    { kod: "A_ZORLANMA",  kategori: "akademik", emoji: "🧩", ad: "Konuda zorlanıyor", konuyaBaglanir: true, duzelme: "✓ Sonraki gözlemde doğru uyguladı" },
+    { kod: "A_ZORLANMA",  kategori: "akademik", emoji: "🧩", ad: "Konuda zorlanıyor", konuyaBaglanir: true, duzelme: "✓ Sonraki gözlemde doğru uyguladı", emekli: true },
     { kod: "A_KAVRAM",    kategori: "akademik", emoji: "🔄", ad: "Kavramı karıştırıyor", konuyaBaglanir: true, duzelme: "✓ Sonraki gözlemde doğru uyguladı" },
     { kod: "A_ISLEM",     kategori: "akademik", emoji: "➗", ad: "İşlem hatası yapıyor", konuyaBaglanir: true, duzelme: "✓ Sonraki gözlemde doğru uyguladı" },
     { kod: "A_PROBLEM",   kategori: "akademik", emoji: "📖", ad: "Problem anlamada zorlanıyor", konuyaBaglanir: true, duzelme: "✓ Sonraki gözlemde doğru uyguladı" },
