@@ -1256,6 +1256,34 @@ function whatsappAdresi(telefon, mesaj, hedef){
   let parametre = "phone=" + telefon + (mesaj ? ("&text=" + encodeURIComponent(mesaj)) : "");
   return (hedef || whatsappHedefi()) === "web" ? ("https://web.whatsapp.com/send?" + parametre) : ("whatsapp://send?" + parametre);
 }
+// v3.56 (Code.gs v2.45) — Kişisel link: SITE_ADRESI + "#g=" + base64url(JSON {i: Ad Soyad, k: Giriş Kodu, t: şu an (ms)}).
+// "#" sonrası tarayıcıdan hiçbir sunucuya gitmez (GitHub, Google, WhatsApp önizlemesi görmez). Veli sayfası okur okumaz
+// adresten siler, Code.gs'e sorar; mesaj hazırlandıktan sonra o öğrenci için hiç giriş yoksa kutuları doldurur (bir kez).
+// Veli yine "SONUÇLARINI GÖR"e kendisi basar; doğrudan giriş yapılmaz.
+function kisiselLink(adSoyad, girisKodu){
+  try{
+    let json = JSON.stringify({ i: adSoyad, k: girisKodu, t: Date.now() });
+    let ikili = Array.from(new TextEncoder().encode(json), function(b){ return String.fromCharCode(b); }).join("");
+    return SITE_ADRESI + "#g=" + btoa(ikili).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }catch(e){ return SITE_ADRESI; }   // eski tarayıcıda link eskisi gibi düz kalır
+}
+// v3.57 (Code.gs v2.46) — 🔍 Sayfasına Bak: sonuç sayfası yeni sekmede ".../sonuc/#ogretmen" ile açılır; sayfa hazır
+// olduğunu bildirince Ad Soyad, Giriş Kodu ve öğretmen anahtarı postMessage ile YALNIZCA SITE_ADRESI'nin kökenine
+// gönderilir (adrese, geçmişe yazılmaz). Code.gs bu girişi Giris_Kayitlari'na yazmaz.
+function ogretmenOlarakBak(o, idx){
+  let anahtar = ogretmenAnahtari();
+  if(!anahtar){ satirBildirimi(idx, "⚠️ Önce Öğretmen Anahtarı'nı gir.", "uyari", BILDIRIM_SURESI_MS); return; }
+  let hedef = new URL(SITE_ADRESI).origin;
+  let pencere = window.open(SITE_ADRESI + "#ogretmen", "_blank");
+  if(!pencere){ satirBildirimi(idx, "⚠️ Tarayıcı yeni sekmeyi engelledi. Bu sayfa için açılır pencerelere izin ver.", "uyari"); return; }
+  let dinle = function(e){
+    if(e.source !== pencere || e.data !== "ultramat-ogretmen-hazir") return;
+    window.removeEventListener("message", dinle);
+    pencere.postMessage({ tur: "ultramat-ogretmen", isim: String(o.isim || "").trim(), kod: String(o.girisKodu || "").trim(), anahtar: anahtar }, hedef);
+  };
+  window.addEventListener("message", dinle);
+  setTimeout(function(){ window.removeEventListener("message", dinle); }, 60000);
+}
 function whatsappAc(telefon, mesaj){
   let adres = whatsappAdresi(telefon, mesaj);
   if(whatsappHedefi() === "web"){ window.open(adres, "whatsappSekmesi"); return; }
@@ -5226,6 +5254,7 @@ function olustur(o, idx){
     <div class="aksiyonlar" style="margin-top:10px;">
       <button class="btnOnizle" id="onizle_${idx}">👁️ Önizle</button>
       <button class="btnOnizle btnHdTek" id="hd_${idx}" title="Bu öğrencinin hata defterini yazdır / PDF">📘 Hata Defteri</button>
+      <button class="btnOnizle" id="bak_${idx}" title="Öğrencinin sonuç sayfasını velinin gördüğü hâliyle açar. Veli Takibi'ne yazılmaz, kişisel linki kullanılmış saydırmaz."${o.girisKodu ? "" : " disabled"}>🔍 Sayfasına Bak</button>
     </div>
     <div class="onizleAlan" id="onizleAlan_${idx}" style="display:none;"></div>
     <div class="aksiyonlar">
@@ -5262,6 +5291,7 @@ function olustur(o, idx){
   };
 
   document.getElementById("kopya_"+idx).onclick = function(){ karneyiKopyala(o, idx); };
+  document.getElementById("bak_"+idx).onclick = function(){ ogretmenOlarakBak(o, idx); };   // v3.57
   let hdSifirla = document.getElementById("hdSifirla_" + idx);
   if(hdSifirla) hdSifirla.onclick = function(){ hedefiSifirla(o, idx, hdSifirla); };
   document.getElementById("hdGonder_"+idx).onclick = function(){ hataDefteriniVeliyeGonder(o, idx); };
@@ -5301,7 +5331,8 @@ function olustur(o, idx){
       // hücre sonunda fark edilmeyen bir boşluk bu yüzden mesajı bozmasın.
       let adSoyad = String(o.isim || "").trim();
       let girisKodu = String(o.girisKodu || "").trim();
-      let mesaj2 = `*Giriş Bilgileri*\n${KISI_EMOJI} Ad Soyad: *${adSoyad}*\n${ANAHTAR_EMOJI} Giriş Kodu: *${girisKodu}*\n\n${KILIT_EMOJI} _Giriş kodu öğrencimize özeldir, lütfen kimseyle paylaşmayınız. Sonuçlar yalnızca çocuğunuzun matematik gelişimini takip etmek için tarafımca saklanır ve sizin dışınızda kimseyle paylaşılmaz._\n\n${LINK_EMOJI} ${SITE_ADRESI}`;
+      // v3.56 (Code.gs v2.45): link öğrenciye özel — veli dokununca giriş kutuları BİR KEZ dolu gelir (bkz. kisiselLink)
+      let mesaj2 = `*Giriş Bilgileri*\n${KISI_EMOJI} Ad Soyad: *${adSoyad}*\n${ANAHTAR_EMOJI} Giriş Kodu: *${girisKodu}*\n\n${KILIT_EMOJI} _Giriş kodu öğrencimize özeldir, lütfen kimseyle paylaşmayınız. Sonuçlar yalnızca çocuğunuzun matematik gelişimini takip etmek için tarafımca saklanır ve sizin dışınızda kimseyle paylaşılmaz._\n\n${LINK_EMOJI} ${kisiselLink(adSoyad, girisKodu)}`;
       if(whatsappHedefi() === "masaustu"){
         whatsappAc(normalizeTelefon(o.veliTelefon), mesaj2);
         satirBildirimi(idx, "✅ Son mesaj WhatsApp'ta yazı kutusunda hazır — Enter'a bas.", "ok", BILDIRIM_SURESI_MS);

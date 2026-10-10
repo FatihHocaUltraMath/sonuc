@@ -400,6 +400,13 @@ font-size:13.5px;
 line-height:1.6;
 }
 .errorBox b{display:block;margin-bottom:4px;font-size:14px;}
+/* Kişisel link (Code.gs v2.45): kutular linkten dolarken ve dolunca giriş kartında kısa durum satırı */
+.linkDurum{margin-top:12px;padding:10px 14px;border-radius:14px;font-size:13.5px;font-weight:600;line-height:1.5;}
+.linkDurum.bekliyor{background:#F5F3FF;color:var(--gray);}
+.linkDurum.hazir{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;}
+/* Öğretmen olarak bak (Code.gs v2.46): sonuç ekranının başında yalnızca öğretmenin gördüğü şerit */
+.ogretmenSeridi{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:#1E1B4B;color:#fff;font-size:13px;line-height:1.5;}
+.ogretmenSeridi b{color:#FDBA74;}
 
 /* Sonuç ekranında tek bir bölüm çizilemediğinde, o bölümün yerine çıkan küçük uyarı.
    Diğer bölümler normal görünmeye devam eder. */
@@ -1879,6 +1886,8 @@ Sonucuna Ulaş
 
 </p>
 
+<div id="linkDurum" class="linkDurum" role="status" aria-live="polite" hidden></div>
+
 
 <label for="studentNameInput">
 Ad Soyad
@@ -1926,6 +1935,7 @@ SONUÇLARINI GÖR
      bu sayfada HATIRLANMAZ: sayfa her sınavda bir kez okunur. -->
 <div class="sonucAkis hidden" id="resultCard">
 
+<div class="ogretmenSeridi" id="ogretmenSeridi" role="note" hidden><b>🔍 Öğretmen görünümü</b> · Bu açılış Veli Takibi'ne yazılmaz, kişisel linki kullanılmış saydırmaz. Meydan Okuma ve Hedefim seçimleri bu görünümde kaydedilmez.</div>
 <div class="card ozetKart" id="ozetKart">
 <div id="uyumsuzlukArea"></div>
 
@@ -3735,7 +3745,9 @@ const istekNo = ++sonIstekNo;
 let hamMetin;
 try{
 
-  let response = await apiIstek({ isim: name, kod: code }, 20000);
+  let istekBilgi = { isim: name, kod: code };
+  if(ogretmenBakisi) Object.assign(istekBilgi, { ogretmenBak: "1", anahtar: ogretmenBakisi });   // v2.46: kayıtsız bakış
+  let response = await apiIstek(istekBilgi, 20000);
 
   if(!response.ok){
     if(istekNo !== sonIstekNo) return;
@@ -3806,7 +3818,9 @@ if(data.length === 0){
   return;
 }
 
-moGiris = { isim: name, kod: code };   // v2.17 — Meydan Okuma seçimi için (yalnızca bellekte)
+// v2.17 — Meydan Okuma / Hedefim seçimi için (yalnızca bellekte). Öğretmen görünümünde seçim öğrenci adına kaydedilmez.
+moGiris = ogretmenBakisi ? null : { isim: name, kod: code };
+document.getElementById("ogretmenSeridi").hidden = !ogretmenBakisi;
 try{
   showResult(data);
   geriAdimEkle("sonuc", function(){ girisEkraninaDon(false); });   // Geri tuşu en son giriş ekranına döner
@@ -4980,6 +4994,9 @@ function girisEkraninaDon(odakla){
   document.getElementById("studentCodeInput").value = "";
   kodGoster(false);   // girişe dönünce kod yeniden gizli
   hataTemizle();
+  linkDurumunuGizle();
+  ogretmenBakisi = null;   // v2.46: girişe dönünce öğretmen görünümü biter; sonraki giriş normal veli girişidir
+  document.getElementById("ogretmenSeridi").hidden = true;
   window.scrollTo(0, 0);   // düğme artık sayfanın sonunda: giriş kartı ekranın başında açılsın
   if(odakla) document.getElementById("studentNameInput").focus();
 }
@@ -4988,6 +5005,72 @@ document.getElementById("backToLoginBtn").addEventListener("click", function(){
   girisEkraninaDon(true);
   gecmisiEsitle();
 });
+
+// ================= 🔗 KİŞİSEL LİNK (Code.gs v2.45, Öğretmen Paneli v3.56) =================
+// Son mesajdaki link: .../sonuc/#g=<base64url {i: Ad Soyad, k: Giriş Kodu, t: mesajın hazırlandığı an}>.
+// "#" sonrası hiçbir sunucuya gitmez. Sayfa onu okur okumaz adres satırından ve tarayıcı geçmişinden siler (sayfa
+// yenilense de yeniden okunmaz), sonra Code.gs'e sorar. Mesaj hazırlandıktan sonra bu öğrenci için hiç giriş yapılmadıysa
+// Ad Soyad ve Giriş Kodu kutulara konur (kod gizli); veli "SONUÇLARINI GÖR"e KENDİSİ basar — doğrudan giriş yapılmaz.
+// Veli bir kez girdikten sonra aynı link kutuları doldurmaz; her yeni sınav mesajındaki yeni link yine bir kez doldurur.
+// Veli bu sırada kutulara yazmaya başladıysa ya da kontrol başarısız olursa hiçbir şey değişmez (elle giriş her zaman açık).
+function linkDurumunuGizle(){ let d = document.getElementById("linkDurum"); if(d){ d.hidden = true; d.textContent = ""; } }
+function linkDurumunuGoster(metin, tur){ let d = document.getElementById("linkDurum"); d.className = "linkDurum " + tur; d.textContent = metin; d.hidden = false; }
+["studentNameInput", "studentCodeInput"].forEach(function(id){
+  document.getElementById(id).addEventListener("input", function(){
+    if(document.getElementById("linkDurum").classList.contains("hazir")) linkDurumunuGizle();   // veli bilgileri değiştirdi
+  });
+});
+(function kisiselLinkiOku(){
+  if(!/^#g=/.test(location.hash)) return;   // yalnızca kişisel link (#ogretmen vb. başka işlere dokunmaz)
+  let m = String(location.hash).match(/^#g=([A-Za-z0-9_-]{8,600})$/);
+  try{ history.replaceState({ um: 0 }, "", location.pathname + location.search); }catch(e){}   // adresten ve geçmişten sil
+  if(!m) return;
+  let v;
+  try{
+    let b = m[1].replace(/-/g, "+").replace(/_/g, "/"); while(b.length % 4) b += "=";
+    let ikili = atob(b);
+    v = JSON.parse(new TextDecoder().decode(Uint8Array.from(ikili, function(c){ return c.charCodeAt(0); })));
+  }catch(e){ console.warn("[UltraMat] Link okunamadı."); return; }
+  let isim = String((v && v.i) || "").trim(), kod = String((v && v.k) || "").trim(), zaman = Number(v && v.t);
+  if(!isim || isim.length > 100 || !/^[0-9]{6}$/.test(kod) || !(zaman > 0)) return;
+  linkDurumunuGoster("Giriş bilgilerin hazırlanıyor…", "bekliyor");
+  apiIstek({ linkKontrol: true, isim: isim, kod: kod, linkZaman: zaman }, 15000)
+    .then(function(r){ return r.ok ? r.json() : null; })
+    .then(function(c){
+      let ad = document.getElementById("studentNameInput"), kk = document.getElementById("studentCodeInput");
+      let girisAcik = !document.getElementById("loginCard").classList.contains("hidden");
+      if(c && c.doldur === true && girisAcik && !sorguSuruyor && !ad.value.trim() && !kk.value.trim()){
+        ad.value = isim; kk.value = kod; kodGoster(false);
+        linkDurumunuGoster("✓ Giriş bilgilerin hazır. Sonuçlarını görmek için aşağıdaki düğmeye dokun.", "hazir");
+      } else linkDurumunuGizle();
+    })
+    .catch(function(){ linkDurumunuGizle(); });
+})();
+
+// ================= 🔍 ÖĞRETMEN OLARAK BAK (Code.gs v2.46, Öğretmen Paneli v3.57) =================
+// Panel bu sayfayı yeni sekmede ".../sonuc/#ogretmen" ile açar. Sayfa hazır olunca panele haber verir; panel öğrencinin
+// Ad Soyad'ını, Giriş Kodu'nu ve öğretmen anahtarını postMessage ile YALNIZCA bu sitenin adresine gönderir (anahtar
+// hiçbir adrese ya da tarayıcı geçmişine yazılmaz). Sayfa girişi kendisi yapar; Code.gs giriş kaydı yazmaz.
+// Yalnızca bu sekmeyi açan pencereden gelen mesaj kabul edilir; anahtar yalnızca bellekte, girişe dönülünce silinir.
+let ogretmenBakisi = null;
+(function ogretmenBakisiniBekle(){
+  if(location.hash !== "#ogretmen") return;
+  try{ history.replaceState({ um: 0 }, "", location.pathname + location.search); }catch(e){}
+  if(!window.opener) return;
+  window.addEventListener("message", function al(e){
+    let v = e.data;
+    if(e.source !== window.opener || !v || v.tur !== "ultramat-ogretmen") return;
+    window.removeEventListener("message", al);
+    let isim = String(v.isim || "").trim(), kod = String(v.kod || "").trim(), anahtar = String(v.anahtar || "").trim();
+    if(!isim || !/^[0-9]{6}$/.test(kod) || !anahtar) return;
+    ogretmenBakisi = anahtar;
+    linkDurumunuGizle();
+    document.getElementById("studentNameInput").value = isim;
+    document.getElementById("studentCodeInput").value = kod; kodGoster(false);
+    getResult();
+  });
+  try{ window.opener.postMessage("ultramat-ogretmen-hazir", "*"); }catch(e){}   // içerik gizli değil: yalnızca "hazırım"
+})();
 
 // Takıldığım Sorular ve Nasıl Değerlendiriyoruz? artık diğer bölümler gibi <details>; ayrı aç-kapa işleyicisi gerekmez.
 
