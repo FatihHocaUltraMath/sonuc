@@ -3007,7 +3007,8 @@ function meydanOkumaCiz(veri, damga){
   ust.classList.toggle("hidden", !sonuc);
   document.getElementById("moSonucAlani").innerHTML = sonuc ? moSonucHtml(sonuc, veri, last) : "";
   bolum.classList.toggle("hidden", !sir);
-  let moTarih = sir ? (sinavKisaAdi(sir.sinavAdi) + " · " + sir.tarihMetni) : "";
+  // Code.gs v2.47: sıradaki sınav henüz girilmediyse (tarihsiz) ad ve tarih yok
+  let moTarih = !sir ? "" : (sir.tarihsiz ? "Sıradaki sınav" : (sinavKisaAdi(sir.sinavAdi) + " · " + sir.tarihMetni));
   let moT = sir && sir.secim ? (MO_TUR[sir.secim.tur] || MO_TUR.kalkan) : null;
   document.getElementById("moEk").textContent = !sir ? ""
     : moT ? (moT.ikon + " " + sir.secim.metin + " · " + moTarih)
@@ -3026,6 +3027,11 @@ function moSonucHtml(m, veri, last){
   let t = MO_TUR[m.tur] || MO_TUR.kalkan, g = m.gercek || {};
   let durum = m.basardi ? "basardi" : (m.yakin ? "yakin" : "olmadi");
   let baslik, satir = "", notlar = [];
+  if(m.degerlendirilemedi && m.uygunBaslikYok){   // Code.gs v2.47 — başlık Nişancı'sı
+    let ar = Array.isArray(m.aralik) ? m.aralik : [2, 3];
+    return `<div class="moSonuc olmadi"><div class="moSonucBaslik">${t.ikon} Bu sefer değerlendirilemedi</div>
+      <div class="moSatir">Bu sınavda ${ar[0] === ar[1] ? ar[0] : ar[0] + "–" + ar[1]} sorulu bir başlık çıkmadı; Nişancı bu sefer değerlendirilmedi. Olmadı sayılmaz. Sıradaki meydan okumanı aşağıdan seçebilirsin.</div></div>`;
+  }
   if(m.degerlendirilemedi){
     return `<div class="moSonuc olmadi"><div class="moSonucBaslik">${t.ikon} Bu sefer değerlendirilemedi</div>
       <div class="moSatir">Seçtiğin içerik (${htmlKacis(m.icerik)}) bu sınavın puanlanan soruları arasında yer almadı. Sıradaki meydan okumanı aşağıdan seçebilirsin.</div></div>`;
@@ -3048,10 +3054,17 @@ function moSonucHtml(m, veri, last){
     satir = `Hedefin <b>en az ${m.hedefEtkin} doğru</b>ydu; <b>${g.dogru} doğru</b> yaptın.` + (m.basardi ? "" : tekSoru);
   } else if(m.tur === "roket"){
     satir = `Hedefin <b>en az ${moSayi(m.hedefEtkin)} net</b>ti; <b>${moSayi(g.net)} net</b> yaptın.` + (m.basardi ? "" : (m.yakin ? " Bir doğru daha yetiyordu." : ""));
+  } else if(m.olcut === "baslik"){   // Code.gs v2.47 — içerik seçmeden Nişancı
+    satir = m.basardi
+      ? `<b>${htmlKacis(g.baslik)}</b> başlığındaki <b>${g.icerikSoru} sorunun hepsini</b> doğru yaptın.`
+      : `Hedefin: ${htmlKacis(m.metin)}. En yaklaştığın başlık <b>${htmlKacis(g.baslik)}</b>: ${g.icerikSoru} sorudan <b>${g.icerikDogru}</b> doğru.${tekSoru}`;
   } else {
     satir = m.basardi
       ? `<b>${htmlKacis(m.icerik)}</b> içeriğindeki <b>${g.icerikSoru} sorunun hepsini</b> doğru yaptın.`
       : `Hedefin: <b>${htmlKacis(m.icerik)}</b> içeriğindeki ${g.icerikSoru} sorunun hepsi. Bu sınavda ${g.icerikSoru} sorudan <b>${g.icerikDogru}</b> doğru yaptın.${tekSoru}`;
+  }
+  if(m.olcek && m.olcek.onceki && m.olcek.simdi){
+    notlar.push(`ℹ️ Sınav ${m.olcek.simdi} soru çıktığı için hedefin ${m.olcek.onceki} soruya göre değil, ${m.olcek.simdi} soruya göre ayarlandı.`);
   }
   if(m.hafifletme){
     let h = m.hafifletme, par = [];
@@ -3092,7 +3105,9 @@ function moParlakNokta(last){
 
 // ---- Sınav öncesi: seçim ya da yapılmış seçim ----
 function moSiradakiHtml(sir, sonucVar, damga){
-  let giris = sonucVar ? `<div class="moGiris"><b>Sıradaki meydan okuman</b> · ${htmlKacis(sir.sinavAdi)}, ${htmlKacis(sir.tarihMetni)}</div>` : "";
+  let giris = !sonucVar ? "" : (sir.tarihsiz ? `<div class="moGiris"><b>Sıradaki meydan okuman</b> · sıradaki sınavın için</div>`
+    : `<div class="moGiris"><b>Sıradaki meydan okuman</b> · ${htmlKacis(sir.sinavAdi)}, ${htmlKacis(sir.tarihMetni)}</div>`);
+  let sonGunMetni = sir.tarihsiz ? "sınavdan önceki akşama" : (sir.sonSecimMetni + "'a");
   if(sir.secim && (!sir.acik || !moDegistirModu)){
     let t = MO_TUR[sir.secim.tur] || MO_TUR.kalkan;
     return `${giris}<div class="moBilet ${sir.secim.tur}">
@@ -3101,16 +3116,17 @@ function moSiradakiHtml(sir, sonucVar, damga){
       <div class="moBiletHedef">${htmlKacis(sir.secim.metin)}</div>
       <div class="moBiletAlt">${sir.acik ? "Kendine iyi bir hedef seçtin 💪 Sonucunu sınavdan sonra burada göreceksin." : "Seçimin kilitlendi. Sonucunu sınavdan sonra burada göreceksin."}</div>
     </div>
-    ${sir.acik ? `<button type="button" class="moDegistir" id="moDegistirBtn">↺ Fikrimi değiştirdim (${htmlKacis(sir.sonSecimMetni)}'a kadar)</button>` : ""}`;
+    ${sir.acik ? `<button type="button" class="moDegistir" id="moDegistirBtn">↺ Fikrimi değiştirdim (${htmlKacis(sonGunMetni)} kadar)</button>` : ""}`;
   }
   if(!sir.acik || !sir.secenekler) return "";
   let s = sir.secenekler;
   if(!moSeciliTur && sir.secim) moSeciliTur = sir.secim.tur;
-  let adaylar = s.nisanci ? s.nisanci.adaylar : [];
+  let baslikNis = !!(s.nisanci && s.nisanci.olcut === "baslik");   // Code.gs v2.47
+  let adaylar = (s.nisanci && s.nisanci.adaylar) ? s.nisanci.adaylar : [];
   if(!moSeciliIcerik || !adaylar.some(function(a){ return a.icerik === moSeciliIcerik; })){
     moSeciliIcerik = (sir.secim && sir.secim.tur === "nisanci" && adaylar.some(function(a){ return a.icerik === sir.secim.icerik; })) ? sir.secim.icerik : (adaylar[0] ? adaylar[0].icerik : null);
   }
-  if(moSeciliTur === "nisanci" && !adaylar.length) moSeciliTur = null;
+  if(moSeciliTur === "nisanci" && !adaylar.length && !baslikNis) moSeciliTur = null;
   let kart = function(tur, ic, kapali){
     let t = MO_TUR[tur];
     return `<button type="button" class="moSecenek ${tur}${moSeciliTur === tur ? " secili" : ""}" data-tur="${tur}" ${kapali ? "disabled" : ""} aria-pressed="${moSeciliTur === tur}">
@@ -3126,14 +3142,17 @@ function moSiradakiHtml(sir, sonucVar, damga){
   else if(r.koru) roketAciklama = `Zirvedesin! Geçen sınav ${moSayi(r.baslangic)} net; bu seviyeyi koru.`;
   else roketAciklama = `Geçen sınav ${moSayi(r.baslangic)} net. Bir doğru fazlası ya da üç yanlış eksiği yeter.`;
   let nis = adaylar.filter(function(a){ return a.icerik === moSeciliIcerik; })[0];
-  let nisanciKart = adaylar.length
+  let nisanciKart = baslikNis
+    ? kart("nisanci", `<div class="moHedef">${htmlKacis(s.nisanci.metin)}</div>
+        <div class="moAciklama">Sınavda ${s.nisanci.hedef}–${s.nisanci.ust} sorusu olan bir içeriğin ya da alt başlığın bütün sorularını doğru yap. Hangi başlık olacağı sınavda belli olur; tek sorulu içerikler sayılmaz.</div>`)
+    : adaylar.length
     ? kart("nisanci", `<div class="moHedef">${htmlKacis(nis.icerik)}: ${nis.soru} sorunun hepsi</div>
         <div class="moAciklama">Seçtiğin içeriğin bütün soruları doğru. Hangisi olsun?</div>
         <div class="moCipler">${adaylar.map(function(a){ return `<span class="moCip${a.icerik === moSeciliIcerik ? " aktif" : ""}" role="button" tabindex="0" data-icerik="${htmlKacis(a.icerik)}">${htmlKacis(a.icerik)} · ${a.soru}</span>`; }).join("")}</div>`)
     : (!s.haritaVar ? kart("nisanci", `<div class="moAciklama">Sınavın içerikleri henüz girilmedi; girilince burada seçebileceksin.</div>`, true) : "");
   let t = moSeciliTur ? MO_TUR[moSeciliTur] : null;
   return `${giris}${sonucVar ? "" : `<p class="moGiris">Sıradaki sınav için <b>kendine bir hedef seç</b>. Üçü de senin geçen sınavına göre ayarlandı; hangisi sana uygunsa.</p>`}
-    <div class="moSure">⏳ Seçim ${htmlKacis(sir.sonSecimMetni)}'a kadar açık</div>
+    <div class="moSure">${sir.tarihsiz ? "⏳ Seçimini sınavdan önceki akşama kadar yap; sınav günü yapılan seçim o sınavda sayılmaz." : `⏳ Seçim ${htmlKacis(sir.sonSecimMetni)}'a kadar açık`}</div>
     ${kart("kalkan", `<div class="moHedef">${htmlKacis(k.metin)}</div><div class="moAciklama">${kalkanAciklama}</div>`)}
     ${nisanciKart}
     ${kart("roket", `<div class="moHedef">${htmlKacis(r.metin)}</div><div class="moAciklama">${roketAciklama}</div>`)}

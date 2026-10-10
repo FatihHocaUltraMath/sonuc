@@ -4759,7 +4759,8 @@ const MO_ADI = { kalkan:"🛡️ Kalkan", nisanci:"🎯 Nişancı", roket:"🚀 
 function moDurumu(m){ return !m ? null : (m.degerlendirilemedi ? "olmadi" : (m.basardi ? "basardi" : (m.yakin ? "yakin" : "olmadi"))); }
 function moGercekMetni(m){
   let g = m.gercek || {};
-  if(m.degerlendirilemedi) return "değerlendirilemedi (içerik puanlanmadı)";
+  if(m.degerlendirilemedi) return m.uygunBaslikYok ? "değerlendirilemedi (sınavda uygun boyutta başlık çıkmadı)" : "değerlendirilemedi (içerik puanlanmadı)";
+  if(m.tur === "nisanci" && m.olcut === "baslik") return (g.baslik || "") + ": " + g.icerikDogru + "/" + g.icerikSoru + " doğru";   // v3.58 (Code.gs v2.47)
   if(m.tur === "nisanci") return g.icerikDogru + "/" + g.icerikSoru + " doğru";
   if(m.tur === "kalkan") return g.yanlis + " yanlış, " + g.dogru + " doğru";
   if(m.olcut === "dogru") return g.dogru + " doğru";
@@ -4770,7 +4771,7 @@ function moSatiriHtml(o){
   let parca = [];
   let m = o.meydanOkuma;
   if(m){
-    let d = moDurumu(m), ikon = { basardi:"✅ Başardı", yakin:"🟡 Tek soru kaldı", olmadi:"▫️ Olmadı" }[d];
+    let d = moDurumu(m), ikon = m.degerlendirilemedi ? "▫️ Değerlendirilemedi" : { basardi:"✅ Başardı", yakin:"🟡 Tek soru kaldı", olmadi:"▫️ Olmadı" }[d];
     parca.push(`<div class="moOgrSatir ${d}">${MO_ADI[m.tur] || ""} · ${htmlKacis(m.metin || "")}<span>→ ${htmlKacis(moGercekMetni(m))} · ${ikon}${m.hafifletme ? " · zorluk dengesiyle" : ""}</span></div>`);
   }
   if(moSiradakiSinif){
@@ -4803,7 +4804,9 @@ function meydanOkumaOzeti(liste){
   }
   if(siradakiVar){
     let secen = liste.filter(function(o){ return o.moSiradakiSecim; }).length;
-    govde += `<div class="moOzetSatir"><b>Sıradaki: ${htmlKacis(moSiradakiSinif.sinavAdi)} (${htmlKacis(moSiradakiSinif.tarihMetni)})</b> — seçim yapan: <b>${secen}/${n}</b>. ${moSiradakiSinif.acik ? `Seçim ${htmlKacis(moSiradakiSinif.sonSecimMetni)}'a kadar açık.` : "Seçim kapandı."}</div>`;
+    govde += moSiradakiSinif.tarihsiz   // v3.58 (Code.gs v2.47): sıradaki sınav henüz Sinavlar'a girilmedi
+      ? `<div class="moOzetSatir"><b>Sıradaki sınav</b> (henüz Sinavlar'a girilmedi) — seçim yapan: <b>${secen}/${n}</b>. Sınavı tarihiyle girdiğinde, o tarihten önceki gece 23.59'a kadar yapılmış seçimler sayılır.</div>`
+      : `<div class="moOzetSatir"><b>Sıradaki: ${htmlKacis(moSiradakiSinif.sinavAdi)} (${htmlKacis(moSiradakiSinif.tarihMetni)})</b> — seçim yapan: <b>${secen}/${n}</b>. ${moSiradakiSinif.acik ? `Seçim ${htmlKacis(moSiradakiSinif.sonSecimMetni)}'a kadar açık.` : "Seçim kapandı."}</div>`;
   }
   kutu.innerHTML = `<h3>🎯 Meydan Okuma${secenler.length ? " · " + htmlKacis(sinavAdi) : ""}</h3>${govde}`;
   let moOzet = secenler.length ? `${secenler.length}/${n} seçti · ${say.basardi} başardı`
