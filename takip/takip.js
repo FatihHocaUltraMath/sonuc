@@ -1,4 +1,5 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.10 · Mufredat "İçerik" maddeleri seçilir: ödevde ve
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.10.1 · "LGS Hazırlık" şubesi takipte görünmez)
+ * sürüm 0.10 · Mufredat "İçerik" maddeleri seçilir: ödevde ve
  *   Bugünün Konusu'nda birden fazla madde; kayda seçilenler yazılır)
  * sürüm 0.9 · Mufredat kapsamı · müfredat dışı ödev konusu ·
  *   ders içi gözlem tarihlerini göster/gizle · anahtar gizli yazılır)
@@ -16,7 +17,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.10";
+const SURUM = "0.10.1";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -309,8 +310,8 @@ function anaEkraniAc() {
   durumCubugunuCiz();
 }
 
-/** Takip sisteminde gösterilmeyen şubeler (ör. "Özel Ders"). Öğrenciler ana tabloda kalır; yalnızca burada görünmez. */
-const TAKIP_DISI_SUBE = ["özel ders"];
+/** Takip sisteminde gösterilmeyen şubeler ("LGS Hazırlık"). Öğrenciler ana tabloda kalır; yalnızca burada görünmez. */
+const TAKIP_DISI_SUBE = ["lgs hazırlık"];
 function takipteGorunur(s) {
   const sube = aramaMetni(s.sube || String(s.classId || "").replace(/^[^-]*-/, ""));
   return TAKIP_DISI_SUBE.indexOf(sube) === -1;
