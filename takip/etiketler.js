@@ -1,4 +1,5 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · etiket kataloğu (sürüm 0.4 · birbirine çok yakın 7 etiket emekli: ders içi 24, ödev 9 etiket seçilebilir)
+/* FatihHoca | UltraMat — Öğrenci Takip · etiket kataloğu (sürüm 0.5 · Defter Takibi etiketleri: 4 olumlu, 4 dikkat)
+ * sürüm 0.4 · birbirine çok yakın 7 etiket emekli: ders içi 24, ödev 9 etiket seçilebilir
  *
  * Kayıtlara etiketin METNİ değil KODU yazılır. Bir etiketin adını ya da emojisini buradan
  * değiştirirseniz eski kayıtlar bozulmaz. Kodları (O_OZEN, D_KONUSMA …) DEĞİŞTİRMEYİN;
@@ -6,7 +7,7 @@
  *
  * Kategoriler:
  *   olumlu   → iyi giden durum
- *   dikkat   → dikkat gerektiren davranış (ders içi)
+ *   dikkat   → dikkat gerektiren davranış (ders içi) ya da defterde dikkat gerektiren durum
  *   gelistir → ödevde geliştirilmesi gereken yön
  *   akademik → derste fark edilen akademik zorlanma (aktif konuya bağlanır)
  *   gelisim  → önceki bir kayda bağlanan "düzeldi / tamamladı" kaydı
@@ -68,6 +69,20 @@ const ETIKETLER = Object.freeze({
     { kod: "A_DORTISLEM", kategori: "akademik", emoji: "🔢", ad: "Dört işlemde zorlanıyor", duzelme: "✓ Sonraki gözlemde doğru uyguladı" }
   ],
 
+  // Defter Takibi: defter kontrolünde öğrencinin adına dokununca (isteğe bağlı, birden fazla seçilebilir).
+  // Dikkat etiketleri sonraki bir kontrolde "Sonradan düzeldi" ile kapatılabilir; eski kayıt silinmez.
+  // ipucu: yalnızca seçim ekranında küçük yazıyla görünür.
+  DEFTER_GOZLEM: [
+    { kod: "F_DUZENLI",  kategori: "olumlu", emoji: "📐", ad: "Defteri düzenli ve temiz" },
+    { kod: "F_OZENLI",   kategori: "olumlu", emoji: "✍️", ad: "Yazı ve çizimleri özenli" },
+    { kod: "F_ADIM",     kategori: "olumlu", emoji: "🪜", ad: "Çözümleri adım adım yazmış" },
+    { kod: "F_RENKLI",   kategori: "olumlu", emoji: "🖍️", ad: "Renkli kalemle önemli yerleri belirginleştirmiş" },
+    { kod: "F_DAGINIK",  kategori: "dikkat", emoji: "🗂️", ad: "Defteri dağınık", ipucu: "Sırasız, tarih ya da başlık yok", duzelme: "✓ Sonradan düzeldi" },
+    { kod: "F_OZENSIZ",  kategori: "dikkat", emoji: "🔍", ad: "Yazı ve çizimleri özensiz", duzelme: "✓ Sonradan düzeldi" },
+    { kod: "F_ADIMYOK",  kategori: "dikkat", emoji: "❔", ad: "Çözüm adımlarını yazmamış", duzelme: "✓ Sonradan düzeldi" },
+    { kod: "F_RENKSIZ",  kategori: "dikkat", emoji: "🖍️", ad: "Renkli kalem kullanmıyor", duzelme: "✓ Sonradan düzeldi" }
+  ],
+
   // Önceki bir kayda bağlanan gelişim kaydının kodu (kategori: gelisim)
   DUZELDI_KODU: "DUZELDI",
 
@@ -82,6 +97,6 @@ const ETIKETLER = Object.freeze({
 
 /** Koddan etiket bilgisini bulur (bilinmeyen kod için güvenli bir yedek döner). */
 function etiketBul(kod) {
-  const hepsi = ETIKETLER.ODEV_GOZLEM.concat(ETIKETLER.DERS_GOZLEM);
+  const hepsi = ETIKETLER.ODEV_GOZLEM.concat(ETIKETLER.DERS_GOZLEM, ETIKETLER.DEFTER_GOZLEM);
   return hepsi.find(e => e.kod === kod) || { kod, kategori: "", emoji: "•", ad: kod };
 }
