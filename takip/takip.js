@@ -2459,7 +2459,9 @@ async function listeTazele(tur, classId) {
     }
   } catch (e) {
     if (anahtarReddi(e)) { depo.sil(DEPO.anahtar); girisGoster("Anahtar değişmiş ya da kaldırılmış. Yeni anahtarla giriş yapın."); return; }
-    durum.listeHata[a] = e instanceof SunucuHatasi ? e.message : "Liste güncellenemedi (internet yok olabilir).";
+    durum.listeHata[a] = e instanceof SunucuHatasi
+      ? (e.kod === "islem" ? "SUNUCU:Sunucu bu bölümü henüz tanımıyor: takip.gs yeni sürümle dağıtılmamış olabilir (Dağıt → Dağıtımları yönet → Yeni sürüm)." : e.message)
+      : "Liste güncellenemedi (internet yok olabilir).";
   } finally {
     durum.listeYukleniyor[a] = false;
   }
@@ -2510,7 +2512,9 @@ function lListeCiz() {
   const ogrSay = sinif ? sinif.ogrenciler.filter(o => o.aktif).length : 0;
   dugmeYukleniyor($("lYenileDugme"), !!durum.listeYukleniyor[a]);
   if (v.yok && durum.listeYukleniyor[a]) { kutu.appendChild(iskelet(4, "kartlar")); return; }
-  if (v.yok && durum.listeHata[a]) kutu.appendChild(el("div", "kart bos", durum.listeHata[a] + " İnternet gelince \"Listeyi Yenile\"ye dokunun."));
+  const lh = durum.listeHata[a] || "", sunucuEski = lh.indexOf("SUNUCU:") === 0;
+  if (sunucuEski) kutu.appendChild(el("div", "kart bos", lh.slice(7)));
+  else if (v.yok && lh) kutu.appendChild(el("div", "kart bos", lh + " İnternet gelince \"Listeyi Yenile\"ye dokunun."));
   else if (durum.listeHata[a]) kutu.appendChild(el("p", "ipucu", "Liste güncellenemedi; telefondaki son liste gösteriliyor."));
 
   const liste = donemKayitlari(v);
