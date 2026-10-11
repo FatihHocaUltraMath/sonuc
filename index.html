@@ -2339,7 +2339,21 @@ function enGucluKonuBulClient(konular){
   if(!konular || konular.length === 0) return null;
   let adaylar = konular.filter(k => k.soruSayisi >= 3 && k.yuzde >= 70);   // %70 altı "en güçlü" sayılmaz (Code.gs ile aynı)
   if(adaylar.length === 0) return null;
-  return adaylar.reduce((en, k) => (!en || k.yuzde > en.yuzde) ? k : en, null);
+  return adaylar.reduce((en, k) => (!en || k.yuzde > en.yuzde || (k.yuzde === en.yuzde && k.soruSayisi > en.soruSayisi)) ? k : en, null);   // v2.55: eşitlikte çok sorulu
+}
+// v2.55 — Tek içerikli sınavda (az sorulu olmayan tek içerik) "en güçlü içerik" karşılaştırması anlamsız: en güçlü alt başlık
+// (en az 3 soru, %70 ve üstü; eşit olanların hepsi, en fazla 3). Bütün alt başlıklar tam puansa ayrı cümle.
+function enGucluAltBaslikBul(k){
+  let liste = (k && k.altKazanimlar || []).map(a => ({ ad: a.altKazanim, soru: Number(a.soruSayisi) || 0, dogru: Number(a.dogruSayisi) || 0 }))
+    .filter(a => a.ad && a.soru);
+  if(liste.length < 2) return null;
+  if(liste.every(a => a.dogru === a.soru)) return { tam: true };
+  let aday = liste.filter(a => a.soru >= 3 && a.dogru / a.soru >= 0.7);
+  if(!aday.length) return null;
+  let enOran = Math.max.apply(null, aday.map(a => a.dogru / a.soru));
+  let enler = aday.filter(a => a.dogru / a.soru === enOran);   // eşitlikte hepsi (en fazla 3) — biri keyfî seçilmez
+  if(enler.length > 3) return null;
+  return { adlar: enler.map(a => a.ad), yuzde: Math.round(enOran * 1000) / 10 };
 }
 
 // Sayfa ilk açıldığında sayılar aniden belirmesin, 0'dan hedefe doğru kısa bir animasyonla
@@ -2505,6 +2519,15 @@ function gelisimAnaliziniCiz(kayit){
     ${maddeler ? `<ul class="gaListe">${maddeler}</ul>` : ""}
     <p class="gaDipnot">Bu değerlendirme, sınav sonuçlarındaki gerçek sayılardan hazırlanır.</p>`;
 }
+// v2.56 — Odak kutusunun alt satırı: içerik tek sınavda geldiyse o sınav ("5. Denemede"), birden çok sınavda "N sınavın toplamı".
+// Eski Code.gs (sinavlar alanı yok) yanıtında etiket yazılmaz; yanlış bir "Tüm sınavlarda" çıkmasın.
+function hnOdakKaynakMetni(odak){
+  let l = odak && Array.isArray(odak.sinavlar) ? odak.sinavlar : null;
+  if(!l || l.length === 0) return "";
+  if(l.length > 1) return `<span>${l.length} sınavın toplamı</span>`;
+  let m = sinavAdiEslesme(l[0]);
+  return `<span>${m ? (m[2] + ". Denemede") : htmlKacis(String(l[0]).trim() + " sınavında")}</span>`;
+}
 function hocaNotunuCiz(kayit){
   let alan = document.getElementById("fatihNote");
   let baslik = alan.previousElementSibling && alan.previousElementSibling.classList.contains("title") ? alan.previousElementSibling : null;
@@ -2524,7 +2547,7 @@ function hocaNotunuCiz(kayit){
       <div class="hnOdakUst"><span class="hnOdakEtiket">${hn.odak.tur === "ustalas" ? "BİR ADIM ÖTEYE" : "BU DÖNEMİN ODAĞI"}</span><span class="hnOdakYuzde">%${Math.round(y)} başarı</span></div>
       <b class="hnOdakAd">${htmlKacis(hn.odak.icerik)}${hn.odak.surekliZayif ? `<span class="hnOdakRozet">${hn.odak.sinavSayisi ? htmlKacis(hn.odak.sinavSayisi) + " sınavdır" : "tekrarlayan"}</span>` : ""}</b>
       <div class="hnOdakBar"><div class="hnOdakDolu" data-hedef-genislik="${y}"></div>${soVar ? `<span class="hnOdakSinif" style="left:${Math.max(0, Math.min(100, Number(so)))}%" title="Sınıf ortalaması"></span>` : ""}</div>
-      <div class="hnOdakAlt"><span>Tüm sınavlarda</span>${soVar ? `<span>Son sınavda sınıf ort. <b>%${Math.round(Number(so))}</b></span>` : ""}</div>
+      <div class="hnOdakAlt">${hnOdakKaynakMetni(hn.odak)}${soVar ? `<span>${Array.isArray(hn.odak.sinavlar) ? "Sınıf ort." : "Son sınavda sınıf ort."} <b>%${Math.round(Number(so))}</b></span>` : ""}</div>
     </div>`;
   }
   if(!odakHtml && hn.odakGirilmedi && hn.odakGirilmedi.icerik){   // v2.54 — giremediği sınavın içeriği (yüzdesi yok)
@@ -4431,8 +4454,15 @@ function renderKonuAnalizi(){
   let sinifGoster = !genel && (window._sonKatilim || 0) >= SINIF_KIYAS_MIN_KATILIM;   // v2.38: tek eşik
 
   // Rozetler: en güçlü içerik yalnızca %70 ve üzerindeyse (Code.gs enGucluKonuBul ile aynı eşik)
-  let enGuclu = genel ? window._enGucluKonu : enGucluKonuBulClient(window._sonSinavKonular);
+  let tekIcerik = !genel && (window._sonSinavKonular || []).filter(k => !icAzSoru(k)).length === 1
+    ? (window._sonSinavKonular || []).filter(k => !icAzSoru(k))[0] : null;
+  let enGuclu = genel ? window._enGucluKonu : (tekIcerik ? null : enGucluKonuBulClient(window._sonSinavKonular));
   let rozetHtml = "";
+  if(tekIcerik){   // v2.55
+    let ab = enGucluAltBaslikBul(tekIcerik);
+    if(ab && ab.tam) rozetHtml += `<div class="icRozet guclu"><span class="icRozetIkon">★</span><span>Bu sınavda <b>${htmlKacis(tekIcerik.konu)}</b> içeriğinin bütün alt başlıklarında tam puan aldın</span></div>`;
+    else if(ab) rozetHtml += `<div class="icRozet guclu"><span class="icRozetIkon">★</span><span>Bu sınavda en güçlü ${ab.adlar.length > 1 ? "alt başlıkların" : "alt başlığın"}: ${ab.adlar.map(x => `<b>${htmlKacis(x)}</b>`).join(ab.adlar.length === 2 ? " ve " : ", ").replace(/, (<b>[^<]*<\/b>)$/, " ve $1")} (${icYuzde(ab.yuzde)})</span></div>`;
+  }
   if(enGuclu){
     rozetHtml += `<div class="icRozet guclu"><span class="icRozetIkon">★</span><span>${genel ? "Bütün sınavlarda" : "Bu sınavda"} en güçlü içeriğin: <b>${htmlKacis(enGuclu.konu)}</b> (${icYuzde(enGuclu.yuzde)})</span></div>`;
   }
