@@ -827,6 +827,9 @@ border:1px solid #FED7AA;
 .history{display:flex;flex-direction:column;gap:10px;}
 .gsKart{background:#FFFFFF;border:1px solid #EDE9FE;border-radius:18px;padding:14px 15px;}
 .gsKart.son{border-color:#DDD6FE;background:#FCFAFF;}
+.gsKart.girilmedi{background:#F8FAFC;border:1px dashed #CBD5E1;padding:11px 15px;}   /* v2.54 — giremediği sınav */
+.gsKart.girilmedi .gsAd b{color:#475569;}
+.gsKart.girilmedi .gsNet small{font-size:12.5px;font-weight:800;color:#475569;}
 .gsUst{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
 .gsAd{min-width:0;display:flex;flex-direction:column;gap:2px;}
 .gsAd b{font-size:14.5px;font-weight:900;color:var(--dark);line-height:1.3;}
@@ -1750,6 +1753,8 @@ details.cpKart[open] > summary .cpKartUst::after{transform:rotate(-135deg) trans
 .hnOdakAlt{display:flex;justify-content:space-between;gap:8px;margin-top:8px;font-size:12px;font-weight:700;color:#475569;}
 .hnOdakAlt b{color:#475569;}
 .hnOdakAlt span{white-space:nowrap;}
+.hnOdak.girilmedi{border-style:dashed;border-color:#CBD5E1;}   /* v2.54 */
+.hnOdak.girilmedi .hnOdakAd{margin-bottom:0;}
 .hnOdakRozet{display:inline-block;margin-left:6px;padding:2px 7px;border-radius:6px;font-size:12px;font-weight:900;letter-spacing:.3px;background:#FEF3C7;color:#92400E;vertical-align:1px;}
 
 /* ===================== v3: İÇERİK ANALİZİ ===================== */
@@ -2164,11 +2169,11 @@ SONUÇLARINI GÖR
   <div class="metMadde sadeceSinif"><span class="metIkon">👥</span><div><b>Sınıf ortalaması bir yarış değildir.</b> Yalnızca bir referans noktasıdır; nerede olduğunu daha iyi anlaman için.</div></div>
   <div class="metMadde"><span class="metIkon">🛡️</span><div><b>Veri rozetleri.</b> "Az veri", "orta veri" ve "yeterli veri" rozetleri bir sonucun kaç soruya dayandığını gösterir. Az veriye dayanan sonuç henüz kesinleşmemiştir; birkaç sınav daha bekleriz.</div></div>
   <div class="metMadde"><span class="metIkon">🏔️</span><div><b>Hedefim.</b> Çocuğunuz yılın başında kendi uzun vadeli hedefini seçer. 8. sınıfta bu, LGS'de matematikten yapmak istediği nettir; 5–7. sınıfta yıl sonunda ulaşmak istediği Başarı Durumu'dur (İyi, Çok İyi, Mükemmel). Hedefe yaklaşma, son 3 sınavın ortalamasıyla ve sınavların zorluğu hesaba katılarak izlenir; böylece tek bir sınav tabloyu değiştirmez. 8. sınıfta bu ortalama 20 soruya göre gösterilir; LGS bütün içeriklerden geldiği için bu bir yön göstergesidir, LGS netinin tahmini değildir. Hedef yıl içinde yükseltilebilir.</div></div>
-  <div class="metMadde"><span class="metIkon">🗺️</span><div><b>Matematik Haritam.</b> Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış içerikler sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir. 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</div></div>
+  <div class="metMadde"><span class="metIkon">🗺️</span><div><b>Matematik Haritam.</b> Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış ya da çocuğunuzun giremediği sınavın içerikleri sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir. 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</div></div>
   <div class="metMadde"><span class="metIkon">🗂️</span><div><b>Koleksiyonum.</b> Her dönemin son iki haftasında çocuğunuzun dönem kartı açılır: dokunduğunuzda o dönemin hikâyesi (çözdüğü sorular, haritası, en güçlü içeriği, rozetleri, meydan okumaları, hedefi ve varsa Onur Belgesi madalyaları) kart kart oynar; sonunda paylaşılabilir bir dönem kartı hazırdır. Kartlar rafta kalır, yıl sonunda "Yılın Özeti" eklenir.</div></div>
   <div class="metMadde sadeceSinif"><span class="metIkon">🎯</span><div><b>Meydan Okuma.</b> Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki ya da alt başlıktaki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></div>
   <div class="metMadde metVurgu"><span class="metIkon">📘</span><div><b>Hata Defteri.</b> Her üç sınavda bir, bu sınavlarda yanlış yapılan ve boş bırakılan sorular öğrencinin adına hazırlanan bir föyde toplanır. Föy sınıfta verilir ya da size WhatsApp'tan PDF olarak gönderilir. Öğrenci soruları föyün üzerinde yeniden çözer, ardından cevap anahtarıyla kontrol eder ve her sorunun altına "Bu sefer doğru yaptım" ya da "Hâlâ zorlanıyorum" işaretler. Karekodlu sorularda çözüm videosunu izleyebilir, yapamadığı soruları okulda Fatih Hoca'ya sorar.<span class="metNot">Föy eve geldiğinde, çocuğunuzun cevap anahtarına bakmadan soruları çözmesine dikkat etmeniz yeterlidir.</span></div></div>
-  <div class="metMadde"><span class="metIkon">🧭</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar.<span class="sadeceSinif"> Sınıfın yarısından fazlasının yanlış yaptığı sorular derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></div>
+  <div class="metMadde"><span class="metIkon">🧭</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar. Çocuğunuzun giremediği bir sınavın içeriği de eksik sayılır ve plana girer.<span class="sadeceSinif"> Sınıfın yarısından fazlasının yanlış yaptığı sorular derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></div>
 </div>
 </div>
 </details>
@@ -2522,6 +2527,13 @@ function hocaNotunuCiz(kayit){
       <div class="hnOdakAlt"><span>Tüm sınavlarda</span>${soVar ? `<span>Son sınavda sınıf ort. <b>%${Math.round(Number(so))}</b></span>` : ""}</div>
     </div>`;
   }
+  if(!odakHtml && hn.odakGirilmedi && hn.odakGirilmedi.icerik){   // v2.54 — giremediği sınavın içeriği (yüzdesi yok)
+    odakHtml = `<div class="hnOdak girilmedi">
+      <div class="hnOdakUst"><span class="hnOdakEtiket">BU DÖNEMİN ODAĞI</span></div>
+      <b class="hnOdakAd">${htmlKacis(hn.odakGirilmedi.icerik)}</b>
+      <div class="hnOdakAlt"><span>${htmlKacis(sinavKisaAdi(hn.odakGirilmedi.sinav))}</span><span>Sınavına giremedin</span></div>
+    </div>`;
+  }
   let paragraflar = hn.paragraflar.map(function(p, i){
     return `<p>${htmlKacis(p)}</p>` + (i === 1 ? odakHtml : "");
   }).join("");
@@ -2788,6 +2800,7 @@ function haritaCiz(veri){
 function hrDetayHtml(x, h){
   if(!x) return "";
   let bas = `<h3>${htmlKacis(konuIkon(x.icerik))} ${htmlKacis(x.icerik)}</h3>`;
+  if(x.seviye === "sis" && x.girilmedi) return `<div class="hrDetay">${bas}<div class="hrSeviye">🌫️ Sisli bölge</div><div class="hrSatir">Bu içeriğin sınavına (${htmlKacis(sinavKisaAdi(x.girilmedi))}) giremedin, bu yüzden bölgen henüz sisli. Bu içerikten yeniden soru geldiğinde sis kalkacak.</div></div>`;   // v2.54
   if(x.seviye === "sis") return `<div class="hrDetay">${bas}<div class="hrSeviye">🌫️ Sisli bölge</div><div class="hrSatir">Bu içeriğin sınavı henüz yapılmadı. Sınavı gelince sis kalkacak ve bölgen renklenecek.</div></div>`;
   let y = Math.round(x.d / x.n * 100);
   let sonraki = { kesif:["🌱 Filizleniyor", "%50"], filiz:["🌳 Sağlam", "%70"], saglam:["👑 Usta", "%90, en az " + (h.ustaMinSoru || 4) + " soruyla"], usta:null }[x.seviye];
@@ -4193,7 +4206,20 @@ function showHistory(data){
       ${(sinifSatiri || rozetCipleri) ? `<div class="gsCipler">${sinifSatiri}${rozetCipleri}</div>` : ""}
       ${icerikHtml}
     </div>`;
-  }).reverse().join("");
+  });
+  // v2.54 — giremediği sınavlar: kendi yerinde (oncekiSayisi = ondan önce girdiği sınav sayısı) soluk bir kart
+  let son = data[data.length - 1] || {};
+  (Array.isArray(son.girilmeyenSinavlar) ? son.girilmeyenSinavlar : []).slice().reverse().forEach(function(g){
+    let yer = Math.max(0, Math.min(html.length, Number(g.oncekiSayisi) || 0));
+    let tarih = tarihUzunYaz(g.tarihMetni !== undefined ? g.tarihMetni : tarihFormatla(g.tarih));
+    let ic = (g.icerikler || []).map(function(k){ return `<span>${htmlKacis(k.konu)}</span>`; }).join("");
+    html.splice(yer, 0, `<div class="gsKart girilmedi">
+      <div class="gsUst"><div class="gsAd"><b>${htmlKacis(sinavOkunurAdi(g.sinav))}</b><small>${htmlKacis(tarih || "")}</small></div>
+        <div class="gsNet"><small>sınava giremedin</small></div></div>
+      ${ic ? `<div class="gsIcerikSatir">${ic}</div>` : ""}
+    </div>`);
+  });
+  html = html.reverse().join("");
   document.getElementById("historyArea").innerHTML = html;
 }
 
@@ -4554,7 +4580,8 @@ function planNeYap(k){
       neden = "Kayıpların tek bir nedene dayanmıyor: " + p.join(", ") + ".";
       ne = "Kaynak kitaplarından bu içeriğin sorularını her adımı alt alta yazarak çöz."; break;
     }
-    default: ne = "Kaynak kitaplarından konu özetini ve çözümlü örnekleri incele, sonra benzer soruları kendin çöz.";
+    default: ne = k.girilmedi ? "Kaynak kitaplarından konu özetini ve çözümlü örnekleri incele, sonra bu içeriğin sorularını kendin çöz."
+      : "Kaynak kitaplarından konu özetini ve çözümlü örnekleri incele, sonra benzer soruları kendin çöz.";
   }
   let ak = (k.altKazanimDetay || [])[0];
   if(ak && ak.soru && ak.dogru / ak.soru < 0.7) ne += " Özellikle " + ak.ad + " üzerinde dur.";
@@ -4564,23 +4591,25 @@ function planNeYap(k){
 }
 function planSiraNedeni(k){
   let parca = [];
-  parca.push(k.son ? "Son sınav" : "Önceki sınavdan");
+  parca.push(k.son ? "Son sınav" : (k.girilmedi ? "Giremediğin sınav" : "Önceki sınavdan"));
   if(k.temeliOlduguMadde) parca.push(k.temeliOlduguMadde.sira + ". maddenin temeli");
   else if(k.temelOlduguKonular && k.temelOlduguKonular.length) parca.push("sıradaki konuların temeli");
-  else if(!k.son) parca[0] = "Önceki sınavdan kalan eksik";
+  else if(!k.son && !k.girilmedi) parca[0] = "Önceki sınavdan kalan eksik";
   return parca.join(" · ");
 }
 function planKartHtml(k, i, plan){
   let ilk = i === 0;
   let cipler = [];
   if(k.son) cipler.push(`<span class="cpCip turuncu">Son Sınav</span>`);
+  else if(k.girilmedi) cipler.push(`<span class="cpCip">Giremediğin Sınav · ${htmlKacis(sinavKisaAdi(k.girilmedi.sinav))}</span>`);   // v2.54
   else if(k.eskiSinav) cipler.push(`<span class="cpCip">Önceki Sınav · ${htmlKacis(sinavKisaAdi(k.eskiSinav))}</span>`);
   if(k.temeliOlduguMadde) cipler.push(`<span class="cpCip mor">${k.temeliOlduguMadde.sira}. Maddenin Temeli</span>`);
   else if(k.temelOlduguKonular && k.temelOlduguKonular.length) cipler.push(`<span class="cpCip mor">Sıradaki Konuların Temeli</span>`);
   if(k.azSoru) cipler.push(`<span class="cpCip gri">Az Soruya Dayanıyor</span>`);
-  let ozet = `<summary><div class="cpKartUst"><span class="cpNo">${i + 1}</span><span class="cpAd">${htmlKacis(k.konu)}</span><span class="cpOran">${Number(k.soruSayisi) || 0} soruda ${Number(k.dogruSayisi) || 0} doğru</span></div>
+  let ozet = `<summary><div class="cpKartUst"><span class="cpNo">${i + 1}</span><span class="cpAd">${htmlKacis(k.konu)}</span>${k.girilmedi ? "" : `<span class="cpOran">${Number(k.soruSayisi) || 0} soruda ${Number(k.dogruSayisi) || 0} doğru</span>`}</div>
     ${planDagilimHtml(k.dagilim, true)}${cipler.length ? `<div class="cpCipler">${cipler.join("")}</div>` : ""}</summary>`;
   let govde = planDagilimHtml(k.dagilim, false);
+  if(k.girilmedi) govde += `<div class="cpMini">Bu içeriğin sınavına giremediğin için nerede zorlandığını henüz bilmiyoruz.</div>`;   // v2.54
   if(k.azSoru) govde += `<div class="cpMini">Bu içerikten yalnızca ${Number(k.soruSayisi) || 0} soru soruldu. Sonuç kesin bir eksik değil, bir işaret olarak görülmeli.</div>`;
   if(k.temeliOlduguMadde){
     let t = k.temeliOlduguMadde;
