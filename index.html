@@ -1095,6 +1095,8 @@ color:#475569;
 .cpNo{flex:0 0 28px;height:28px;border-radius:50%;background:#F3E8FF;color:#6D28D9;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;}
 .cpAd{flex:1;min-width:0;font-size:15.5px;font-weight:900;color:var(--dark);line-height:1.3;}
 .cpOran{flex-shrink:0;font-size:12px;font-weight:700;color:var(--gray);white-space:nowrap;}
+/* dar ekranda (320–360 px) oran başlığın altına iner; başlığın üstüne binmez, kelime bölünmez */
+@media (max-width:374px){ .cpKartUst{flex-wrap:wrap;row-gap:2px;} .cpKartUst .cpOran{order:3;flex-basis:100%;padding-left:38px;} }
 .cpCubuk{height:7px;border-radius:999px;background:#F1F5F9;overflow:hidden;margin:10px 0 2px;}
 .cpCubuk span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#FB923C,#F97316);}
 .cpCipler{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;}
@@ -1594,7 +1596,7 @@ details.cpKart[open] > summary .cpKartUst::after{transform:rotate(-135deg) trans
 .dnHarita .s{display:flex;gap:4px;}
 .dnHarita i{width:34px;height:39px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-style:normal;font-weight:900;font-size:12px;opacity:0;transform:scale(.3);animation:dnHex .45s forwards;}
 @keyframes dnHex{to{opacity:1;transform:scale(1)}}
-.dnHarita i.k{background:#FDE68A;color:#92400E;} .dnHarita i.f{background:#86EFAC;color:#14532D;animation:dnHex .45s forwards,dnFiliz 1.6s 2.4s ease-in-out infinite;}
+.dnHarita i.k{background:#FEF3C7;color:#92400E;} .dnHarita i.f{background:#86EFAC;color:#14532D;animation:dnHex .45s forwards,dnFiliz 1.6s 2.4s ease-in-out infinite;}
 .dnHarita i.x{background:repeating-linear-gradient(135deg,rgba(255,255,255,.14) 0 4px,rgba(255,255,255,.06) 4px 8px);color:rgba(255,255,255,.4);}
 @keyframes dnFiliz{50%{transform:scale(1.12);box-shadow:0 0 14px #86EFAC}}
 /* 4 süper güç */
@@ -2160,20 +2162,20 @@ SONUÇLARINI GÖR
 
 <section class="bolumKart sade" id="kartMetodoloji" aria-label="Nasıl Değerlendiriyoruz?">
 <details class="bolum" id="bolMetodoloji">
-<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">ℹ️</span><span class="bolumMetin"><span class="bolumAd">Nasıl Değerlendiriyoruz?</span><span class="bolumOzet hep">Sonuçları nasıl yorumladığımızı, Hedefim'i, Haritam'ı, Meydan Okuma'yı, Çalışma Planı'nı ve Hata Defteri'ni anlatır.</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">ℹ️</span><span class="bolumMetin"><span class="bolumAd">Nasıl Değerlendiriyoruz?</span><span class="bolumOzet hep">Sonuçları nasıl yorumladığımızı, Hedefim'i, Haritam'ı, <span class="sadeceSinif">Meydan Okuma'yı, </span>Çalışma Planı'nı ve Hata Defteri'ni anlatır.</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
 <div class="bolumIc">
 <div id="metodolojiArea" class="metodolojiAlan">
   <div class="metMadde"><span class="metIkon">🔎</span><div><b>Az veriyle hüküm vermeyiz.</b> Tek bir sınav sonucu her şeyi anlatmaz. Bir konuda henüz yeterince soru gelmediyse bunu açıkça belirtiriz ("henüz emin olamayız" gibi).</div></div>
   <div class="metMadde"><span class="metIkon">📈</span><div><b>Gidişata bakarız.</b> Gelişim, tek bir sınava değil, sınavlar arasındaki gidişata bakılarak değerlendirilir. Bir sınav kötü geçmiş olabilir; asıl önemli olan genel yön.</div></div>
   <div class="metMadde"><span class="metIkon">⚖️</span><div><b>Sınavların zorluğunu hesaba katarız.</b> Sınavlarımız farklı içeriklerden oluştuğu için bazıları daha zor geçer. Sınavdan sınava ilerlemeyi gösterirken (grafik, kişisel rekor, gelişim rozetleri, Hedefim) neti, sınavın sınıfın geneli için ne kadar zor olduğuna göre düzeltiriz. Her ölçümün küçük bir oynama payı da vardır; bu payın içinde kalan farkları "aynı seviyede" sayarız. Bu karşılaştırmalar, sınava en az 10 öğrenci girdiğinde yapılır. Ekrandaki net ve Başarı Durumu ise sınavdaki gerçek sonuçtur.</div></div>
   <div class="metMadde sadeceSinif"><span class="metIkon">👥</span><div><b>Sınıf ortalaması bir yarış değildir.</b> Yalnızca bir referans noktasıdır; nerede olduğunu daha iyi anlaman için.</div></div>
-  <div class="metMadde"><span class="metIkon">🛡️</span><div><b>Veri rozetleri.</b> "Az veri", "orta veri" ve "yeterli veri" rozetleri bir sonucun kaç soruya dayandığını gösterir. Az veriye dayanan sonuç henüz kesinleşmemiştir; birkaç sınav daha bekleriz.</div></div>
+  <div class="metMadde"><span class="metIkon">📏</span><div><b>Veri etiketleri.</b> Matematik Gelişimim'de eğilimin yanındaki "az veri", "orta veri" ya da "yeterli veri" etiketi, eğilimin kaç sınava dayandığını gösterir: 3 sınavda az, 4–5 sınavda orta, 6 ve daha fazla sınavda yeterli. İçerik Analizi'nin Genel Durum görünümünde 15'ten az soruyla ölçülen içeriklerin yanında "az veri" yazar; bu sonuçlar henüz kesinleşmemiştir. 3'ten az soruyla ölçülen içerikler gri gösterilir ve yüzde yerine kaç soruda kaç doğru yapıldığı yazılır.</div></div>
   <div class="metMadde"><span class="metIkon">🏔️</span><div><b>Hedefim.</b> Çocuğunuz yılın başında kendi uzun vadeli hedefini seçer. 8. sınıfta bu, LGS'de matematikten yapmak istediği nettir; 5–7. sınıfta yıl sonunda ulaşmak istediği Başarı Durumu'dur (İyi, Çok İyi, Mükemmel). Hedefe yaklaşma, son 3 sınavın ortalamasıyla ve sınavların zorluğu hesaba katılarak izlenir; böylece tek bir sınav tabloyu değiştirmez. 8. sınıfta bu ortalama 20 soruya göre gösterilir; LGS bütün içeriklerden geldiği için bu bir yön göstergesidir, LGS netinin tahmini değildir. Hedef yıl içinde yükseltilebilir.</div></div>
-  <div class="metMadde"><span class="metIkon">🗺️</span><div><b>Matematik Haritam.</b> Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış ya da çocuğunuzun giremediği sınavın içerikleri sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir. 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</div></div>
-  <div class="metMadde"><span class="metIkon">🗂️</span><div><b>Koleksiyonum.</b> Her dönemin son iki haftasında çocuğunuzun dönem kartı açılır: dokunduğunuzda o dönemin hikâyesi (çözdüğü sorular, haritası, en güçlü içeriği, rozetleri, meydan okumaları, hedefi ve varsa Onur Belgesi madalyaları) kart kart oynar; sonunda paylaşılabilir bir dönem kartı hazırdır. Kartlar rafta kalır, yıl sonunda "Yılın Özeti" eklenir.</div></div>
+  <div class="metMadde"><span class="metIkon">🗺️</span><div><b>Matematik Haritam.</b> Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış ya da çocuğunuzun giremediği sınavın içerikleri sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir.<span class="sadeceSinif"> 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</span></div></div>
+  <div class="metMadde"><span class="metIkon">🗂️</span><div><b>Koleksiyonum.</b> Her dönemin son iki haftasında çocuğunuzun dönem kartı açılır: dokunduğunuzda o dönemin hikâyesi (çözdüğü sorular, haritası, en güçlü içeriği, rozetleri, <span class="sadeceSinif">meydan okumaları, </span>hedefi ve varsa Onur Belgesi madalyaları) kart kart oynar; sonunda paylaşılabilir bir dönem kartı hazırdır. Kartlar rafta kalır, yıl sonunda "Yılın Özeti" eklenir.</div></div>
   <div class="metMadde sadeceSinif"><span class="metIkon">🎯</span><div><b>Meydan Okuma.</b> Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki ya da alt başlıktaki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></div>
   <div class="metMadde metVurgu"><span class="metIkon">📘</span><div><b>Hata Defteri.</b> Her üç sınavda bir, bu sınavlarda yanlış yapılan ve boş bırakılan sorular öğrencinin adına hazırlanan bir föyde toplanır. Föy sınıfta verilir ya da size WhatsApp'tan PDF olarak gönderilir. Öğrenci soruları föyün üzerinde yeniden çözer, ardından cevap anahtarıyla kontrol eder ve her sorunun altına "Bu sefer doğru yaptım" ya da "Hâlâ zorlanıyorum" işaretler. Karekodlu sorularda çözüm videosunu izleyebilir, yapamadığı soruları okulda Fatih Hoca'ya sorar.<span class="metNot">Föy eve geldiğinde, çocuğunuzun cevap anahtarına bakmadan soruları çözmesine dikkat etmeniz yeterlidir.</span></div></div>
-  <div class="metMadde"><span class="metIkon">🧭</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar. Çocuğunuzun giremediği bir sınavın içeriği de eksik sayılır ve plana girer.<span class="sadeceSinif"> Sınıfın yarısından fazlasının yanlış yaptığı sorular derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></div>
+  <div class="metMadde"><span class="metIkon">🧭</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar. Çocuğunuzun giremediği bir sınavın içeriği de eksik sayılır ve plana girer.<span class="sadeceSinif"> Sınıfın yarısından azının doğru yapabildiği sorular, çocuğunuz onları yanlış yapmış da olsa boş bırakmış da olsa derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></div>
 </div>
 </div>
 </details>
@@ -2584,9 +2586,9 @@ function sayi(x){ let n = Number(x); return (x === null || x === undefined || x 
 
 // ================= 🗂️ KOLEKSİYONUM · DÖNEM ÖZETİM (Code.gs v2.20) =================
 // Son sınav kaydındaki "koleksiyon": { yil, donemler:[{no, ad, acik, acilisMetni, ozet, onurlar}], yilOzeti }.
-const DN_RENK = { sis:"rgba(255,255,255,.2)", kesif:"#FDE68A", filiz:"#86EFAC", saglam:"#22C55E", usta:"#F5D77A" };
+const DN_RENK = { sis:"rgba(255,255,255,.2)", kesif:"#FEF3C7", filiz:"#86EFAC", saglam:"#22C55E", usta:"#F59E0B" };   // 26. konu: Keşifte açık krem, Usta koyu altın (önceden ikisi de sarıydı)
 const DN_SINIF = { sis:"x", kesif:"k", filiz:"f", saglam:"s", usta:"u" };
-const DN_ONUR_EMOJI = { "Sözünün Eri":"🎯", "Zirveci":"🏔️", "Mentor":"🤝", "İstikrar":"📅", "Yükseliş":"📈", "Kâşif":"🧭" };
+const DN_ONUR_EMOJI = { "Sözünün Eri":"🎯", "Zirveci":"🏔️", "Mentor":"🤝", "Tam Katılım":"📅", "İstikrar":"📅", "Yükseliş":"📈", "Kâşif":"🧭" };
 let dnAktif = null, dnK = 0, dnZaman = null, dnKartlar = [], dnSureler = [];
 function dnIlkAd(){ let v = sonGelenVeri && sonGelenVeri[0]; return String((v && v.isim) || "").trim().split(/\s+/)[0].toLocaleLowerCase("tr-TR").replace(/^./, function(c){ return c.toLocaleUpperCase("tr-TR"); }); }
 function dnMiniHarita(h){ return (h.bolgeler || []).map(function(b){ return `<span class="s">${b.i.map(function(x){ return `<i style="background:${DN_RENK[x[1]] || DN_RENK.sis}"></i>`; }).join("")}</span>`; }).join(""); }
@@ -2646,7 +2648,7 @@ function dnHikayeKartlari(h){
     <div class="dnYazi">${haritaAlt}${onceMetin}</div></div>`, 7);
   // 4 · süper güç
   if(o.guclu) ekle(`<div class="dnK k4"><div class="dnIsik"></div><div class="dnUst">SÜPER GÜCÜN</div><div class="dnBuyukHex">${htmlKacis(konuIkon(o.guclu.icerik))}</div>
-    <div class="dnOrta">${htmlKacis(o.guclu.icerik)}</div><div class="dnYazi">${o.guclu.n} sorudan ${o.guclu.d}'si doğru. ${h.yil ? "Bu yıl" : "Bu dönem"} seni en çok burada gördük.</div></div>`, 5.5);
+    <div class="dnOrta">${htmlKacis(o.guclu.icerik)}</div><div class="dnYazi">${o.guclu.n} sorudan ${o.guclu.d}'${ekYuzde(o.guclu.d)} doğru. ${h.yil ? "Bu yıl" : "Bu dönem"} seni en çok burada gördük.</div></div>`, 5.5);
   // 5 · rozetler (bu dilimde kazanılanlar)
   let adlar = {}; (sonGelenVeri || []).forEach(function(v){ if(o.sinavIdleri.indexOf(v.sinavID) !== -1) adlar[v.sinav] = true; });
   let rozet = []; try{ rozet = rozetleriHesapla(sonGelenVeri).filter(function(r){ return r.kazanildi && adlar[r.kazanilanSinav]; }); }catch(e){}
@@ -2658,7 +2660,7 @@ function dnHikayeKartlari(h){
   let moB = mo.filter(function(v){ return v.meydanOkuma.basardi; }).length;
   if(mo.length) ekle(`<div class="dnK k5"><div class="dnUst">MEYDAN OKUMALARIN</div><div class="dnDev">${moB}<span style="font-size:34px;opacity:.7"> / ${mo.length}</span></div>
     <div class="dnOrta">${moB ? "sözünü tuttun." : "cesaretle denedin."}</div><div class="dnYazi">${moB ? `${mo.length} meydan okumanın ${moB} tanesini başardın. Kendi koyduğun hedefler, kendi zaferlerin.` : "Hedef koymak başlı başına cesaret. Sıradakinde birlikte bakalım."}</div></div>`, 5.5);
-  else if(!h.yil) ekle(`<div class="dnK k5"><div class="dnUst">SIRADAKİ İÇİN</div><div class="dnOrta">İlk meydan okuman seni bekliyor.</div>
+  else if(!h.yil && !((sonGelenVeri[sonGelenVeri.length - 1] || {}).bireysel)) ekle(`<div class="dnK k5"><div class="dnUst">SIRADAKİ İÇİN</div><div class="dnOrta">İlk meydan okuman seni bekliyor.</div>
     <div class="dnYazi">Bir sonraki sınavdan önce üç hedeften birini sen seç; sonucu burada birlikte görelim.</div>
     <div class="dnUc3"><span style="animation-delay:.8s"><b>🛡️</b>Kalkan</span><span style="animation-delay:.95s"><b>🎯</b>Nişancı</span><span style="animation-delay:1.1s"><b>🚀</b>Roket</span></div></div>`, 5.5);
   // 7 · hedef
@@ -2667,7 +2669,7 @@ function dnHikayeKartlari(h){
     let oran = Math.max(4, Math.min(100, hd.simdi.puan / hd.hedef.hedefPuan * 100));
     ekle(`<div class="dnK k8"><div class="dnUst">${hd.tur === "lgs" ? "LGS HEDEFİN" : "YIL SONU HEDEFİN"}</div><div class="dnOrta">${htmlKacis(hd.hedef.metin)}</div>
       <div class="dnHedefCubuk"><i style="--w:${oran.toFixed(0)}%"></i></div>
-      <div class="dnYazi">${hd.ulasti ? "🏔️ <b>Hedefine ulaştın!</b> Sıradaki zirve seni bekliyor." : `Hedefine giden yolda <b>%${oran.toFixed(0)}</b> ilerledin. Her sınav bir adım daha.`}</div></div>`, 5.5);
+      <div class="dnYazi">${hd.ulasti ? "🏔️ <b>Hedefine ulaştın!</b> Sıradaki zirve seni bekliyor." : `Hedefine <b>${hdSayi(hdNet(hd, hd.hedef.hedefPuan) - hdNet(hd, hd.simdi.puan))} net</b> kaldı. Her sınav bir adım daha.`}</div></div>`, 5.5);
   }
   // 8 · onurlar
   if(d.onurlar && d.onurlar.length) ekle(`<div class="dnK k9"><div class="dnUst">ONUR BELGEN</div><div class="dnOrta">${d.onurlar.length === 1 ? "Bir onur madalyası" : d.onurlar.length + " onur madalyası"}</div>
@@ -2732,7 +2734,7 @@ async function dnKartCiz(h){
   c.font = "700 58px Georgia, 'Times New Roman', serif"; c.fillStyle = "rgba(255,255,255,.9)"; c.fillText(h.yil ? "yılın böyle geçti." : "dönemin böyle geçti.", 110, 470);
   // harita petekleri: bölge sayısına göre ölçeklenir (7'den fazla bölgede iki sütun), sayı kutularına (y=1420) taşmaz
   let bl = o.harita.bolgeler || [], bSay = Math.max(1, bl.length), enCokI = Math.max(1, ...bl.map(function(b){ return b.i.length; }));
-  let sut = bSay > 6 ? 2 : 1, satirSay = Math.ceil(bSay / sut), sutW = (W - 220) / sut, ust = 540, alt = 1390;
+  let sut = bSay > 6 ? 2 : 1, satirSay = Math.ceil(bSay / sut), sutW = (W - 220) / sut, ust = 540, alt = 1330;   // 26. konu: altta renk açıklaması (y≈1375)
   let adimY = Math.min(140, (alt - ust) / satirSay), etH = 28;
   let r = Math.max(18, Math.min(44, (adimY - etH - 22) / 2, ((sutW - 20) / enCokI - 10) / Math.sqrt(3))), w = Math.sqrt(3) * r;
   bl.forEach(function(b, bi){
@@ -2747,6 +2749,13 @@ async function dnKartCiz(h){
       c.beginPath(); for(let k = 0; k < 6; k++){ let a = Math.PI / 180 * (60 * k - 30); c.lineTo(cx + r * Math.cos(a), cy + r * Math.sin(a)); } c.closePath();
       c.fillStyle = x[1] === "sis" ? "rgba(255,255,255,.14)" : (DN_RENK[x[1]] || "#FDE68A"); c.fill();
     });
+  });
+  // renk açıklaması (26. konu): görselde basamakların hangi renk olduğu
+  c.font = "800 26px " + YAZI; let lx = 110;
+  [["kesif", "Keşifte"], ["filiz", "Filizleniyor"], ["saglam", "Sağlam"], ["usta", "Usta"]].forEach(function(e){
+    c.beginPath(); for(let k = 0; k < 6; k++){ let a = Math.PI / 180 * (60 * k - 30); c.lineTo(lx + 13 + 13 * Math.cos(a), 1376 + 13 * Math.sin(a)); } c.closePath();
+    c.fillStyle = DN_RENK[e[0]]; c.fill();
+    c.fillStyle = "rgba(255,255,255,.75)"; c.fillText(e[1], lx + 34, 1385); lx += 34 + c.measureText(e[1]).width + 36;
   });
   // sayılar
   let kesf = o.harita.toplam - o.harita.sayilar.sis, bayrak = o.harita.sayilar.saglam + o.harita.sayilar.usta;
@@ -2815,9 +2824,50 @@ function haritaCiz(veri){
   let lejant = `<div class="hrLejant"><span><i style="background:#FEF3C7;border:2px solid #F59E0B"></i>Keşifte</span><span><i style="background:#DCFCE7;border:2px solid #4ADE80"></i>Filizleniyor</span><span><i style="background:#22C55E"></i>Sağlam</span><span><i style="background:#FDE68A;border:2px solid #F59E0B"></i>Usta</span><span><i style="background:repeating-linear-gradient(90deg,#DCFCE7 0 3px,#fff 3px 5px);border:1px solid #CBD5E1"></i>Az Soru</span></div>`;
   let secili = tum.filter(function(x){ return x.icerik === hrSecili; })[0];
   document.getElementById("haritaAlani").innerHTML = ust + `<div class="hrOzet">${ozet}</div>` + bolgeler + lejant + hrDetayHtml(secili, h);
+  hrEtiketGenislik = 0; hrEtiketleriBol();
+  if(!haritaCiz.ro && window.ResizeObserver){
+    haritaCiz.ro = new ResizeObserver(function(){ hrEtiketleriBol(); });
+    haritaCiz.ro.observe(document.getElementById("haritaAlani"));
+  }
   document.querySelectorAll("#haritaAlani .hrPetek").forEach(function(b){
     b.onclick = function(){ hrSecili = b.getAttribute("data-k"); haritaCiz(sonGelenVeri);
       let d = document.querySelector("#haritaAlani .hrDetay"); if(d && d.scrollIntoView) d.scrollIntoView({ behavior:"smooth", block:"nearest" }); };
+  });
+}
+// 24. konu: dar petekte uzun sözcük harf ortasından bölünmesin. Etikete sığmayan sözcüğe (yalnızca ona) Türkçe hece
+// sınırlarında yumuşak tire (U+00AD) konur; tarayıcı oradan böler ve tire gösterir ("Dikdörtge-nin"). Sığan sözcüklere
+// dokunulmaz. Kural: iki ünlü arasında 1 ünsüz → ünsüzden önce, 2 ünsüz → aralarından, 3+ ünsüz → sonuncudan önce;
+// satır sonunda ve yeni satırda en az 3 harf kalır ("E-şitlik", "Pa-ralelkenar", "Özellikle-ri" olmaz; 25. konu).
+function heceliKir(sozcuk){
+  const UNLU = /[aeıioöuüâîûAEIİOÖUÜÂÎÛ]/, HARF = /[A-Za-zÇĞİÖŞÜçğıöşüâîû]/;
+  let parca = String(sozcuk).split(""), ic = [], kes = [];
+  for(let i = 0; i < parca.length; i++) if(UNLU.test(parca[i])) ic.push(i);
+  for(let k = 0; k + 1 < ic.length; k++){
+    let arada = ic[k + 1] - ic[k] - 1;
+    if(arada < 1) continue;
+    let yer = arada === 1 ? ic[k] + 1 : (arada === 2 ? ic[k] + 2 : ic[k + 1] - 1);
+    if(yer >= 3 && parca.length - yer >= 3 && HARF.test(parca[yer - 1]) && HARF.test(parca[yer])) kes.push(yer);
+  }
+  kes.reverse().forEach(function(y){ parca.splice(y, 0, "\u00AD"); });
+  return parca.join("");
+}
+let hrEtiketGenislik = 0, hrOlcer = null;
+function hrEtiketleriBol(){
+  let ets = Array.prototype.slice.call(document.querySelectorAll("#haritaAlani .hrPetekAd"));
+  if(!ets.length) return;
+  let cs = getComputedStyle(ets[0]);
+  let gen = ets[0].clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  if(!(gen > 0)) return;                                   // bölüm kapalı: açılınca ResizeObserver yeniden çağırır
+  if(gen === hrEtiketGenislik && ets[0].dataset.ad) return;
+  hrEtiketGenislik = gen;
+  hrOlcer = hrOlcer || document.createElement("canvas").getContext("2d");
+  hrOlcer.font = cs.fontWeight + " " + cs.fontSize + " " + cs.fontFamily;
+  ets.forEach(function(e){
+    let ad = e.dataset.ad || e.textContent;
+    e.dataset.ad = ad;
+    e.textContent = ad.split(/(\s+)/).map(function(s){
+      return /\S/.test(s) && hrOlcer.measureText(s).width > gen ? heceliKir(s) : s;
+    }).join("");
   });
 }
 function hrDetayHtml(x, h){
@@ -2938,7 +2988,7 @@ function hdSecimHtml(h){
     let hedefSatir, aciklama;
     if(h.tur === "lgs"){
       hedefSatir = `LGS'de en az ${x.net20} net${x.seviye ? " · " + htmlKacis(x.seviye) + " seviyesi" : ""}`;
-      aciklama = { "Temkinli":"Sağlam bir başlangıç.", "Kararlı":"Her sınavda biraz ilerleyerek.", "Cesur":"İddialı ama yıl uzun." }[x.ad] || "";
+      aciklama = { "Temkinli":"Sağlam bir başlangıç.", "Kararlı":"Her sınavda biraz ilerleyerek.", "Cesur":"İddialı bir hedef; yıl boyunca yaklaşmak için zaman var." }[x.ad] || "";
       aciklama = `Şu anki seviyenin ${hdSayi(x.artis)} net üstü. ${aciklama}`;
     } else {
       hedefSatir = `${hdSoruMetni(h)} en az ${hdSayi(hdNet(h, x.hedefPuan))} net`;
@@ -3066,15 +3116,15 @@ function moSonucHtml(m, veri, last){
   let baslik, satir = "", notlar = [];
   if(m.degerlendirilemedi && m.uygunBaslikYok){   // Code.gs v2.47 — başlık Nişancı'sı
     let ar = Array.isArray(m.aralik) ? m.aralik : [2, 3];
-    return `<div class="moSonuc olmadi"><div class="moSonucBaslik">${t.ikon} Bu sefer değerlendirilemedi</div>
-      <div class="moSatir">Bu sınavda ${ar[0] === ar[1] ? ar[0] : ar[0] + "–" + ar[1]} sorulu bir başlık çıkmadı; Nişancı bu sefer değerlendirilmedi. Olmadı sayılmaz. Sıradaki meydan okumanı aşağıdan seçebilirsin.</div></div>`;
+    return `<div class="moSonuc olmadi"><div class="moSonucBaslik">${t.ikon} Bu sınavda değerlendirilemedi</div>
+      <div class="moSatir">Bu sınavda ${ar[0] === ar[1] ? ar[0] : ar[0] + "–" + ar[1]} sorulu bir başlık yoktu; bu yüzden Nişancı bu sınavda değerlendirilmedi ve başarısız sayılmaz. Sıradaki meydan okumanı aşağıdan seçebilirsin.</div></div>`;
   }
   if(m.degerlendirilemedi){
-    return `<div class="moSonuc olmadi"><div class="moSonucBaslik">${t.ikon} Bu sefer değerlendirilemedi</div>
+    return `<div class="moSonuc olmadi"><div class="moSonucBaslik">${t.ikon} Bu sınavda değerlendirilemedi</div>
       <div class="moSatir">Seçtiğin ${String(m.icerik || "").indexOf(" · ") > -1 ? "başlık" : "içerik"} (${htmlKacis(m.icerik)}) bu sınavın puanlanan soruları arasında yer almadı. Sıradaki meydan okumanı aşağıdan seçebilirsin.</div></div>`;
   }
   let tamam = { kalkan:"🛡️ Kalkan tuttu! Başardın.", nisanci:"🎯 Tam isabet! Başardın.", roket:"🚀 Roket kalktı! Başardın." };
-  baslik = m.basardi ? tamam[m.tur] : (m.yakin ? (t.ikon + " Çok yaklaştın!") : (t.ikon + " Bu sefer olmadı"));
+  baslik = m.basardi ? tamam[m.tur] : (m.yakin ? (t.ikon + " Çok yaklaştın!") : (t.ikon + " Bu kez hedefine ulaşamadın"));
   let tekSoru = m.yakin ? " Tek soru uzaktaydın." : "";
   if(m.tur === "kalkan"){
     let yanlisTuttu = Number(g.yanlis) <= Number(m.hedefEtkin);
@@ -3084,7 +3134,7 @@ function moSonucHtml(m, veri, last){
     } else if(yanlisTuttu){
       satir = `Yanlışın hedefteydi (<b>${g.yanlis}</b>) ama doğru sayın <b>${g.dogru}</b> oldu; hedefte en az <b>${m.dogruAlt} doğru</b> da vardı.${tekSoru}`;
     } else {
-      satir = `Hedefin <b>en fazla ${m.hedefEtkin} yanlış</b>tı; <b>${g.yanlis} yanlış</b> çıktı.${tekSoru}`;
+      satir = `Hedefin <b>en fazla ${m.hedefEtkin} yanlış</b>tı; <b>${g.yanlis} yanlış</b> yaptın.${tekSoru}`;
       if(m.baslangic !== null && m.baslangic !== undefined && Number(g.yanlis) < Number(m.baslangic)) notlar.push("Yine de yanlışını geçen sınava göre azalttın 👏");
     }
   } else if(m.tur === "roket" && m.olcut === "dogru"){
@@ -3102,7 +3152,7 @@ function moSonucHtml(m, veri, last){
       : `Hedefin: <b>${htmlKacis(m.icerik)}</b> ${ekAd} ${g.icerikSoru} sorunun hepsi. Bu sınavda ${g.icerikSoru} sorudan <b>${g.icerikDogru}</b> doğru yaptın.${tekSoru}`;
   }
   if(m.olcek && m.olcek.onceki && m.olcek.simdi){
-    notlar.push(`ℹ️ Sınav ${m.olcek.simdi} soru çıktığı için hedefin ${m.olcek.onceki} soruya göre değil, ${m.olcek.simdi} soruya göre ayarlandı.`);
+    notlar.push(`ℹ️ Sınav ${m.olcek.simdi} soru olduğu için hedefin ${m.olcek.onceki} soruya göre değil, ${m.olcek.simdi} soruya göre ayarlandı.`);
   }
   if(m.hafifletme){
     let h = m.hafifletme, par = [];
@@ -3114,7 +3164,7 @@ function moSonucHtml(m, veri, last){
   if(!m.basardi){
     let parlak = moParlakNokta(last);
     if(parlak) notlar.push("✨ " + parlak);
-    if(!m.yakin) notlar.push("Olur böyle sınavlar — sıradaki hedefin yeni sınavına göre ayarlanır.");
+    if(!m.yakin) notlar.push("Sıradaki hedefin, bu sınavdaki sonucuna göre yeniden ayarlanır.");
   }
   // Seri: bütün meydan okumaların (seçim yapılan sınavlar) sırayla
   let gecmis = veri.filter(function(x){ return x.meydanOkuma && !x.meydanOkuma.degerlendirilemedi; });
@@ -3395,7 +3445,7 @@ function rozetSeridiniCiz(sinavlar){
   let baslik, altMetin;
   if(yeniler.length){
     baslik = yeniler.length === 1 ? "Yeni rozet kazandın!" : (yeniler.length + " yeni rozet kazandın!");
-    altMetin = "Hepsi aşağıda, Rozet Dolabım'da";
+    altMetin = yeniler.length === 1 ? "Rozet Dolabım'a eklendi" : "Hepsi Rozet Dolabım'a eklendi";
   } else if(konu.etiket === "YENİ KİŞİSEL REKOR"){
     baslik = "Yeni kişisel rekor!"; altMetin = konu.aciklama;
   } else {
@@ -3465,7 +3515,7 @@ async function basariKartiCiz(sinavlar, konu){
     c.save(); c.shadowColor = "rgba(255,255,255,.8)"; c.shadowBlur = 24;
     c.beginPath(); c.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * o.oran); c.strokeStyle = "#FFFFFF"; c.stroke(); c.restore();
   }
-  c.fillStyle = "#FFFFFF"; c.font = "900 170px " + YAZI; aralik(-4); c.fillText(String(son.net), cx, cy + 50);
+  c.fillStyle = "#FFFFFF"; c.font = "900 170px " + YAZI; aralik(-4); c.fillText(netYaz(son.net), cx, cy + 50);   // 26. konu: sayfadaki gibi virgülle (12,67)
   c.font = "800 40px " + YAZI; aralik(10); c.fillText("NET", cx, cy + 118);
   c.font = "600 30px " + YAZI; aralik(0); c.fillStyle = "rgba(255,255,255,.85)";
   if(o.toplam) c.fillText(o.toplam + " soru üzerinden", cx, cy - 110);
@@ -3662,43 +3712,35 @@ function konfetiPatlat(){
 
 function konuIkon(konu){
   // Türkçe kurallarıyla küçük harfe çevrilir: "I" → "ı", "İ" → "i" (varsayılan toLowerCase bunu bilmez).
+  // 23. konu: ilk eşleşen sözcük kazanır, bu yüzden özel olan genelden önce gelir ("rasyonel sayılarla" "rasyonel"den,
+  // "dikdörtgen" "dörtgen"den önce). Her sınıfta her içeriğin kendi simgesi var; Σ yalnızca tanınmayan ada düşer (ikon-test.js).
   konu = (konu||"").toLocaleLowerCase('tr-TR');
-  if(konu.includes("üslü")) return "aⁿ";
-  if(konu.includes("karekök")) return "√x";
-  if(konu.includes("çarpan")) return "123";
-  if(konu.includes("cebir")) return "x+y";
-  if(konu.includes("olasılık")) return "%";
-  if(konu.includes("doğrusal")) return "y=x";
-  if(konu.includes("üçgen")) return "△";
-  if(konu.includes("dönüşüm")) return "⟳";
-  if(konu.includes("cisim")) return "⬡";
-  if(konu.includes("eşitsizlik")) return "≠";
-  if(konu.includes("eğim")) return "∕";
-  if(konu.includes("geometri")) return "∟";
-  // v2.19 — 5–7. sınıf (Maarif) içerikleri
-  if(konu.includes("rasyonel")) return "a/b";
-  if(konu.includes("kesir")) return "½";
-  if(konu.includes("ondalık")) return "0,5";
-  if(konu.includes("yüzde")) return "%";
-  if(konu.includes("orant") || konu.includes("oran")) return "a:b";
-  if(konu.includes("bölünebil")) return "÷";
-  if(konu.includes("asal")) return "p";
-  if(konu.includes("ortak kat") || konu.includes("ortak bölen")) return "∩";
-  if(konu.includes("doğal sayı") || konu.includes("basamak")) return "123";
-  if(konu.includes("çember") || konu.includes("daire") || konu.includes("pi ")) return "◯";
-  if(konu.includes("orta dikme") || konu.includes("açıortay") || konu.includes("kenarortay") || konu.includes("inşa")) return "⌖";
-  if(konu.includes("merkez açı") || konu.includes("açı")) return "∠";
-  if(konu.includes("dörtgen")) return "▱";
-  if(konu.includes("prizma") || konu.includes("küp")) return "⬡";
-  if(konu.includes("yansıma") || konu.includes("dönüşüm")) return "⟳";
-  if(konu.includes("alan") || konu.includes("çevre")) return "▭";
-  if(konu.includes("uzunluk")) return "↔";
-  if(konu.includes("veri") || konu.includes("grafik") || konu.includes("ortalama") || konu.includes("ortanca") || konu.includes("araştırma") || konu.includes("yayılım")) return "📊";
-  if(konu.includes("örüntü")) return "◆◇";
-  if(konu.includes("algoritma")) return "⤳";
-  if(konu.includes("denklem")) return "x=";
-  if(konu.includes("işlem")) return "±";
-  if(konu.includes("geometrik") || konu.includes("temel")) return "•—";
+  const K = [
+    // 8. sınıf (2018 programı)
+    ["üslü","aⁿ"], ["karekök","√x"], ["doğrusal","y=x"], ["benzerlik","≅"],
+    ["geometrik cisim","⬡"], ["dönüşüm geometri","⟳"],
+    // asal / bölünebilme / çarpan
+    ["asal","p"], ["bölünebil","÷"], ["çarpan","×"],
+    // sayılar
+    ["basamak","123"], ["ondalık","0,5"], ["çözümleme","3·10"], ["doğal sayılarla","×÷"],
+    ["tam sayı","−3"], ["karşılaştırma ve sıralama","a<b"], ["rasyonel sayılarla","×÷"], ["rasyonel","a/b"],
+    ["kesir-bölme","a/b"], ["kesirlerle","+½"], ["karşılaştırıl","a<b"], ["kesir","½"],
+    // oran-orantı
+    ["doğru orantı","↗"], ["orantı","∝"], ["oran","a:b"], ["yüzde","%"],
+    // cebir
+    ["algoritma","⤳"], ["örüntü","◆◇"], ["işlem önceliği","( )"], ["eşitliğin korunumu","="],
+    ["değişme","⇄"], ["bilinmeyen","x"], ["değerini hesaplama","x=3"], ["ispat","∴"],
+    ["denklem","x="], ["eşitsizlik","≤"], ["cebir","x+y"],
+    // veri ve olasılık
+    ["olasılı","%"], ["veri","📊"], ["grafik","📊"], ["ortalama","📊"], ["araştırma","📊"],
+    // geometri ve ölçme
+    ["çemberin ve çapın","π"], ["merkez açı","◔"], ["daire","◔"], ["çember","◯"],
+    ["paralel doğru","∥"], ["kenarortay","△"], ["orta dikme","⌖"], ["inşası","⌖"], ["üçgenin alanı","a·h"],
+    ["üçgen","△"], ["çokgenlerin","⬡"], ["prizma","V"], ["hacim","m³"], ["cisim","⬡"], ["yansıma","⟳"], ["dönüşüm","⟳"],
+    ["yamuk","▱"], ["dikdörtgen","▭"], ["dörtgen","▱"], ["alan ölçme","m²"], ["uzunluk","↔"], ["alan","▭"],
+    ["açı","∠"], ["geometri","∟"], ["temel","•—"], ["işlem","±"]
+  ];
+  for (const [a, i] of K) if (konu.includes(a)) return i;
   return "Σ";
 }
 
@@ -4630,27 +4672,33 @@ function planSiraNedeni(k){
 function planKartHtml(k, i, plan){
   let ilk = i === 0;
   let cipler = [];
+  // v2.59 (index) — içerik birden çok sınavda geldiyse sayılar toplamdır: etiket ve kırılım bunu söyler
+  let sv = (Array.isArray(k.sinavlar) ? k.sinavlar : []).filter(function(x){ return x && Number(x.soru) > 0; });
+  let cokSinav = !k.girilmedi && sv.length >= 2;
   if(k.son) cipler.push(`<span class="cpCip turuncu">Son Sınav</span>`);
   else if(k.girilmedi) cipler.push(`<span class="cpCip">Giremediğin Sınav · ${htmlKacis(sinavKisaAdi(k.girilmedi.sinav))}</span>`);   // v2.54
+  else if(cokSinav) cipler.push(`<span class="cpCip">Önceki Sınavlar</span>`);
   else if(k.eskiSinav) cipler.push(`<span class="cpCip">Önceki Sınav · ${htmlKacis(sinavKisaAdi(k.eskiSinav))}</span>`);
+  if(cokSinav) cipler.push(`<span class="cpCip">${sv.length} Sınavın Toplamı</span>`);
   if(k.temeliOlduguMadde) cipler.push(`<span class="cpCip mor">${k.temeliOlduguMadde.sira}. Maddenin Temeli</span>`);
   else if(k.temelOlduguKonular && k.temelOlduguKonular.length) cipler.push(`<span class="cpCip mor">Sıradaki Konuların Temeli</span>`);
   if(k.azSoru) cipler.push(`<span class="cpCip gri">Az Soruya Dayanıyor</span>`);
   let ozet = `<summary><div class="cpKartUst"><span class="cpNo">${i + 1}</span><span class="cpAd">${htmlKacis(k.konu)}</span>${k.girilmedi ? "" : `<span class="cpOran">${Number(k.soruSayisi) || 0} soruda ${Number(k.dogruSayisi) || 0} doğru</span>`}</div>
     ${planDagilimHtml(k.dagilim, true)}${cipler.length ? `<div class="cpCipler">${cipler.join("")}</div>` : ""}</summary>`;
   let govde = planDagilimHtml(k.dagilim, false);
+  if(cokSinav) govde += `<div class="cpMini">Bu içerik ${sv.length} sınavda geldi: ${sv.map(function(x){ return htmlKacis(sinavKisaAdi(x.sinav)).replace(/ /g, "&nbsp;") + "&nbsp;" + (Number(x.dogru) || 0) + "/" + Number(x.soru); }).join(" · ")} doğru. Buradaki sayılar ${sv.length === 2 ? "ikisinin" : "hepsinin"} toplamı.</div>`;
   if(k.girilmedi) govde += `<div class="cpMini">Bu içeriğin sınavına giremediğin için nerede zorlandığını henüz bilmiyoruz.</div>`;   // v2.54
   if(k.azSoru) govde += `<div class="cpMini">Bu içerikten yalnızca ${Number(k.soruSayisi) || 0} soru soruldu. Sonuç kesin bir eksik değil, bir işaret olarak görülmeli.</div>`;
   if(k.temeliOlduguMadde){
     let t = k.temeliOlduguMadde;
-    govde += `<div class="cpTemel"><b>Neden önce bu:</b> ${htmlKacis(t.konu)}${t.beceri ? " için gereken temel: " + htmlKacis(t.beceri) + "." : " bu içeriğin üzerine kurulur."} Bu oturmadan ${t.sira}. maddeye geçersen orada da zorlanırsın.</div>`;
+    govde += `<div class="cpTemel"><b>Neden önce bu:</b> ${htmlKacis(t.konu)}${t.beceri ? " için gereken temel: " + htmlKacis(t.beceri) + "." : " bu içeriğin üzerine kurulur."} Bunu pekiştirmeden ${t.sira}. maddeye geçersen orada da zorlanırsın.</div>`;
   }
   if(k.temelOlduguKonular && k.temelOlduguKonular.length){
     let tek = k.temelOlduguKonular.length === 1;
-    govde += `<div class="cpTemel"><b>Neden önemli:</b> Sırada gelen ${planListe(k.temelOlduguKonular)} bu içerik üzerine kurulur. Şimdi oturtursan ${tek ? "yeni konu kolaylaşır" : "yeni konular kolaylaşır"}.</div>`;
+    govde += `<div class="cpTemel"><b>Neden önemli:</b> Sırada gelen ${planListe(k.temelOlduguKonular)} bu içerik üzerine kurulur. Şimdi pekiştirirsen ${tek ? "yeni konu kolaylaşır" : "yeni konular kolaylaşır"}.</div>`;
   }
   let onk = (k.onKosul || [])[0];
-  if(onk) govde += `<div class="cpTemel"><b>Önce temeli yokla:</b> ${htmlKacis(onk.icerik)} içeriğinde ${yuzdeEk(Math.round(onk.yuzde), "de")} kalmışsın.${onk.beceri ? " " + htmlKacis(k.konu) + " için gereken temel: " + htmlKacis(onk.beceri) + "." : ""}</div>`;
+  if(onk) govde += `<div class="cpTemel"><b>Önce temeli kontrol et:</b> ${htmlKacis(onk.icerik)} içeriğinde ${yuzdeEk(Math.round(onk.yuzde), "de")} kalmışsın.${onk.beceri ? " " + htmlKacis(k.konu) + " için gereken temel: " + htmlKacis(onk.beceri) + "." : ""}</div>`;
   if((k.altKazanimDetay || []).length >= 2){
     govde += `<div class="cpAltKaz"><div class="cpAltBas">Nerede takıldın?</div>${k.altKazanimDetay.map(function(a){
       let iyi = a.soru && a.dogru / a.soru >= 0.7;
@@ -4667,7 +4715,7 @@ function planKartHtml(k, i, plan){
   if(k.mentorVar) yardim.push(["🤝", "Bu içerikte sınıfında bir mentor var; eşleşmek için Fatih Hoca'ya söyle."]);
   if(yardim.length) govde += `<div class="cpYardim"><div class="cpYardimBas">Yardım</div>${yardim.map(function(x){ return `<div class="cpSatir"><span class="cpSatirIkon" aria-hidden="true">${x[0]}</span><span>${htmlKacis(x[1])}</span></div>`; }).join("")}</div>`;
   if(!k.son){
-    let not = "Bu içerikten sonraki sınavlarda soru gelmeyebilir; oturup oturmadığını yukarıdaki ölçütle kendin anlarsın.";
+    let not = "Bu içerikten sonraki sınavlarda soru gelmeyebilir; öğrenip öğrenmediğini yukarıdaki ölçütle kendin anlarsın.";
     if(k.bekleyen && k.bekleyen.length && i === plan.length - 1) not = `Önceki sınavlardan kalan eksiklerin sırayla gelir; bekleyen: ${k.bekleyen.join(", ")}. ` + not;
     govde += `<div class="cpMini">${htmlKacis(not)}</div>`;
   }
@@ -4954,6 +5002,8 @@ function createDistractorAnalysis(data) {
   let nedenli = takilan.filter(function(s){ return s.durum === "Yanlis" && s.nedenYanlis; }).length;   // Code.gs v2.40
   let yanlisSay = takilan.filter(function(s){ return s.durum === "Yanlis"; }).length, bosSay = takilan.length - yanlisSay;
   if (ozet) {
+    // Takılan soru yoksa gövde aynı şeyi zaten söylüyor: özet yalnızca bölüm kapalıyken görünür (24. konu).
+    ozet.classList.toggle("hep", takilan.length > 0);
     ozet.textContent = !takilan.length ? "Bu sınavda takıldığın soru yok. 🎉"
       : [yanlisSay ? yanlisSay + " yanlış" : "", bosSay ? bosSay + " boş" : ""].filter(Boolean).join(", ") + " soru"
         + (videolu ? " · " + videolu + " sorunun çözüm videosu var ▶" : "")

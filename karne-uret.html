@@ -1195,7 +1195,7 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
   <div id="ekPanel" class="ekPanel" hidden></div>
   <div id="liste"></div>
 
-  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.55 (10.10.2026) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
+  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.60 (12.10.2026) · karnede "oturmadığını" → "pekişmediğini" (Code.gs v2.61) · Onur Belgesi'nde 📅 İstikrar → Tam Katılım (Code.gs v2.60) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
 
 </div>
 
@@ -4099,7 +4099,7 @@ function hdVeliMesaji(o, hd){
     adimlar.push("Hâlâ anlamadığı soruları okulda bana sorsun.");
     return `${selam}\n\n*${adIn} Hata Defteri – Föy ${foyNo}* bu mesajın ardından PDF olarak geliyor.\n\n`
       + `Föyde, ${adIn} son sınavlarda (${sinavlar}) yanlış yaptığı${hd.bosVar ? " ve boş bıraktığı" : ""} ${sayi} soru yer alıyor. `
-      + `Yanlış cevaplar ${adIn} hangi noktada hata yaptığını${hd.bosVar ? ", boş bıraktığı sorular ise hangi konuların henüz yeterince oturmadığını" : ""} gösteriyor. `
+      + `Yanlış cevaplar ${adIn} hangi noktada hata yaptığını${hd.bosVar ? ", boş bıraktığı sorular ise hangi konuların henüz yeterince pekişmediğini" : ""} gösteriyor. `
       + `*Bu soruları gerçekten anlayarak çözmesi, yeni sorular çözmesinden çok daha değerli.*\n\n`
       + `*Nasıl çalışmalı?*\n` + adimlar.map(function(a, i){ return (i + 1) + ". " + a; }).join("\n") + `\n\n`
       + `Sizden ricam, ${adIn} soruları cevap anahtarına bakmadan çözmesine dikkat etmenizdir.`
@@ -4819,7 +4819,7 @@ const ONUR = {
   soz:      { ad:"Sözünün Eri",  ikon:'<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4.8"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><path d="M12 12 L20.5 3.5 M17 3.2 L20.8 3.2 L20.8 7"/>' },
   zirve:    { ad:"Zirveci",      ikon:'<path d="M2.5 20 L9 8.5 L12.5 14 L15.5 10 L21.5 20 Z"/><path d="M15.5 10 V3.5 L20 5 L15.5 6.6"/>' },
   mentor:   { ad:"Mentor",       ikon:'<path d="M12 2.6c2.2 3.2 4.6 5.6 4.6 9.2a4.6 4.6 0 0 1-9.2 0c0-2.3 1.3-3.8 2.3-5.1.2 1.6.9 2.7 2.2 3.2-.4-2.7.1-5 .1-7.3z"/><path d="M9.6 17.6 h4.8 l-1.1 4.4 h-2.6 z"/>' },
-  istikrar: { ad:"İstikrar",     ikon:'<rect x="3.2" y="5" width="17.6" height="15.4" rx="2"/><path d="M3.2 9.6 H20.8 M8 3 V6.6 M16 3 V6.6"/><path d="M7.2 13.4 l2 2 l4-4.4" /><circle cx="16.4" cy="16.6" r=".9" fill="currentColor"/>' },
+  istikrar: { ad:"Tam Katılım",  /* v3.59 (Code.gs v2.60): eski adı İstikrar */ ikon:'<rect x="3.2" y="5" width="17.6" height="15.4" rx="2"/><path d="M3.2 9.6 H20.8 M8 3 V6.6 M16 3 V6.6"/><path d="M7.2 13.4 l2 2 l4-4.4" /><circle cx="16.4" cy="16.6" r=".9" fill="currentColor"/>' },
   yukselis: { ad:"Yükseliş",     ikon:'<path d="M3 19.5 L9 13.2 L13 16 L20.6 7.4"/><path d="M15.4 7 H20.8 V12.4"/><path d="M3 21.4 H21"/>' },
   kasif:    { ad:"Kâşif",        ikon:'<circle cx="12" cy="12" r="9"/><path d="M12 3.8 L13.8 10.2 L20.2 12 L13.8 13.8 L12 20.2 L10.2 13.8 L3.8 12 L10.2 10.2 Z" fill="currentColor" fill-opacity=".18"/>' }
 };
@@ -4879,7 +4879,7 @@ function onurBelgeHtml(o, onurlar, donem){
   // onurlar: [{id, aciklama}] · donem: {ad:"1. Dönem", yil:"2026–2027", tarih:"22 Ocak 2027"}
   let isim = adElYazisi(o.isim), ek = yonelmeEki(isim).slice(isim.length).replace("'", "’");
   let vurgu = { soz:"sözünün arkasında duruşu", zirve:"hedefine olan kararlılığı", mentor:"arkadaşlarına uzattığı el",
-                istikrar:"istikrarı", yukselis:"azimli yükselişi", kasif:"keşif merakı" };
+                istikrar:"devamlılığı", yukselis:"azimli yükselişi", kasif:"keşif merakı" };
   let v = onurlar.map(function(x){ return vurgu[x.id]; });
   let vurguMetni = v.length > 1 ? v.slice(0, -1).join(", ") + " ve " + v[v.length - 1] : v[0];
   let g = odGuilosSvg().replace(/#8B5CF6/g, "#1E3A8A"), kose = onurKoseSvg();
@@ -5012,7 +5012,7 @@ function onurYillikKur(liste){
   }).join("");
   kart.innerHTML = `<div class="anBaslik"><h3>📜 Onur Belgeleri · ${htmlKacis(donemAd)}</h3><small>${adaylar.length ? adaylar.length + " öğrenci onur kazandı" : "henüz onur kazanan yok"}</small></div>
     ${adaylar.length ? satirlar + `<div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="odBtn" id="onurHepsiBtn">🖨 Hepsini Yazdır (${adaylar.length})</button></div>` : ""}
-    <div class="anNot">Onur Belgesi tek bir sınavı değil, dönem boyunca gösterilen tutumu onurlandırır. Ölçütler (dönem içinde): 🎯 Sözünün Eri en az 3 meydan okuma başarısı · 🏔️ Zirveci yıl hedefine ulaştı · 🤝 Mentor · 📅 İstikrar dönemin bütün sınavları (en az 4) · 📈 Yükseliş son 3 sınav ortalaması ilk 3'ünkinden en az 2 net yüksek · 🧭 Kâşif en az 3 yeni bayrak (en az 4 soruyla). Yazdırılan belge Oduller sayfasına kaydedilir ve öğrencinin dönem kartında madalya olarak görünür.</div>
+    <div class="anNot">Onur Belgesi tek bir sınavı değil, dönem boyunca gösterilen tutumu onurlandırır. Ölçütler (dönem içinde): 🎯 Sözünün Eri en az 3 meydan okuma başarısı · 🏔️ Zirveci yıl hedefine ulaştı · 🤝 Mentor · 📅 Tam Katılım dönemin bütün sınavları (en az 4) · 📈 Yükseliş son 3 sınav ortalaması ilk 3'ünkinden en az 2 net yüksek · 🧭 Kâşif en az 3 yeni bayrak (en az 4 soruyla). Yazdırılan belge Oduller sayfasına kaydedilir ve öğrencinin dönem kartında madalya olarak görünür.</div>
     <div class="raporIpucu" id="onurDurum" role="status" aria-live="polite"></div>`;
   bolumeYerlestir("yuvaOnur", "onurBelgeleri", "📜", "Onur Belgeleri",
     adaylar.length ? { metin: `${donemAd} · ${adaylar.length} öğrenci`, tur: "iyi" } : `${donemAd} · henüz yok`, kart, false);
