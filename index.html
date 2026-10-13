@@ -5010,6 +5010,8 @@ function createDistractorAnalysis(data) {
     return;
   }
   let takilan = data.sorular.filter(function(s){ return s.durum !== "Dogru"; });
+  // A/B kitapçık (Code.gs v2.64): kno = öğrencinin kendi kitapçığındaki numara; sıra ve numara ona göre.
+  takilan.sort(function(a, b){ return (Number(a.kno) || Number(a.no)) - (Number(b.kno) || Number(b.no)); });
   let videolu = takilan.filter(function(s){ return s.cozumVideosu; }).length;
   let nedenli = takilan.filter(function(s){ return s.durum === "Yanlis" && s.nedenYanlis; }).length;   // Code.gs v2.40
   let yanlisSay = takilan.filter(function(s){ return s.durum === "Yanlis"; }).length, bosSay = takilan.length - yanlisSay;
@@ -5043,7 +5045,7 @@ function createDistractorAnalysis(data) {
     let video = s.cozumVideosu
       ? `<a class="tkVideo" href="${htmlKacis(s.cozumVideosu)}" target="_blank" rel="noopener">▶ Çözümü izle</a>` : "";
     return `<div class="tkKart">
-      <div class="tkUst"><span class="tkNo">Soru ${htmlKacis(s.no)}</span>
+      <div class="tkUst"><span class="tkNo">Soru ${htmlKacis(s.kno || s.no)}</span>
         <span class="tkKonu"><b>${htmlKacis(s.konu || "-")}</b>${s.altKazanim && s.altKazanim !== s.konu ? " · " + htmlKacis(s.altKazanim) : ""}</span></div>
       <div class="tkAlt">${cevap}<span class="tkDogru">Doğru cevap: <b>${htmlKacis(s.dogruSik)}</b></span>${video}</div>
       ${nedenYanlisKartHtml(s)}

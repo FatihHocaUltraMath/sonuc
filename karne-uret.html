@@ -1202,7 +1202,7 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
   <div id="ekPanel" class="ekPanel" hidden></div>
   <div id="liste"></div>
 
-  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.61 (13.10.2026) · test döneminden kalan gönderim işaretlerini silen tek seferlik düğme · karnede "oturmadığını" → "pekişmediğini" (Code.gs v2.61) · Onur Belgesi'nde 📅 İstikrar → Tam Katılım (Code.gs v2.60) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
+  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.62 (13.10.2026) · A/B kitapçık: soru ayrıntısında diğer kitapçığın numarası, föyde öğrencinin kendi kitapçığı (Code.gs v2.64) · test döneminden kalan gönderim işaretlerini silen tek seferlik düğme · karnede "oturmadığını" → "pekişmediğini" (Code.gs v2.61) · Onur Belgesi'nde 📅 İstikrar → Tam Katılım (Code.gs v2.60) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
 
 </div>
 
@@ -1565,6 +1565,8 @@ async function listeGetir(){
     // v3.52 (Code.gs v2.40): Neden Yanlış? notları (taslaklar dahil); alan yoksa sunucu eski, bölüm gösterilmez
     nyDestek = !!(data && !Array.isArray(data) && data.nedenYanlisNotlari && typeof data.nedenYanlisNotlari === "object");
     nyNotlar = nyDestek ? data.nedenYanlisNotlari : {};
+    // v3.62 (Code.gs v2.64): iki kitapçıklı sınavın eşlemesi { ana, diger, no: { anaNo: digerNo } }; tek kitapçıklıysa null
+    kitapcikBilgi = (data && !Array.isArray(data) && data.kitapcik && data.kitapcik.no) ? data.kitapcik : null;
     nyDuzenlenen = null; nyMesaj = "";
     if(liste === null){ durum.innerHTML = "Sunucudan beklenmeyen bir yanıt geldi. Lütfen daha sonra tekrar dene."; return; }
 
@@ -1947,6 +1949,10 @@ function analiziCiz(){
 // Tablo başlığına tıklayınca o sütuna göre sıralanır; "📋 Tabloyu Kopyala" Sheets/Excel'e yapıştırmaya hazır kopyalar.
 let katilmayanlar = [];                 // sunucudan (Code.gs v2.13)
 let olcumDestek = false, olcumBilgi = null, olcumSinavlar = [];   // v3.51 — sunucudan (Code.gs v2.39 ölçüm modeli)
+// v3.62 — A/B kitapçık. Paneldeki soru numaraları ana kitapçığa göredir; diğer kitapçığın numarası yanında yazılır.
+let kitapcikBilgi = null;
+function digerKitapcikNo(no){ return kitapcikBilgi ? (kitapcikBilgi.no[String(no)] || null) : null; }
+function digerKitapcikMetni(no){ let d = digerKitapcikNo(no); return d ? (kitapcikBilgi.diger === "A" ? "A'da " : "B'de ") + d + ". soru" : ""; }
 let nyDestek = false, nyNotlar = {}, nyFiltre = "bekleyen", nyDuzenlenen = null, nyMesaj = "", nyMesgul = false;   // v3.52
 let istGorunum = "net", istSiralama = null;
 
@@ -3042,7 +3048,7 @@ function soruDetayHtml(q, n){
   if(q.hicSecilmeyen.length === 3 && q.toplam >= ANALIZ_AZ_KATILIM) notlar.push(`Yanlış şıkların hiçbiri seçilmedi: soru herkes için çok kolay kalmış.`);
   let gorsel = q.soruGorseli ? `<img class="sdGorsel" src="${htmlKacis(q.soruGorseli)}" alt="Soru ${q.no} görseli" loading="lazy" onerror="this.remove()">` : "";
   return `<div class="soruDetay">
-    <div class="sdUst"><b>Soru ${q.no}</b> · ${soruKunye(q)} · doğru cevap <b>${htmlKacis(q.dogruSik)}</b> · %${q.yuzde} doğru</div>
+    <div class="sdUst"><b>Soru ${q.no}</b>${digerKitapcikNo(q.no) ? ` <span class="istGri">(${digerKitapcikMetni(q.no)})</span>` : ""} · ${soruKunye(q)} · doğru cevap <b>${htmlKacis(q.dogruSik)}</b> · %${q.yuzde} doğru</div>
     ${gorsel}${satirlar}
     ${notlar.map(function(x){ return `<div class="sdNot">${x}</div>`; }).join("")}
   </div>`;
@@ -3166,6 +3172,7 @@ function yarinDersteAdaylari(A, liste){
     let q = guclu[0];
     aday.push({ tur: "tuzak", puan: 80 + q.tuzak.oran / 10, ikon: "🪤", baslik: `${q.no}. Soruyu Tahtada Çöz`,
       neden: `Sınıfın %${q.tuzak.oran}'${ekSec(q.tuzak.oran)} (${q.tuzak.sayi} kişi) aynı yanlış şıkkı (${q.tuzak.sik}) seçti; ${n >= ANALIZ_AZ_KATILIM ? "bu tesadüf değil, ortak bir yanılgı" : "ortak bir yanılgı olabilir"}. ${soruKunye(q)}.` +
+        (digerKitapcikNo(q.no) ? ` ${kitapcikBilgi.ana} kitapçığında ${q.no}., ${kitapcikBilgi.diger} kitapçığında ${digerKitapcikNo(q.no)}. soru.` : "") +
         (guclu.length > 1 ? ` Benzer güçlü ${guclu.length > 2 ? "tuzaklar" : "tuzak"}: ${soruListesi(guclu.slice(1, 4))}.` : ""),
       dugme: "Soruyu Aç", hedef: "soru:" + q.no });
   }
@@ -3198,6 +3205,14 @@ function yarinDersteAdaylari(A, liste){
     let oran = function(arr){ let b = 0, t = 0; arr.forEach(function(q){ b += q.secenler.Bos.length; t += q.toplam; }); return t ? b / t : 0; };
     let son = A.sorular.filter(function(q){ return Number(q.no) >= bas; }), ilk = A.sorular.filter(function(q){ return Number(q.no) < bas; });
     let sO = oran(son), iO = oran(ilk);
+    if(kitapcikBilgi){   // v3.62: iki kitapçıkta "son bölüm" her öğrencinin kendi kitapçığındaki sıradır
+      let sb = 0, st = 0, ib = 0, it = 0;
+      liste.forEach(function(o){ (o.sorular || []).forEach(function(x){
+        let sonda = Number(x.kno || x.no) >= bas, bos = x.durum === "Bos";
+        if(sonda){ st++; if(bos) sb++; } else { it++; if(bos) ib++; }
+      }); });
+      sO = st ? sb / st : 0; iO = it ? ib / it : 0;
+    }
     let sureOgr = liste.filter(function(o){ return o.planDetay && o.planDetay.hataProfili && o.planDetay.hataProfili.tur === "sure"; });
     if((sO >= 0.10 && sO >= iO * 2 + 0.05) || sureOgr.length >= 3){
       aday.push({ tur: "sure", puan: 65 + sO * 30, ikon: "⏱️", baslik: "Süre Yönetimini Konuş",
@@ -3566,6 +3581,7 @@ function soruAnaliziHtml(A){
   let cip = function(k, ad, n, kapali){ return `<button type="button" class="saCip" data-suz="${k}" aria-pressed="${k === "hepsi"}"${kapali ? " disabled" : ""}>${ad}<b>${n}</b></button>`; };
   let ayirt = ayirtEdicilikHtml(A);
   return `<div class="saKap">
+    ${kitapcikBilgi ? `<div class="kbMeta">Soru numaraları ${kitapcikBilgi.ana} kitapçığına göre. ${kitapcikBilgi.diger} kitapçığındaki numara, soruyu açınca yazar.</div>` : ""}
     <div class="saCipler" role="group" aria-label="Soru süzgeci">${cip("hepsi", "Tümü", A.sorular.length)}${cip("zor", "%50 Altı", zor, !zor)}${cip("tuzak", "Tuzaklı", tuzak, !tuzak)}${hesapli.length ? cip("kontrol", "Kontrol Edilmeli", kontrol, !kontrol && !ayirt) : ""}</div>
     ${soruHaritasiHtml(A)}
     <div class="saPanel" data-panel="zor" hidden>${zorSorularHtml(A)}</div>
@@ -3706,7 +3722,7 @@ function raporHtml(A, liste, ogrenciListesiDahil){
 
   let sayfa2 = `<section class="rpSayfa rpYeniSayfa">
     ${bas("Soru Analizi")}
-    <h2>Soru Haritası <small>Kutudaki oran soruyu doğru yapanlar; turuncu köşe çeldirici tuzağı</small></h2>
+    <h2>Soru Haritası <small>Kutudaki oran soruyu doğru yapanlar; turuncu köşe çeldirici tuzağı${kitapcikBilgi ? `; numaralar ${kitapcikBilgi.ana} kitapçığına göre` : ""}</small></h2>
     ${harita}
     ${ozetMaddeler.length ? `<div class="rpOzetKutu">${ozetMaddeler.map(function(m){ return `<div>${m}</div>`; }).join("")}</div>` : ""}
     <h2>Şık Dağılımı <small>Yeşil doğru şık, turuncu tuzak şık; sayılar öğrenci sayısı</small></h2>
@@ -3782,7 +3798,8 @@ function hataDefteriHazirla(o){
   let sorular = [];
   sinavlar.forEach(function(x, sira){
     (x.sorular || []).forEach(function(s){
-      sorular.push({ sinav: x.sinav, sinavSirasi: sira, no: s.no, konu: s.konu || (hdEk ? "" : "Genel"), altKazanim: s.altKazanim || "",
+      // v3.62 (Code.gs v2.64): iki kitapçıklı sınavda numara öğrencinin kendi kitapçığındaki (kno), harfi kaynakta yazar
+      sorular.push({ sinav: x.sinav, sinavSirasi: sira, no: s.kno || s.no, kitapcik: x.kitapcik || "", konu: s.konu || (hdEk ? "" : "Genel"), altKazanim: s.altKazanim || "",
         ogrenciSik: s.ogrenciSik || "", dogruSik: s.dogruSik || "", durum: s.durum, soruGorseli: s.soruGorseli || "",
         cozumVideosu: s.cozumVideosu || "" });
     });
@@ -3831,7 +3848,7 @@ function hdVideoKarekodu(adres){
 function hdSoruKutusu(s, i, yukseklikMm){
   return `<div class="foySoru${s.genis ? " genis" : ""}${s.cozumVideosu ? " videolu" : ""}"${yukseklikMm ? ` style="min-height:${yukseklikMm}mm"` : ""}>
     <div class="foySoruUst"><span class="foySoruNo">${i + 1}</span>
-      <span class="foyKonu">${s.soruGorseli ? "" : `<b class="foyKaynak">${htmlKacis(s.sinav)} · Soru ${htmlKacis(s.no)}</b> · `}<b>${htmlKacis(s.konu)}</b>${s.altKazanim && s.altKazanim !== s.konu ? (" · " + htmlKacis(s.altKazanim)) : ""}</span>
+      <span class="foyKonu">${s.soruGorseli ? "" : `<b class="foyKaynak">${htmlKacis(s.sinav)}${s.kitapcik ? " · " + htmlKacis(s.kitapcik) + " Kitapçığı" : ""} · Soru ${htmlKacis(s.no)}</b> · `}<b>${htmlKacis(s.konu)}</b>${s.altKazanim && s.altKazanim !== s.konu ? (" · " + htmlKacis(s.altKazanim)) : ""}</span>
       ${s.tekrar ? '<span class="foyTekrar">↻ tekrarlayan konu</span>' : ""}</div>
     ${s.soruGorseli ? `<img class="foyGorsel" src="${htmlKacis(s.soruGorseli)}" alt="Soru ${htmlKacis(s.no)}"${s.gorselMm ? ` style="width:${s.gorselMm}mm"` : ""}>` : ""}
     <div class="foyCozum${s.soruGorseli ? " kisa" : ""}"></div>
@@ -3864,7 +3881,7 @@ function hdAnahtarHtml(hd, bas, son, devam){
   let kaynak = hd.sorular.some(function(q){ return !q.soruGorseli; });   // görselsiz soru varsa sınav/soru sütunu gerekli
   let konuSut = !hdEk;                                                    // ek föyde içerik çerçevesi yok
   let satir = hd.sorular.slice(bas, son).map(function(s, j){ let i = bas + j;
-    return `<tr><td>${i + 1}</td>${kaynak ? `<td>${htmlKacis(s.sinav)}</td><td>${htmlKacis(s.no)}</td>` : ""}${konuSut ? `<td>${htmlKacis(s.konu)}</td>` : ""}<td class="orta">${s.durum === "Bos" ? "boş" : htmlKacis(s.ogrenciSik || "-")}</td><td class="dogruCvp">${htmlKacis(s.dogruSik)}</td></tr>`;
+    return `<tr><td>${i + 1}</td>${kaynak ? `<td>${htmlKacis(s.sinav)}${s.kitapcik ? " (" + htmlKacis(s.kitapcik) + ")" : ""}</td><td>${htmlKacis(s.no)}</td>` : ""}${konuSut ? `<td>${htmlKacis(s.konu)}</td>` : ""}<td class="orta">${s.durum === "Bos" ? "boş" : htmlKacis(s.ogrenciSik || "-")}</td><td class="dogruCvp">${htmlKacis(s.dogruSik)}</td></tr>`;
   }).join("");
   return `<div class="foyAnahtarIc"><h3>${HD_IKON_ANAHTAR}Cevap Anahtarı${devam ? " (devam)" : ""}</h3>${devam ? "" : "<p>Önce bütün soruları çöz, sonra kontrol et. Yine yapamadıklarını Fatih Hoca'ya sor.</p>"}
     <table class="foyTablo"><thead><tr><th>#</th>${kaynak ? "<th>Sınav</th><th>Soru</th>" : ""}${konuSut ? "<th>İçerik Çerçevesi</th>" : ""}<th class="orta">Sınavdaki Cevabın</th><th class="orta">Doğru Cevap</th></tr></thead><tbody>${satir}</tbody></table></div>`;
