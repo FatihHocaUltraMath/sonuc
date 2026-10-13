@@ -1307,10 +1307,20 @@ details.cpKart[open] > summary .cpKartUst::after{transform:rotate(-135deg) trans
 .metodolojiOzet{font-size:12px;color:var(--gray);font-weight:600;margin:-6px 0 4px;}
 .metodolojiAlan{margin-top:10px;display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--text);line-height:1.6;}
 .metodolojiAlan.hidden{display:none !important;}
-.metMadde{display:flex;gap:10px;align-items:flex-start;}
-.metMadde b{color:var(--dark);}
+/* Nasıl Değerlendiriyoruz: her madde kapalı gelir, başlığına dokununca açılır; aynı anda bir madde açık kalır. */
+.metodolojiAlan{gap:6px;}
+.metGrup{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gray);margin:8px 2px 0;}
+.metGrup:first-child{margin-top:0;}
+.metMadde{border:1px solid #EDE9FE;border-radius:14px;background:#fff;}
+.metMadde > summary{list-style:none;display:flex;gap:10px;align-items:center;padding:8px 10px;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.metMadde > summary::-webkit-details-marker{display:none;}
+.metMadde > summary b{flex:1;color:var(--dark);line-height:1.35;}
+.metOk{flex:0 0 18px;height:18px;position:relative;}
+.metOk::before{content:"";position:absolute;left:5px;top:3px;width:7px;height:7px;border-right:2px solid #8B5CF6;border-bottom:2px solid #8B5CF6;transform:rotate(45deg);transition:transform .2s;}
+.metMadde[open] > summary .metOk::before{transform:rotate(-135deg);top:7px;}
+.metMetin{padding:0 12px 12px 52px;}
 .metIkon{flex:0 0 32px;height:32px;border-radius:10px;background:#F5F3FF;display:flex;align-items:center;justify-content:center;font-size:16px;}
-.metVurgu{background:#F5F3FF;border:1px solid #DDD6FE;border-radius:14px;padding:12px;}
+.metVurgu{background:#F5F3FF;border:1px solid #DDD6FE;}
 .metVurgu .metIkon{background:#fff;}
 .metNot{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed #DDD6FE;font-weight:700;color:#6D28D9;}
 
@@ -2162,20 +2172,22 @@ SONUÇLARINI GÖR
 
 <section class="bolumKart sade" id="kartMetodoloji" aria-label="Nasıl Değerlendiriyoruz?">
 <details class="bolum" id="bolMetodoloji">
-<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">ℹ️</span><span class="bolumMetin"><span class="bolumAd">Nasıl Değerlendiriyoruz?</span><span class="bolumOzet hep">Sonuçları nasıl yorumladığımızı, Hedefim'i, Haritam'ı, <span class="sadeceSinif">Meydan Okuma'yı, </span>Çalışma Planı'nı ve Hata Defteri'ni anlatır.</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
+<summary class="title bolumBas"><span class="bolumIkon" aria-hidden="true">ℹ️</span><span class="bolumMetin"><span class="bolumAd">Nasıl Değerlendiriyoruz?</span><span class="bolumOzet hep">Sonuçları nasıl yorumladığımızı ve sayfadaki bölümlerin ne işe yaradığını anlatır.</span></span><span class="bolumOk" aria-hidden="true"></span></summary>
 <div class="bolumIc">
 <div id="metodolojiArea" class="metodolojiAlan">
-  <div class="metMadde"><span class="metIkon">🔎</span><div><b>Az veriyle hüküm vermeyiz.</b> Tek bir sınav sonucu her şeyi anlatmaz. Bir konuda henüz yeterince soru gelmediyse bunu açıkça belirtiriz ("henüz emin olamayız" gibi).</div></div>
-  <div class="metMadde"><span class="metIkon">📈</span><div><b>Gidişata bakarız.</b> Gelişim, tek bir sınava değil, sınavlar arasındaki gidişata bakılarak değerlendirilir. Bir sınav kötü geçmiş olabilir; asıl önemli olan genel yön.</div></div>
-  <div class="metMadde"><span class="metIkon">⚖️</span><div><b>Sınavların zorluğunu hesaba katarız.</b> Sınavlarımız farklı içeriklerden oluştuğu için bazıları daha zor geçer. Sınavdan sınava ilerlemeyi gösterirken (grafik, kişisel rekor, gelişim rozetleri, Hedefim) neti, sınavın sınıfın geneli için ne kadar zor olduğuna göre düzeltiriz. Her ölçümün küçük bir oynama payı da vardır; bu payın içinde kalan farkları "aynı seviyede" sayarız. Bu karşılaştırmalar, sınava en az 10 öğrenci girdiğinde yapılır. Ekrandaki net ve Başarı Durumu ise sınavdaki gerçek sonuçtur.</div></div>
-  <div class="metMadde sadeceSinif"><span class="metIkon">👥</span><div><b>Sınıf ortalaması bir yarış değildir.</b> Yalnızca bir referans noktasıdır; nerede olduğunu daha iyi anlaman için.</div></div>
-  <div class="metMadde"><span class="metIkon">📏</span><div><b>Veri etiketleri.</b> Matematik Gelişimim'de eğilimin yanındaki "az veri", "orta veri" ya da "yeterli veri" etiketi, eğilimin kaç sınava dayandığını gösterir: 3 sınavda az, 4–5 sınavda orta, 6 ve daha fazla sınavda yeterli. İçerik Analizi'nin Genel Durum görünümünde 15'ten az soruyla ölçülen içeriklerin yanında "az veri" yazar; bu sonuçlar henüz kesinleşmemiştir. 3'ten az soruyla ölçülen içerikler gri gösterilir ve yüzde yerine kaç soruda kaç doğru yapıldığı yazılır.</div></div>
-  <div class="metMadde"><span class="metIkon">🏔️</span><div><b>Hedefim.</b> Çocuğunuz yılın başında kendi uzun vadeli hedefini seçer. 8. sınıfta bu, LGS'de matematikten yapmak istediği nettir; 5–7. sınıfta yıl sonunda ulaşmak istediği Başarı Durumu'dur (İyi, Çok İyi, Mükemmel). Hedefe yaklaşma, son 3 sınavın ortalamasıyla ve sınavların zorluğu hesaba katılarak izlenir; böylece tek bir sınav tabloyu değiştirmez. 8. sınıfta bu ortalama 20 soruya göre gösterilir; LGS bütün içeriklerden geldiği için bu bir yön göstergesidir, LGS netinin tahmini değildir. Hedef yıl içinde yükseltilebilir.</div></div>
-  <div class="metMadde"><span class="metIkon">🗺️</span><div><b>Matematik Haritam.</b> Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış ya da çocuğunuzun giremediği sınavın içerikleri sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir.<span class="sadeceSinif"> 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</span></div></div>
-  <div class="metMadde"><span class="metIkon">🗂️</span><div><b>Koleksiyonum.</b> Her dönemin son iki haftasında çocuğunuzun dönem kartı açılır: dokunduğunuzda o dönemin hikâyesi (çözdüğü sorular, haritası, en güçlü içeriği, rozetleri, <span class="sadeceSinif">meydan okumaları, </span>hedefi ve varsa Onur Belgesi madalyaları) kart kart oynar; sonunda paylaşılabilir bir dönem kartı hazırdır. Kartlar rafta kalır, yıl sonunda "Yılın Özeti" eklenir.</div></div>
-  <div class="metMadde sadeceSinif"><span class="metIkon">🎯</span><div><b>Meydan Okuma.</b> Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki ya da alt başlıktaki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></div>
-  <div class="metMadde metVurgu"><span class="metIkon">📘</span><div><b>Hata Defteri.</b> Her üç sınavda bir, bu sınavlarda yanlış yapılan ve boş bırakılan sorular öğrencinin adına hazırlanan bir föyde toplanır. Föy sınıfta verilir ya da size WhatsApp'tan PDF olarak gönderilir. Öğrenci soruları föyün üzerinde yeniden çözer, ardından cevap anahtarıyla kontrol eder ve her sorunun altına "Bu sefer doğru yaptım" ya da "Hâlâ zorlanıyorum" işaretler. Karekodlu sorularda çözüm videosunu izleyebilir, yapamadığı soruları okulda Fatih Hoca'ya sorar.<span class="metNot">Föy eve geldiğinde, çocuğunuzun cevap anahtarına bakmadan soruları çözmesine dikkat etmeniz yeterlidir.</span></div></div>
-  <div class="metMadde"><span class="metIkon">🧭</span><div><b>Çalışma planı.</b> Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar. Çocuğunuzun giremediği bir sınavın içeriği de eksik sayılır ve plana girer.<span class="sadeceSinif"> Sınıfın yarısından azının doğru yapabildiği sorular, çocuğunuz onları yanlış yapmış da olsa boş bırakmış da olsa derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></div>
+  <div class="metGrup">Sonuçları Nasıl Yorumluyoruz?</div>
+  <details class="metMadde"><summary><span class="metIkon">🔎</span><b>Az veriyle hüküm vermeyiz</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Tek bir sınav sonucu her şeyi anlatmaz. Bir konuda henüz yeterince soru gelmediyse bunu açıkça belirtiriz ("henüz emin olamayız" gibi).</div></details>
+  <details class="metMadde"><summary><span class="metIkon">📈</span><b>Gidişata bakarız</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Gelişim, tek bir sınava değil, sınavlar arasındaki gidişata bakılarak değerlendirilir. Bir sınav kötü geçmiş olabilir; asıl önemli olan genel yön.</div></details>
+  <details class="metMadde"><summary><span class="metIkon">⚖️</span><b>Sınavların zorluğunu hesaba katarız</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Sınavlarımız farklı içeriklerden oluştuğu için bazıları daha zor geçer. Sınavdan sınava ilerlemeyi gösterirken (grafik, kişisel rekor, gelişim rozetleri, Hedefim) neti, sınavın sınıfın geneli için ne kadar zor olduğuna göre düzeltiriz. Her ölçümün küçük bir oynama payı da vardır; bu payın içinde kalan farkları "aynı seviyede" sayarız. Bu karşılaştırmalar, sınava en az 10 öğrenci girdiğinde yapılır. Ekrandaki net ve Başarı Durumu ise sınavdaki gerçek sonuçtur.</div></details>
+  <details class="metMadde sadeceSinif"><summary><span class="metIkon">👥</span><b>Sınıf ortalaması bir yarış değildir</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Yalnızca bir karşılaştırma noktasıdır; çocuğunuzun nerede olduğunu daha iyi görmenize yardım eder.</div></details>
+  <details class="metMadde"><summary><span class="metIkon">📏</span><b>Veri etiketleri</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Matematik Gelişimim'de eğilimin yanındaki "az veri", "orta veri" ya da "yeterli veri" etiketi, eğilimin kaç sınava dayandığını gösterir: 3 sınavda az, 4–5 sınavda orta, 6 ve daha fazla sınavda yeterli. İçerik Analizi'nin Genel Durum görünümünde 15'ten az soruyla ölçülen içeriklerin yanında "az veri" yazar; bu sonuçlar henüz kesinleşmemiştir. 3'ten az soruyla ölçülen içerikler gri gösterilir ve yüzde yerine kaç soruda kaç doğru yapıldığı yazılır.</div></details>
+  <div class="metGrup">Sayfadaki Bölümler</div>
+  <details class="metMadde"><summary><span class="metIkon">🧭</span><b>Çalışma Planı</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar. Çocuğunuzun giremediği bir sınavın içeriği de eksik sayılır ve plana girer.<span class="sadeceSinif"> Sınıfın yarısından azının doğru yapabildiği sorular, çocuğunuz onları yanlış yapmış da olsa boş bırakmış da olsa derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></details>
+  <details class="metMadde sadeceSinif"><summary><span class="metIkon">🎯</span><b>Meydan Okuma</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki ya da alt başlıktaki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></details>
+  <details class="metMadde"><summary><span class="metIkon">🏔️</span><b>Hedefim</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Çocuğunuz yılın başında kendi uzun vadeli hedefini seçer. 8. sınıfta bu, LGS'de matematikten yapmak istediği nettir; 5–7. sınıfta yıl sonunda ulaşmak istediği Başarı Durumu'dur (İyi, Çok İyi, Mükemmel). Hedefe yaklaşma, son 3 sınavın ortalamasıyla ve sınavların zorluğu hesaba katılarak izlenir; böylece tek bir sınav tabloyu değiştirmez. 8. sınıfta bu ortalama 20 soruya göre gösterilir; LGS bütün içeriklerden geldiği için bu bir yön göstergesidir, LGS netinin tahmini değildir. Hedef yıl içinde yükseltilebilir.</div></details>
+  <details class="metMadde"><summary><span class="metIkon">🗺️</span><b>Matematik Haritam</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Yılın bütün içerikleri bir harita gibi gösterilir. Her bölgenin rengi, çocuğunuzun o içerikte bütün sınavlarda yaptığı doğruların toplamından gelir: 🏕️ Keşifte, 🌱 Filizleniyor, 🌳 Sağlam, 👑 Usta. Henüz sınavı yapılmamış ya da çocuğunuzun giremediği sınavın içerikleri sislidir. Kırmızı kullanmıyoruz: zayıf bir bölge "henüz fethedilmemiş" demektir.<span class="sadeceSinif"> 🤝 işareti, çocuğunuzun o içerikte sınıfta arkadaşlarına yardım eden bir mentor olarak seçildiğini gösterir.</span></div></details>
+  <details class="metMadde"><summary><span class="metIkon">🗂️</span><b>Koleksiyonum</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Her dönemin son iki haftasında çocuğunuzun dönem kartı açılır: dokunduğunuzda o dönemin hikâyesi (çözdüğü sorular, haritası, en güçlü içeriği, rozetleri, <span class="sadeceSinif">meydan okumaları, </span>hedefi ve varsa Onur Belgesi madalyaları) kart kart oynar; sonunda paylaşılabilir bir dönem kartı hazırdır. Kartlar rafta kalır, yıl sonunda "Yılın Özeti" eklenir.</div></details>
+  <details class="metMadde metVurgu"><summary><span class="metIkon">📘</span><b>Hata Defteri</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Her üç sınavda bir, bu sınavlarda yanlış yapılan ve boş bırakılan sorular öğrencinin adına hazırlanan bir föyde toplanır. Föy sınıfta verilir ya da size WhatsApp'tan PDF olarak gönderilir. Öğrenci soruları föyün üzerinde yeniden çözer, ardından cevap anahtarıyla kontrol eder ve her sorunun altına "Bu sefer doğru yaptım" ya da "Hâlâ zorlanıyorum" işaretler. Karekodlu sorularda çözüm videosunu izleyebilir, yapamadığı soruları okulda Fatih Hoca'ya sorar.<span class="metNot">Föy eve geldiğinde, çocuğunuzun cevap anahtarına bakmadan soruları çözmesine dikkat etmeniz yeterlidir.</span></div></details>
 </div>
 </div>
 </details>
@@ -4137,7 +4149,7 @@ function bolumleriHazirla(veri){
   // v2.42 — kapalı gelen bölümlerin özet satırları
   let hn = last.hocaNotu, notVar = !!((hn && Array.isArray(hn.paragraflar) && hn.paragraflar.length) || last.fatihNotu);
   let hitapAd = hn && /^Sevgili (.+),$/.exec(String(hn.hitap || "").trim());
-  yaz("hocaNotuOzet", !notVar ? "" : (hitapAd ? hitapAd[1] + ", sana bir notum var ✉️" : "Sana bir notum var ✉️"));
+  yaz("hocaNotuOzet", !notVar ? "" : (hitapAd ? hitapAd[1] + ", sana bir notum var 📝" : "Sana bir notum var 📝"));
   yaz("gelisimAnaliziOzet", last.gelisimAnalizi ? "Bu sınavın yazılı değerlendirmesi" : "");
   let sa = [];
   if(!last.bireysel && sayi(last.sira) !== null && sinifKiyasVar(last)) sa.push("Sıra " + last.sira + "/" + last.katilim);
@@ -5154,6 +5166,22 @@ window.addEventListener("popstate", function(e){
   }finally{ geriIsleniyor = false; }
   gecmisiEsitle();   // "İleri" ile geri alınamayacak bir adıma gelindiyse kayıt geri sarılır
 });
+
+// Nasıl Değerlendiriyoruz: aynı anda tek madde açık kalır; bölüm kapanınca maddeler de kapanır (yeniden açılınca hepsi kapalı gelir).
+(function(){
+  const bolum = document.getElementById("bolMetodoloji");
+  if(!bolum) return;
+  bolum.querySelectorAll("details.metMadde").forEach(function(m){
+    m.addEventListener("toggle", function(){
+      if(!m.open) return;
+      bolum.querySelectorAll("details.metMadde[open]").forEach(function(o){ if(o !== m) o.open = false; });
+    });
+  });
+  bolum.addEventListener("toggle", function(e){
+    if(e.target !== bolum || bolum.open) return;
+    bolum.querySelectorAll("details.metMadde[open]").forEach(function(o){ o.open = false; });
+  });
+})();
 
 // Velinin kendi dokunuşuyla açtığı / kapattığı bölümler (sayfanın kendiliğinden açtıkları değil)
 document.getElementById("resultCard").addEventListener("click", function(e){

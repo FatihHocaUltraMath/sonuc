@@ -692,6 +692,12 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
 .topBar .waHedefSecici button{width:auto;padding:7px 11px;border-radius:9px;background:transparent;color:var(--gray);font-size:12px;font-weight:800;}
 .topBar .waHedefSecici button[aria-pressed="true"]{background:white;color:#166534;box-shadow:0 1px 4px rgba(0,0,0,.08);}
 .waHedefIpucu{flex-basis:100%;font-size:11.5px;color:var(--gray);font-weight:600;line-height:1.45;}
+/* v3.61 — test döneminden kalan gönderim işaretleri (tek seferlik) */
+.testIsaret{margin-top:12px;padding:12px;border:1px solid #FED7AA;background:#FFF7ED;border-radius:12px;font-size:12.5px;line-height:1.5;color:#7C2D12;font-weight:600;}
+.testIsaret[hidden]{display:none;}
+.testIsaret b{color:#9A3412;}
+.topBar .testIsaret button{width:auto;margin-top:8px;padding:8px 14px;border-radius:10px;background:#EA580C;color:#fff;font-size:12.5px;font-weight:800;}
+.testIsaret.bitti{border-color:#BBF7D0;background:#F0FDF4;color:#166534;}
 
 /* ================= HATA DEFTERİ FÖYÜ (v3.6; yalnızca yazdırırken) — index.html'deki eski föyle aynı biçim ================= */
 .raporGrup{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;}
@@ -1190,12 +1196,13 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
       </span>
       <div class="waHedefIpucu" id="waHedefIpucu"></div>
     </div>
+    <div class="testIsaret" id="testIsaret" hidden></div>
   </div>
 
   <div id="ekPanel" class="ekPanel" hidden></div>
   <div id="liste"></div>
 
-  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.60 (12.10.2026) · karnede "oturmadığını" → "pekişmediğini" (Code.gs v2.61) · Onur Belgesi'nde 📅 İstikrar → Tam Katılım (Code.gs v2.60) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
+  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.61 (13.10.2026) · test döneminden kalan gönderim işaretlerini silen tek seferlik düğme · karnede "oturmadığını" → "pekişmediğini" (Code.gs v2.61) · Onur Belgesi'nde 📅 İstikrar → Tam Katılım (Code.gs v2.60) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
 
 </div>
 
@@ -1256,6 +1263,45 @@ function whatsappAdresi(telefon, mesaj, hedef){
   let parametre = "phone=" + telefon + (mesaj ? ("&text=" + encodeURIComponent(mesaj)) : "");
   return (hedef || whatsappHedefi()) === "web" ? ("https://web.whatsapp.com/send?" + parametre) : ("whatsapp://send?" + parametre);
 }
+// v3.61 — Test döneminden kalan gönderim işaretleri. "İlk mesaj gönderildi" ve Gönderim Modu adım işaretleri tarayıcıda
+// sınav kimliği + ad + veli telefonuyla tutulur. Gerçek sınavlar da D801… adını alınca test işaretleri "gönderildi" gibi
+// görünür ve sınav açılınca sunucuya (Gonderimler) aktarılırdı. Düğme yalnızca bu iki türü siler (imza, WhatsApp tercihi,
+// notlar ve bölüm durumları kalır) ve tek seferliktir: silindikten sonra ya da tarayıcıda hiç işaret yokken bir daha görünmez,
+// böylece gerçek gönderimlerin işaretleri yanlışlıkla silinemez. Panelin her kopyası (GitHub, masaüstü) ayrı tarayıcı alanıdır.
+const TEST_ISARET_ONEKLERI = ["fhUltraMat_ilkMesajGonderildi::", "fhUltraMat_gonderimAdim::"];
+const TEST_ISARET_TAMAM = "fhUltraMat_testIsaretleriTemizlendi";
+function testIsaretAnahtarlari(){
+  let a = [];
+  for(let i = 0; i < localStorage.length; i++){
+    let k = localStorage.key(i);
+    if(k && TEST_ISARET_ONEKLERI.some(function(o){ return k.indexOf(o) === 0; })) a.push(k);
+  }
+  return a;
+}
+function testIsaretKutusunuKur(){
+  let kutu = document.getElementById("testIsaret");
+  if(!kutu) return;
+  try{
+    if(localStorage.getItem(TEST_ISARET_TAMAM)){ kutu.hidden = true; return; }
+    let anahtarlar = testIsaretAnahtarlari();
+    if(!anahtarlar.length){ localStorage.setItem(TEST_ISARET_TAMAM, new Date().toISOString() + " (işaret yoktu)"); kutu.hidden = true; return; }
+    let ogrenci = new Set(anahtarlar.map(function(k){ return k.split("::").slice(2).join("::"); })).size;   // ad + telefon (sınavdan bağımsız)
+    kutu.innerHTML = `🧹 <b>Test döneminden kalan gönderim işaretleri:</b> bu tarayıcıda ${ogrenci} öğrenci "gönderildi" diye işaretli.
+      Gerçek sınavlar da D801… adını alacağı için bunlar silinmezse, mesaj almamış veliler "gönderildi" görünür.
+      İlk gerçek sınavı açmadan önce bir kez sil.<br><button type="button" id="testIsaretSilBtn">Test İşaretlerini Sil</button>`;
+    kutu.hidden = false;
+    document.getElementById("testIsaretSilBtn").onclick = function(){
+      let simdi = testIsaretAnahtarlari();
+      if(!window.confirm(`Bu tarayıcıdaki ${ogrenci} öğrencinin gönderim işaretleri silinecek.\n\nİmzan, WhatsApp tercihin ve notların kalır; tablodaki Gonderimler sayfasına dokunulmaz. Bu düğme bir daha görünmez.\n\nSilinsin mi?`)) return;
+      simdi.forEach(function(k){ localStorage.removeItem(k); });
+      localStorage.setItem(TEST_ISARET_TAMAM, new Date().toISOString());
+      kutu.classList.add("bitti");
+      kutu.innerHTML = `✓ ${ogrenci} öğrencinin test işareti silindi. Bu kutu bir dahaki açılışta görünmez.`;
+    };
+  }catch(e){ kutu.hidden = true; }   // localStorage kapalıysa (gizli sekme vb.) silinecek işaret de yoktur
+}
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", testIsaretKutusunuKur); else testIsaretKutusunuKur();
+
 // v3.56 (Code.gs v2.45) — Kişisel link: SITE_ADRESI + "#g=" + base64url(JSON {i: Ad Soyad, k: Giriş Kodu, t: şu an (ms)}).
 // "#" sonrası tarayıcıdan hiçbir sunucuya gitmez (GitHub, Google, WhatsApp önizlemesi görmez). Veli sayfası okur okumaz
 // adresten siler, Code.gs'e sorar; mesaj hazırlandıktan sonra o öğrenci için hiç giriş yoksa kutuları doldurur (bir kez).
