@@ -831,7 +831,8 @@ border:1px solid #FED7AA;
 .gsKart.girilmedi .gsAd b{color:#475569;}
 .gsKart.girilmedi .gsNet small{font-size:12.5px;font-weight:800;color:#475569;}
 .gsUst{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
-.gsAd{min-width:0;display:flex;flex-direction:column;gap:2px;}
+.gsAd{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.gsKod{font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.3px;color:#7C3AED;background:#F5F3FF;border:1px solid #E9D5FF;border-radius:6px;padding:3px 6px;margin-bottom:3px;}
 .gsAd b{font-size:14.5px;font-weight:900;color:var(--dark);line-height:1.3;}
 .gsAd small{font-size:12px;font-weight:600;color:#475569;}
 .gsNet{text-align:right;white-space:nowrap;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;}
@@ -2303,6 +2304,22 @@ let sonIstekNo = 0;
 function sinavAdiEslesme(kod){ return String(kod || "").trim().match(/^(\d{1,2})\s*-\s*MAT\s*-\s*D\s*0*(\d+)$/i); }
 function sinavOkunurAdi(kod){ let m = sinavAdiEslesme(kod); return m ? (m[1] + ". Sınıf Matematik " + m[2] + ". Deneme") : String(kod || "").trim(); }
 function sinavKisaAdi(kod){ let m = sinavAdiEslesme(kod); return m ? (m[2] + ". Deneme") : String(kod || "").trim(); }
+// Sınav adı kitapçığın adı olabilir ("Ankara 1. Deneme"); sıra kodu ("8-MAT-D01") o zaman Sınav ID'den çıkar
+// (D801 → 8-MAT-D01). Eski "8-MAT-D01" adlarında kod adın kendisidir. Kod çıkmazsa boş döner.
+function sinavKodu(ad, id){
+  let m = sinavAdiEslesme(ad);
+  if(m) return m[1] + "-MAT-D" + String(m[2]).padStart(2, "0");
+  let k = String(id || "").trim().match(/^D(\d{1,2})(\d{2})$/i);
+  return k ? (k[1] + "-MAT-D" + k[2]) : "";
+}
+// Grafik ekseni: "Ankara 1. Deneme" → ["Ankara", "1. Deneme"] (telefonda sıkışmasın); diğer adlar tek satır
+function sinavGrafikEtiketi(ad){
+  let kisa = sinavKisaAdi(ad), m = kisa.match(/^(.+?)\s+(\d+\.\s*Deneme)$/i);
+  return m ? [m[1], m[2]] : kisa;
+}
+// Geçmiş Sınavlarım kartı: kod adın üstünde; eski "8-MAT-D01" adlarında başlık eskisi gibi okunur ad
+function gsKodHtml(ad, id){ let k = sinavKodu(ad, id); return k ? `<span class="gsKod">${htmlKacis(k)}</span>` : ""; }
+function gsAdMetni(ad){ return sinavOkunurAdi(ad); }
 
 // "25.09.2026" → "25 Eylül 2026"; başka biçimler olduğu gibi kalır
 function tarihUzunYaz(x){ let m = String(x || "").match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
@@ -2540,7 +2557,8 @@ function hnOdakKaynakMetni(odak){
   if(!l || l.length === 0) return "";
   if(l.length > 1) return `<span>${l.length} sınavın toplamı</span>`;
   let m = sinavAdiEslesme(l[0]);
-  return `<span>${m ? (m[2] + ". Denemede") : htmlKacis(String(l[0]).trim() + " sınavında")}</span>`;
+  let ad = String(l[0]).trim();
+  return `<span>${m ? (m[2] + ". Denemede") : htmlKacis(/Deneme$/i.test(ad) ? ad + "de" : ad + " sınavında")}</span>`;
 }
 function hocaNotunuCiz(kayit){
   let alan = document.getElementById("fatihNote");
@@ -4007,7 +4025,7 @@ document.getElementById("kimlikTarih").innerHTML = tUzun ? (IKON_TAKVIM + "<span
 // "8-MAT-D02" → "8. Sınıf Matematik 2. Deneme"; kalıba uymayan adlar olduğu gibi kalır
 let sinavKod = String(last.sinav || "").trim(), sinavEslesme = sinavAdiEslesme(sinavKod);
 document.getElementById("examArea").textContent = sinavOkunurAdi(sinavKod);
-document.getElementById("kimlikKod").textContent = sinavEslesme ? sinavKod : "";
+document.getElementById("kimlikKod").textContent = sinavKodu(sinavKod, last.sinavID);
 
 // v2.38: sıra ve dilim yalnızca sınava en az SINIF_KIYAS_MIN_KATILIM öğrenci girdiyse; altında kutu "—" ve katılım sayısını
 // gösterir (nedeni hemen altındaki katılım notunda yazar).
@@ -4275,7 +4293,7 @@ function showHistory(data){
     }
     return `<div class="gsKart${i === data.length - 1 ? " son" : ""}">
       <div class="gsUst">
-        <div class="gsAd"><b>${htmlKacis(sinavOkunurAdi(x.sinav))}</b><small>${htmlKacis(tarih || "")}${i === data.length - 1 ? `${tarih ? " · " : ""}son sınav` : ""}</small></div>
+        <div class="gsAd">${gsKodHtml(x.sinav, x.sinavID)}<b>${htmlKacis(gsAdMetni(x.sinav))}</b><small>${htmlKacis(tarih || "")}</small></div>
         <div class="gsNet"><b>${htmlKacis(gsSayi(x.net))}</b><small>net${toplam ? (" / " + toplam + " soru") : ""}</small></div>
       </div>
       <div class="gsCubuk" role="img" aria-label="Doğru oranı yüzde ${oran}"><span style="width:${oran}%"></span></div>
@@ -4291,7 +4309,7 @@ function showHistory(data){
     let tarih = tarihUzunYaz(g.tarihMetni !== undefined ? g.tarihMetni : tarihFormatla(g.tarih));
     let ic = (g.icerikler || []).map(function(k){ return `<span>${htmlKacis(k.konu)}</span>`; }).join("");
     html.splice(yer, 0, `<div class="gsKart girilmedi">
-      <div class="gsUst"><div class="gsAd"><b>${htmlKacis(sinavOkunurAdi(g.sinav))}</b><small>${htmlKacis(tarih || "")}</small></div>
+      <div class="gsUst"><div class="gsAd">${gsKodHtml(g.sinav, g.sinavID)}<b>${htmlKacis(gsAdMetni(g.sinav))}</b><small>${htmlKacis(tarih || "")}</small></div>
         <div class="gsNet"><small>sınava giremedin</small></div></div>
       ${ic ? `<div class="gsIcerikSatir">${ic}</div>` : ""}
     </div>`);
@@ -4343,7 +4361,7 @@ function createChart(data){
     return;
   }
 
-  let labels = data.map(x => sinavKisaAdi(x.sinav));
+  let labels = data.map(x => sinavGrafikEtiketi(x.sinav));
   // v2.39 — ÖLÇÜM MODELİ: karşılaştırılabilir sınav varsa çizgi zorluğa göre DÜZELTİLMİŞ nettir (20 soruya göre),
   // çevresindeki gölge hata payıdır (±duzHata); ham net ince kesikli gri çizgidir. Karşılaştırılabilir olmayan sınav
   // (10'dan az öğrenci) düzeltilmiş çizgide boş kalır (çizgi atlayarak devam eder). Hiç karşılaştırılabilir sınav
