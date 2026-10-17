@@ -22,6 +22,16 @@ h2{margin:0 0 10px;font-size:17px;color:var(--dark);}
 input[type=text],input[type=number],select{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;color:var(--text);}
 input:focus,select:focus{outline:none;border-color:var(--purple);}
 input:disabled,select:disabled{background:var(--soft);color:var(--gray);}
+/* Öğretmen Anahtarı yazarken gizli (••••) — Öğretmen Paneli (karne-uret v3.55) ile aynı göz düğmesi.
+   type="password" kullanılmadı: tarayıcı "şifreyi kaydet" diye sormasın. */
+.kodKutusu{position:relative;}
+.kodKutusu input{padding-right:54px;}
+.gizliKod{-webkit-text-security:disc;text-security:disc;}
+.kodKutusu button.kodGoster{position:absolute;top:50%;right:2px;transform:translateY(-50%);width:44px;height:40px;margin:0;padding:0;
+  display:flex;align-items:center;justify-content:center;border:none;border-radius:10px;background:transparent;color:var(--gray);box-shadow:none;cursor:pointer;}
+.kodKutusu button.kodGoster:hover,.kodKutusu button.kodGoster[aria-pressed="true"]{color:var(--orange);}
+.kodKutusu button.kodGoster:focus-visible{outline:2px solid var(--orange);outline-offset:1px;}
+.kodKutusu button.kodGoster[aria-pressed="true"] .kodGosterCizgi{display:none;}
 label.et{display:block;font-size:12.5px;font-weight:700;color:var(--gray);margin:8px 0 4px;}
 button{border:none;border-radius:12px;padding:11px 14px;font-size:14.5px;font-weight:800;cursor:pointer;}
 .ana{background:linear-gradient(90deg,var(--orange),var(--purple));color:#fff;}
@@ -67,6 +77,14 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
 .durum.hata{color:var(--red);} .durum.ok{color:var(--green);}
 .durum:empty{min-height:0;margin:0;}   /* boş durum satırı kartın altında boşluk bırakmasın */
 .gizli{display:none !important;}
+/* v2.67 (Code.gs) — A/B kitapçık eşlemesi */
+.eslIzgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:6px;margin-top:6px;}
+.eslHucre{display:flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:10px;padding:4px 6px;font-size:13px;font-weight:800;color:var(--dark);}
+.eslHucre input{width:50px;padding:5px 6px;font-size:14px;border-radius:8px;text-align:center;}
+.eslHucre.bos{border-color:#EF9F27;background:#FFFBEB;}
+.aEt{color:#7C3AED;}
+textarea{width:100%;min-height:60px;padding:10px 12px;border:1.5px solid var(--line);border-radius:12px;font-size:14.5px;resize:vertical;color:var(--text);}
+textarea:focus{outline:none;border-color:var(--purple);}
 .denemeKart{border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-bottom:10px;cursor:pointer;background:#fff;}
 .denemeKart:hover{border-color:var(--purple);}
 .denemeKart b{color:var(--dark);font-size:15px;}
@@ -104,7 +122,12 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
   <div class="kart" id="girisKart">
     <h2>Öğretmen Girişi</h2>
     <label class="et" for="anahtar">Öğretmen Anahtarı</label>
-    <input type="text" id="anahtar" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+    <div class="kodKutusu">
+      <input type="text" id="anahtar" class="gizliKod" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+      <button type="button" id="anahtarGosterBtn" class="kodGoster" aria-label="Anahtarı göster" aria-pressed="false" title="Anahtarı göster">
+        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><line class="kodGosterCizgi" x1="3" y1="3" x2="21" y2="21"/></svg>
+      </button>
+    </div>
     <div class="satir" style="margin-top:10px"><button class="ana" id="baglanBtn">Kütüphaneyi Aç</button></div>
     <div class="durum" id="girisDurum" role="status" aria-live="polite"></div>
   </div>
@@ -155,11 +178,33 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline
       <div class="bolumIc"><div class="soruIzgara" id="soruIzgara"></div></div>
     </details>
 
+    <details class="bolum" data-bolum="tgEsleme">
+      <summary class="bolumBas"><span class="bolumIkon" aria-hidden="true">🔀</span><span class="bolumAd">Kitapçık Eşlemesi</span>
+        <span class="bolumSag"><span class="bolumOzet" id="ozetEsleme"></span><span class="bolumOk" aria-hidden="true"></span></span></summary>
+      <div class="bolumIc">
+      <div class="ipucu">Deneme A ve B kitapçıklıysa, öbür kitapçıktaki numaraları buraya gir. Öğretmen Paneli, öğrencinin kendi kitapçığındaki numarayı bununla kütüphane numarasına çevirir. Dosya adında öbür kitapçığın numarası varsa (ör. <b>10-B-A7.png</b>) toplu yüklemede kendiliğinden dolar. Kitapçık türü föyde yazmaz.</div>
+      <label class="et" for="esKit">Kütüphanenin Kitapçığı</label>
+      <select id="esKit" style="max-width:340px"><option value="">Tek Kitapçık (Eşleme Yok)</option><option value="A">A</option><option value="B">B</option></select>
+      <div id="esAlan" class="gizli">
+        <div class="satir" style="margin-top:4px"><div style="flex:0 0 150px"><label class="et" for="esSayi">Soru Sayısı</label><input type="number" id="esSayi" min="1" max="200" inputmode="numeric"></div></div>
+        <label class="et" id="esBaslik">Her Sorunun Öbür Kitapçıktaki Numarası</label>
+        <div class="eslIzgara" id="esIzgara"></div>
+        <label class="et" for="esYapistir">Listeyi Yapıştır (İsteğe Bağlı)</label>
+        <textarea id="esYapistir" placeholder="kütüphane no = öbür kitapçıktaki no, ör. 1=5, 2=12, 3=1"></textarea>
+        <div class="satir" style="margin-top:6px"><button class="ikincil" id="esAktar" style="flex:0 0 auto">📋 Kutulara Aktar</button></div>
+        <label class="secenek"><input type="checkbox" id="esSik"> Öbür Kitapçıkta Şıkların Yeri de Farklı</label>
+        <div class="ipucu" style="margin-top:0">İşaretliyse öbür kitapçıktaki öğrencinin işaretlediği şık föye yazılmaz; o soru yalnızca “yanlış” olarak geçer.</div>
+      </div>
+      <div class="satir" style="margin-top:10px"><button class="ana" id="esKaydet" style="flex:0 0 auto">💾 Eşlemeyi Kaydet</button></div>
+      <div class="durum" id="esDurum" role="status" aria-live="polite"></div>
+      </div>
+    </details>
+
     <details class="bolum" data-bolum="tgToplu" open>
       <summary class="bolumBas"><span class="bolumIkon" aria-hidden="true">📦</span><span class="bolumAd">Hazır Soruları Toplu Yükle</span>
         <span class="bolumSag"><span class="bolumOzet" id="ozetToplu"></span><span class="bolumOk" aria-hidden="true"></span></span></summary>
       <div class="bolumIc">
-      <div class="ipucu">Hazırlanmış soru görsellerini (ör. <b>10-B.png</b>, <b>12-A.png</b>) hepsini birlikte seç. Soru numarası ve doğru şık dosya adından, geniş/yarım bilgisi görselin genişliğinden okunur; kesme ve şık seçme gerekmez.</div>
+      <div class="ipucu">Hazırlanmış soru görsellerini (ör. <b>10-B.png</b>, <b>12-A.png</b>) hepsini birlikte seç. Soru numarası ve doğru şık dosya adından, geniş/yarım bilgisi görselin genişliğinden okunur; kesme ve şık seçme gerekmez. Dosya adının sonunda öbür kitapçığın numarası varsa (ör. <b>10-B-A7.png</b>) Kitapçık Eşlemesi de dolar.</div>
       <div class="satir"><button class="ana" id="topluBtn">📦 Görselleri Seç</button></div>
       <input type="file" id="topluInput" accept="image/png,image/jpeg,image/webp" multiple class="gizli">
       <div class="durum" id="topluDurum" role="status" aria-live="polite"></div>
@@ -281,6 +326,7 @@ function ozetleriGuncelle(){
   if(eksikKuyruk.length) bolumOzeti("ozetKes", `Sıradaki: Soru ${eksikKuyruk[0]}`, "uyari");
   else bolumOzeti("ozetKes", sayfalar.length ? `${sayfalar.length} sayfa yüklü` : "");
   if(!$("ozetToplu").textContent) bolumOzeti("ozetToplu", "ör. 10-B.png");
+  eslemeOzeti();
 }
 
 async function api(veri){
@@ -296,11 +342,23 @@ if(anahtar){ $("anahtar").value = anahtar; baglan(); }
 function girisYap(){ if(yukleniyorMu($("baglanBtn"))) return; anahtar = $("anahtar").value.trim(); baglan(); }
 $("baglanBtn").onclick = girisYap;
 enterIle($("anahtar"), girisYap);
+// Öğretmen Anahtarı göster/gizle (göz düğmesi) — Öğretmen Paneliyle aynı. Anahtar varsayılan olarak gizlidir.
+function anahtarGoster(goster){
+  const kutu = $("anahtar"), btn = $("anahtarGosterBtn");
+  kutu.classList.toggle("gizliKod", !goster);
+  btn.setAttribute("aria-pressed", goster ? "true" : "false");
+  const etiket = goster ? "Anahtarı gizle" : "Anahtarı göster";
+  btn.setAttribute("aria-label", etiket); btn.title = etiket;
+}
+$("anahtarGosterBtn").addEventListener("click", function(){
+  anahtarGoster($("anahtar").classList.contains("gizliKod"));
+  $("anahtar").focus();   // telefonda klavye kapanmasın
+});
 
 async function baglan(){
   if(!anahtar){ durum($("girisDurum"), "Öğretmen Anahtarını yaz.", "hata"); return; }
   durum($("girisDurum"), "");
-  dugmeYukleniyor($("baglanBtn"), true, "YÜKLENİYOR", [$("anahtar")]);
+  dugmeYukleniyor($("baglanBtn"), true, "YÜKLENİYOR", [$("anahtar"), $("anahtarGosterBtn")]);
   try{
     const r = await api({ islem:"ekListe" });
     if(!r.ok){ durum($("girisDurum"), r.mesajTr || "Bağlanılamadı.", "hata"); return; }
@@ -313,9 +371,10 @@ async function baglan(){
     if(qd && denemeler.some(d => d.id === qd)){
       eksikKuyruk = (q.get("eksik") || "").split(",").map(Number).filter(n => n >= 1 && n <= 200);
       denemeAc(qd);
+      if(q.get("esleme") === "1") bolumuAc("tgEsleme");   // v2.67: panelin "Eşlemeyi Gir" bağlantısı
     }
   }catch(e){ durum($("girisDurum"), "Bağlantı hatası: " + e.message, "hata"); }
-  finally{ dugmeYukleniyor($("baglanBtn"), false, "", [$("anahtar")]); }
+  finally{ dugmeYukleniyor($("baglanBtn"), false, "", [$("anahtar"), $("anahtarGosterBtn")]); }
 }
 
 function listeCiz(){
@@ -364,10 +423,10 @@ $("geriBtn").onclick = () => { $("denemeEkran").classList.add("gizli"); $("kutup
 
 function denemeCiz(){
   $("dBaslik").textContent = aktif.ad;
-  $("dAlt").textContent = `${aktif.sinif}. sınıf · kütüphanede ${aktif.sorular.length} soru`;
+  $("dAlt").textContent = `${aktif.sinif}. sınıf · kütüphanede ${aktif.sorular.length} soru` + kitapcikOzeti();
   const izg = $("soruIzgara");
   if(!aktif.sorular.length){ izg.innerHTML = '<div class="kucuk">Bu denemeden henüz soru kesilmedi.</div>'; }
-  else izg.innerHTML = aktif.sorular.map(s => `<div class="soruKutu"><div class="ust"><span>Soru ${s.no} · ${kacis(s.dogru)}${s.genis ? " · Geniş" : ""}</span>
+  else izg.innerHTML = aktif.sorular.map(s => `<div class="soruKutu"><div class="ust"><span>Soru ${s.no} · ${kacis(s.dogru)}${s.genis ? " · Geniş" : ""}${aktif.kitapcik && aktif.esleme && aktif.esleme[s.no] ? ` <span class="aEt">· ${oburKit()}'${oburKit() === "A" ? "da" : "de"} ${aktif.esleme[s.no]}</span>` : ""}</span>
       <button class="tehlike" data-no="${s.no}" aria-label="Soru ${s.no}'i sil">Sil</button></div>
       <img src="${kacis(s.gorsel.replace("sz=w1600","sz=w500"))}" alt="Soru ${s.no}" loading="lazy"></div>`).join("");
   izg.querySelectorAll("button[data-no]").forEach(b => b.onclick = async () => {
@@ -382,8 +441,92 @@ function denemeCiz(){
   if(!ham) $("soruNo").value = sonraki;
   $("eksikBilgi").classList.toggle("gizli", !eksikKuyruk.length);
   $("eksikBilgi").textContent = eksikKuyruk.length ? `Föy için kesilmesi gereken sorular: ${eksikKuyruk.join(", ")}. Sıradaki: Soru ${eksikKuyruk[0]}.` : "";
+  eslemeCiz();
   ozetleriGuncelle();
 }
+
+// ---------------- v2.67: KİTAPÇIK EŞLEMESİ ----------------
+// Kütüphane hangi kitapçıktan hazırlandıysa (A/B) numaraları onunkidir; öbür kitapçıktaki karşılıklar burada tutulur.
+// Öğretmen Paneli, öbür kitapçığı çözen öğrencinin numaralarını bununla kütüphane numarasına çevirir. Föye yazılmaz.
+function oburKit(k){ k = k === undefined ? (aktif && aktif.kitapcik) : k; return k === "A" ? "B" : "A"; }
+function eslemeSayisi(){ return aktif && aktif.esleme ? Object.keys(aktif.esleme).length : 0; }
+function eslemeHedef(){ const nos = aktif.sorular.map(s => s.no).concat(Object.keys(aktif.esleme || {}).map(Number)); return nos.length ? Math.max(...nos) : 20; }
+function kitapcikOzeti(){
+  if(!aktif || !aktif.kitapcik) return "";
+  const n = eslemeSayisi(), h = eslemeHedef();
+  return ` · ${aktif.kitapcik} kitapçığından · ${oburKit()} eşlemesi ${n >= h ? "tam" : n + "/" + h}`;
+}
+function eslemeOzeti(){
+  if(!aktif) return;
+  if(!aktif.kitapcik){ bolumOzeti("ozetEsleme", "Tek kitapçık"); return; }
+  const n = eslemeSayisi(), h = eslemeHedef();
+  bolumOzeti("ozetEsleme", `${aktif.kitapcik} ↔ ${oburKit()}: ${n}/${h} soru`, n >= h ? "iyi" : "uyari");
+}
+function eslemeIzgaraCiz(degerler){
+  const kit = $("esKit").value, ob = oburKit(kit), n = Math.max(1, Math.min(200, parseInt($("esSayi").value, 10) || 20));
+  $("esBaslik").textContent = `Her Sorunun ${ob} Kitapçığındaki Numarası`;
+  $("esIzgara").innerHTML = Array.from({ length: n }, (_, i) => { const v = degerler[i + 1] || "";
+    return `<div class="eslHucre${v ? "" : " bos"}"><span style="min-width:36px">${kit} ${i + 1}</span>→ ${ob}<input type="text" inputmode="numeric" maxlength="3" data-no="${i + 1}" value="${v}" aria-label="${kit} ${i + 1}. sorunun ${ob} kitapçığındaki numarası"></div>`; }).join("");
+  $("esIzgara").querySelectorAll("input").forEach(inp => inp.oninput = () => inp.parentElement.classList.toggle("bos", !inp.value.trim()));
+}
+function eslemeDegerleri(){ const o = {}; $("esIzgara").querySelectorAll("input").forEach(inp => { const v = inp.value.trim(); if(v) o[Number(inp.dataset.no)] = v; }); return o; }
+function eslemeCiz(){
+  $("esKit").value = aktif.kitapcik || "";
+  $("esSik").checked = !!aktif.siklarFarkli;
+  $("esYapistir").value = "";
+  $("esSayi").value = eslemeHedef();
+  $("esAlan").classList.toggle("gizli", !aktif.kitapcik);
+  if(aktif.kitapcik) eslemeIzgaraCiz(aktif.esleme || {});
+  durum($("esDurum"), "");
+  eslemeOzeti();
+}
+$("esKit").onchange = () => {
+  const k = $("esKit").value;
+  $("esAlan").classList.toggle("gizli", !k);
+  if(k) eslemeIzgaraCiz($("esIzgara").children.length ? eslemeDegerleri() : (aktif.esleme || {}));
+};
+$("esSayi").onchange = () => eslemeIzgaraCiz(eslemeDegerleri());
+/** "1=5, 2=12" → { 1:"5", 2:"12" }; okunamayan parçalar ayrıca döner */
+function eslemeMetniCoz(metin){
+  const o = {}, hatali = [];
+  String(metin || "").split(/[,;\n]+/).forEach(p => { p = p.trim(); if(!p) return;
+    const m = p.match(/^(\d{1,3})\s*[=:→>-]+\s*(\d{1,3})$/);
+    if(m && +m[1] >= 1 && +m[1] <= 200 && +m[2] >= 1 && +m[2] <= 200) o[+m[1]] = String(+m[2]); else hatali.push(p); });
+  return { o, hatali };
+}
+$("esAktar").onclick = () => {
+  const c = eslemeMetniCoz($("esYapistir").value), say = Object.keys(c.o).length;
+  if(!say){ durum($("esDurum"), "Listede okunabilen eşleme yok. Biçim: kütüphane no = öbür kitapçıktaki no (ör. 1=5, 2=12).", "hata"); return; }
+  const mevcut = eslemeDegerleri(); Object.assign(mevcut, c.o);
+  $("esSayi").value = Math.max(parseInt($("esSayi").value, 10) || 0, ...Object.keys(mevcut).map(Number));
+  eslemeIzgaraCiz(mevcut);
+  durum($("esDurum"), `${say} eşleme kutulara aktarıldı; kaydetmeyi unutma.` + (c.hatali.length ? ` Okunamayan: ${c.hatali.slice(0, 5).join(", ")}.` : ""), c.hatali.length ? "hata" : "ok");
+};
+async function eslemeGonder(kit, esleme, sik, dugme){
+  const metin = Object.keys(esleme).map(Number).sort((a, b) => a - b).map(n => n + "=" + esleme[n]).join(", ");
+  const r = await api({ islem:"ekEslemeKaydet", denemeID:aktif.id, kitapcik:kit, esleme:metin, siklarFarkli: sik ? "1" : "" });
+  if(r.ok){ denemeler = r.denemeler; aktif = denemeler.find(d => d.id === aktif.id); }
+  return r;
+}
+$("esKaydet").onclick = async () => {
+  if(yukleniyorMu($("esKaydet"))) return;
+  const kit = $("esKit").value, es = kit ? eslemeDegerleri() : {};
+  if(kit){
+    const yanlis = Object.keys(es).filter(n => !/^\d{1,3}$/.test(es[n]) || +es[n] < 1 || +es[n] > 200);
+    if(yanlis.length){ durum($("esDurum"), `Geçersiz numara: ${yanlis.map(n => kit + " " + n).join(", ")}.`, "hata"); return; }
+    const gor = {}, tekrar = [];
+    Object.keys(es).forEach(n => { const v = +es[n]; if(gor[v]) tekrar.push(v); gor[v] = true; });
+    if(tekrar.length){ durum($("esDurum"), `${oburKit(kit)} kitapçığındaki şu numaralar birden fazla soruya yazılmış: ${[...new Set(tekrar)].join(", ")}.`, "hata"); return; }
+  } else if(aktif.kitapcik && eslemeSayisi() && !confirm("Deneme tek kitapçıklı yapılırsa kayıtlı eşleme silinir. Devam edilsin mi?")) return;
+  dugmeYukleniyor($("esKaydet"), true, "KAYDEDİLİYOR");
+  try{
+    const r = await eslemeGonder(kit, es, kit && $("esSik").checked, $("esKaydet"));
+    if(!r.ok){ durum($("esDurum"), r.mesajTr || "Kaydedilemedi.", "hata"); return; }
+    denemeCiz();
+    durum($("esDurum"), kit ? `Eşleme kaydedildi (${eslemeSayisi()} soru).` : "Deneme tek kitapçıklı olarak kaydedildi.", "ok");
+  }catch(e){ durum($("esDurum"), "Hata: " + e.message, "hata"); }
+  finally{ dugmeYukleniyor($("esKaydet"), false); }
+};
 
 // ---------------- SAYFA YÜKLEME ----------------
 $("kameraBtn").onclick = () => $("kameraInput").click();
@@ -659,8 +802,9 @@ $("topluInput").onchange = async e => {
   const dosyalar = [...e.target.files]; e.target.value = "";
   if(!dosyalar.length || !aktif) return;
   const uygun = [], atlanan = [];
-  dosyalar.forEach(f => { const m = f.name.match(/^0*(\d{1,3})\s*[-_ .]\s*([A-Ea-e])\.(png|jpe?g|webp)$/i);
-    if(m && Number(m[1]) >= 1 && Number(m[1]) <= 200) uygun.push({ f, no:Number(m[1]), dogru:m[2].toUpperCase() }); else atlanan.push(f.name); });
+  // v2.67: isteğe bağlı öbür kitapçık numarası: "10-B-A7.png" → soru 10, doğru şık B, A kitapçığında 7
+  dosyalar.forEach(f => { const m = f.name.match(/^0*(\d{1,3})\s*[-_ .]\s*([A-Ea-e])(?:\s*[-_ .]\s*([ABab])\s*0*(\d{1,3}))?\.(png|jpe?g|webp)$/i);
+    if(m && Number(m[1]) >= 1 && Number(m[1]) <= 200) uygun.push({ f, no:Number(m[1]), dogru:m[2].toUpperCase(), obKit:m[3] ? m[3].toUpperCase() : "", obNo:m[4] ? Number(m[4]) : 0 }); else atlanan.push(f.name); });
   uygun.sort((a, b) => a.no - b.no);
   if(!uygun.length){ durum($("topluDurum"), "Dosya adları tanınmadı. Ad biçimi: <soru no>-<doğru şık>.png (ör. 10-B.png).", "hata"); return; }
   const cakisan = uygun.filter(u => aktif.sorular.some(s => s.no === u.no)).map(u => u.no);
@@ -678,13 +822,28 @@ $("topluInput").onchange = async e => {
       denemeler = r.denemeler; aktif = denemeler.find(d => d.id === aktif.id);
     }catch(err){ hatali.push(`${u.no} (${err.message})`); }
   }
+  // v2.67: dosya adlarındaki öbür kitapçık numaralarını Kitapçık Eşlemesi'ne ekle
+  let esMesaj = "", esHata = false;
+  const obur = uygun.filter(u => u.obKit && u.obNo >= 1 && u.obNo <= 200);
+  if(obur.length){
+    const harfler = [...new Set(obur.map(u => u.obKit))], kit = harfler.length === 1 ? oburKit(harfler[0]) : "";
+    if(!kit){ esMesaj = " Dosya adlarında hem A hem B numarası var; eşleme eklenmedi."; esHata = true; }
+    else if(aktif.kitapcik && aktif.kitapcik !== kit){ esMesaj = ` Dosya adlarına göre kütüphane ${kit} kitapçığından, ama deneme ${aktif.kitapcik} olarak kayıtlı; eşleme eklenmedi. Kitapçık Eşlemesi'ni kontrol et.`; esHata = true; }
+    else {
+      const es = Object.assign({}, aktif.esleme || {}); obur.forEach(u => { es[u.no] = u.obNo; });
+      try{ const r = await eslemeGonder(kit, es, !!aktif.siklarFarkli);
+        if(r.ok) esMesaj = ` ${obur.length} sorunun ${harfler[0]} kitapçığındaki numarası Kitapçık Eşlemesi'ne eklendi.`;
+        else { esMesaj = " Eşleme eklenemedi: " + (r.mesajTr || "") ; esHata = true; } }
+      catch(err){ esMesaj = " Eşleme eklenemedi: " + err.message; esHata = true; }
+    }
+  }
   dugmeYukleniyor($("topluBtn"), false); denemeCiz();
   const tamam = liste.length - hatali.length;
-  let m = `${tamam} soru kütüphaneye kaydedildi.`;
+  let m = `${tamam} soru kütüphaneye kaydedildi.` + esMesaj;
   if(liste.length < uygun.length) m += ` ${uygun.length - liste.length} soru zaten vardı, atlandı.`;
   if(atlanan.length) m += ` Adı tanınmayan dosyalar atlandı: ${atlanan.join(", ")}.`;
   if(hatali.length) m += ` Kaydedilemeyen: ${hatali.join(", ")}.`;
-  durum($("topluDurum"), m, hatali.length || atlanan.length ? "hata" : "ok");
+  durum($("topluDurum"), m, hatali.length || atlanan.length || esHata ? "hata" : "ok");
   bolumOzeti("ozetToplu", hatali.length ? `${hatali.length} soru kaydedilemedi` : `Son yükleme: ${tamam} soru`, hatali.length ? "uyari" : "iyi");
 };
 </script>
