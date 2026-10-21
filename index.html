@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+<!-- Çıta (Code.gs v2.69): sayfası kapalı öğrenciye çıta ekranı; açık sayfada ilk açılış / yeniden açılış / uyarı bandı;
+     Geçmiş Sınavlarım'da çıtanın altında kalan (kilitli) sınavlar yalnızca ad, tarih ve netle; Nasıl Değerlendiriyoruz'da Çıta. -->
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -410,6 +412,38 @@ line-height:1.6;
 /* Öğretmen olarak bak (Code.gs v2.46): sonuç ekranının başında yalnızca öğretmenin gördüğü şerit */
 .ogretmenSeridi{margin:0 0 12px;padding:10px 14px;border-radius:14px;background:#1E1B4B;color:#fff;font-size:13px;line-height:1.5;}
 .ogretmenSeridi b{color:#FDBA74;}
+
+/* ================= ÇITA (Code.gs v2.69) =================
+   Kapalı ekran: giriş kartının yerinde. Net çubuğu 0 – soru sayısı; turuncu çizgi çıta, mor dolgu öğrencinin neti.
+   Bantlar (açık sayfa, yalnızca son sınav): sonuç özetinin üstünde. */
+.citaKart{text-align:left;}
+.citaKilit{width:56px;height:56px;border-radius:18px;background:#FFF7ED;border:1.5px solid #FED7AA;color:var(--orange);display:flex;align-items:center;justify-content:center;margin:0 0 14px;}
+.citaKilit svg{width:28px;height:28px;}
+.citaKart h2{margin:0 0 8px;}
+.citaMetin{font-size:15px;line-height:1.6;color:var(--text);margin:0 0 4px;}
+.citaMetin b{color:var(--dark);}
+.citaCubukKap{position:relative;margin:34px 0 6px;padding:0 2px;}
+.citaCubuk{position:relative;height:16px;border-radius:999px;background:#F1F5F9;border:1px solid #E2E8F0;overflow:visible;}
+.citaDolgu{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#A78BFA,var(--purple));min-width:0;}
+.citaCizgi{position:absolute;top:-8px;bottom:-8px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--orange);}
+.citaCizgiEtiket{position:absolute;bottom:calc(100% + 8px);transform:translateX(-50%);white-space:nowrap;font-size:12.5px;font-weight:900;color:#C2410C;background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:2px 7px;}
+.citaUclar{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#64748B;margin-top:6px;}
+.citaNetler{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
+.citaNetler span{font-size:13px;font-weight:700;color:var(--gray);background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:5px 9px;}
+.citaNetler b{color:var(--dark);}
+.citaKalan{margin:16px 0 10px;font-size:17px;font-weight:900;color:#C2410C;}
+.citaSon{font-size:14.5px;line-height:1.6;color:var(--gray);margin:0;}
+.citaOgretmen{margin:0 0 16px;}
+.citaBant{display:flex;gap:12px;align-items:flex-start;margin:0 0 12px;padding:13px 15px;border-radius:18px;font-size:14.5px;line-height:1.55;}
+.citaBant .cbIkon{flex-shrink:0;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;}
+.citaBant .cbIkon svg{width:19px;height:19px;}
+.citaBant b{display:block;font-size:15.5px;line-height:1.35;margin-bottom:2px;}
+.citaBant.acildi{background:#F5F3FF;border:1.5px solid #DDD6FE;color:#4C1D95;}
+.citaBant.acildi .cbIkon{background:var(--purple);color:#fff;}
+.citaBant.acildi b{color:var(--dark);}
+.citaBant.uyari{background:#FFF7ED;border:1.5px solid #FDBA74;color:#7C2D12;}
+.citaBant.uyari .cbIkon{background:var(--orange);color:#fff;}
+.citaBant.uyari b{color:#9A3412;}
 
 /* Grafik kütüphanesi girişten sonra hâlâ yoldaysa grafik yerinde görünen kısa satır */
 .grafikYukleniyor{display:flex;align-items:center;gap:8px;margin-top:8px;padding:10px 14px;border-radius:12px;background:#F5F3FF;color:#475569;font-size:13px;font-weight:600;}
@@ -830,6 +864,9 @@ border:1px solid #FED7AA;
 .gsKart.girilmedi{background:#F8FAFC;border:1px dashed #CBD5E1;padding:11px 15px;}   /* v2.54 — giremediği sınav */
 .gsKart.girilmedi .gsAd b{color:#475569;}
 .gsKart.girilmedi .gsNet small{font-size:12.5px;font-weight:800;color:#475569;}
+/* Code.gs v2.69 — çıtanın altında kalan (kilitli) sınav: tek satır, tıklanmaz */
+.gsKart.kilitli{background:#F8FAFC;border:1px dashed #CBD5E1;padding:9px 13px;font-size:13px;line-height:1.5;color:#475569;}
+.gsKart.kilitli b{color:#334155;font-weight:800;}
 .gsUst{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
 .gsAd{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
 .gsKod{font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.3px;color:#7C3AED;background:#F5F3FF;border:1px solid #E9D5FF;border-radius:6px;padding:3px 6px;margin-bottom:3px;}
@@ -1953,6 +1990,15 @@ SONUÇLARINI GÖR
 
 
 
+<!-- Code.gs v2.69 — çıta ekranı: sayfası kapalı öğrenci yalnızca bunu görür (içeriği citaEkraniniGoster yazar) -->
+<div class="card citaKart hidden" id="citaCard" aria-live="polite">
+<div class="ogretmenSeridi citaOgretmen" id="citaOgretmenSeridi" role="note" hidden><b>🔍 Öğretmen görünümü</b> · Bu öğrencinin sayfası kapalı. Öğrenci girişte bu ekranı görüyor.</div>
+<div class="citaKilit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v3"/></svg></div>
+<h2 id="citaMerhaba"></h2>
+<div id="citaIcerik"></div>
+<button id="citaGeriBtn" class="backLink" type="button">↩ Başka Bir Sonuç Ara</button>
+</div>
+
 <!-- Sonuç sayfası düzeni (Öğretmen Paneli v3.39 arayüz kurallarına uyarlandı):
      en üstte her zaman açık SONUÇ ÖZETİ kartı; altında dört BÖLÜM KARTI (1 Bu Sınav · 2 Sırada Ne Var ·
      3 Yolculuğum · 4 Ödüllerim) ve en altta sade Nasıl Değerlendiriyoruz? kartı. Kartların içindeki her bölüm
@@ -1962,6 +2008,7 @@ SONUÇLARINI GÖR
 <div class="sonucAkis hidden" id="resultCard">
 
 <div class="ogretmenSeridi" id="ogretmenSeridi" role="note" hidden><b>🔍 Öğretmen görünümü</b> · Bu açılış Veli Takibi'ne yazılmaz, kişisel linki kullanılmış saydırmaz. Meydan Okuma ve Hedefim seçimleri bu görünümde kaydedilmez.</div>
+<div id="citaBantAlani"></div>
 <div class="card ozetKart" id="ozetKart">
 <div id="uyumsuzlukArea"></div>
 
@@ -2182,6 +2229,7 @@ SONUÇLARINI GÖR
   <details class="metMadde"><summary><span class="metIkon">⚖️</span><b>Sınavların zorluğunu hesaba katarız</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Sınavlarımız farklı içeriklerden oluştuğu için bazıları daha zor geçer. Sınavdan sınava ilerlemeyi gösterirken (grafik, kişisel rekor, gelişim rozetleri, Hedefim) neti, sınavın sınıfın geneli için ne kadar zor olduğuna göre düzeltiriz. Her ölçümün küçük bir oynama payı da vardır; bu payın içinde kalan farkları "aynı seviyede" sayarız. Bu karşılaştırmalar, sınava en az 10 öğrenci girdiğinde yapılır. Ekrandaki net ve Başarı Durumu ise sınavdaki gerçek sonuçtur.</div></details>
   <details class="metMadde sadeceSinif"><summary><span class="metIkon">👥</span><b>Sınıf ortalaması bir yarış değildir</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Yalnızca bir karşılaştırma noktasıdır; çocuğunuzun nerede olduğunu daha iyi görmenize yardım eder.</div></details>
   <details class="metMadde"><summary><span class="metIkon">📏</span><b>Veri etiketleri</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Matematik Gelişimim'de eğilimin yanındaki "az veri", "orta veri" ya da "yeterli veri" etiketi, eğilimin kaç sınava dayandığını gösterir: 3 sınavda az, 4–5 sınavda orta, 6 ve daha fazla sınavda yeterli. İçerik Analizi'nin Genel Durum görünümünde 15'ten az soruyla ölçülen içeriklerin yanında "az veri" yazar; bu sonuçlar henüz kesinleşmemiştir. 3'ten az soruyla ölçülen içerikler gri gösterilir ve yüzde yerine kaç soruda kaç doğru yapıldığı yazılır.</div></details>
+  <details class="metMadde sadeceSinif"><summary><span class="metIkon">🔓</span><b>Çıta</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Analiz sayfası, sınavda puanlanan soruların %30'u kadar net yapan öğrenciye açılır (20 soruluk sınavda 6 net). Sayfası açık öğrenci, girdiği iki sınavda üst üste çıtanın altında kalırsa sayfası kapanır; çıtayı geçtiği ilk sınavda yeniden açılır. Sayfanın kapalı kaldığı sınavlar (sayfayı kapatan sınav da dahil) grafiğe, içerik analizine, çalışma planına ve rozetlere katılmaz; Geçmiş Sınavlarım'da yalnızca adı, tarihi ve neti "çıtanın altında" notuyla görünür.</div></details>
   <div class="metGrup">Sayfadaki Bölümler</div>
   <details class="metMadde"><summary><span class="metIkon">🧭</span><b>Çalışma Planı</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Plan, çocuğunuzun kendi yanlış ve boş bıraktığı sorulara bakarak hangi içeriklere hangi sırayla çalışacağını gösterir; rastgele soru sayısı önermeyiz. En fazla 3 iş yazılır. Başka bir işin ya da derste sıradaki konuların temeli olan eksik önce gelir; sonra son sınavın eksikleri, ardından önceki sınavlardan kalanlar. Çocuğunuzun giremediği bir sınavın içeriği de eksik sayılır ve plana girer.<span class="sadeceSinif"> Sınıfın yarısından azının doğru yapabildiği sorular, çocuğunuz onları yanlış yapmış da olsa boş bırakmış da olsa derste birlikte ele alınır.</span> Bir iş, o içerikten daha önce görmediği bir soruyu çözüme bakmadan yapıp nasıl çözdüğünü anlatabildiğinde bitmiş sayılır. Kapatılacak eksik yoksa plan, tam puandan en uzak kalınan içerikte bir adım öteye geçmeyi önerir. Soruların kendisi plana değil, Takıldığım Sorular'a ve Hata Defteri'ne gelir.</div></details>
   <details class="metMadde sadeceSinif"><summary><span class="metIkon">🎯</span><b>Meydan Okuma</b><span class="metOk" aria-hidden="true"></span></summary><div class="metMetin">Her sınavdan önce çocuğunuz, bir önceki sınavına göre ayarlanmış üç hedeften birini kendisi seçer: yanlışını azaltmak, seçtiği bir içerikteki ya da alt başlıktaki bütün soruları doğru yapmak ya da netini artırmak. Hedefler hep ulaşılabilir tutulur; sınav sınıf genelinde zor geçerse hedef de o kadar hafifletilir. Bu bir yarış değildir, çocuğunuz yalnızca kendi geçen sınavıyla yarışır. Sonucu sınavdan sonra bu sayfada görür.</div></details>
@@ -3848,6 +3896,8 @@ function eksikSonucAlanlari(kayit){
 function sonucEkraniKurulamadi(err){
   console.error("[UltraMat] Sonuç ekranı kurulamadı:", err);
   document.getElementById("resultCard").classList.add("hidden");
+  document.getElementById("citaCard").classList.add("hidden");   // Code.gs v2.69
+  document.getElementById("citaBantAlani").innerHTML = "";
   document.getElementById("loginCard").classList.remove("hidden");
   hataGoster("Sonuçların sunucudan alındı ama ekranda gösterilirken bir sorun oluştu. Sayfayı yenileyip tekrar dene; sorun devam ederse Fatih Hoca'ya haber ver.");
 }
@@ -3966,6 +4016,17 @@ if(data && data.engellendi){
 
 if(data && data.hata){
   hataGoster(data.mesajTr || "Sunucu bir hata bildirdi. Lütfen daha sonra tekrar dene.");
+  return;
+}
+
+// Code.gs v2.69 — sayfası kapalı öğrenci: analiz gelmez, yalnızca çıta ekranı
+if(data && data.citaKapali && typeof data.citaKapali === "object"){
+  moGiris = null;
+  try{
+    citaEkraniniGoster(data.citaKapali, !!ogretmenBakisi);
+    geriAdimEkle("sonuc", function(){ girisEkraninaDon(false); });
+  }catch(err){ sonucEkraniKurulamadi(err); }
+  if(sayfaDenemesi) sayfaDenemesiniBitir({ acildi: false, citaKapali: true, mesaj: "Sayfası kapalı: çıta ekranı gösterildi." });   // Öğretmen Paneli v3.76
   return;
 }
 
@@ -4103,6 +4164,7 @@ bolumuGuvenliCiz("Kişisel rekor", null, function(){
 // zorluğa göre düzeltilmiş karşılaştırmayı söylemesi veliyi yanıltıyordu. İlerleme Matematik Gelişimim grafiğinde,
 // Gelişim Analizi'nde ve (belirgin ilerlemede) kutlama şeridinde.
 
+bolumuGuvenliCiz("Çıta bandı", null, function(){ citaBandiniCiz(last); });   // Code.gs v2.69
 bolumuGuvenliCiz("Geçmiş sınavlar", "historyArea", function(){ showHistory(sonGelenVeri); });
 bolumuGuvenliCiz("Rozet dolabı", "rozetAlani", function(){ rozetDolabiniCiz(sonGelenVeri); });
 bolumuGuvenliCiz("Rozet şeridi", "rozetSeridi", function(){ rozetSeridiniCiz(sonGelenVeri); });
@@ -4306,10 +4368,29 @@ function showHistory(data){
     </div>`;
   });
   // v2.54 — giremediği sınavlar: kendi yerinde (oncekiSayisi = ondan önce girdiği sınav sayısı) soluk bir kart
+  // Code.gs v2.69 — çıtanın altında kalan (kilitli) sınavlar da kendi yerinde, tek satır; ekSira ikisinin kronolojik sırası
   let son = data[data.length - 1] || {};
-  (Array.isArray(son.girilmeyenSinavlar) ? son.girilmeyenSinavlar : []).slice().reverse().forEach(function(g){
+  let ekler = (Array.isArray(son.girilmeyenSinavlar) ? son.girilmeyenSinavlar : []).map(function(g, i){ return { tur: "girilmedi", g: g, i: i }; })
+    .concat((Array.isArray(son.kilitliSinavlar) ? son.kilitliSinavlar : []).map(function(g, i){ return { tur: "kilitli", g: g, i: i }; }));
+  ekler.sort(function(a, b){
+    let ya = Number(a.g.oncekiSayisi) || 0, yb = Number(b.g.oncekiSayisi) || 0;
+    if(ya !== yb) return ya - yb;
+    let sa = sayi(a.g.ekSira), sb = sayi(b.g.ekSira);
+    if(sa !== null && sb !== null) return sa - sb;
+    return a.tur === b.tur ? a.i - b.i : (a.tur === "kilitli" ? -1 : 1);
+  });
+  ekler.reverse().forEach(function(e){
+    let g = e.g;
     let yer = Math.max(0, Math.min(html.length, Number(g.oncekiSayisi) || 0));
     let tarih = tarihUzunYaz(g.tarihMetni !== undefined ? g.tarihMetni : tarihFormatla(g.tarih));
+    if(e.tur === "kilitli"){
+      let parca = [htmlKacis(gsAdMetni(g.sinav))];
+      if(tarih) parca.push(htmlKacis(tarih));
+      if(sayi(g.net) !== null) parca.push(htmlKacis(gsSayi(g.net)) + " net");
+      parca.push("çıtanın altında");
+      html.splice(yer, 0, `<div class="gsKart kilitli">🔒 <b>${parca[0]}</b> · ${parca.slice(1).join(" · ")}</div>`);
+      return;
+    }
     let ic = (g.icerikler || []).map(function(k){ return `<span>${htmlKacis(k.konu)}</span>`; }).join("");
     html.splice(yer, 0, `<div class="gsKart girilmedi">
       <div class="gsUst"><div class="gsAd">${gsKodHtml(g.sinav, g.sinavID)}<b>${htmlKacis(gsAdMetni(g.sinav))}</b><small>${htmlKacis(tarih || "")}</small></div>
@@ -5232,6 +5313,8 @@ function girisEkraninaDon(odakla){
   document.body.classList.remove("bireyselSayfa");   // v2.33
   moGiris = null;
   document.getElementById("resultCard").classList.add("hidden");
+  document.getElementById("citaCard").classList.add("hidden");   // Code.gs v2.69
+  document.getElementById("citaBantAlani").innerHTML = "";
   document.getElementById("loginCard").classList.remove("hidden");
   document.getElementById("studentNameInput").value = "";
   document.getElementById("studentCodeInput").value = "";
@@ -5248,6 +5331,78 @@ document.getElementById("backToLoginBtn").addEventListener("click", function(){
   girisEkraninaDon(true);
   gecmisiEsitle();
 });
+document.getElementById("citaGeriBtn").addEventListener("click", function(){   // Code.gs v2.69 — çıta ekranından
+  geriYigini = [];
+  girisEkraninaDon(true);
+  gecmisiEsitle();
+});
+
+// ================= ÇITA (Code.gs v2.69) =================
+// Çıta = puanlanan soru sayısı × %30. Sayfa, girdiği son iki sınavın en az birinde çıtayı geçen öğrenciye açık; değilse
+// sunucu analiz göndermez, yalnızca citaKapali {isim, sinavID, sinav, net, cita, soru, fark, durum: hic | kapandi,
+// oncekiSinav, oncekiNet} gelir. Açık sayfada son kayıttaki cita.durum: ilk | yeniden | uyari | acik.
+function citaSayi(x){ return netGosterim(Math.round(Number(x) * 100) / 100); }
+// "8-MAT-D02" → "8-MAT-D02'de"; "Ankara 1. Deneme" → "Ankara 1. Deneme'de" (Türkçe ses uyumu, sayıda okunuşa göre)
+function bulunmaEkli(metin){
+  let s = String(metin || "").trim(); if(!s) return s;
+  let m = s.match(/(\d+)$/), son;
+  if(m) son = sayiOkunusSon(Number(m[1]));
+  else son = s.toLocaleLowerCase("tr-TR");
+  let unlu = (son.match(/[aeıioöuü](?=[^aeıioöuü]*$)/) || ["e"])[0], kalin = "aıou".indexOf(unlu) !== -1;
+  let sert = "fstkçşhp".indexOf(son.slice(-1)) !== -1;
+  return s + "'" + (sert ? "t" : "d") + (kalin ? "a" : "e");
+}
+function citaSinavAdi(ad, id){ return sinavKodu(ad, id) || gsAdMetni(ad); }
+function citaIlkAd(isim){ let a = String(isim || "").trim().split(/\s+/)[0] || ""; return a.toLocaleLowerCase("tr-TR").replace(/^./, function(c){ return c.toLocaleUpperCase("tr-TR"); }); }
+function citaCubukHtml(net, cita, soru){
+  let t = Math.max(1, Number(soru) || 20), yuzde = function(x){ return Math.max(0, Math.min(100, Number(x) / t * 100)); };
+  return `<div class="citaCubukKap" role="img" aria-label="Netin ${htmlKacis(citaSayi(net))}, çıta ${htmlKacis(citaSayi(cita))}, en fazla ${t}">
+    <div class="citaCubuk"><span class="citaDolgu" style="width:${yuzde(net)}%"></span>
+      <span class="citaCizgi" style="left:${yuzde(cita)}%"></span>
+      <span class="citaCizgiEtiket" style="left:${Math.max(9, Math.min(91, yuzde(cita)))}%">Çıta ${htmlKacis(citaSayi(cita))}</span></div>
+    <div class="citaUclar"><span>0</span><span>${t} soru</span></div></div>`;
+}
+function citaEkraniniGoster(c, ogretmen){
+  sahneyiSifirla();
+  document.body.classList.remove("bireyselSayfa");
+  document.getElementById("ogretmenSeridi").hidden = true;
+  document.getElementById("citaOgretmenSeridi").hidden = !ogretmen;
+  document.getElementById("citaMerhaba").textContent = "Merhaba " + citaIlkAd(c.isim);
+  let sinav = citaSinavAdi(c.sinav, c.sinavID), kalan = Math.max(0, Number(c.fark) || 0), html = "";
+  if(c.durum === "kapandi"){
+    html += `<p class="citaMetin">Son iki sınavında çıtanın altında kaldığın için sayfan kapandı.</p>`;
+    html += citaCubukHtml(c.net, c.cita, c.soru);
+    html += `<div class="citaNetler"><span>Son sınav · ${htmlKacis(sinav)} · <b>${htmlKacis(citaSayi(c.net))} net</b></span>`
+      + (sayi(c.oncekiNet) !== null ? `<span>Önceki sınav · ${htmlKacis(citaSinavAdi(c.oncekiSinav, c.oncekiSinavID))} · <b>${htmlKacis(citaSayi(c.oncekiNet))} net</b></span>` : "") + `</div>`;
+    html += `<div class="citaKalan">Çıtaya ${htmlKacis(citaSayi(kalan))} net kaldı</div>`;
+    html += `<p class="citaSon">Çıtayı geçtiğin ilk sınavda sayfan kaldığı yerden yeniden açılır.</p>`;
+  }else{
+    html += `<p class="citaMetin">${htmlKacis(bulunmaEkli(sinav))} <b>${htmlKacis(citaSayi(c.net))} net</b> yaptın. Sayfanın açılması için çıta <b>${htmlKacis(citaSayi(c.cita))} net</b>.</p>`;
+    html += citaCubukHtml(c.net, c.cita, c.soru);
+    html += `<div class="citaKalan">Çıtaya ${htmlKacis(citaSayi(kalan))} net kaldı</div>`;
+    html += `<p class="citaSon">Bir sonraki sınavda çıtayı geçtiğinde sayfan açılacak.</p>`;
+  }
+  document.getElementById("citaIcerik").innerHTML = html;
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("resultCard").classList.add("hidden");
+  document.getElementById("citaCard").classList.remove("hidden");
+  window.scrollTo(0, 0);
+}
+const CB_IKON_ACIK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 7.6-1.8"/></svg>';
+const CB_IKON_UYARI = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2v.1"/></svg>';
+function citaBandiniCiz(last){
+  let alan = document.getElementById("citaBantAlani");
+  alan.innerHTML = "";
+  let c = last && last.cita;
+  if(!c || last.bireysel) return;
+  let sinav = citaSinavAdi(last.sinav, last.sinavID), cita = htmlKacis(citaSayi(c.deger)), net = htmlKacis(citaSayi(last.net));
+  if(c.durum === "ilk")
+    alan.innerHTML = `<div class="citaBant acildi" role="status"><span class="cbIkon">${CB_IKON_ACIK}</span><div><b>Çıtayı geçtin, sayfan açıldı!</b>${htmlKacis(bulunmaEkli(sinav))} ${net} net yaptın; çıta ${cita} netti.</div></div>`;
+  else if(c.durum === "yeniden")
+    alan.innerHTML = `<div class="citaBant acildi" role="status"><span class="cbIkon">${CB_IKON_ACIK}</span><div><b>Çıtayı yeniden geçtin, sayfan kaldığı yerden devam ediyor.</b></div></div>`;
+  else if(c.durum === "uyari")
+    alan.innerHTML = `<div class="citaBant uyari" role="status"><span class="cbIkon">${CB_IKON_UYARI}</span><div><b>Bu sınavda çıtanın altında kaldın (${net} net, çıta ${cita}).</b>Bir sonraki sınavda da kalırsan sayfan kapanır.</div></div>`;
+}
 
 // ================= 🔗 KİŞİSEL LİNK (Code.gs v2.45, Öğretmen Paneli v3.56) =================
 // Son mesajdaki link: .../sonuc/#g=<base64url {i: Ad Soyad, k: Giriş Kodu, t: mesajın hazırlandığı an}>.
