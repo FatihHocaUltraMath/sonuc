@@ -195,6 +195,7 @@ body{
 .khImzaGorsel{height:50px;width:auto;display:block;margin:2px 6px 4px auto;transform:rotate(-4deg);}
 /* v3.43: imza bloğu başarı belgesindekiyle aynı düzen: ıslak imza + "Fatih KARYAĞDI" + "Matematik Öğretmeni" (Playfair) */
 .khImzaBlok{display:flex;flex-direction:column;align-items:center;text-align:center;}
+.khImzaBlok.yalinYazi{margin-top:6px;}   /* v3.73: imza seçilmemişse sahte el yazısı yerine yalnızca ad ve unvan */
 .khImzaBlok .khImzaGorsel{height:46px;margin:2px auto -2px;transform-origin:50% 70%;mix-blend-mode:multiply;}
 .khImzaAd{display:block;font-family:"OdPlayfair",Georgia,serif;font-weight:900;font-size:13.5px;color:#2E1065;letter-spacing:.3px;line-height:1.2;}
 .khImzaUnvan{display:block;margin-top:1px;font-family:"OdPlayfair",Georgia,serif;font-weight:400;font-size:11.5px;color:#2E1065;letter-spacing:.2px;line-height:1.2;}
@@ -773,6 +774,52 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
   .optikSayfa:last-child{break-after:auto;page-break-after:auto;}
   .optikSayfa svg{display:block;width:210mm;height:148.5mm;}
 }
+/* ================= VELİ BİLGİ FORMU (v3.73) ================= */
+#veliListeAlani{display:none;}
+@page veliliste{size:A4 portrait;margin:0;}
+.vlSayfa{width:210mm;height:297mm;box-sizing:border-box;padding:13mm 14mm 10mm;font-family:"OdNunito",sans-serif;color:#111827;position:relative;background:#fff;overflow:hidden;}
+.vlUst{display:flex;justify-content:space-between;align-items:center;border-bottom:2.5px solid #7C3AED;padding-bottom:2.1mm;}
+.vlMarka{font-weight:900;font-size:17pt;color:#3B0764;line-height:1.1;}
+.vlMarka{display:flex;align-items:center;gap:3.2mm;}
+.vlMarka span span{color:#F97316;}
+.vlMarka small{display:block;font-size:9pt;font-weight:800;letter-spacing:2px;color:#64748B;line-height:1.3;}
+.vlLogo img{width:44px;height:auto;display:block;}
+.vlBaslik{font-weight:900;font-size:16pt;color:#3B0764;}
+.vlBilgi{display:flex;align-items:stretch;margin:4mm 0 4.5mm;}
+.vlAlan{padding:0 5mm;border-left:.6pt solid #D1D5DB;display:flex;flex-direction:column;justify-content:center;}
+.vlAlan:first-child{padding-left:0;border-left:none;}
+.vlEtiket{font-size:6.5pt;font-weight:800;color:#6B7280;letter-spacing:.15mm;}
+.vlDeger{font-size:11pt;font-weight:900;color:#111827;margin-top:.5mm;line-height:1.1;}
+.vlYon{margin-left:auto;align-self:center;background:#EFEFF1;border-radius:1.6mm;padding:2mm 3.2mm;text-align:left;font-size:7.5pt;font-weight:800;color:#111827;line-height:1.4;}
+.vlYon em{display:block;font-style:normal;font-weight:600;color:#374151;font-size:7pt;}
+.vlTablo{width:100%;border-collapse:collapse;table-layout:fixed;}
+.vlTablo th{font-size:7.5pt;font-weight:800;color:#374151;text-align:left;padding:0 1.5mm 1.6mm;border-bottom:.9pt solid #111827;}
+.vlTablo th.no{text-align:right;padding-right:2.5mm;}
+.vlTablo td{height:7mm;padding:0 1.5mm;border-bottom:.5pt solid #9CA3AF;font-size:8.5pt;vertical-align:middle;}
+.vlTablo tr:nth-child(even) td{background:#EFEFF1;}
+.vlTablo td+td+td{border-left:.5pt solid #9CA3AF;}
+.vlTablo td.no{font-weight:900;text-align:right;color:#111827;padding-right:2.5mm;}
+.vlTablo td.ad{font-weight:800;white-space:nowrap;overflow:hidden;}
+.vlYak{font-size:7pt;font-weight:800;color:#374151;white-space:nowrap;}
+.vlYak .d{display:inline-block;width:2.6mm;height:2.6mm;border:.9pt solid #111827;border-radius:50%;background:#fff;vertical-align:-.6mm;margin:0 .8mm 0 1.2mm;}
+.vlYak .d:first-child{margin-left:0;}
+.vlYak span.s{display:flex;align-items:center;}
+.vlYak .s .d{flex:none;}
+.vlSayfa *{font-family:"OdNunito",sans-serif;}
+.vlYak i{flex:1;min-width:6mm;height:3mm;margin-left:1mm;border-bottom:.6pt solid #6B7280;}
+.vlAlt{position:absolute;left:14mm;right:14mm;bottom:9mm;display:flex;justify-content:space-between;align-items:center;gap:8mm;border-top:.6pt solid #9CA3AF;padding-top:2.6mm;}
+.vlNot{flex:1;font-size:7pt;font-weight:600;color:#374151;line-height:1.4;}
+.vlImza{text-align:center;line-height:1.2;}
+.vlImza b{display:block;font-size:10.5pt;font-weight:900;color:#111827;}
+.vlImza small{display:block;font-size:7.5pt;font-weight:800;color:#374151;margin-top:.4mm;}
+@media print{
+  body.vlYazdiriliyor{background:#FFFFFF !important;padding:0 !important;margin:0 !important;}
+  body.vlYazdiriliyor > *:not(#veliListeAlani){display:none !important;}
+  body.vlYazdiriliyor #veliListeAlani{display:block !important;}
+  #veliListeAlani, #veliListeAlani *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .vlSayfa{page:veliliste;break-after:page;page-break-after:always;}
+  .vlSayfa:last-child{break-after:auto;page-break-after:auto;}
+}
 /* ================= EK HATA DEFTERİ PANELİ (v3.17) ================= */
 .ekAcBtn{margin-top:10px;background:#F5F3FF;color:#3B0764;border:1.5px solid #DDD6FE;border-radius:12px;padding:9px 14px;font-weight:800;cursor:pointer;}
 .ekPanel{background:#fff;border-radius:18px;padding:16px;margin:14px 0;box-shadow:0 8px 24px rgba(59,7,100,.07);}
@@ -1258,6 +1305,7 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
     <div class="ustDugmeler">
       <button type="button" id="ekAcBtn" class="ekAcBtn" aria-expanded="false" aria-controls="ekPanel">TG Denemeleri Hata Defterini Aç</button>
       <button type="button" id="optikAcBtn" class="ekAcBtn" aria-expanded="false" aria-controls="optikPanel">Optik Formları Aç</button>
+      <button type="button" id="veliListeAcBtn" class="ekAcBtn" aria-expanded="false" aria-controls="veliListePanel">Veli Bilgi Formunu Aç</button>
     </div>
     <div class="waHedef">
       <span class="waHedefEtiket">WhatsApp mesajları:</span>
@@ -1272,9 +1320,10 @@ details.bolum[data-bolum="yarinDerste"] > .bolumBas{background:#FFF7ED;}
 
   <div id="ekPanel" class="ekPanel" hidden></div>
   <div id="optikPanel" class="ekPanel" hidden></div>
+  <div id="veliListePanel" class="ekPanel" hidden></div>
   <div id="liste"></div>
 
-  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.72 (20.10.2026) · 🧪 Bütün Sayfaları Dene: göndermeden önce bütün öğrencilerin sonuç sayfası velinin göreceği hâliyle denenir (hata ve ekrana sığmayan yer raporu) · TG Hata Defteri veli mesajlarında "okulda" kaldırıldı · Föy 1 veli mesajlarında (Hata Defteri ve TG) kapanış cümlesi yenilendi · Föy 1 veli mesajlarında (Hata Defteri ve TG) kapanış cümlesi yenilendi · TG kaydında tarihe dönüşmüş numaralar uyarıyla gösterilir, föy düzeltilene kadar basılmaz (Code.gs v2.68) · TG Denemeleri Hata Defteri'nde öğrenci listesi yalnızca 8. sınıf · TG A/B kitapçık: yanlışlar öğrencinin kendi kitapçığındaki numarayla girilir, kütüphane numarasına çevrilir; föyde kitapçık yazmaz (Code.gs v2.67) · föy başlığında her sınavın ve TG denemesinin tarihi, TG yanlış girişinde Deneme Tarihi (Code.gs v2.66) · optik okuma: taranan PDF tarayıcıda okunur, Cevaplar'a yapıştırmaya hazır satırlar, şüpheli işaretler görüntüsüyle listelenir (jsDelivr: pdf.js 3.11.174, jsQR 1.4.0) · optik formlar: A5 yatay, öğrenci başına bir sayfa, karekodlu, Ders: Matematik alanıyla (Code.gs v2.65) · A/B kitapçık: soru ayrıntısında diğer kitapçığın numarası, föyde öğrencinin kendi kitapçığı (Code.gs v2.64) · test döneminden kalan gönderim işaretlerini silen tek seferlik düğme · karnede "oturmadığını" → "pekişmediğini" (Code.gs v2.61) · Onur Belgesi'nde 📅 İstikrar → Tam Katılım (Code.gs v2.60) · Öğretmen Anahtarı gizli yazılır (göz düğmesi) · Çalışma Planı yenilendi: plan sözleşmesi ve adım takibi kaldırıldı (Code.gs v2.42) · rozetler sunucuda (Code.gs v2.41) · 💡 Neden Yanlış? notları: yanlış şıklara açıklama yazma, düzeltme ve onay (Code.gs v2.40) · ölçüm modeli: KR-20 ve sınavlar arası güvenirlik, düzeltilmiş net ile gelişim, rekor ve ödüller (Code.gs v2.39) · şube karşılaştırması eylem odaklı · "Çalışma Planı İşe Yaradı mı?" bölümü kaldırıldı · küçük düzeltmeler (tek onay, anlaşılır hata mesajları, ödül eşleşmesi) · karnede Türkçe sayı yazımı (virgül) · karnede QR yerine bağlantı yönlendirmesi · tek dikkat hatası artık Bilgi Eksiği sayılmıyor (Code.gs v2.34) · hatırlatma düğmesi kaldırıldı · bireysel öğrenciler (Code.gs v2.33) · sürprizler · şube karşılaştırması · plan etkisi (Code.gs v2.32) · sınavın kalitesi (KR-20) · hata türü veli sayfasıyla ortak (Code.gs v2.31) (dikkat mi, bilgi mi?) · yarın derste · açılır bölümler · yeni net dağılımı · birleşik soru analizi · meydan okuma · hedefim · harita ve mentorlar · onur belgesi · yıllık · sınav analizi · sınıf raporu · WhatsApp masaüstü · hata defteri</div>
+  <div class="surumBilgi">FatihHoca UltraMat · Öğretmen Paneli · sürüm 3.75 (21.10.2026)</div>
 
 </div>
 
@@ -2341,10 +2390,11 @@ function imzaHtml(sinif){
   let g = imzaGorseli();
   return g ? `<img class="${sinif}" src="${g}" alt="İmza">` : `<span class="${sinif} odImzaYedek">Fatih Hoca</span>`;
 }
-// Veliye giden karnede de öğretmenin kendi (ıslak görünümlü) imzası kullanılır; seçilmemişse eski imza görseli.
+// Veliye giden karnede de öğretmenin kendi (ıslak görünümlü) imzası kullanılır; seçilmemişse yalnızca ad ve unvan (v3.73).
 function karneImzaHtml(){
   let g = imzaGorseli();
-  return g ? `<div class="khImzaBlok"><img class="khImzaGorsel" src="${g}" alt="İmza"><b class="khImzaAd">Fatih KARYAĞDI</b><small class="khImzaUnvan">Matematik Öğretmeni</small></div>` : SIGNATURE_IMG;
+  return g ? `<div class="khImzaBlok"><img class="khImzaGorsel" src="${g}" alt="İmza"><b class="khImzaAd">Fatih KARYAĞDI</b><small class="khImzaUnvan">Matematik Öğretmeni</small></div>`
+    : `<div class="khImzaBlok yalinYazi"><b class="khImzaAd">Fatih KARYAĞDI</b><small class="khImzaUnvan">Matematik Öğretmeni</small></div>`;
 }
 function imzaDosyasiniIsle(dosya){
   return new Promise(function(coz, reddet){
@@ -5957,7 +6007,7 @@ const OPT = {
   PANEL_G: 60, PB: 14,                                  // sol panel genişliği, panel alt kenarı (alttan)
   RH: 8.55, R: 2.65, DX: 9, QS: 17,                     // cevap satırı yüksekliği, daire yarıçapı, şık aralığı, karekod
   MAKS_SORU: 20,
-  KOYU: "#111827", MOR: "#3B0764", TUR: "#C2410C", ORTA: "#374151", ACIK: "#6B7280", ZEMIN: "#E9E9EB", CIZ: "#9CA3AF"
+  KOYU: "#111827", MOR: "#3B0764", TUR: "#C2410C", MARKA_TUR: "#F97316", CIZGI_MOR: "#7C3AED", ORTA: "#374151", ACIK: "#6B7280", ZEMIN: "#E9E9EB", CIZ: "#9CA3AF"
 };
 const PT = 25.4 / 72;   // 1 punto kaç mm
 let optikVeri = null;   // { sinav, soruSayisi, ikiKitapcik, ogrenciler, yukluID }
@@ -6007,10 +6057,17 @@ function optikFormSvg(sinav, o, soru, ikiKitapcik){
   [OPT.KI, OPT.W - OPT.KI - OPT.K].forEach(function(x){ [OPT.KI, H - OPT.KI - OPT.K].forEach(function(y){
     p.push(`<rect x="${x}" y="${(H - y - OPT.K).toFixed(2)}" width="${OPT.K}" height="${OPT.K}" fill="#000000"/>`); }); });
   // başlık
-  p.push(optikYaz(L, by, "FatihHoca | ", { aile: "PF", agirlik: 800, pt: 15, renk: OPT.MOR }));
-  p.push(optikYaz(L + optikGenislikMm("FatihHoca | ", 800, "OdPlayfair", 15), by, "UltraMat", { aile: "PF", agirlik: 800, pt: 15, renk: OPT.TUR }));
-  p.push(optikYaz(R, by + 0.2, "Optik Cevap Formu", { aile: "PF", agirlik: 800, pt: 12, renk: OPT.KOYU, hiza: "sag" }));
-  p.push(`<line x1="${L}" y1="${H - by + 4}" x2="${R}" y2="${H - by + 4}" stroke="${OPT.KOYU}" stroke-width="${(1.4 * PT).toFixed(3)}"/>`);
+  // v3.75: marka bloğu hata defteri föyüyle aynı — logo, "FatihHoca | UltraMat" (kalın, 17 pt, mor + turuncu),
+  // altında "MATEMATİK GELİŞİM ANALİZİ", sağda mor başlık, altında mor çizgi. Yazı tipi gömülü Nunito (her bilgisayarda aynı).
+  // Yalnızca üst şerit değişti: köşe işaretleri, karekod ve cevap alanı (OPT ölçüleri) aynı kaldı.
+  let logoSrc = (LOGO_SVG.match(/src="([^"]+)"/) || [])[1], lgW = 11, lgUst = 6.8, metinX = L + lgW + 3.2;
+  if(logoSrc) p.push(`<image href="${logoSrc}" x="${L}" y="${lgUst}" width="${lgW}" height="${(lgW * 114 / 109).toFixed(2)}"/>`);
+  else metinX = L;
+  p.push(optikYaz(metinX, H - 13.0, "FatihHoca | ", { agirlik: 900, pt: 17, renk: OPT.MOR }));
+  p.push(optikYaz(metinX + optikGenislikMm("FatihHoca | ", 900, "OdNunito", 17), H - 13.0, "UltraMat", { agirlik: 900, pt: 17, renk: OPT.MARKA_TUR }));
+  p.push(`<text x="${metinX.toFixed(2)}" y="17.40" style="font-family:OdNunito,sans-serif;font-weight:800;font-size:${(9 * PT).toFixed(3)}px;letter-spacing:0.53px" fill="#64748B">MATEMATİK GELİŞİM ANALİZİ</text>`);
+  p.push(optikYaz(R, H - 15.0, "Optik Cevap Formu", { agirlik: 900, pt: 16, renk: OPT.MOR, hiza: "sag" }));
+  p.push(`<line x1="${L}" y1="${H - by + 4}" x2="${R}" y2="${H - by + 4}" stroke="${OPT.CIZGI_MOR}" stroke-width="0.66"/>`);
   // sol panel
   let px0 = L, px1 = L + OPT.PANEL_G, pt = by - 9, pb = OPT.PB;
   p.push(`<rect x="${px0}" y="${(H - pt).toFixed(2)}" width="${px1 - px0}" height="${(pt - pb).toFixed(2)}" rx="2.5" fill="${OPT.ZEMIN}"/>`);
@@ -6068,7 +6125,7 @@ function optikFormSvg(sinav, o, soru, ikiKitapcik){
     else p.push(`<path d="M${cx} ${sy + 1.9}A1.9 1.9 0 0 0 ${cx} ${sy - 1.9}Z" fill="${OPT.ORTA}"/>`);
   }
   let sx = R - 22;
-  p.push(optikYaz(sx, fy + 4.2, "Başarılar dilerim.", { aile: "PF", agirlik: 500, italik: true, pt: 14, renk: OPT.KOYU, hiza: "orta" }));
+  p.push(optikYaz(sx, fy + 4.2, "Başarılar dilerim.", { agirlik: 800, pt: 11.5, renk: OPT.MOR, hiza: "orta" }));   // v3.75: markayla aynı yazı tipi (Nunito)
   p.push(`<line x1="${sx - 16}" y1="${(H - fy - 1.6).toFixed(2)}" x2="${sx + 16}" y2="${(H - fy - 1.6).toFixed(2)}" stroke="${OPT.CIZ}" stroke-width="${(0.6 * PT).toFixed(3)}"/>`);
   p.push(optikYaz(sx, fy - 2.6, "Fatih Hoca", { agirlik: 900, pt: 10.5, renk: OPT.KOYU, hiza: "orta" }));
   p.push(optikYaz(sx, fy - 6.2, "Matematik Öğretmeni", { agirlik: 800, pt: 7.5, renk: OPT.ORTA, hiza: "orta" }));
@@ -6206,6 +6263,127 @@ document.getElementById("optikAcBtn").onclick = async function(){
   try{ await optikYukle(); }
   finally{ dugmeYukleniyor(b, false); }
   optikPanelGoster(true);
+};
+
+// ================= VELİ BİLGİ FORMU (v3.73) =================
+// Ogrenciler'deki öğrencilerin adları basılı, şube başına A4 dikey form: öğrenci kendi satırına Veli Adı, Veli Yakınlığı
+// (Anne / Baba / Diğer) ve Veli İletişim (WhatsApp numarası) yazar. Bireysel (LGS Hazırlık) öğrenciler listeye girmez.
+// Öğrenci listesi TG panelinin kullandığı ekOgrenciler'den gelir (yalnızca öğretmen anahtarıyla; Code.gs değişmedi).
+const VL_SATIR = 32;   // bir sayfadaki en çok satır; daha kalabalık şube ikinci sayfaya geçer
+let vlVeri = null;     // { ogrenciler: [...] }
+
+/** Şube şube gruplar: sınıf (5→8), şube (harf sırası), şube içinde ad sırası. Bireysel ve sınıfı boş olanlar dışarıda. */
+function vlGruplar(){
+  let liste = (vlVeri.ogrenciler || []).filter(function(o){ return !o.bireysel && String(o.sinif || "").trim(); });
+  liste.sort(function(a, b){
+    let s = String(a.sinif).localeCompare(String(b.sinif), "tr", { numeric: true });
+    if(s) return s;
+    s = String(a.sube).localeCompare(String(b.sube), "tr", { numeric: true });
+    return s || adElYazisi(a.isim).localeCompare(adElYazisi(b.isim), "tr");
+  });
+  let g = {}, sira = [];
+  liste.forEach(function(o){ let k = hdSinifMetni(o); if(!g[k]){ g[k] = []; sira.push(k); } g[k].push(o); });
+  return { g: g, sira: sira };
+}
+function vlSayfaHtml(sinifMetni, ogrenciler, bas, sayfaNo, sayfaSay, toplam){
+  let satirlar = ogrenciler.map(function(o, i){
+    return `<tr><td class="no">${bas + i + 1}</td><td class="ad">${htmlKacis(optikAd(o.isim))}</td><td></td>`
+      + `<td class="vlYak"><span class="s"><span class="d"></span>Anne<span class="d"></span>Baba<span class="d"></span>Diğer:<i></i></span></td>`
+      + `<td></td></tr>`;
+  }).join("");
+  return `<div class="vlSayfa">
+    <div class="vlUst"><div class="vlMarka"><span class="vlLogo">${LOGO_SVG}</span><span>FatihHoca | <span>UltraMat</span><small>MATEMATİK GELİŞİM ANALİZİ</small></span></div><div class="vlBaslik">Veli Bilgi Formu</div></div>
+    <div class="vlBilgi"><div class="vlAlan"><span class="vlEtiket">Sınıf / Şube</span><span class="vlDeger">${htmlKacis(sinifMetni)}</span></div><div class="vlAlan"><span class="vlEtiket">Ders</span><span class="vlDeger">Matematik</span></div><div class="vlAlan"><span class="vlEtiket">Öğrenci Sayısı</span><span class="vlDeger">${toplam}</span></div>${sayfaSay > 1 ? `<div class="vlAlan"><span class="vlEtiket">Sayfa</span><span class="vlDeger">${sayfaNo} / ${sayfaSay}</span></div>` : ""}
+      <div class="vlYon">Kendi adının yazılı olduğu satırı doldur.<em>Tükenmez kalemle, okunaklı yaz.</em></div></div>
+    <table class="vlTablo"><colgroup><col style="width:7mm"><col style="width:48mm"><col style="width:36mm"><col style="width:53mm"><col></colgroup>
+      <thead><tr><th class="no">No</th><th>Ad Soyad</th><th>Veli Adı</th><th>Veli Yakınlığı</th><th>Veli İletişim</th></tr></thead>
+      <tbody>${satirlar}</tbody></table>
+    <div class="vlAlt"><span class="vlNot">Bilgiler yalnızca matematik derslerindeki gelişimini takip etmek ve velinle iletişim için kullanılır.</span><span class="vlImza"><b>Fatih KARYAĞDI</b><small>Matematik Öğretmeni</small></span></div>
+  </div>`;
+}
+function vlSayfalar(anahtarlar){
+  let gr = vlGruplar(), out = [];
+  anahtarlar.forEach(function(k){
+    let liste = gr.g[k] || [], say = Math.max(1, Math.ceil(liste.length / VL_SATIR));
+    for(let p = 0; p < say; p++) out.push(vlSayfaHtml(k, liste.slice(p * VL_SATIR, (p + 1) * VL_SATIR), p * VL_SATIR, p + 1, say, liste.length));
+  });
+  return out;
+}
+function vlDurum(m, tur){ let d = document.getElementById("vlDurum"); if(d){ d.textContent = m || ""; d.className = "ekDurum" + (tur === "hata" ? " hata" : ""); } }
+function vlSecilenler(){ return Array.from(document.querySelectorAll("#vlSubeler input:checked")).map(function(i){ return i.value; }); }
+function vlSayaciYaz(){
+  let b = document.getElementById("vlYazdir"); if(!b) return;
+  let gr = vlGruplar(), sec = vlSecilenler(), n = 0;
+  sec.forEach(function(k){ n += Math.max(1, Math.ceil((gr.g[k] || []).length / VL_SATIR)); });
+  b.textContent = `🖨️ Formları Yazdır (${n} sayfa)`; b.disabled = !n;
+}
+function vlPanelCiz(){
+  let p = document.getElementById("veliListePanel"), gr = vlGruplar();
+  let bireysel = (vlVeri.ogrenciler || []).filter(function(o){ return o.bireysel; }).length;
+  if(!gr.sira.length){
+    p.innerHTML = `<h3>📋 Veli Bilgi Formu</h3><div class="ekDurum hata">Ogrenciler sayfasında forma girecek öğrenci yok (bireysel öğrenciler forma girmez).</div>`;
+    return;
+  }
+  let subeler = gr.sira.map(function(k){
+    return `<label><input type="checkbox" value="${htmlKacis(k)}" checked> ${htmlKacis(k)} <small>(${gr.g[k].length})</small></label>`;
+  }).join("");
+  p.innerHTML = `<h3>📋 Veli Bilgi Formu</h3>
+    <div class="opOzet">Öğrenciler adları basılı formda kendi satırına <b>Veli Adı</b>, <b>Veli Yakınlığı</b> ve <b>Veli İletişim</b> yazar.</div>
+    <div class="ekBolum"><label>Şubeler</label><div class="opSubeler" id="vlSubeler">${subeler}</div>
+      <div class="ekDugmeler"><button type="button" class="ekAna" id="vlYazdir"></button></div>
+      <div class="opNot">Her şube ayrı sayfada, ad sırasıyla (${VL_SATIR} öğrenciden kalabalık şube ikinci sayfaya geçer). Yazdırırken kâğıt boyutu <b>A4</b>, yön <b>dikey</b>, ölçek <b>%100</b> olsun.${bireysel ? ` Bireysel öğrenciler (${bireysel}) forma girmez.` : ""}</div></div>
+    <div class="ekDurum" id="vlDurum" role="status" aria-live="polite"></div>`;
+  p.querySelectorAll("#vlSubeler input").forEach(function(i){ i.onchange = vlSayaciYaz; });
+  vlSayaciYaz();
+  document.getElementById("vlYazdir").onclick = function(){ vlYazdir(vlSecilenler()); };
+}
+async function vlYazdir(anahtarlar){
+  if(!anahtarlar.length){ vlDurum("Yazdırılacak şube seçilmedi.", "hata"); return; }
+  vlDurum("Formlar hazırlanıyor…");
+  await optikFontlariYukle();
+  let alan = document.getElementById("veliListeAlani");
+  if(!alan){ alan = document.createElement("div"); alan.id = "veliListeAlani"; document.body.appendChild(alan); }
+  let sayfalar = vlSayfalar(anahtarlar);
+  alan.innerHTML = sayfalar.join("");
+  let eskiBaslik = document.title;
+  document.title = ["Veli-Bilgi-Formu", anahtarlar.length === 1 ? anahtarlar[0] : ""].filter(Boolean).join("-").replace(/\s+/g, "-");
+  // Panelin genel yazdırma sayfası kenar boşluklu; liste onunla ölçeklenmesin diye yazdırma süresince A4 dikey ve kenarsız.
+  let eskiStil = document.getElementById("vlSayfaStili"); if(eskiStil) eskiStil.remove();
+  let sayfaStili = document.createElement("style");
+  sayfaStili.id = "vlSayfaStili"; sayfaStili.textContent = "@page{size:A4 portrait;margin:0;}";
+  document.head.appendChild(sayfaStili);
+  document.body.classList.add("vlYazdiriliyor");
+  let bitir = function(){
+    document.body.classList.remove("vlYazdiriliyor");
+    sayfaStili.remove(); document.title = eskiBaslik; alan.innerHTML = "";
+    window.removeEventListener("afterprint", bitir);
+  };
+  window.addEventListener("afterprint", bitir);
+  vlDurum(`${sayfalar.length} sayfa yazdırmaya gönderildi.`);
+  window.print();
+}
+async function vlYukle(){
+  let p = document.getElementById("veliListePanel");
+  if(!ogretmenAnahtari()){ p.innerHTML = `<div class="ekDurum hata">Önce yukarıya öğretmen anahtarını yaz, sonra düğmeye yeniden bas.</div>`; vlVeri = null; return; }
+  try{
+    let j = await ekApi({ ekIslem: "ekOgrenciler" });
+    vlVeri = { ogrenciler: j.ogrenciler || [] };
+    vlPanelCiz();
+  }catch(e){ vlVeri = null; p.innerHTML = `<div class="ekDurum hata">⚠️ ${htmlKacis(hataMetni(e))}</div>`; }
+}
+const VL_BTN_AC = "Veli Bilgi Formunu Aç", VL_BTN_KAPAT = "Veli Bilgi Formunu Kapat";
+function vlPanelGoster(acik){
+  let p = document.getElementById("veliListePanel"), b = document.getElementById("veliListeAcBtn");
+  p.hidden = !acik; b.textContent = acik ? VL_BTN_KAPAT : VL_BTN_AC; b.setAttribute("aria-expanded", String(acik));
+}
+document.getElementById("veliListeAcBtn").onclick = async function(){
+  let b = this;
+  if(b.disabled) return;
+  if(!document.getElementById("veliListePanel").hidden){ vlPanelGoster(false); return; }
+  dugmeYukleniyor(b, true);   // her açılışta yeniden yüklenir: Ogrenciler değişmiş olabilir
+  try{ await vlYukle(); }
+  finally{ dugmeYukleniyor(b, false); }
+  vlPanelGoster(true);
 };
 
 // ================= OPTİK FORM OKUMA (v3.64) =================
