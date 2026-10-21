@@ -3806,6 +3806,7 @@ function setLoading(durum){
 function hataGoster(mesaj){
   document.getElementById("errorArea").innerHTML =
     `<div class="errorBox"><b>Bir sorun oluştu</b>${htmlKacis(mesaj)}</div>`;
+  if(sayfaDenemesi) sayfaDenemesiniBitir({ acildi: false, mesaj: String(mesaj || "") });
 }
 
 function hataTemizle(){
@@ -3823,6 +3824,7 @@ function bolumuGuvenliCiz(bolumAdi, hataAlanId, cizFonksiyonu){
     cizFonksiyonu();
     return true;
   }catch(err){
+    if(sayfaDenemesi) sayfaDenemesi.bolumler.push({ ad: bolumAdi, kutu: !!hataAlanId, hata: String(err && err.message || err).slice(0, 160) });
     console.error("[UltraMat] '" + bolumAdi + "' bölümü çizilemedi:", err);
     let alan = hataAlanId ? document.getElementById(hataAlanId) : null;
     if(alan) alan.innerHTML = `<div class="bolumHataKutusu">${BOLUM_HATA_METNI}</div>`;
@@ -3986,6 +3988,7 @@ document.getElementById("ogretmenSeridi").hidden = !ogretmenBakisi;
 try{
   showResult(data);
   geriAdimEkle("sonuc", function(){ girisEkraninaDon(false); });   // Geri tuşu en son giriş ekranına döner
+  if(sayfaDenemesi) setTimeout(sayfaDenemesiniOlc, 0);   // Öğretmen Paneli v3.72 — Bütün Sayfaları Dene
 }catch(err){
   sonucEkraniKurulamadi(err);
 }
@@ -5133,10 +5136,14 @@ document.getElementById("studentNameInput").addEventListener("keydown", function
 // (bölümü kapatır, perdeyi ✕ ile kapatır) o kayıt da silinir; böylece "hiçbir şey olmayan" Geri basışı olmaz.
 // Sunucuya hiç istek gitmez. Ad Soyad ve kod gibi hiçbir bilgi adres satırına ya da geçmişe yazılmaz.
 // Model: geriYigini (adımlar) ↔ tarayıcı geçmişindeki kayıtlar (durum: {um: sıra}); ikisi hep eşit tutulur.
+// Öğretmen Paneli v3.72 — "Bütün Sayfaları Dene": sayfa panelin içindeki görünmez bir çerçevede (#deneme) açıldığında
+// raporu toplayan nesne; normal veli girişinde null kalır. Burada tanımlanır, çünkü geçmiş işlevleri de ona bakar.
+let sayfaDenemesi = null;
 let geriYigini = [], gecmisKonum = 0, gecmisBekliyor = false, geriIsleniyor = false, gecmisBekleZaman = null;
 try{ history.scrollRestoration = "manual"; history.replaceState({ um: 0 }, ""); }catch(e){}
 
 function gecmisiEsitle(){
+  if(sayfaDenemesi) return;   // Öğretmen Paneli v3.72 — çerçeve içindeki denemede panelin sekme geçmişine kayıt eklenmez
   if(gecmisBekliyor || geriIsleniyor) return;
   try{
     while(gecmisKonum < geriYigini.length){ gecmisKonum++; history.pushState({ um: gecmisKonum }, ""); }
@@ -5324,6 +5331,177 @@ let ogretmenBakisi = null;
   });
   try{ window.opener.postMessage("ultramat-ogretmen-hazir", "*"); }catch(e){}   // içerik gizli değil: yalnızca "hazırım"
 })();
+
+// ================= 🧪 SAYFA DENEMESİ (Öğretmen Paneli v3.72 — "Bütün Sayfaları Dene") =================
+// Panel bu sayfayı kendi içindeki görünmez, 360 px genişliğinde bir çerçevede ".../sonuc/#deneme" ile açar. Giriş,
+// Sayfasına Bak'taki öğretmen bakışıyla aynıdır (Code.gs v2.46: giriş kaydı yazılmaz, kişisel link kullanılmış sayılmaz,
+// Meydan Okuma / Hedefim seçimi kaydedilmez). Sayfa çizildikten sonra bütün bölümler açılır, bekleyen animasyonlar
+// hemen oynatılır ve sayfa kendini denetler: çizilemeyen bölüm, "hazırlanıyor…" yazısında ya da boş kalan bölüm, eski
+// sunucu, özet kartındaki sayılarla verinin uyuşmaması, D+Y+B ile soru sayısının tutmaması, beklenmeyen JS hatası
+// (kırmızı); ekrana sığmayan içerik ve grafik kütüphanesinin yüklenememesi (sarı). Rapor yalnızca denemeyi başlatan
+// pencereye (panele) gönderilir. Veli sayfayı normal açtığında bu kısım hiç çalışmaz.
+const DENEME_BOLUM_ADLARI = {
+  "Sunucu uyumluluğu": "Sunucu uyumluluk denetimi", "Kişisel rekor": "Kişisel rekor şeridi", "Geçmiş sınavlar": "Geçmiş Sınavlarım",
+  "Rozet dolabı": "Rozet Dolabım", "Rozet şeridi": "Rozet şeridi", "Hedefim": "Hedefim", "Matematik haritam": "Matematik Haritam",
+  "Koleksiyonum": "Koleksiyonum", "Meydan okuma": "Meydan Okuma", "Gelişim grafiği": "Matematik Gelişimim grafiği",
+  "Gelişim analizi": "Gelişim Analizi", "Fatih Hoca'nın notu": "Fatih Hoca'nın Notu", "Gelişim özeti": "Matematik Gelişimim özeti",
+  "Çalışma planı": "Önerilen Çalışma Planı", "Takıldığım sorular": "Takıldığım Sorular", "Bölüm özetleri": "Bölüm özet satırları",
+  "Konu analizi": "İçerik Analizi"
+};
+// Her zaman dolu gelmesi gereken alanlar: bölüm görünürken bunlar boş ya da "hazırlanıyor…" yazısında kalmamalı.
+const DENEME_DOLU_ALANLAR = [["fatihNote", "Fatih Hoca'nın Notu"], ["analysisArea", "Gelişim Analizi"], ["topicAnalysis", "İçerik Analizi"],
+  ["planArea", "Önerilen Çalışma Planı"], ["distractorArea", "Takıldığım Sorular"]];
+const DENEME_BEKLEME_MS = 2600;   // net ve D/Y/B sayaçları (en uzunu 1,2 sn) ile rekor şeridi (1,15 sn sonra) bitsin
+
+(function sayfaDenemesiniBekle(){
+  if(location.hash !== "#deneme") return;
+  try{ history.replaceState({ um: 0 }, "", location.pathname + location.search); }catch(e){}
+  if(window.parent === window) return;   // yalnızca bir çerçevenin içinde
+  window.addEventListener("message", function al(e){
+    let v = e.data;
+    if(e.source !== window.parent || !v || v.tur !== "ultramat-deneme") return;
+    window.removeEventListener("message", al);
+    let isim = String(v.isim || "").trim(), kod = String(v.kod || "").trim(), anahtar = String(v.anahtar || "").trim();
+    sayfaDenemesi = { hedef: e.source, bitti: false, bolumler: [], konsol: [], grafikYok: false };
+    if(!isim || !/^[0-9]{6}$/.test(kod) || !anahtar){ sayfaDenemesiniBitir({ acildi: false, mesaj: "Ad Soyad ya da 6 haneli Giriş Kodu eksik." }); return; }
+    // Bölümlerin kendi korumasına takılmayan hatalar da rapora girsin (sahne olayı, sıralama paneli, dönem kartı…)
+    let asilHata = console.error;
+    console.error = function(){
+      try{
+        let ilk = String(arguments[0] || "");
+        if(/^\[UltraMat\] Chart\.js yüklenemedi/.test(ilk)) sayfaDenemesi.grafikYok = true;
+        else if(/^\[UltraMat\]/.test(ilk) && !/bölümü çizilemedi/.test(ilk))
+          sayfaDenemesi.konsol.push((ilk.replace(/^\[UltraMat\]\s*/, "") + " " + (arguments[1] && arguments[1].message ? arguments[1].message : "")).trim().slice(0, 160));
+      }catch(x){}
+      return asilHata.apply(console, arguments);
+    };
+    // Görünmeyen çerçevede tarayıcı animasyon karelerini durdurabilir; sayaçlar ve sığdırma ölçümleri yine de bitsin
+    window.requestAnimationFrame = function(cb){ return setTimeout(function(){ cb(performance.now()); }, 16); };
+    window.cancelAnimationFrame = function(id){ clearTimeout(id); };
+    try{ navigator.vibrate = function(){ return false; }; }catch(e){}   // kutlama titreşimi çerçevede gereksiz
+    window.addEventListener("error", function(ev){ sayfaDenemesi.konsol.push("JS hatası: " + String(ev.message || "").slice(0, 150)); });
+    window.addEventListener("unhandledrejection", function(ev){ sayfaDenemesi.konsol.push("JS hatası: " + String(ev.reason && ev.reason.message || ev.reason || "").slice(0, 150)); });
+    ogretmenBakisi = anahtar;
+    linkDurumunuGizle();
+    document.getElementById("studentNameInput").value = isim;
+    document.getElementById("studentCodeInput").value = kod; kodGoster(false);
+    getResult();
+  });
+  try{ window.parent.postMessage("ultramat-deneme-hazir", "*"); }catch(e){}   // içerik gizli değil: yalnızca "hazırım"
+})();
+
+function sayfaDenemesiniBitir(rapor){
+  if(!sayfaDenemesi || sayfaDenemesi.bitti) return;
+  sayfaDenemesi.bitti = true;
+  try{ sayfaDenemesi.hedef.postMessage(Object.assign({ tur: "ultramat-deneme-rapor" }, rapor), "*"); }catch(e){}
+}
+
+// Sonuç ekranı kurulduktan sonra: bütün açılırları aç, bekleyen sahne olaylarını oynat, bekle, ölç, raporla.
+function sayfaDenemesiniOlc(){
+  if(!sayfaDenemesi || sayfaDenemesi.bitti) return;
+  let kart = document.getElementById("resultCard");
+  kart.querySelectorAll("details").forEach(function(d){ d.open = true; });
+  let bekleyen = Array.from(sahneOlaylari.values());
+  sahneOlaylari.clear();
+  bekleyen.forEach(function(liste){ liste.forEach(function(fn){ try{ fn(); }catch(e){ console.error("[UltraMat] Sahne olayı:", e); } }); });
+  let bas = Date.now();
+  let olc = function(){
+    // grafik kütüphanesi hâlâ yoldaysa (en çok 8 sn) gelmesini bekle; sonra sayaçlar bitsin diye DENEME_BEKLEME_MS
+    if(!window.Chart && grafikKutuphanesi === "yukleniyor" && Date.now() - bas < 8000){ setTimeout(olc, 200); return; }
+    setTimeout(function(){
+      try{ sayfaDenemesiniBitir(sayfaDenemesiBulgulari()); }
+      catch(e){ sayfaDenemesiniBitir({ acildi: true, sinavID: "", hatalar: [{ seviye: "hata", metin: "Sayfa denetlenirken bir hata oluştu: " + String(e && e.message || e).slice(0, 120) }] }); }
+    }, DENEME_BEKLEME_MS);
+  };
+  olc();
+}
+
+function sayfaDenemesiBulgulari(){
+  let last = (sonGelenVeri || [])[(sonGelenVeri || []).length - 1] || {};
+  let d = sayfaDenemesi, hatalar = [];
+  let ekle = function(seviye, metin){ if(!hatalar.some(function(h){ return h.metin === metin; })) hatalar.push({ seviye: seviye, metin: metin }); };
+  let gorunur = function(el){ return !!el && el.getClientRects().length > 0 && !el.closest(".hidden"); };
+
+  // 1) çizilemeyen bölümler
+  d.bolumler.forEach(function(b){
+    let ad = DENEME_BOLUM_ADLARI[b.ad] || b.ad;
+    ekle("hata", ad + " çizilemedi" + (b.kutu ? "; veli \"Bu bölüm şu an gösterilemedi\" kutusunu görür." : "; sayfada eksik kalabilir.") + " (" + b.hata + ")");
+  });
+  // 2) eski sunucu
+  let eksik = eksikSonucAlanlari(last);
+  if(eksik.length) ekle("hata", "Sayfa eski bir Code.gs sürümüyle çalışıyor (eksik alanlar: " + eksik.join(", ") + "). Apps Script dağıtımını kontrol et.");
+  // 3) boş ya da "hazırlanıyor…" yazısında kalan bölümler
+  DENEME_DOLU_ALANLAR.forEach(function(a){
+    let el = document.getElementById(a[0]);
+    if(!gorunur(el) || el.querySelector(".bolumHataKutusu")) return;
+    let metin = el.innerText.replace(/\s+/g, " ").trim();
+    if(!metin) ekle("hata", a[1] + " bölümü boş görünüyor.");
+    else if(/hazırlanıyor\.\.\./i.test(metin)) ekle("hata", a[1] + " bölümü \"hazırlanıyor…\" yazısında kaldı.");
+  });
+  // 4) özet kartındaki sayılar ve D+Y+B
+  let ekranda = {
+    net: (document.getElementById("scoreArea") || {}).innerText, dogru: (document.getElementById("correctArea") || {}).innerText,
+    yanlis: (document.getElementById("wrongArea") || {}).innerText, bos: (document.getElementById("emptyArea") || {}).innerText
+  };
+  let beklenen = { net: netGosterim(last.net), dogru: String(last.dogru), yanlis: String(last.yanlis), bos: String(last.bos) };
+  let farkli = Object.keys(beklenen).filter(function(k){ return String(ekranda[k] || "").trim() !== beklenen[k]; });
+  if(farkli.length) ekle("hata", "Özet kartında görünen " + farkli.map(function(k){ return { net: "net", dogru: "doğru", yanlis: "yanlış", bos: "boş" }[k] + " " + (String(ekranda[k] || "").trim() || "—"); }).join(", ") +
+    " verideki değerle (" + farkli.map(function(k){ return beklenen[k]; }).join(", ") + ") tutmuyor.");
+  let soruSay = Array.isArray(last.sorular) ? last.sorular.length : 0;
+  let dyb = (Number(last.dogru) || 0) + (Number(last.yanlis) || 0) + (Number(last.bos) || 0);
+  if(soruSay && dyb !== soruSay) ekle("hata", "Doğru + yanlış + boş (" + dyb + ") sınavın soru sayısını (" + soruSay + ") tutmuyor.");
+  // 5) bölümlerin korumasına takılmayan hatalar
+  d.konsol.forEach(function(m){ ekle("hata", "Sayfada bir hata oluştu: " + m); });
+  // 6) sarılar: grafik kütüphanesi, ekrana sığmayan içerik
+  if(d.grafikYok || (!window.Chart && grafikKutuphanesi !== "hazir"))
+    ekle("uyari", "Grafik kütüphanesi yüklenemedi (internet bağlantısı); Matematik Gelişimim grafiği denetlenemedi.");
+  sayfaDenemesiTasmalari().forEach(function(t){ ekle("uyari", t); });
+
+  return { acildi: true, sinavID: String(last.sinavID || ""), sinavAdi: String(last.sinav || ""),
+    dyb: { dogru: last.dogru, yanlis: last.yanlis, bos: last.bos, net: last.net }, genislik: document.documentElement.clientWidth, hatalar: hatalar };
+}
+
+// Ekrana sığmayan içerik: kendi kaydırma kutusu olmayan, sağdan ya da soldan taşan en dıştaki öğeler; bölüm adıyla.
+// Bilerek "…" ile kısaltılan metinler (text-overflow: ellipsis) sorun sayılmaz.
+function sayfaDenemesiTasmalari(){
+  let vw = document.documentElement.clientWidth, kok = document.getElementById("resultCard"), sorun = [];
+  let kaydirmali = function(el){
+    for(let x = el.parentElement; x && x !== document.body; x = x.parentElement){
+      let ox = getComputedStyle(x).overflowX;
+      if(ox === "auto" || ox === "scroll" || ox === "hidden" || ox === "clip") return true;
+    }
+    return false;
+  };
+  kok.querySelectorAll("*").forEach(function(el){
+    if(!el.getClientRects().length || el.closest(".hidden")) return;
+    let r = el.getBoundingClientRect();
+    if(r.width === 0) return;
+    if((r.right > vw + 0.5 || r.left < -0.5) && !kaydirmali(el)) sorun.push({ el: el, px: Math.round(Math.max(r.right - vw, -r.left)), tur: "tasma" });
+    let cs = getComputedStyle(el);
+    if((cs.overflowX === "hidden" || cs.overflowX === "clip") && cs.textOverflow !== "ellipsis" && el.children.length === 0 &&
+       el.scrollWidth > el.clientWidth + 1 && el.innerText && el.innerText.trim())
+      sorun.push({ el: el, px: el.scrollWidth - el.clientWidth, tur: "kirpma" });
+  });
+  let ogeler = sorun.map(function(x){ return x.el; });
+  let dis = sorun.filter(function(x){ return x.tur === "kirpma" || !ogeler.some(function(e){ return e !== x.el && e.contains(x.el); }); });
+  let bolumAdi = function(el){
+    let det = el.closest("details.bolum");
+    if(det){ let a = det.querySelector(".bolumAd"); if(a) return a.innerText.trim(); }
+    if(el.closest("#ozetKart")) return "Sonuç özeti";
+    let k = el.closest(".bolumKart"); if(k){ let b = k.querySelector(".bkAd"); if(b) return b.innerText.trim() + " başlığı"; }
+    return "Sayfa";
+  };
+  let grup = {};
+  dis.forEach(function(x){
+    let ad = bolumAdi(x.el), anahtar = ad + "|" + x.tur;
+    if(!grup[anahtar] || grup[anahtar].px < x.px) grup[anahtar] = { ad: ad, tur: x.tur, px: x.px };
+  });
+  return Object.keys(grup).map(function(k){
+    let g = grup[k];
+    return g.tur === "tasma" ? g.ad + " ekrana sığmıyor (" + vw + " px genişlikte " + g.px + " px taşıyor)."
+      : g.ad + " içinde bir yazı kırpılıyor (" + g.px + " px görünmüyor).";
+  });
+}
 
 // Takıldığım Sorular ve Nasıl Değerlendiriyoruz? artık diğer bölümler gibi <details>; ayrı aç-kapa işleyicisi gerekmez.
 
