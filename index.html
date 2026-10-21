@@ -414,26 +414,69 @@ line-height:1.6;
 .ogretmenSeridi b{color:#FDBA74;}
 
 /* ================= ÇITA (Code.gs v2.69) =================
-   Kapalı ekran: giriş kartının yerinde. Net çubuğu 0 – soru sayısı; turuncu çizgi çıta, mor dolgu öğrencinin neti.
-   Bantlar (açık sayfa, yalnızca son sınav): sonuç özetinin üstünde. */
+   Kapalı ekran: giriş kartının yerinde. Üstte mor karşılama alanı, sınav çipi, net / çıta kutuları, çubuk (0 – soru
+   sayısı; turuncu çizgi çıta, mor dolgu ve "Sen" işareti öğrencinin neti), kaç doğru eksik kaldığı, sayfanın nasıl
+   açılacağı ve açılınca bekleyen bölümler. Uyarı bandı (açık sayfa, son sınav çıta altı): sonuç özetinin üstünde. */
 .citaKart{text-align:left;}
-.citaKilit{width:56px;height:56px;border-radius:18px;background:#FFF7ED;border:1.5px solid #FED7AA;color:var(--orange);display:flex;align-items:center;justify-content:center;margin:0 0 14px;}
-.citaKilit svg{width:28px;height:28px;}
-.citaKart h2{margin:0 0 8px;}
-.citaMetin{font-size:15px;line-height:1.6;color:var(--text);margin:0 0 4px;}
-.citaMetin b{color:var(--dark);}
-.citaCubukKap{position:relative;margin:34px 0 6px;padding:0 2px;}
-.citaCubuk{position:relative;height:16px;border-radius:999px;background:#F1F5F9;border:1px solid #E2E8F0;overflow:visible;}
-.citaDolgu{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#A78BFA,var(--purple));min-width:0;}
-.citaCizgi{position:absolute;top:-8px;bottom:-8px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--orange);}
-.citaCizgiEtiket{position:absolute;bottom:calc(100% + 8px);transform:translateX(-50%);white-space:nowrap;font-size:12.5px;font-weight:900;color:#C2410C;background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:2px 7px;}
-.citaUclar{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#64748B;margin-top:6px;}
-.citaNetler{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
-.citaNetler span{font-size:13px;font-weight:700;color:var(--gray);background:#F8FAFC;border:1px solid #E2E8F0;border-radius:10px;padding:5px 9px;}
-.citaNetler b{color:var(--dark);}
-.citaKalan{margin:16px 0 10px;font-size:17px;font-weight:900;color:#C2410C;}
-.citaSon{font-size:14.5px;line-height:1.6;color:var(--gray);margin:0;}
+.citaHero{position:relative;overflow:hidden;border-radius:22px;padding:20px 18px 18px;color:#fff;
+  background:radial-gradient(120% 140% at 100% 0%,#F97316 0%,rgba(249,115,22,0) 46%),linear-gradient(140deg,#4C1D95 0%,#7C3AED 62%,#A855F7 100%);}
+.citaHero::after{content:"";position:absolute;right:-34px;bottom:-46px;width:150px;height:150px;border-radius:50%;border:22px solid rgba(255,255,255,.07);}
+.citaHeroUst{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
+.citaKilit{flex:none;width:48px;height:48px;border-radius:15px;display:grid;place-items:center;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;}
+.citaKilit svg{width:24px;height:24px;}
+.citaHero h2{margin:0;color:#fff;font-size:24px;line-height:1.15;}
+.citaHeroAlt{display:block;font-size:13.5px;font-weight:800;color:#FED7AA;margin-top:3px;letter-spacing:.2px;}
+.citaHeroMetin{position:relative;z-index:1;margin:14px 0 0;font-size:15px;line-height:1.55;color:#F5F3FF;}
+.citaHeroMetin b{color:#fff;}
+.citaSinav{display:flex;align-items:center;gap:11px;margin:16px 0 0;padding:10px 12px;border-radius:16px;background:#fff;border:1px solid #EDE9FE;box-shadow:0 6px 18px rgba(124,58,237,.08);}
+.citaSinavIkon{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#7C3AED;background:linear-gradient(135deg,#F5F3FF,#FFF4EA);border:1px solid #EDE9FE;}
+.citaSinavIkon svg{width:19px;height:19px;}
+.citaSinavMetin{min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;}
+.citaSinavMetin b{font-size:15px;font-weight:900;color:var(--dark);line-height:1.25;}
+.citaKod{font:700 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.3px;color:#7C3AED;background:#F5F3FF;border:1px solid #E9D5FF;border-radius:6px;padding:3px 6px;}
+.citaSinavEtiket{width:100%;font-size:10.5px;font-weight:900;letter-spacing:.8px;color:#64748B;}
+.citaSkor{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 0;}
+.citaSkorKutu{border-radius:16px;padding:12px 13px;}
+.citaSkorKutu span{display:block;font-size:10.5px;font-weight:900;letter-spacing:.8px;}
+.citaSkorKutu b{display:block;font-size:30px;line-height:1.1;font-weight:900;margin-top:4px;}
+.citaSkorKutu small{font-size:13px;font-weight:800;margin-left:3px;}
+.citaSkorKutu.sen{background:#F5F3FF;border:1.5px solid #DDD6FE;color:#6D28D9;}
+.citaSkorKutu.sen b{color:#4C1D95;}
+.citaSkorKutu.cita{background:#FFF7ED;border:1.5px solid #FED7AA;color:#C2410C;}
+.citaSkorKutu.cita b{color:#9A3412;}
+.citaCubukKap{position:relative;margin:30px 0 4px;padding:0 4px;}
+.citaCubuk{position:relative;height:14px;border-radius:999px;background:repeating-linear-gradient(90deg,#EEF2F7 0 calc(25% - 1px),#E2E8F0 calc(25% - 1px) 25%);border:1px solid #E2E8F0;}
+.citaDolgu{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:linear-gradient(90deg,#C4B5FD,#7C3AED);}
+.citaCizgi{position:absolute;top:-9px;bottom:-9px;width:3px;margin-left:-1.5px;border-radius:2px;background:var(--orange);}
+.citaCizgiEtiket{position:absolute;bottom:calc(100% + 9px);transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:900;color:#fff;background:var(--orange);border-radius:8px;padding:3px 8px;}
+.citaSen{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;border:4px solid #6D28D9;box-shadow:0 2px 6px rgba(76,29,149,.35);}
+.citaSenEtiket{position:absolute;top:calc(100% + 10px);transform:translateX(-50%);white-space:nowrap;font-size:12px;font-weight:900;color:#4C1D95;}
+.citaUclar{display:flex;justify-content:space-between;font-size:11.5px;font-weight:800;color:#94A3B8;margin-top:30px;}
+.citaFark{display:flex;align-items:center;gap:12px;margin:14px 0 0;padding:13px 14px;border-radius:16px;background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #FDBA74;}
+.citaFarkSayi{flex:none;min-width:48px;height:48px;padding:0 8px;border-radius:14px;display:grid;place-items:center;background:var(--orange);color:#fff;font-size:24px;font-weight:900;box-shadow:0 6px 14px rgba(249,115,22,.3);}
+.citaFark p{margin:0;font-size:15px;line-height:1.45;color:#7C2D12;}
+.citaFark p b{color:#9A3412;}
+.citaGecmis{margin:14px 0 0;display:grid;gap:8px;}
+.citaGecmisSatir{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:#F8FAFC;border:1px solid #E2E8F0;}
+.citaGecmisSatir .cgEtiket{flex:none;font-size:10.5px;font-weight:900;letter-spacing:.6px;color:#64748B;width:74px;line-height:1.25;}
+.citaGecmisSatir .cgAd{flex:1;min-width:0;font-size:14px;font-weight:800;color:var(--dark);line-height:1.3;}
+.citaGecmisSatir .cgNet{flex:none;font-size:14px;font-weight:900;color:#9A3412;background:#FFF7ED;border:1px solid #FED7AA;border-radius:9px;padding:3px 8px;white-space:nowrap;}
+.citaYol{margin:16px 0 0;padding:15px 14px 14px;border-radius:18px;background:#FAF5FF;border:1.5px solid #E9D5FF;}
+.citaYol h3{margin:0 0 6px;font-size:16px;font-weight:900;color:var(--dark);}
+.citaYol p{margin:0;font-size:14.5px;line-height:1.55;color:var(--text);}
+.citaYol p b{color:var(--dark);}
+.citaKazanBaslik{margin:14px 0 0;font-size:10.5px;font-weight:900;letter-spacing:.8px;color:#7C3AED;}
+.citaKazan{display:grid;gap:8px;margin:8px 0 0;}
+.citaBolum{display:flex;gap:11px;align-items:flex-start;padding:10px 11px;border-radius:14px;background:#fff;border:1px solid #EDE9FE;}
+.citaBolumNo{flex:none;width:30px;height:30px;border-radius:10px;display:grid;place-items:center;font-size:14px;font-weight:900;color:#fff;background:linear-gradient(135deg,#7C3AED,#A855F7);}
+.citaBolum b{display:block;font-size:14.5px;font-weight:900;color:var(--dark);line-height:1.3;}
+.citaBolum small{display:block;font-size:12.5px;font-weight:700;color:#64748B;line-height:1.45;margin-top:1px;}
 .citaOgretmen{margin:0 0 16px;}
+@media (max-width:360px){
+  .citaHero{padding:18px 15px 16px;} .citaHero h2{font-size:21px;}
+  .citaSkorKutu b{font-size:26px;}
+  .citaGecmisSatir{flex-wrap:wrap;} .citaGecmisSatir .cgEtiket{width:100%;}
+}
 .citaBant{display:flex;gap:12px;align-items:flex-start;margin:0 0 12px;padding:13px 15px;border-radius:18px;font-size:14.5px;line-height:1.55;}
 .citaBant .cbIkon{flex-shrink:0;width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;}
 .citaBant .cbIkon svg{width:19px;height:19px;}
@@ -441,9 +484,31 @@ line-height:1.6;
 .citaBant.acildi{background:#F5F3FF;border:1.5px solid #DDD6FE;color:#4C1D95;}
 .citaBant.acildi .cbIkon{background:var(--purple);color:#fff;}
 .citaBant.acildi b{color:var(--dark);}
-.citaBant.uyari{background:#FFF7ED;border:1.5px solid #FDBA74;color:#7C2D12;}
-.citaBant.uyari .cbIkon{background:var(--orange);color:#fff;}
-.citaBant.uyari b{color:#9A3412;}
+/* uyarı bandı: başlık, net / çıta çubuğu, kaç doğru eksik, sonraki sınavın kuralı */
+.citaUyari{margin:0 0 14px;padding:15px 15px 14px;border-radius:20px;background:linear-gradient(135deg,#FFF7ED,#FFFBF5);border:1.5px solid #FDBA74;box-shadow:0 8px 22px rgba(249,115,22,.12);color:#7C2D12;}
+.citaUyariUst{display:flex;align-items:center;gap:11px;}
+.citaUyariUst .cbIkon{flex:none;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--orange);color:#fff;}
+.citaUyariUst .cbIkon svg{width:20px;height:20px;}
+.citaUyariUst b{font-size:15.5px;line-height:1.3;color:#9A3412;}
+.citaUyariUst small{display:block;font-size:12.5px;font-weight:800;color:#C2410C;margin-top:1px;}
+.citaUyari .citaCubukKap{margin:40px 0 2px;}
+.citaUyari .citaUclar{margin-top:28px;}
+.citaAcikCip{display:inline-flex;align-items:center;gap:5px;margin-top:5px;font-size:11.5px;font-weight:900;color:#166534;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:999px;padding:2px 9px;}
+.citaAcikCip::before{content:"";width:7px;height:7px;border-radius:50%;background:#22C55E;}
+.citaUyariFark{display:flex;align-items:center;gap:10px;margin:12px 0 0;font-size:14.5px;line-height:1.45;}
+.citaUyariFark .citaFarkSayi{min-width:40px;height:40px;font-size:20px;border-radius:12px;}
+.citaUyariFark b{color:#9A3412;}
+.citaSonraki{margin:12px 0 0;padding:12px 13px;border-radius:16px;background:#fff;border:1.5px solid #FED7AA;}
+.citaSonrakiBaslik{font-size:10.5px;font-weight:900;letter-spacing:.8px;color:#C2410C;}
+.citaYol2{display:flex;align-items:center;gap:10px;margin:9px 0 0;padding:9px 11px;border-radius:12px;font-size:14px;line-height:1.4;}
+.citaYol2 i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:15px;font-weight:900;color:#fff;}
+.citaYol2 svg{width:15px;height:15px;}
+.citaYol2.iyi{background:#F0FDF4;border:1px solid #BBF7D0;color:#14532D;}
+.citaYol2.iyi i{background:#22C55E;}
+.citaYol2.kotu{background:#FFF7ED;border:1px solid #FED7AA;color:#7C2D12;}
+.citaYol2.kotu i{background:#64748B;}
+.citaYol2 b{font-weight:900;}
+.citaSonrakiNot{margin:9px 0 0;font-size:12.5px;font-weight:700;line-height:1.45;color:#9A3412;}
 
 /* Grafik kütüphanesi girişten sonra hâlâ yoldaysa grafik yerinde görünen kısa satır */
 .grafikYukleniyor{display:flex;align-items:center;gap:8px;margin-top:8px;padding:10px 14px;border-radius:12px;background:#F5F3FF;color:#475569;font-size:13px;font-weight:600;}
@@ -1993,8 +2058,6 @@ SONUÇLARINI GÖR
 <!-- Code.gs v2.69 — çıta ekranı: sayfası kapalı öğrenci yalnızca bunu görür (içeriği citaEkraniniGoster yazar) -->
 <div class="card citaKart hidden" id="citaCard" aria-live="polite">
 <div class="ogretmenSeridi citaOgretmen" id="citaOgretmenSeridi" role="note" hidden><b>🔍 Öğretmen görünümü</b> · Bu öğrencinin sayfası kapalı. Öğrenci girişte bu ekranı görüyor.</div>
-<div class="citaKilit" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 14.5v3"/></svg></div>
-<h2 id="citaMerhaba"></h2>
 <div id="citaIcerik"></div>
 <button id="citaGeriBtn" class="backLink" type="button">↩ Başka Bir Sonuç Ara</button>
 </div>
@@ -5352,36 +5415,71 @@ function bulunmaEkli(metin){
   let sert = "fstkçşhp".indexOf(son.slice(-1)) !== -1;
   return s + "'" + (sert ? "t" : "d") + (kalin ? "a" : "e");
 }
-function citaSinavAdi(ad, id){ return sinavKodu(ad, id) || gsAdMetni(ad); }
+function citaSinavAdi(ad, id){ return gsAdMetni(ad) || sinavKodu(ad, id); }   // kitapçık adı önce (velinin tanıdığı ad)
 function citaIlkAd(isim){ let a = String(isim || "").trim().split(/\s+/)[0] || ""; return a.toLocaleLowerCase("tr-TR").replace(/^./, function(c){ return c.toLocaleUpperCase("tr-TR"); }); }
 function citaCubukHtml(net, cita, soru){
   let t = Math.max(1, Number(soru) || 20), yuzde = function(x){ return Math.max(0, Math.min(100, Number(x) / t * 100)); };
+  let kenar = function(x){ return Math.max(8, Math.min(92, yuzde(x))); };
   return `<div class="citaCubukKap" role="img" aria-label="Netin ${htmlKacis(citaSayi(net))}, çıta ${htmlKacis(citaSayi(cita))}, en fazla ${t}">
     <div class="citaCubuk"><span class="citaDolgu" style="width:${yuzde(net)}%"></span>
       <span class="citaCizgi" style="left:${yuzde(cita)}%"></span>
-      <span class="citaCizgiEtiket" style="left:${Math.max(9, Math.min(91, yuzde(cita)))}%">Çıta ${htmlKacis(citaSayi(cita))}</span></div>
+      <span class="citaCizgiEtiket" style="left:${kenar(cita)}%">Çıta ${htmlKacis(citaSayi(cita))}</span>
+      <span class="citaSen" style="left:${yuzde(net)}%"></span>
+      <span class="citaSenEtiket" style="left:${kenar(net)}%">Sen ${htmlKacis(citaSayi(net))}</span></div>
     <div class="citaUclar"><span>0</span><span>${t} soru</span></div></div>`;
+}
+// Çıtaya kalan net → kaç doğru daha (her doğru en az 1 net getirir; çıtaya eşit net de geçer)
+// "%30" → "%30'u", "%25" → "%25'i", "%40" → "%40'ı", "%50" → "%50'si" (sayının okunuşuna göre iyelik eki)
+function yuzdeIyelik(n){
+  let son = sayiOkunusSon(Number(n)), unlu = (son.match(/[aeıioöuü](?=[^aeıioöuü]*$)/) || ["e"])[0];
+  let ek = { a: "ı", ı: "ı", o: "u", u: "u", e: "i", i: "i", ö: "ü", ü: "ü" }[unlu];
+  return "%" + n + "'" + (/[aeıioöuü]$/.test(son) ? "s" : "") + ek;
+}
+function citaDogruEksik(fark){ return Math.max(1, Math.ceil((Number(fark) || 0) - 0.01)); }
+const CITA_IKON_KILIT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/></svg>';
+const CITA_IKON_SINAV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>';
+// Sayfa açılınca gelen bölümler: sonuç sayfasının dört bölümü ve içindekiler (sırası sayfadakiyle aynı)
+function citaBolumlerHtml(sinif){
+  let hedef = Number(sinif) === 8 ? "LGS Hedefim" : "Yıl Sonu Hedefim";
+  let b = [["Bu Sınav", "Sonuç Ayrıntıları, Fatih Hoca'nın Notu, Takıldığım Sorular, İçerik Analizi, Gelişim Analizi"],
+    ["Sırada Ne Var", "Meydan Okuma, Önerilen Çalışma Planı"],
+    ["Yolculuğum", "Matematik Gelişimim, " + hedef + ", Matematik Haritam, Geçmiş Sınavlarım"],
+    ["Ödüllerim", "Rozet Dolabım, Koleksiyonum"]];
+  return `<div class="citaKazanBaslik">SAYFAN AÇILINCA</div><div class="citaKazan">` + b.map(function(x, i){
+    return `<div class="citaBolum"><span class="citaBolumNo">${i + 1}</span><div><b>${htmlKacis(x[0])}</b><small>${htmlKacis(x[1])}</small></div></div>`;
+  }).join("") + `</div>`;
+}
+function citaSinavCipi(ad, id, etiket){
+  let kod = sinavKodu(ad, id), okunur = gsAdMetni(ad);
+  return `<div class="citaSinav"><span class="citaSinavIkon">${CITA_IKON_SINAV}</span><div class="citaSinavMetin">
+    <span class="citaSinavEtiket">${htmlKacis(etiket)}</span><b>${htmlKacis(okunur)}</b>${kod && kod !== okunur ? `<span class="citaKod">${htmlKacis(kod)}</span>` : ""}</div></div>`;
 }
 function citaEkraniniGoster(c, ogretmen){
   sahneyiSifirla();
   document.body.classList.remove("bireyselSayfa");
   document.getElementById("ogretmenSeridi").hidden = true;
   document.getElementById("citaOgretmenSeridi").hidden = !ogretmen;
-  document.getElementById("citaMerhaba").textContent = "Merhaba " + citaIlkAd(c.isim);
-  let sinav = citaSinavAdi(c.sinav, c.sinavID), kalan = Math.max(0, Number(c.fark) || 0), html = "";
-  if(c.durum === "kapandi"){
-    html += `<p class="citaMetin">Son iki sınavında çıtanın altında kaldığın için sayfan kapandı.</p>`;
-    html += citaCubukHtml(c.net, c.cita, c.soru);
-    html += `<div class="citaNetler"><span>Son sınav · ${htmlKacis(sinav)} · <b>${htmlKacis(citaSayi(c.net))} net</b></span>`
-      + (sayi(c.oncekiNet) !== null ? `<span>Önceki sınav · ${htmlKacis(citaSinavAdi(c.oncekiSinav, c.oncekiSinavID))} · <b>${htmlKacis(citaSayi(c.oncekiNet))} net</b></span>` : "") + `</div>`;
-    html += `<div class="citaKalan">Çıtaya ${htmlKacis(citaSayi(kalan))} net kaldı</div>`;
-    html += `<p class="citaSon">Çıtayı geçtiğin ilk sınavda sayfan kaldığı yerden yeniden açılır.</p>`;
-  }else{
-    html += `<p class="citaMetin">${htmlKacis(bulunmaEkli(sinav))} <b>${htmlKacis(citaSayi(c.net))} net</b> yaptın. Sayfanın açılması için çıta <b>${htmlKacis(citaSayi(c.cita))} net</b>.</p>`;
-    html += citaCubukHtml(c.net, c.cita, c.soru);
-    html += `<div class="citaKalan">Çıtaya ${htmlKacis(citaSayi(kalan))} net kaldı</div>`;
-    html += `<p class="citaSon">Bir sonraki sınavda çıtayı geçtiğinde sayfan açılacak.</p>`;
+  let kapandi = c.durum === "kapandi";
+  let ad = gsAdMetni(c.sinav), net = htmlKacis(citaSayi(c.net)), cita = htmlKacis(citaSayi(c.cita));
+  let dogru = citaDogruEksik(c.fark), soru = Math.max(1, Number(c.soru) || 20);
+  let html = `<div class="citaHero"><div class="citaHeroUst"><span class="citaKilit">${CITA_IKON_KILIT}</span><div>
+      <h2>Merhaba ${htmlKacis(citaIlkAd(c.isim))}</h2><span class="citaHeroAlt">${kapandi ? "Sayfan şimdilik kapandı" : "Sayfan henüz açılmadı"}</span></div></div>
+    <p class="citaHeroMetin">${kapandi
+      ? "Son iki sınavında da çıtanın altında kaldın. Çıtayı yeniden geçtiğinde analiz sayfan kaldığı yerden açılır."
+      : "Analiz sayfan, bir sınavda çıtayı geçtiğinde açılır."}</p></div>`;
+  html += citaSinavCipi(c.sinav, c.sinavID, kapandi ? "SON SINAV" : "DEĞERLENDİRİLEN SINAV");
+  html += `<div class="citaSkor"><div class="citaSkorKutu sen"><span>SENİN NETİN</span><b>${net}<small>net</small></b></div>
+    <div class="citaSkorKutu cita"><span>ÇITA</span><b>${cita}<small>net</small></b></div></div>`;
+  html += citaCubukHtml(c.net, c.cita, soru);
+  html += `<div class="citaFark"><span class="citaFarkSayi">${dogru}</span><p><b>doğru daha</b> yapsaydın bu sınavda çıtayı geçerdin.</p></div>`;
+  if(kapandi && sayi(c.oncekiNet) !== null){
+    html += `<div class="citaGecmis"><div class="citaGecmisSatir"><span class="cgEtiket">ÖNCEKİ SINAV</span><span class="cgAd">${htmlKacis(gsAdMetni(c.oncekiSinav))}</span><span class="cgNet">${htmlKacis(citaSayi(c.oncekiNet))} net</span></div></div>`;
   }
+  html += `<div class="citaYol"><h3>Sayfan Nasıl Açılır?</h3>
+    <p>${kapandi
+      ? `Bir sonraki sınavda çıtayı geç: ${soru} soruluk bir sınavda en az <b>${cita} net</b>. Geçmiş sınavların ve rozetlerin seni bekliyor.`
+      : `Bir sonraki sınavda çıtayı geç: ${soru} soruluk bir sınavda en az <b>${cita} net</b>. Çıtayı geçtiğin sınavdan sonra sayfan açılır.`}</p>
+    ${citaBolumlerHtml(c.sinif)}</div>`;
   document.getElementById("citaIcerik").innerHTML = html;
   document.getElementById("loginCard").classList.add("hidden");
   document.getElementById("resultCard").classList.add("hidden");
@@ -5400,8 +5498,17 @@ function citaBandiniCiz(last){
     alan.innerHTML = `<div class="citaBant acildi" role="status"><span class="cbIkon">${CB_IKON_ACIK}</span><div><b>Çıtayı geçtin, sayfan açıldı!</b>${htmlKacis(bulunmaEkli(sinav))} ${net} net yaptın; çıta ${cita} netti.</div></div>`;
   else if(c.durum === "yeniden")
     alan.innerHTML = `<div class="citaBant acildi" role="status"><span class="cbIkon">${CB_IKON_ACIK}</span><div><b>Çıtayı yeniden geçtin, sayfan kaldığı yerden devam ediyor.</b></div></div>`;
-  else if(c.durum === "uyari")
-    alan.innerHTML = `<div class="citaBant uyari" role="status"><span class="cbIkon">${CB_IKON_UYARI}</span><div><b>Bu sınavda çıtanın altında kaldın (${net} net, çıta ${cita}).</b>Bir sonraki sınavda da kalırsan sayfan kapanır.</div></div>`;
+  else if(c.durum === "uyari"){
+    let dogru = citaDogruEksik(Number(c.deger) - Number(last.net)), soru = Math.max(1, Number(c.soru) || 20);
+    alan.innerHTML = `<div class="citaUyari" role="status"><div class="citaUyariUst"><span class="cbIkon">${CB_IKON_UYARI}</span>
+        <div><b>Bu sınavda çıtanın altında kaldın</b><small>${htmlKacis(gsAdMetni(last.sinav))} · ${net} net</small><span class="citaAcikCip">Sayfan açık</span></div></div>
+      ${citaCubukHtml(last.net, c.deger, soru)}
+      <div class="citaUyariFark"><span class="citaFarkSayi">${dogru}</span><span><b>doğru daha</b> yapsaydın çıtayı geçerdin.</span></div>
+      <div class="citaSonraki"><div class="citaSonrakiBaslik">SONRAKİ SINAVDA</div>
+        <div class="citaYol2 iyi"><i><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></i><span>Çıtayı geçersen sayfan <b>açık kalır</b>.</span></div>
+        <div class="citaYol2 kotu"><i>${CITA_IKON_KILIT}</i><span>Yine çıtanın altında kalırsan sayfan <b>kapanır</b>.</span></div>
+        <p class="citaSonrakiNot">Çıta, sınavdaki soru sayısının ${htmlKacis(yuzdeIyelik(Math.round((Number(c.oran) || 0.3) * 100)))} kadar nettir (20 soruluk sınavda ${htmlKacis(citaSayi(20 * (Number(c.oran) || 0.3)))} net).</p></div></div>`;
+  }
 }
 
 // ================= 🔗 KİŞİSEL LİNK (Code.gs v2.45, Öğretmen Paneli v3.56) =================
