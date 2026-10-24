@@ -244,10 +244,14 @@ button:focus-visible,.girdi:focus-visible{outline:3px solid var(--purple);outlin
 .veliSerit b{display:block;color:#14532D;font-size:15px;}
 .veliSerit small{display:block;color:#166534;font-size:12.5px;margin-top:2px;}
 .veliSerit .ok{margin-left:auto;font-size:22px;color:#166534;}
-.ilerleme{display:flex;gap:4px;margin:4px 0 12px;}
-.ilerleme span{flex:1;height:6px;border-radius:3px;background:var(--line);}
-.ilerleme span.gitti{background:#25D366;}
-.ilerleme span.simdi{background:var(--orange);}
+.ilerleme{display:flex;gap:4px;margin:0 0 6px;}
+/* 0.12.2: çizgiler dokunulabilir — görünüş 6 px, dokunma alanı 28 px */
+.ilerleme .cizgi{flex:1;min-width:0;height:28px;padding:0;border:none;background:none;cursor:pointer;display:flex;align-items:center;}
+.ilerleme .cizgi span{flex:1;height:6px;border-radius:3px;background:var(--line);}
+.ilerleme .cizgi:hover span{background:#CBD5E1;}
+.ilerleme .cizgi.gitti span{background:#25D366;}
+.ilerleme .cizgi.simdi span{background:var(--orange);height:8px;}
+.veliGezinme{display:flex;justify-content:space-between;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid var(--line);}
 .veliKimlik{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:8px;flex-wrap:wrap;}
 .veliKimlik b{font-size:17px;color:var(--dark);}
 .veliKimlik small{font-size:12.5px;color:var(--gray);}

@@ -3,7 +3,8 @@
  * sürüm 0.12.2 · Veli mesajı Öğretmen Paneli (karne-uret) kurallarıyla gönderilir: wa.me yerine whatsapp://send
  *   (masaüstü uygulaması, sayfa yerinde kalır) ya da tek WhatsApp Web sekmesi; tercih panelle ortak. Tek düğme: sohbet
  *   açılır + "veli bilgilendirildi" kaydı; kart "✓ Gönderildi (Tekrar Gönder)" olarak kalır. Hatalı telefon kilidi,
- *   imza emojisi ve kalın yazı için ad/hitap kırpma paneldeki gibi.
+ *   imza emojisi ve kalın yazı için ad/hitap kırpma paneldeki gibi. Velilerde geri/ileri gezinme: "‹ Önceki Veli /
+ *   Sonraki Veli ›" ve üstteki çizgilere dokunarak; gönderilmiş veliye dönülebilir (Tekrar Gönder yeni kayıt açmaz).
  * sürüm 0.12.1 · Ödev Takip Formu: satır yükseklikleri uygulamanın genel stilinden etkilenmez, tarih sütunu 39,6 mm
  * sürüm 0.11 · Online Ders yoklaması ve Defter Takibi:
  *   ödevle aynı düzende kayıt → durum işaretle → kaydet; defterde isteğe bağlı etiketler; Öğrenci Görünümü, PDF, Excel)
@@ -56,8 +57,9 @@ const durum = {
   ozet: null,            // son kaydın özeti: { odevId, ilk, onceki }
   cikisOnayli: false,
   form: null,            // açık form: { id } (düzenleme) ya da { id: null } (yeni)
-  veliSira: 0,           // veli mesajı ekranında sıradaki velinin yeri
-  veliSabit: null,       // az önce gönderilen veli: { classId, kod, donemNo, blokNo, mesaj } — kartı "gönderildi" olarak kalır
+  veliKod: null,         // veli mesajı ekranında gösterilen öğrenci (null: sıradaki ilk bekleyen)
+  veliBitti: false,      // bloğun tüm mesajları gönderildi kartı gösteriliyor
+  veliMesajlar: {},      // bu oturumda gönderilen metinler (sınıf|dönem|blok|kod → metin); dönülünce aynı metin görünür
   dersYukleniyor: {},    // classId → true (ders gözlemleri okunuyor)
   dersHata: {},
   gozlemSecili: new Set(),   // "Birden fazla öğrenci" açıkken seçilenler
@@ -1288,7 +1290,7 @@ function waHedefSecici() {
 function veliSeridi(kutu, classId) {
   const b = veliSirasi(classId);
   if (b.tamam && b.bekleyen.length) {
-    const d = dugme("veliSerit", null, () => { durum.veliSira = 0; durum.veliSabit = null; ileri({ e: "veli" }); dersGozlemleriTazele(classId); });
+    const d = dugme("veliSerit", null, () => { durum.veliKod = null; durum.veliBitti = false; ileri({ e: "veli" }); dersGozlemleriTazele(classId); });
     const metin = el("span");
     metin.append(el("b", "", "📨 Veli Mesajı Zamanı"),
       el("small", "", b.tamam + ". blok (" + b.tamam * 4 + " ödev) tamamlandı · " + b.bekleyen.length + " veli sırada" + (b.giden.length ? ", " + b.giden.length + " gönderildi" : "")));
@@ -1309,70 +1311,96 @@ function veliCiz() {
   $("vIlerleme").innerHTML = "";
   if (!b.tamam) { $("vAlt").textContent = ""; icerik.appendChild(el("div", "kart bos", "Bu dönem henüz 4 ödev kontrol edilmedi.")); return; }
   $("vAlt").textContent = b.tamam + ". blok · " + ayAraligi(b.blok[0].tarih, b.blok[3].tarih) + " arası 4 ödev";
-  // Az önce gönderilen veli, "Sıradakine Geç"e basılana kadar ekranda "gönderildi" olarak kalır (karne-uret'teki
-  // "✓ İlk Mesaj Gönderildi (Tekrar Gönder)" gibi). Sabit kayıt bu bloğa ait değilse bırakılır.
-  const vs = durum.veliSabit;
-  const sabit = vs && vs.classId === classId && vs.donemNo === b.donemNo && vs.blokNo === b.tamam
-    ? b.giden.find(x => x.kod === vs.kod) : null;
-  if (!sabit) durum.veliSabit = null;
-  if (durum.veliSira >= b.bekleyen.length) durum.veliSira = 0;
-  const s = sabit || b.bekleyen[durum.veliSira];
+  // Gezinme sınıf listesindeki sırayla (Ogrenciler): gönderilmiş ya da bekleyen her veli açılabilir. Gönderilmiş veli
+  // "✓ Mesaj Gönderildi (Tekrar Gönder)" kartıyla açılır (karne-uret'teki ilk mesaj düğmesi gibi).
   const sinif = sinifBul(classId);
-  sinif.ogrenciler.filter(x => x.aktif).forEach(x => {
-    $("vIlerleme").appendChild(el("span", s && s.kod === x.kod ? "simdi" : (b.giden.some(g => g.kod === x.kod) ? "gitti" : "")));
+  const aktif = sinif.ogrenciler.filter(x => x.aktif);
+  const gitti = kod => b.giden.some(g => g.kod === kod);
+  let s = durum.veliBitti ? null : aktif.find(x => x.kod === durum.veliKod) || b.bekleyen[0] || null;
+  durum.veliKod = s ? s.kod : null;
+  aktif.forEach(x => {
+    const c = dugme("cizgi" + (s && s.kod === x.kod ? " simdi" : gitti(x.kod) ? " gitti" : ""), null, () => veliAc(x.kod));
+    c.title = x.ad + (gitti(x.kod) ? " · gönderildi" : "");
+    c.setAttribute("aria-label", c.title);
+    c.appendChild(el("span"));
+    $("vIlerleme").appendChild(c);
   });
   if (!s) {
     const k = el("div", "kart bitti");
-    k.append(el("div", "buyuk", "✅"), el("b", "", "Bu bloğun tüm mesajları gönderildi."),
-      el("p", "altBilgi", "Sonraki mesajlar 4 ödev daha kontrol edilince hazır olur."),
+    k.append(el("div", "buyuk", "✅"), el("b", "", b.bekleyen.length ? "Sırada veli kalmadı." : "Bu bloğun tüm mesajları gönderildi."),
+      el("p", "altBilgi", b.bekleyen.length ? "Atladığınız veliler bekliyor; üstteki çizgilerden açabilirsiniz." : "Sonraki mesajlar 4 ödev daha kontrol edilince hazır olur. Bir veliye yeniden bakmak için üstteki çizgiye dokunun."),
       dugme("anaDugme", "Ödev Listesine Dön", () => geri()));
     icerik.appendChild(k);
     return;
   }
+  const gonderildi = gitti(s.kod);
+  const mKey = [classId, b.donemNo, b.tamam, s.kod].join("|");
   const hatali = telefonCokKisaMi(s.tel);
   const tel = hatali ? "" : telefonNormal(s.tel);
   const kart = el("div", "kart");
   const kim = el("div", "veliKimlik");
-  kim.append(el("b", "", s.ad), el("small", "", (sabit ? "✓ Gönderildi" : (durum.veliSira + 1) + "/" + b.bekleyen.length + " sırada") +
+  const sira = b.bekleyen.findIndex(x => x.kod === s.kod) + 1;
+  kim.append(el("b", "", s.ad), el("small", "", (gonderildi ? "✓ Gönderildi" : sira + "/" + b.bekleyen.length + " sırada") +
     " · " + (tel ? "📞 " + s.tel : "telefon yok")));
   kart.appendChild(kim);
-  if (hatali) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu hatalı görünüyor (\"" + s.tel + "\"); kontrol edin. Mesajı kopyalayıp başka yoldan gönderebilir ya da bu veliyi atlayabilirsiniz."));
-  else if (!tel) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu yok. Mesajı kopyalayıp başka yoldan gönderebilir ya da bu veliyi atlayabilirsiniz."));
+  if (hatali) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu hatalı görünüyor (\"" + s.tel + "\"); kontrol edin. Mesajı kopyalayıp başka yoldan gönderebilir ya da sonraki veliye geçebilirsiniz."));
+  else if (!tel) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu yok. Mesajı kopyalayıp başka yoldan gönderebilir ya da sonraki veliye geçebilirsiniz."));
   const alan = el("textarea", "mesaj");
   alan.id = "mesajMetni";
   alan.setAttribute("aria-label", "Mesaj");
-  alan.value = sabit ? vs.mesaj : veliMesaji(s, b);
+  // Gönderilmiş veli: bu oturumda gönderilen metin; yoksa metin o anki kayıtlardan yeniden oluşturulur
+  // (sunucu gönderilen metni uygulamaya geri vermez; metin Veli_Bilgi sayfasında saklıdır).
+  alan.value = gonderildi && durum.veliMesajlar[mKey] ? durum.veliMesajlar[mKey] : veliMesaji(s, b);
   durum.veliDuzenlendi = false;
-  alan.addEventListener("input", () => { if (sabit) vs.mesaj = alan.value; else durum.veliDuzenlendi = true; });
+  alan.addEventListener("input", () => { if (gonderildi) durum.veliMesajlar[mKey] = alan.value; else durum.veliDuzenlendi = true; });
   kart.append(alan, el("p", "ipucu", "Göndermeden önce metni burada değiştirebilirsiniz. *Yıldızlı* yazılar WhatsApp'ta kalın görünür."));
   const dugmeler = el("div", "dugmeSatir");
   const masaustu = whatsappHedefi() === "masaustu";
   const hazirMetni = masaustu ? "✅ Mesaj WhatsApp'ta yazı kutusunda hazır — Enter'a basın." : "✅ Mesaj WhatsApp Web'de açıldı — Gönder'e basın.";
   if (tel) {
-    const wa = dugme("waDugme" + (sabit ? " gonderildi" : ""), sabit ? "✓ Mesaj Gönderildi (Tekrar Gönder)" : "📨 Mesajı Gönder", () => {
+    const wa = dugme("waDugme" + (gonderildi ? " gonderildi" : ""), gonderildi ? "✓ Mesaj Gönderildi (Tekrar Gönder)" : "📨 Mesajı Gönder", () => {
       whatsappAc(tel, alan.value);
-      if (sabit) { bildirimGoster(hazirMetni); return; }   // tekrar gönderim yeni kayıt açmaz
-      veliGonderildi(s, b, alan.value, hazirMetni, true);
+      if (gonderildi) { bildirimGoster(hazirMetni); return; }   // tekrar gönderim yeni kayıt açmaz
+      veliGonderildi(s, b, alan.value, hazirMetni, false, mKey);
     });
     wa.title = "Velinin WhatsApp sohbetini mesaj hazır yazılı olarak açar ve “veli bilgilendirildi” olarak kaydeder.";
     dugmeler.appendChild(wa);
   }
-  const gonderdim = dugme("anaDugme", "✓ Gönderdim, Sıradakine Geç", () => veliGonderildi(s, b, alan.value, "", false));
+  const gonderdim = dugme("anaDugme", "✓ Gönderdim, Sıradakine Geç", () => veliGonderildi(s, b, alan.value, "", true, mKey));
   gonderdim.hidden = true;
   dugmeler.appendChild(dugme("ikinciDugme", "📋 Mesajı Kopyala", async () => {
     const ok = await panoyaKopyala(alan.value);
     bildirimGoster(ok ? "Mesaj kopyalandı." : "Kopyalanamadı; metni basılı tutup kendiniz kopyalayın.");
-    if (!sabit) gonderdim.hidden = false;
+    if (!gonderildi) gonderdim.hidden = false;
   }));
-  if (sabit) {
-    dugmeler.appendChild(dugme("anaDugme", b.bekleyen.length ? "Sıradakine Geç ›" : "Bitir ›", () => { durum.veliSabit = null; veliCiz(); }));
-  } else {
-    dugmeler.appendChild(gonderdim);
-    dugmeler.appendChild(dugme("baglantiDugme", "Bu Veliyi Şimdilik Atla ›", () => { durum.veliSira++; veliCiz(); }));
-  }
+  if (gonderildi) dugmeler.appendChild(dugme("anaDugme", b.bekleyen.length ? "Sıradakine Geç ›" : "Bitir ›", () => veliSiradaki(b)));
+  else dugmeler.appendChild(gonderdim);
   kart.appendChild(dugmeler);
+  // ‹ Önceki Veli / Sonraki Veli › — sınıf listesindeki sırayla, gönderilmiş/bekleyen fark etmez (sona gelince başa döner)
+  const yer = aktif.findIndex(x => x.kod === s.kod);
+  const gez = el("div", "veliGezinme");
+  gez.append(dugme("baglantiDugme", "‹ Önceki Veli", () => veliAc(aktif[(yer - 1 + aktif.length) % aktif.length].kod)),
+    dugme("baglantiDugme", "Sonraki Veli ›", () => veliAc(aktif[(yer + 1) % aktif.length].kod)));
+  kart.appendChild(gez);
   if (tel) kart.appendChild(waHedefSecici());
   icerik.appendChild(kart);
+}
+
+function veliAc(kod) { durum.veliBitti = false; durum.veliKod = kod; veliCiz(); }
+
+/** Gösterilen veliden sonra (sınıf sırasıyla, sona gelince baştan) ilk bekleyen veli; yoksa "bitti" kartı. */
+function veliSiradaki(b) {
+  const aktif = sinifBul(b.classId).ogrenciler.filter(x => x.aktif);
+  const bekKod = new Set(veliSirasi(b.classId).bekleyen.map(x => x.kod));
+  const yer = aktif.findIndex(x => x.kod === durum.veliKod);
+  let sonraki = null;
+  for (let i = 1; i <= aktif.length; i++) {
+    const x = aktif[(yer + i) % aktif.length];
+    if (bekKod.has(x.kod)) { sonraki = x; break; }
+  }
+  durum.veliKod = sonraki ? sonraki.kod : null;
+  durum.veliBitti = !sonraki;
+  veliCiz();
 }
 
 async function panoyaKopyala(metin) {
@@ -1383,17 +1411,17 @@ async function panoyaKopyala(metin) {
   } catch (e) { return false; }
 }
 
-/** "Veli bilgilendirildi" kaydı. sabitle: kart "gönderildi" olarak ekranda kalır (WhatsApp düğmesi);
- *  sabitlenmezse (kopyala + "Gönderdim") doğrudan sıradakine geçilir. */
-function veliGonderildi(s, b, mesaj, metin, sabitle) {
+/** "Veli bilgilendirildi" kaydı. ilerle: false → kart "gönderildi" olarak ekranda kalır (WhatsApp düğmesi);
+ *  true → (kopyala + "Gönderdim") doğrudan sıradaki bekleyen veliye geçilir. */
+function veliGonderildi(s, b, mesaj, metin, ilerle, mKey) {
   const kayitId = yeniKimlik();
   if (!kuyrugaEkle("veliBilgi", {
     kayitId, classId: durum.seciliSinif, kod: s.kod, ad: s.ad, donemNo: b.donemNo, blokNo: b.tamam,
     odevIdler: b.blok.map(o => o.id), mesaj
   })) return;
-  durum.veliSabit = sabitle ? { classId: durum.seciliSinif, kod: s.kod, donemNo: b.donemNo, blokNo: b.tamam, mesaj } : null;
+  durum.veliMesajlar[mKey] = mesaj;
   bildirimGoster((metin ? metin + " " : "") + "“Veli bilgilendirildi” olarak kaydedildi.");
-  veliCiz();
+  if (ilerle) veliSiradaki(b); else veliCiz();
 }
 
 // ---------- 6. ders içi gözlem ----------
