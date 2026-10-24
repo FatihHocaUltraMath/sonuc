@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.11 · Online Ders ve Defter Takibi)
+/* FatihHoca | UltraMat — Öğrenci Takip · stiller (sürüm 0.12.2 · WhatsApp hedef seçimi; 0.11 · Online Ders ve Defter Takibi)
    Renkler karne-uret.html ile aynı. Telefon öncelikli: dokunma alanları en az 48 px,
    yazı alanları 16 px (telefonun otomatik yakınlaştırmasını önler). */
 :root{
@@ -254,6 +254,14 @@ button:focus-visible,.girdi:focus-visible{outline:3px solid var(--purple);outlin
 .mesaj{width:100%;min-height:340px;border:1.5px solid var(--line);border-radius:12px;padding:12px;font-size:15px;line-height:1.5;background:#ECE5DD;color:#111;resize:vertical;font-family:inherit;}
 .mesaj:focus{outline:none;border-color:var(--purple);}
 .waDugme{width:100%;min-height:52px;border:none;border-radius:12px;background:#25D366;color:#fff;font-weight:800;font-size:15px;cursor:pointer;}
+.waDugme.gonderildi{background:#DCFCE7;color:#166534;border:1.5px solid #86EFAC;}
+/* WhatsApp hedef seçimi (0.12.2) — Öğretmen Paneli (karne-uret v3.3) ile aynı görünüm */
+.waHedef{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;}
+.waHedefEtiket{font-size:12px;font-weight:800;color:var(--dark);}
+.waHedefSecici{display:inline-flex;background:#F1F5F9;border-radius:12px;padding:3px;gap:3px;}
+.waHedefSecici button{min-height:40px;padding:7px 11px;border:none;border-radius:9px;background:transparent;color:var(--gray);font-size:12.5px;font-weight:800;cursor:pointer;}
+.waHedefSecici button[aria-pressed="true"]{background:#fff;color:#166534;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.waHedefIpucu{flex-basis:100%;font-size:12px;color:var(--gray);font-weight:600;line-height:1.45;}
 .uyariKucuk{background:var(--amber-acik);color:var(--amber);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin-bottom:10px;}
 .bitti{text-align:center;padding:24px 12px;}
 .bitti .buyuk{font-size:40px;}

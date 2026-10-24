@@ -1,5 +1,9 @@
 /* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.12 · Raporlar'a Ödev Takip Formu (A5): öğrencinin adı basılı,
  *   ödev satırları boş; 1–20 ön kapak, 21–40 arka kapak; şablon ayrı dosyada (odev-formu.js), gerekince yüklenir)
+ * sürüm 0.12.2 · Veli mesajı Öğretmen Paneli (karne-uret) kurallarıyla gönderilir: wa.me yerine whatsapp://send
+ *   (masaüstü uygulaması, sayfa yerinde kalır) ya da tek WhatsApp Web sekmesi; tercih panelle ortak. Tek düğme: sohbet
+ *   açılır + "veli bilgilendirildi" kaydı; kart "✓ Gönderildi (Tekrar Gönder)" olarak kalır. Hatalı telefon kilidi,
+ *   imza emojisi ve kalın yazı için ad/hitap kırpma paneldeki gibi.
  * sürüm 0.12.1 · Ödev Takip Formu: satır yükseklikleri uygulamanın genel stilinden etkilenmez, tarih sütunu 39,6 mm
  * sürüm 0.11 · Online Ders yoklaması ve Defter Takibi:
  *   ödevle aynı düzende kayıt → durum işaretle → kaydet; defterde isteğe bağlı etiketler; Öğrenci Görünümü, PDF, Excel)
@@ -22,7 +26,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.12.1";
+const SURUM = "0.12.2";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -53,6 +57,7 @@ const durum = {
   cikisOnayli: false,
   form: null,            // açık form: { id } (düzenleme) ya da { id: null } (yeni)
   veliSira: 0,           // veli mesajı ekranında sıradaki velinin yeri
+  veliSabit: null,       // az önce gönderilen veli: { classId, kod, donemNo, blokNo, mesaj } — kartı "gönderildi" olarak kalır
   dersYukleniyor: {},    // classId → true (ders gözlemleri okunuyor)
   dersHata: {},
   gozlemSecili: new Set(),   // "Birden fazla öğrenci" açıkken seçilenler
@@ -1178,9 +1183,11 @@ const kisaTarih = t => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { d
 function veliMesaji(s, b) {
   const v = b.v, blok = b.blok;
   const bid = new Set(blok.map(o => o.id));
-  let m = (s.hitap ? "Merhaba " + s.hitap + "," : "Merhaba,") + "\n\n*" + s.ad + " · Matematik ödev takibi*\n_" +
+  // trim(): WhatsApp'ta kalın yazı (*...*) yıldızın yanında boşluk varsa çalışmaz (karne-uret ile aynı kural).
+  const ad = String(s.ad || "").trim(), hitap = String(s.hitap || "").trim();
+  let m = (hitap ? "Merhaba " + hitap + "," : "Merhaba,") + "\n\n*" + ad + " · Matematik ödev takibi*\n_" +
     ayAraligi(blok[0].tarih, blok[blok.length - 1].tarih) + " arasında verilen 4 ödev_\n\n";
-  m += blok.map(o => { const d = (v.kontrol[o.id] || {})[s.kod]; return (d ? DURUM[d].emoji : "▫️") + " " + o.ad + " (" + kisaTarih(o.tarih) + "): " + (d ? DURUM[d].ad : "kontrol edilmedi"); }).join("\n");
+  m += blok.map(o => { const d = (v.kontrol[o.id] || {})[s.kod]; return (d ? DURUM[d].emoji : BOS_KARE_EMOJI) + " " + o.ad + " (" + kisaTarih(o.tarih) + "): " + (d ? DURUM[d].ad : "kontrol edilmedi"); }).join("\n");
   if (b.tamam > 1) {
     const donem = b.kontrollu.slice(0, b.tamam * 4);
     const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
@@ -1218,7 +1225,7 @@ function veliMesaji(s, b) {
       sira.forEach(k => { const e = dersEtiket(k); m += "\n" + e.emoji + " " + e.ad + (sayi[k] > 1 ? " (" + sayi[k] + " kez)" : ""); });
     }
   }
-  return m + "\n\nBilginize sunarım.\n— Fatih Hoca ✍️";
+  return m + "\n\nBilginize sunarım.\n— Fatih Hoca " + IMZA_EMOJI;
 }
 
 /** Sunucudaki normalizeTelefon (karne-uret) ile aynı kural. */
@@ -1232,10 +1239,56 @@ function telefonNormal(t) {
   return "90" + r;
 }
 
+// ================= WHATSAPP (Öğretmen Paneli / karne-uret v3.3 kurallarıyla aynı) =================
+// wa.me KULLANILMAZ: istek api.whatsapp.com'a yönlendirilirken emojiler bozulabiliyor. Masaüstü (varsayılan):
+// whatsapp://send uygulamada velinin sohbetini mesaj yazı kutusunda hazır olarak açar; sayfa yerinde kalır, boş
+// sekme açılmaz. Chrome/Edge ilk seferde izin sorar: "Her zaman izin ver" işaretlenirse bir daha sormaz.
+// Web: web.whatsapp.com, hep aynı sekmede ("whatsappSekmesi"). Tercih panelle aynı anahtarda: aynı tarayıcıda ortaktır.
+const WA_TERCIH_ANAHTARI = "fhUltraMat_whatsappHedefi";
+const IMZA_EMOJI = String.fromCodePoint(0x270D, 0xFE0F);      // ✍️ — paneldeki imzayla aynı
+const BOS_KARE_EMOJI = String.fromCodePoint(0x25AB, 0xFE0F);  // ▫️ — kontrol edilmemiş ödev
+function whatsappHedefi() {
+  try { return localStorage.getItem(WA_TERCIH_ANAHTARI) === "web" ? "web" : "masaustu"; } catch (e) { return "masaustu"; }
+}
+function whatsappHedefiniKaydet(hedef) { try { localStorage.setItem(WA_TERCIH_ANAHTARI, hedef); } catch (e) { /* gizli sekme */ } }
+function whatsappAdresi(telefon, mesaj, hedef) {
+  const parametre = "phone=" + telefon + (mesaj ? "&text=" + encodeURIComponent(mesaj) : "");
+  return (hedef || whatsappHedefi()) === "web" ? "https://web.whatsapp.com/send?" + parametre : "whatsapp://send?" + parametre;
+}
+function whatsappAc(telefon, mesaj) {
+  const adres = whatsappAdresi(telefon, mesaj);
+  if (whatsappHedefi() === "web") { window.open(adres, "whatsappSekmesi"); return; }
+  // Uygulama bağlantısı gizli bir bağlantıya tıklatılarak açılır: sayfa yerinde kalır, yeni sekme açılmaz.
+  const a = document.createElement("a");
+  a.href = adres; a.style.display = "none";
+  document.body.appendChild(a); a.click(); a.remove();
+}
+/** "1234" gibi açıkça hatalı/eksik numara (tam doğrulama değil) — karne-uret telefonCokKisaMi ile aynı. */
+function telefonCokKisaMi(t) {
+  const r = String(t || "").replace(/[^0-9]/g, "");
+  return r.length > 0 && r.length < 7;
+}
+/** Veli ekranının altındaki "WhatsApp mesajları: Uygulama | Web" seçimi. */
+function waHedefSecici() {
+  const kap = el("div", "waHedef");
+  const grup = el("span", "waHedefSecici");
+  grup.setAttribute("role", "group"); grup.setAttribute("aria-label", "WhatsApp mesajlarının açılacağı yer");
+  const h = whatsappHedefi();
+  [["masaustu", "💻 WhatsApp Uygulaması"], ["web", "🌐 WhatsApp Web"]].forEach(([k, ad]) => {
+    const b = dugme("", ad, () => { whatsappHedefiniKaydet(k); veliCiz(); });
+    b.setAttribute("aria-pressed", String(k === h));
+    grup.appendChild(b);
+  });
+  kap.append(el("span", "waHedefEtiket", "WhatsApp mesajları:"), grup, el("div", "waHedefIpucu", h === "masaustu"
+    ? "Mesaj WhatsApp uygulamasında velinin sohbetinde, yazı kutusuna hazır gelir; size yalnızca Enter kalır. Tarayıcı ilk seferde izin sorarsa \"Her zaman izin ver\"i işaretleyin."
+    : "Mesajlar tarayıcıda, hep aynı WhatsApp Web sekmesinde açılır."));
+  return kap;
+}
+
 function veliSeridi(kutu, classId) {
   const b = veliSirasi(classId);
   if (b.tamam && b.bekleyen.length) {
-    const d = dugme("veliSerit", null, () => { durum.veliSira = 0; ileri({ e: "veli" }); dersGozlemleriTazele(classId); });
+    const d = dugme("veliSerit", null, () => { durum.veliSira = 0; durum.veliSabit = null; ileri({ e: "veli" }); dersGozlemleriTazele(classId); });
     const metin = el("span");
     metin.append(el("b", "", "📨 Veli Mesajı Zamanı"),
       el("small", "", b.tamam + ". blok (" + b.tamam * 4 + " ödev) tamamlandı · " + b.bekleyen.length + " veli sırada" + (b.giden.length ? ", " + b.giden.length + " gönderildi" : "")));
@@ -1256,11 +1309,17 @@ function veliCiz() {
   $("vIlerleme").innerHTML = "";
   if (!b.tamam) { $("vAlt").textContent = ""; icerik.appendChild(el("div", "kart bos", "Bu dönem henüz 4 ödev kontrol edilmedi.")); return; }
   $("vAlt").textContent = b.tamam + ". blok · " + ayAraligi(b.blok[0].tarih, b.blok[3].tarih) + " arası 4 ödev";
+  // Az önce gönderilen veli, "Sıradakine Geç"e basılana kadar ekranda "gönderildi" olarak kalır (karne-uret'teki
+  // "✓ İlk Mesaj Gönderildi (Tekrar Gönder)" gibi). Sabit kayıt bu bloğa ait değilse bırakılır.
+  const vs = durum.veliSabit;
+  const sabit = vs && vs.classId === classId && vs.donemNo === b.donemNo && vs.blokNo === b.tamam
+    ? b.giden.find(x => x.kod === vs.kod) : null;
+  if (!sabit) durum.veliSabit = null;
   if (durum.veliSira >= b.bekleyen.length) durum.veliSira = 0;
-  const s = b.bekleyen[durum.veliSira];
+  const s = sabit || b.bekleyen[durum.veliSira];
   const sinif = sinifBul(classId);
   sinif.ogrenciler.filter(x => x.aktif).forEach(x => {
-    $("vIlerleme").appendChild(el("span", b.giden.some(g => g.kod === x.kod) ? "gitti" : (s && s.kod === x.kod ? "simdi" : "")));
+    $("vIlerleme").appendChild(el("span", s && s.kod === x.kod ? "simdi" : (b.giden.some(g => g.kod === x.kod) ? "gitti" : "")));
   });
   if (!s) {
     const k = el("div", "kart bitti");
@@ -1270,34 +1329,49 @@ function veliCiz() {
     icerik.appendChild(k);
     return;
   }
-  const tel = telefonNormal(s.tel);
+  const hatali = telefonCokKisaMi(s.tel);
+  const tel = hatali ? "" : telefonNormal(s.tel);
   const kart = el("div", "kart");
   const kim = el("div", "veliKimlik");
-  kim.append(el("b", "", s.ad), el("small", "", (durum.veliSira + 1) + "/" + b.bekleyen.length + " sırada · " + (tel ? "📞 " + s.tel : "telefon yok")));
+  kim.append(el("b", "", s.ad), el("small", "", (sabit ? "✓ Gönderildi" : (durum.veliSira + 1) + "/" + b.bekleyen.length + " sırada") +
+    " · " + (tel ? "📞 " + s.tel : "telefon yok")));
   kart.appendChild(kim);
-  if (!tel) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu yok. Mesajı kopyalayıp başka yoldan gönderebilir ya da bu veliyi atlayabilirsiniz."));
+  if (hatali) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu hatalı görünüyor (\"" + s.tel + "\"); kontrol edin. Mesajı kopyalayıp başka yoldan gönderebilir ya da bu veliyi atlayabilirsiniz."));
+  else if (!tel) kart.appendChild(el("div", "uyariKucuk", "Ogrenciler sayfasında bu öğrencinin veli telefonu yok. Mesajı kopyalayıp başka yoldan gönderebilir ya da bu veliyi atlayabilirsiniz."));
   const alan = el("textarea", "mesaj");
   alan.id = "mesajMetni";
   alan.setAttribute("aria-label", "Mesaj");
-  alan.value = veliMesaji(s, b);
+  alan.value = sabit ? vs.mesaj : veliMesaji(s, b);
   durum.veliDuzenlendi = false;
-  alan.addEventListener("input", () => { durum.veliDuzenlendi = true; });
+  alan.addEventListener("input", () => { if (sabit) vs.mesaj = alan.value; else durum.veliDuzenlendi = true; });
   kart.append(alan, el("p", "ipucu", "Göndermeden önce metni burada değiştirebilirsiniz. *Yıldızlı* yazılar WhatsApp'ta kalın görünür."));
   const dugmeler = el("div", "dugmeSatir");
-  const gonderdim = dugme("anaDugme", "✓ Gönderdim, Sıradakine Geç", () => veliGonderildi(s, b, alan.value));
+  const masaustu = whatsappHedefi() === "masaustu";
+  const hazirMetni = masaustu ? "✅ Mesaj WhatsApp'ta yazı kutusunda hazır — Enter'a basın." : "✅ Mesaj WhatsApp Web'de açıldı — Gönder'e basın.";
+  if (tel) {
+    const wa = dugme("waDugme" + (sabit ? " gonderildi" : ""), sabit ? "✓ Mesaj Gönderildi (Tekrar Gönder)" : "📨 Mesajı Gönder", () => {
+      whatsappAc(tel, alan.value);
+      if (sabit) { bildirimGoster(hazirMetni); return; }   // tekrar gönderim yeni kayıt açmaz
+      veliGonderildi(s, b, alan.value, hazirMetni, true);
+    });
+    wa.title = "Velinin WhatsApp sohbetini mesaj hazır yazılı olarak açar ve “veli bilgilendirildi” olarak kaydeder.";
+    dugmeler.appendChild(wa);
+  }
+  const gonderdim = dugme("anaDugme", "✓ Gönderdim, Sıradakine Geç", () => veliGonderildi(s, b, alan.value, "", false));
   gonderdim.hidden = true;
-  if (tel) dugmeler.appendChild(dugme("waDugme", "WhatsApp'ta Aç", () => {
-    window.open("https://wa.me/" + tel + "?text=" + encodeURIComponent(alan.value), "_blank");
-    gonderdim.hidden = false;
-  }));
   dugmeler.appendChild(dugme("ikinciDugme", "📋 Mesajı Kopyala", async () => {
     const ok = await panoyaKopyala(alan.value);
     bildirimGoster(ok ? "Mesaj kopyalandı." : "Kopyalanamadı; metni basılı tutup kendiniz kopyalayın.");
-    gonderdim.hidden = false;
+    if (!sabit) gonderdim.hidden = false;
   }));
-  dugmeler.appendChild(gonderdim);
-  dugmeler.appendChild(dugme("baglantiDugme", "Bu Veliyi Şimdilik Atla ›", () => { durum.veliSira++; veliCiz(); }));
+  if (sabit) {
+    dugmeler.appendChild(dugme("anaDugme", b.bekleyen.length ? "Sıradakine Geç ›" : "Bitir ›", () => { durum.veliSabit = null; veliCiz(); }));
+  } else {
+    dugmeler.appendChild(gonderdim);
+    dugmeler.appendChild(dugme("baglantiDugme", "Bu Veliyi Şimdilik Atla ›", () => { durum.veliSira++; veliCiz(); }));
+  }
   kart.appendChild(dugmeler);
+  if (tel) kart.appendChild(waHedefSecici());
   icerik.appendChild(kart);
 }
 
@@ -1309,13 +1383,16 @@ async function panoyaKopyala(metin) {
   } catch (e) { return false; }
 }
 
-function veliGonderildi(s, b, mesaj) {
+/** "Veli bilgilendirildi" kaydı. sabitle: kart "gönderildi" olarak ekranda kalır (WhatsApp düğmesi);
+ *  sabitlenmezse (kopyala + "Gönderdim") doğrudan sıradakine geçilir. */
+function veliGonderildi(s, b, mesaj, metin, sabitle) {
   const kayitId = yeniKimlik();
   if (!kuyrugaEkle("veliBilgi", {
     kayitId, classId: durum.seciliSinif, kod: s.kod, ad: s.ad, donemNo: b.donemNo, blokNo: b.tamam,
     odevIdler: b.blok.map(o => o.id), mesaj
   })) return;
-  bildirimGoster("“Veli bilgilendirildi” olarak kaydedildi.");
+  durum.veliSabit = sabitle ? { classId: durum.seciliSinif, kod: s.kod, donemNo: b.donemNo, blokNo: b.tamam, mesaj } : null;
+  bildirimGoster((metin ? metin + " " : "") + "“Veli bilgilendirildi” olarak kaydedildi.");
   veliCiz();
 }
 
