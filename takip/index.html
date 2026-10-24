@@ -11,7 +11,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="takip.css?v=0.11">
+<link rel="stylesheet" href="takip.css?v=0.12">
 </head>
 <body>
 <div class="wrap">
@@ -76,7 +76,7 @@
     </div>
     <div class="ikincilIzgara">
       <button class="ikincilDugme" type="button" data-bolum="ogrenci"><svg class="svgIk" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg><span>Öğrenci Görünümü</span></button>
-      <button class="ikincilDugme" type="button" data-bolum="rapor"><svg class="svgIk" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14.5l3 3 3-3M12 10.5v7"/></svg><span>Raporlar<small>Excel · PDF</small></span></button>
+      <button class="ikincilDugme" type="button" data-bolum="rapor"><svg class="svgIk" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 14.5l3 3 3-3M12 10.5v7"/></svg><span>Raporlar<small>PDF · Excel · Form</small></span></button>
     </div>
 
     <div class="altBaglantilar">
@@ -188,7 +188,22 @@
     <div class="sekmeler"><button type="button" id="raporDonem">Bu Dönem</button><button type="button" id="raporYil">Tüm Yıl</button></div>
     <button class="raporDugme" type="button" id="pdfDugme"><span class="ik">📄</span><span><b>Öğrenci Raporu (PDF)</b><small>Bir öğrenci ya da tüm sınıf (her öğrenci ayrı sayfa). Veli görüşmesi, rehberlik, dosya için.</small></span></button>
     <button class="raporDugme" type="button" id="excelDugme"><span class="ik">📊</span><span><b>Sınıf Tablosu (Excel)</b><small>Ödev tablosu, ödev listesi (içerik ve kapsam), online ders ve defter takibi (kayıt varsa), gözlem sayıları, tüm kayıtlar ve veli mesajları. İnternet gerekir.</small></span></button>
+    <button class="raporDugme" type="button" id="tfDugme"><span class="ik">📝</span><span><b>Ödev Takip Formu (A5)</b><small>Öğrencinin adı basılı; ödevlerini ve kontrol tarihini kendisi yazar. Ders kitabının kapağının içine köşelerinden bantlanır.</small></span></button>
     <p class="ipucu merkez" id="raporDurum"></p>
+  </main>
+
+  <main id="ekran-raporForm" hidden>
+    <div class="ustCubuk"><button class="geriDugme" type="button" data-geri aria-label="Raporlara Dön">‹</button><div class="ustMetin"><h2 class="bolumBaslik">Ödev Takip Formu</h2><p class="ustAlt" id="tfAlt"></p></div></div>
+    <div class="sekmeler"><button type="button" id="tfSayfa1">1–20 · Ön Kapak</button><button type="button" id="tfSayfa2">21–40 · Arka Kapak</button></div>
+    <div class="kart secenekKart">
+      <input class="girdi araGirdi" type="search" id="tfAra" placeholder="Öğrenci Ara" aria-label="Öğrenci Ara" autocomplete="off" enterkeyhint="search">
+      <select class="girdi" id="tfOgr" aria-label="Öğrenci"></select>
+    </div>
+    <p class="ipucu">“Formu Yazdır” deyince yazdırma ekranı açılır. Kâğıt boyutu <b>A5</b>, yön <b>dikey</b>, ölçek <b>%100</b>, kenar boşlukları <b>Yok</b> olsun. Yazıcıda A5 kâğıt yoksa A4 kâğıda <b>kâğıt başına 2 sayfa</b> basıp ortadan kesebilirsiniz.</p>
+    <button class="anaDugme" type="button" id="tfYazdirDugme">🖨️ Formu Yazdır</button>
+    <div class="grupBaslik">Kâğıttaki Görünümü</div>
+    <p class="ipucu" id="tfBilgi" hidden></p>
+    <div class="a4Kutu a5Kutu" id="a5Kutu"><div id="a5Icerik"></div></div>
   </main>
 
   <main id="ekran-raporPdf" hidden>
@@ -322,6 +337,6 @@
 </div>
 
 <script src="etiketler.js?v=0.5"></script>
-<script src="takip.js?v=0.11"></script>
+<script src="takip.js?v=0.12"></script>
 </body>
 </html>

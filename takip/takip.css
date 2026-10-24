@@ -391,6 +391,8 @@ details.odevDetay summary{font-size:13px;font-weight:700;color:var(--purple);min
 .a4 .rozet.acik{background:#FEF3C7;color:#92400E;} .a4 .rozet.duz{background:#EDE9FE;color:#3B0764;}
 .a4 .not{font-size:10.5px;color:#64748B;margin-top:22px;border-top:1px solid #E2E8F0;padding-top:8px;line-height:1.5;}
 .a4 .imza{text-align:right;margin-top:14px;font-weight:700;color:#3B0764;}
+/* 0.12: Ödev Takip Formu (A5) önizlemesi — şablonun kendi stili odev-formu.js'ten gelir */
+#a5Icerik .otSayfa{margin:0 auto;box-shadow:0 2px 12px rgba(0,0,0,.15);transform-origin:top left;}
 #yazdirmaAlani{display:none;}
 
 @media print{
@@ -401,6 +403,9 @@ details.odevDetay summary{font-size:13px;font-weight:700;color:var(--purple);min
   #yazdirmaAlani .a4{width:auto;min-height:0;padding:0;box-shadow:none;transform:none !important;margin:0 !important;break-after:page;
     -webkit-print-color-adjust:exact;print-color-adjust:exact;}
   #yazdirmaAlani .a4:last-child{break-after:auto;}
+  /* 0.12: Ödev Takip Formu — sayfa ayarı (A5, kenarsız) yazdırma süresince JS ile eklenir */
+  body.formYazdiriliyor #yazdirmaAlani .otSayfa{margin:0 !important;box-shadow:none;transform:none !important;break-after:page;page-break-after:always;}
+  body.formYazdiriliyor #yazdirmaAlani .otSayfa:last-child{break-after:auto;page-break-after:auto;}
 }
 
 @media (min-width:700px){ body{padding-top:28px;} }

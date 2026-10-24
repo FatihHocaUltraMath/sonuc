@@ -1,4 +1,6 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.11 · Online Ders yoklaması ve Defter Takibi:
+/* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.12 · Raporlar'a Ödev Takip Formu (A5): öğrencinin adı basılı,
+ *   ödev satırları boş; 1–20 ön kapak, 21–40 arka kapak; şablon ayrı dosyada (odev-formu.js), gerekince yüklenir)
+ * sürüm 0.11 · Online Ders yoklaması ve Defter Takibi:
  *   ödevle aynı düzende kayıt → durum işaretle → kaydet; defterde isteğe bağlı etiketler; Öğrenci Görünümü, PDF, Excel)
  * sürüm 0.10.1 · "LGS Hazırlık" şubesi takipte görünmez
  * sürüm 0.10 · Mufredat "İçerik" maddeleri seçilir: ödevde ve
@@ -19,7 +21,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.11";
+const SURUM = "0.12";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -203,7 +205,7 @@ async function api(islem, ek, anahtar) {
 function anahtarReddi(e) { return e instanceof SunucuHatasi && (e.kod === "anahtar" || e.kod === "anahtar_yok"); }
 
 // ---------- ekranlar ve gezinme ----------
-const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli", "gozlem", "ogrListe", "ogrenci", "rapor", "raporPdf", "raporExcel",
+const EKRANLAR = ["giris", "ana", "bolum", "odevListe", "odevForm", "kontrol", "ozet", "veli", "gozlem", "ogrListe", "ogrenci", "rapor", "raporPdf", "raporExcel", "raporForm",
   "lListe", "lForm", "yoklama", "lOzet"];
 
 function ekranGoster(ad) {
@@ -261,6 +263,7 @@ function ciz() {
   else if (ust.e === "rapor") raporCiz();
   else if (ust.e === "raporPdf") raporPdfCiz();
   else if (ust.e === "raporExcel") raporExcelCiz();
+  else if (ust.e === "raporForm") tfCiz();
   else if (ust.e === "lListe") { durum.lTur = ust.tur; lListeCiz(); }
   else if (ust.e === "lForm") lFormCiz();
   else if (ust.e === "yoklama") yCiz(true);
@@ -2182,6 +2185,132 @@ function pdfOlustur() {
   setTimeout(() => window.print(), 50);
 }
 
+// ----- 0.12: Ödev Takip Formu (A5) -----
+// Öğrencinin adı ve şubesi basılı, ödev satırları boş form; öğrenci ödevini ve kontrol tarihini kendisi yazar.
+// Nunito yazı tipi, logo ve şablon odev-formu.js'tedir; uygulamanın açılışını ağırlaştırmasın diye yalnızca bu ekranda yüklenir.
+const TF_ADRESI = "odev-formu.js?v=0.12";
+let tfYuklemesi = null;
+
+/** odev-formu.js'i bir kez yükler, stilini ekler. */
+function tfYukle() {
+  if (window.ODEV_FORMU) return Promise.resolve();
+  if (!tfYuklemesi) tfYuklemesi = new Promise((tamam, hata) => {
+    const s = document.createElement("script");
+    s.src = TF_ADRESI;
+    s.onload = () => {
+      if (!window.ODEV_FORMU) { tfYuklemesi = null; hata(new Error("şablon yok")); return; }
+      const st = document.createElement("style");
+      st.id = "odevFormuStili"; st.textContent = window.ODEV_FORMU.CSS;
+      document.head.appendChild(st);
+      tamam();
+    };
+    s.onerror = () => { tfYuklemesi = null; s.remove(); hata(new Error("yüklenemedi")); };
+    document.head.appendChild(s);
+  });
+  return tfYuklemesi;
+}
+
+/** Yazdırmadan önce yazı tipleri hazır olsun (yoksa ilk sayfa yedek yazı tipiyle basılabilir). */
+function tfFontlari() {
+  if (!document.fonts || !document.fonts.load) return Promise.resolve();
+  return Promise.all(["600 10px OdNunito", "800 10px OdNunito", "900 10px OdNunito"]
+    .map(f => document.fonts.load(f, "AaÇçĞğİıÖöŞşÜü").catch(() => {})));
+}
+
+function tfAc() {
+  if (durum.tfBas !== 20) durum.tfBas = 0;
+  $("tfAra").value = "";
+  tfSecenekleri();
+  const ogr = raporOgrencileri();
+  if (durum.ogrKod && ogr.some(s => s.kod === durum.ogrKod)) $("tfOgr").value = durum.ogrKod;
+  ileri({ e: "raporForm" });
+}
+
+/** Öğrenci listesi: "Tüm Sınıf" en üstte (form çoğunlukla sınıfça basılır); "Öğrenci Ara" yazılanla eşleşenleri bırakır. */
+function tfSecenekleri() {
+  const sec = $("tfOgr"), once = sec.value;
+  const q = aramaMetni($("tfAra").value);
+  const ogr = raporOgrencileri();
+  sec.innerHTML = "";
+  const hepsi = el("option", "", "Tüm Sınıf (her öğrenci ayrı sayfa · " + ogr.length + " sayfa)"); hepsi.value = "*";
+  sec.appendChild(hepsi);
+  ogr.filter(s => !q || aramaMetni(s.ad).indexOf(q) !== -1)
+    .forEach(s => { const o = el("option", "", s.ad); o.value = s.kod; sec.appendChild(o); });
+  if (q && sec.options.length > 1) sec.selectedIndex = 1;
+  else if (Array.from(sec.options).some(o => o.value === once)) sec.value = once;
+  else sec.selectedIndex = 0;
+  return sec.value !== once;
+}
+
+function tfOgrencileri() {
+  const secim = $("tfOgr").value;
+  return raporOgrencileri().filter(s => secim === "*" || s.kod === secim);
+}
+
+function tfSayfalari(ogr) {
+  return ogr.map(s => window.ODEV_FORMU.sayfaHtml({ sinif: durum.seciliSinif, ad: s.ad, bas: durum.tfBas })).join("");
+}
+
+async function tfCiz() {
+  ekranGoster("raporForm");
+  const ikinci = durum.tfBas === 20;
+  $("tfAlt").textContent = durum.seciliSinif + " · " + (ikinci ? "21–40 · arka kapak" : "1–20 · ön kapak");
+  $("tfSayfa1").classList.toggle("secili", !ikinci); $("tfSayfa1").setAttribute("aria-pressed", ikinci ? "false" : "true");
+  $("tfSayfa2").classList.toggle("secili", ikinci); $("tfSayfa2").setAttribute("aria-pressed", ikinci ? "true" : "false");
+  const kutu = $("a5Icerik"), bilgi = $("tfBilgi");
+  const ogr = tfOgrencileri();
+  bilgi.hidden = true;
+  if (!ogr.length) { kutu.innerHTML = '<p class="ipucu merkez">Bu sınıfta öğrenci yok.</p>'; return; }
+  if (!window.ODEV_FORMU) {
+    kutu.innerHTML = '<p class="ipucu merkez">Form hazırlanıyor…</p>';
+    try { await tfYukle(); }
+    catch (e) { kutu.innerHTML = '<p class="ipucu merkez">Form dosyası yüklenemedi. İnternet bağlantısını kontrol edip bu ekranı yeniden açın.</p>'; return; }
+    if (!ekranAcik("raporForm")) return;
+  }
+  // Tüm sınıfta sayfalar yalnızca adla ayrılır: önizlemede ilk sayfa yeter, yazdırırken hepsi basılır.
+  kutu.innerHTML = tfSayfalari(ogr.slice(0, 1));
+  if (ogr.length > 1) { bilgi.hidden = false; bilgi.textContent = "İlk öğrencinin sayfası gösteriliyor. Yazdırınca " + ogr.length + " sayfanın her birinde ilgili öğrencinin adı yazar."; }
+  tfOlcekle();
+  tfFontlari().then(() => { if (ekranAcik("raporForm")) tfOlcekle(); });
+}
+
+function tfOlcekle() {
+  const kutu = $("a5Icerik"), ilk = kutu.querySelector(".otSayfa");
+  if (!ilk) return;
+  kutu.querySelectorAll(".otSayfa").forEach(a => { a.style.transform = ""; a.style.marginBottom = ""; a.style.marginRight = ""; });
+  const tam = ilk.offsetWidth;
+  const o = Math.min(1, ($("a5Kutu").clientWidth - 24) / tam);
+  kutu.querySelectorAll(".otSayfa").forEach(a => {
+    a.style.transform = "scale(" + o + ")";
+    a.style.marginBottom = (-(1 - o) * a.offsetHeight + 14) + "px";
+    a.style.marginRight = (-(1 - o) * tam) + "px";
+  });
+}
+
+async function tfYazdir() {
+  const ogr = tfOgrencileri();
+  if (!ogr.length) { bildirimGoster("Formda gösterilecek öğrenci yok."); return; }
+  try { await tfYukle(); }
+  catch (e) { bildirimGoster("Form dosyası yüklenemedi. İnternet bağlantısını kontrol edin."); return; }
+  await tfFontlari();
+  const alan = $("yazdirmaAlani");
+  alan.innerHTML = tfSayfalari(ogr);
+  // Raporun A4 sayfa ayarı yerine yazdırma süresince A5 dikey ve kenarsız; bitince eski hâline döner.
+  const sayfaStili = document.createElement("style");
+  sayfaStili.textContent = "@page{size:A5 portrait;margin:0;}";
+  document.head.appendChild(sayfaStili);
+  document.body.classList.add("formYazdiriliyor");
+  const eskiBaslik = document.title;
+  document.title = dosyaAdi(durum.seciliSinif + "_" + (ogr.length === 1 ? ogr[0].ad : "Tum_Sinif") + "_Odev_Takip_Formu_" + (durum.tfBas === 20 ? "21-40" : "1-20"));
+  const geriAl = () => {
+    document.title = eskiBaslik; alan.innerHTML = ""; sayfaStili.remove();
+    document.body.classList.remove("formYazdiriliyor");
+    window.removeEventListener("afterprint", geriAl);
+  };
+  window.addEventListener("afterprint", geriAl);
+  setTimeout(() => window.print(), 50);
+}
+
 /** Dosya adına uygun, Türkçe harfleri sadeleştirilmiş ad. */
 function dosyaAdi(ad) {
   const harita = { ç: "c", Ç: "C", ğ: "g", Ğ: "G", ı: "i", İ: "I", ö: "o", Ö: "O", ş: "s", Ş: "S", ü: "u", Ü: "U", "–": "-" };
@@ -3257,6 +3386,14 @@ function baslat() {
   $("raporYil").addEventListener("click", () => { durum.raporKapsam = "yil"; raporCiz(); });
   $("pdfDugme").addEventListener("click", pdfAc);
   $("excelDugme").addEventListener("click", excelAc);
+  // 0.12: Ödev Takip Formu
+  $("tfDugme").addEventListener("click", tfAc);
+  $("tfSayfa1").addEventListener("click", () => { durum.tfBas = 0; tfCiz(); });
+  $("tfSayfa2").addEventListener("click", () => { durum.tfBas = 20; tfCiz(); });
+  $("tfAra").addEventListener("input", () => { if (tfSecenekleri()) tfCiz(); });
+  $("tfOgr").addEventListener("change", tfCiz);
+  $("tfYazdirDugme").addEventListener("click", tfYazdir);
+  window.addEventListener("resize", () => { if (ekranAcik("raporForm")) tfOlcekle(); });
   ["pOgr", "pAkademik", "pDikkat", "pOdevListe", "pOnline", "pDefter"].forEach(id => $(id).addEventListener("change", raporPdfCiz));
   // 0.9: ders içi gözlem tarihleri — üç yerde aynı ayar (Öğrenci Görünümü, PDF, Excel)
   $("pTarih").addEventListener("change", () => { gozlemTarihiAyarla($("pTarih").checked); raporPdfCiz(); });
