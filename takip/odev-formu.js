@@ -1,4 +1,4 @@
-/* FatihHoca | UltraMat — Öğrenci Takip · Ödev Takip Formu (sürüm 0.12)
+/* FatihHoca | UltraMat — Öğrenci Takip · Ödev Takip Formu (sürüm 0.12.1)
  * Yalnızca "Ödev Takip Formu" ekranı açılınca yüklenir (uygulamanın açılışını ağırlaştırmasın diye):
  * Nunito yazı tipi, logo ve A5 form şablonu. Biçim karne-uret'teki Veli Bilgi Formu ile aynıdır.
  * Öğrencinin adı ve şubesi basılı gelir; ödev satırlarını öğrenci kendisi doldurur.
@@ -15,8 +15,9 @@
 /* Ödev Takip Formu — A5 dikey (148 × 210 mm). Veli Bilgi Formu (karne-uret) ile aynı biçim. */
 .otSayfa{width:148mm;height:210mm;box-sizing:border-box;padding:9mm 10mm 8mm;font-family:"OdNunito",sans-serif;color:#111827;position:relative;background:#fff;overflow:hidden;
   -webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.otSayfa *{font-family:"OdNunito",sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.otBant{position:absolute;width:15mm;height:15mm;background:linear-gradient(135deg,#E5E7EB 50%,transparent 50%);}
+/* Takip'in genel "box-sizing:border-box" kuralı satırları kısaltıp düzeni kaydırmasın: ölçüler Veli Bilgi Formu'ndaki gibi */
+.otSayfa *{box-sizing:content-box;font-family:"OdNunito",sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.otBant{position:absolute;width:15mm;height:15mm;background:#E5E7EB;clip-path:polygon(0 0,100% 0,0 100%);}
 .otBant.sol{left:0;top:0;}
 .otBant.sa{right:0;top:0;transform:scaleX(-1);}
 .otBant.asol{left:0;bottom:0;transform:scaleY(-1);}
@@ -44,7 +45,7 @@
 .otTablo td.no{font-weight:900;text-align:center;color:#111827;}
 .otTablo td.kutu{text-align:center;}
 .otTablo td.kutu span{display:inline-block;box-sizing:content-box;width:3.4mm;height:3.4mm;border:.9pt solid #111827;border-radius:.8mm;background:#fff;vertical-align:middle;}
-.otSoz{margin:5.2mm 6mm 0;text-align:center;font-size:8pt;font-weight:800;color:#3B0764;line-height:1.45;}
+.otSoz{margin:4.95mm 6mm 0;text-align:center;font-size:8pt;font-weight:800;color:#3B0764;line-height:1.45;}
 .otAlt{position:absolute;left:10mm;right:10mm;bottom:8mm;display:flex;justify-content:space-between;align-items:center;gap:6mm;border-top:.6pt solid #9CA3AF;padding-top:2.2mm;}
 .otNot{flex:1;font-size:6.5pt;font-weight:600;color:#374151;line-height:1.4;}
 .otYer{font-weight:800;color:#3B0764;}
@@ -72,7 +73,7 @@
       '<div class="otBilgi"><div class="otAlan"><span class="otEtiket">Sınıf / Şube</span><span class="otDeger">' + esc(o.sinif) + '</span></div>' +
       '<div class="otAlan genis"><span class="otEtiket">Öğrenci Adı Soyadı</span><span class="otDeger' + adSinif + '">' + esc(ad) + '</span></div>' +
       '<div class="otAlan"><span class="otEtiket">Ders</span><span class="otDeger">Matematik</span></div></div>' +
-      '<table class="otTablo"><colgroup><col style="width:10mm"><col><col style="width:36mm"><col style="width:16mm"></colgroup>' +
+      '<table class="otTablo"><colgroup><col style="width:10mm"><col><col style="width:39.6mm"><col style="width:16mm"></colgroup>' +
       '<thead><tr><th class="no">Sıra</th><th>Ödev</th><th class="ort">Ödev Kontrol Tarihi</th><th class="ort">Kontrol</th></tr></thead><tbody>' + satirlar + '</tbody></table>' +
       '<div class="otSoz">' + s.soz + '</div>' +
       '<div class="otAlt"><span class="otNot"><span class="otYer">Matematik ders kitabının ' + s.kapak + ' kapağının içine yapıştır.</span><br>' +
@@ -80,5 +81,5 @@
       '<span class="otImza"><b>Fatih KARYAĞDI</b><small>Matematik Öğretmeni</small></span></div></div>';
   }
 
-  window.ODEV_FORMU = { SURUM: "0.12", SATIR, CSS, sayfaHtml };
+  window.ODEV_FORMU = { SURUM: "0.12.1", SATIR, CSS, sayfaHtml };
 })();

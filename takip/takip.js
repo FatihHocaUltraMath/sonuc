@@ -1,5 +1,6 @@
 /* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.12 · Raporlar'a Ödev Takip Formu (A5): öğrencinin adı basılı,
  *   ödev satırları boş; 1–20 ön kapak, 21–40 arka kapak; şablon ayrı dosyada (odev-formu.js), gerekince yüklenir)
+ * sürüm 0.12.1 · Ödev Takip Formu: satır yükseklikleri uygulamanın genel stilinden etkilenmez, tarih sütunu 39,6 mm
  * sürüm 0.11 · Online Ders yoklaması ve Defter Takibi:
  *   ödevle aynı düzende kayıt → durum işaretle → kaydet; defterde isteğe bağlı etiketler; Öğrenci Görünümü, PDF, Excel)
  * sürüm 0.10.1 · "LGS Hazırlık" şubesi takipte görünmez
@@ -21,7 +22,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.12";
+const SURUM = "0.12.1";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -2188,7 +2189,7 @@ function pdfOlustur() {
 // ----- 0.12: Ödev Takip Formu (A5) -----
 // Öğrencinin adı ve şubesi basılı, ödev satırları boş form; öğrenci ödevini ve kontrol tarihini kendisi yazar.
 // Nunito yazı tipi, logo ve şablon odev-formu.js'tedir; uygulamanın açılışını ağırlaştırmasın diye yalnızca bu ekranda yüklenir.
-const TF_ADRESI = "odev-formu.js?v=0.12";
+const TF_ADRESI = "odev-formu.js?v=0.12.1";
 let tfYuklemesi = null;
 
 /** odev-formu.js'i bir kez yükler, stilini ekler. */
