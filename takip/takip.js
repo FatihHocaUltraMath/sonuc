@@ -1,5 +1,8 @@
 /* FatihHoca | UltraMat — Öğrenci Takip · uygulama (sürüm 0.12 · Raporlar'a Ödev Takip Formu (A5): öğrencinin adı basılı,
  *   ödev satırları boş; 1–20 ön kapak, 21–40 arka kapak; şablon ayrı dosyada (odev-formu.js), gerekince yüklenir)
+ * sürüm 0.12.3 · Veli mesajı gecikince birikmiş ödevlerin hepsini gösterir: o veliye en son gönderilen bloktan sonraki
+ *   tüm kontrol edilmiş ödevler tek mesajda listelenir (zamanında gönderilince yine 4 ödev). Gözlemler aynı aralıktan
+ *   alınır; liste dönemin tamamıysa "Dönem geneli" satırı yazılmaz. Kayıt son blok numarasıyla, listelenen tüm ödevlerle.
  * sürüm 0.12.2 · Veli mesajı Öğretmen Paneli (karne-uret) kurallarıyla gönderilir: wa.me yerine whatsapp://send
  *   (masaüstü uygulaması, sayfa yerinde kalır) ya da tek WhatsApp Web sekmesi; tercih panelle ortak. Tek düğme: sohbet
  *   açılır + "veli bilgilendirildi" kaydı; kart "✓ Gönderildi (Tekrar Gönder)" olarak kalır. Hatalı telefon kilidi,
@@ -27,7 +30,7 @@
 // ===== AYAR: Apps Script "Web uygulaması" adresi (…/exec ile biter) =====
 const API_URL = "https://script.google.com/macros/s/AKfycbw-WAIeNfMbb6nSp_Q0eraU6WG7ii20c1g6vhT-x91N_DqCuEkpuv5Caouzc1g-q-kZ1Q/exec";
 
-const SURUM = "0.12.2";
+const SURUM = "0.12.3";
 const DEPO = {
   anahtar: "fhTakip_anahtar", onbellek: "fhTakip_baslangic", kuyruk: "fhTakip_kuyruk", sonSinif: "fhTakip_sonSinif",
   odevler: "fhTakip_odevler", taslak: "fhTakip_taslak", sonKonu: "fhTakip_sonKonu",
@@ -1173,6 +1176,15 @@ function veliSirasi(classId) {
   return Object.assign(b, { bekleyen: aktif.filter(s => !gidenKod.has(s.kod)), giden: aktif.filter(s => gidenKod.has(s.kod)) });
 }
 
+/** 0.12.3 — Bu veliye gidecek mesajın ödevleri: bu dönem o veliye en son gönderilen bloktan (bu bloktan önceki)
+ *  sonra kontrol edilen ödevlerin hepsi, son tamamlanan bloğun sonuna kadar. Zamanında gönderilince 4 ödev;
+ *  gecikince birikenlerin hepsi. Gönderilmiş veliye dönülünce de aynı aralık yeniden kurulur. */
+function veliAraligi(b, kod) {
+  const onceki = (b.v.veli || []).filter(x => x.kod === kod && x.donemNo === b.donemNo && x.blokNo < b.tamam)
+    .reduce((m, x) => Math.max(m, x.blokNo), 0);
+  return { onceki, odevler: b.kontrollu.slice(onceki * 4, b.tamam * 4) };
+}
+
 function ayAraligi(t1, t2) {
   const a = new Date(t1 + "T12:00:00"), b = new Date(t2 + "T12:00:00");
   const ay = d => d.toLocaleDateString("tr-TR", { month: "long" });
@@ -1183,14 +1195,14 @@ function ayAraligi(t1, t2) {
 const kisaTarih = t => new Date(t + "T12:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
 
 function veliMesaji(s, b) {
-  const v = b.v, blok = b.blok;
+  const v = b.v, ara = veliAraligi(b, s.kod), blok = ara.odevler;
   const bid = new Set(blok.map(o => o.id));
   // trim(): WhatsApp'ta kalın yazı (*...*) yıldızın yanında boşluk varsa çalışmaz (karne-uret ile aynı kural).
   const ad = String(s.ad || "").trim(), hitap = String(s.hitap || "").trim();
   let m = (hitap ? "Merhaba " + hitap + "," : "Merhaba,") + "\n\n*" + ad + " · Matematik ödev takibi*\n_" +
-    ayAraligi(blok[0].tarih, blok[blok.length - 1].tarih) + " arasında verilen 4 ödev_\n\n";
+    ayAraligi(blok[0].tarih, blok[blok.length - 1].tarih) + " arasında verilen " + blok.length + " ödev_\n\n";
   m += blok.map(o => { const d = (v.kontrol[o.id] || {})[s.kod]; return (d ? DURUM[d].emoji : BOS_KARE_EMOJI) + " " + o.ad + " (" + kisaTarih(o.tarih) + "): " + (d ? DURUM[d].ad : "kontrol edilmedi"); }).join("\n");
-  if (b.tamam > 1) {
+  if (ara.onceki > 0) {   // liste dönemin tamamıysa dönem geneli aynı bilgiyi tekrar ederdi
     const donem = b.kontrollu.slice(0, b.tamam * 4);
     const c = { T: 0, E: 0, Y: 0, M: 0 }; let yok = 0;
     donem.forEach(o => { const d = (v.kontrol[o.id] || {})[s.kod]; if (d) c[d]++; else yok++; });
@@ -1212,10 +1224,10 @@ function veliMesaji(s, b) {
     });
   }
   // Derste: yalnızca OLUMLU ders içi gözlemler (dikkat/akademik/düzeldi veliye gitmez).
-  // Aralık: önceki bloğun son ödev tarihinden sonra → bu bloğun son ödev tarihine kadar (bloklar çakışmaz).
+  // Aralık: bu veliye gönderilen önceki bloğun son ödev tarihinden sonra → listedeki son ödev tarihine kadar (çakışmaz).
   const ders = dersVerisi(b.classId);
   if (!ders.yok) {
-    const bas = b.tamam > 1 ? b.kontrollu[(b.tamam - 1) * 4 - 1].tarih : "";
+    const bas = ara.onceki > 0 ? b.kontrollu[ara.onceki * 4 - 1].tarih : "";
     const bit = blok[blok.length - 1].tarih;
     const sayi = {};
     ders.gozlemler.filter(g => g.kod === s.kod && g.kategori === "olumlu" && g.tarih > bas && g.tarih <= bit &&
@@ -1310,7 +1322,6 @@ function veliCiz() {
   icerik.innerHTML = "";
   $("vIlerleme").innerHTML = "";
   if (!b.tamam) { $("vAlt").textContent = ""; icerik.appendChild(el("div", "kart bos", "Bu dönem henüz 4 ödev kontrol edilmedi.")); return; }
-  $("vAlt").textContent = b.tamam + ". blok · " + ayAraligi(b.blok[0].tarih, b.blok[3].tarih) + " arası 4 ödev";
   // Gezinme sınıf listesindeki sırayla (Ogrenciler): gönderilmiş ya da bekleyen her veli açılabilir. Gönderilmiş veli
   // "✓ Mesaj Gönderildi (Tekrar Gönder)" kartıyla açılır (karne-uret'teki ilk mesaj düğmesi gibi).
   const sinif = sinifBul(classId);
@@ -1318,6 +1329,8 @@ function veliCiz() {
   const gitti = kod => b.giden.some(g => g.kod === kod);
   let s = durum.veliBitti ? null : aktif.find(x => x.kod === durum.veliKod) || b.bekleyen[0] || null;
   durum.veliKod = s ? s.kod : null;
+  const ara = s ? veliAraligi(b, s.kod).odevler : b.blok;
+  $("vAlt").textContent = b.tamam + ". blok · " + ayAraligi(ara[0].tarih, ara[ara.length - 1].tarih) + " arası " + ara.length + " ödev";
   aktif.forEach(x => {
     const c = dugme("cizgi" + (s && s.kod === x.kod ? " simdi" : gitti(x.kod) ? " gitti" : ""), null, () => veliAc(x.kod));
     c.title = x.ad + (gitti(x.kod) ? " · gönderildi" : "");
@@ -1417,7 +1430,7 @@ function veliGonderildi(s, b, mesaj, metin, ilerle, mKey) {
   const kayitId = yeniKimlik();
   if (!kuyrugaEkle("veliBilgi", {
     kayitId, classId: durum.seciliSinif, kod: s.kod, ad: s.ad, donemNo: b.donemNo, blokNo: b.tamam,
-    odevIdler: b.blok.map(o => o.id), mesaj
+    odevIdler: veliAraligi(b, s.kod).odevler.map(o => o.id), mesaj
   })) return;
   durum.veliMesajlar[mKey] = mesaj;
   bildirimGoster((metin ? metin + " " : "") + "“Veli bilgilendirildi” olarak kaydedildi.");
