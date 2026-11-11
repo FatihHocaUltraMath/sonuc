@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#FFF7ED">
+<title>FatihHoca | UltraMat Yörünge</title>
+<!--
+  UltraMat Yörünge — öğrenci sayfası (Aşama 1: giriş, setler, video adımı, tek oturum)
+  Sunucu: yorunge.gs 0.3 (UltraMat_Yorunge tablosuna bağlı Apps Script, web uygulaması).
+  İstekler sonuç sistemindeki gibi POST + düz metin JSON gövdesiyle gider (CORS ön kontrolü yok).
+  Keşif, Test ve Çalışma kağıdı adımları Aşama 2'de bu sayfaya eklenecek.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --zemin:#FFF7ED; --kart:#FFFFFF; --cizgi:#F1E4D3; --cizgi2:#E2D4C2;
+  --koyu:#3B0764; --metin:#334155; --gri:#475569; --soluk:#64748B;
+  --turuncu:#C2410C; --turuncuK:#9A3412; --marka:#EA580C; --turuncuAcik:#FFEDD5;
+  --mor:#6D28D9; --morAcik:#EDE9FE; --morYazi:#5B21B6;
+  --kilitZemin:#F1F5F9; --kilitCizgi:#94A3B8;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{background:var(--zemin)}
+body{margin:0;min-height:100vh;background:var(--zemin);color:var(--metin);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-text-size-adjust:100%}
+button,input{font-family:inherit}
+.kap{max-width:460px;margin:0 auto;padding:18px 18px 28px}
+.gizli{display:none!important}
+.ekran{display:flex;flex-direction:column;gap:18px}
+
+/* Marka */
+.logoBuyuk{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding-top:26px}
+.markaSatiri{font-size:15px;font-weight:800;color:var(--koyu);letter-spacing:-.2px}
+.markaSatiri span{color:var(--marka)}
+.yorungeBaslik{margin:0;font-size:44px;line-height:1;font-weight:900;letter-spacing:-1.5px;color:var(--koyu)}
+.slogan{font-size:14px;font-weight:700;letter-spacing:2px;color:var(--gri)}
+
+/* Kartlar */
+.kart{background:var(--kart);border-radius:24px;padding:24px 20px 22px;box-shadow:0 10px 30px rgba(59,7,100,.08);display:flex;flex-direction:column;gap:14px}
+.kart h2{margin:0;font-size:22px;font-weight:800;color:var(--koyu)}
+.aciklama{margin:0;font-size:14.5px;line-height:1.5;color:var(--gri)}
+.alan{display:flex;flex-direction:column;gap:6px}
+.alan label{font-size:14px;font-weight:700;color:var(--koyu)}
+.alan input{height:50px;width:100%;border:1.5px solid #CBD5E1;border-radius:14px;padding:0 14px;font-size:16px;color:var(--metin);background:#fff}
+.alan input:focus{outline:3px solid #FED7AA;border-color:var(--turuncu)}
+.kodKutu{position:relative}
+.kodKutu input{padding-right:52px;font-size:18px;letter-spacing:4px}
+.kodGoster{position:absolute;right:3px;top:3px;width:44px;height:44px;border:0;background:transparent;color:var(--gri);display:flex;align-items:center;justify-content:center;cursor:pointer;border-radius:12px}
+.kodGoster .capraz{display:block}
+.kodGoster[aria-pressed="true"] .capraz{display:none}
+.anaDugme{height:54px;border:0;border-radius:16px;background:var(--turuncu);color:#fff;font-size:16px;font-weight:800;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;width:100%;text-decoration:none}
+.anaDugme:disabled{opacity:.75;cursor:default}
+.dugme{height:50px;border-radius:14px;border:0;background:var(--turuncu);color:#fff;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;width:100%}
+.dugme.ikincil{background:#fff;border:1.5px solid var(--cizgi2);color:var(--koyu);font-weight:700}
+.donen{width:18px;height:18px;border:3px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:don .8s linear infinite}
+@keyframes don{to{transform:rotate(360deg)}}
+.hataKutusu{font-size:14px;line-height:1.5;color:#991B1B;background:#FEE2E2;border-radius:12px;padding:10px 12px}
+.bilgiKutusu{font-size:14px;line-height:1.5;color:var(--turuncuK);background:var(--turuncuAcik);border-radius:12px;padding:10px 12px}
+#girisHata:empty,#setlerHata:empty,#vHata:empty,#vBittiIpucu:empty{display:none}
+.altNot{margin:0;font-size:13px;line-height:1.5;color:var(--gri);text-align:center}
+
+/* Üst çubuk */
+.ustCubuk{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.kucukLogo{display:flex;align-items:center;gap:8px}
+.kucukLogo .k1{font-size:11px;font-weight:800;color:var(--koyu)}
+.kucukLogo .k1 span{color:var(--turuncu)}
+.kucukLogo .k2{font-size:19px;font-weight:900;color:var(--koyu);letter-spacing:-.5px;line-height:1.1}
+.cikisDugme{height:44px;padding:0 12px;border-radius:12px;border:1.5px solid var(--cizgi2);background:#fff;color:var(--gri);font-size:13px;font-weight:700;display:flex;align-items:center;gap:6px;cursor:pointer}
+.geriDugme{align-self:flex-start;height:44px;padding:0 12px 0 6px;border-radius:12px;border:0;background:transparent;color:var(--koyu);font-size:14px;font-weight:700;display:flex;align-items:center;gap:4px;cursor:pointer}
+
+/* Selam kartı */
+.selam{background:var(--koyu);color:#fff;border-radius:22px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:12px}
+.selam .ust{font-size:13px;font-weight:600;color:#E9D5FF}
+.selam .ad{font-size:24px;font-weight:800;letter-spacing:-.4px;overflow-wrap:anywhere}
+.ozetSatiri{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.noktalar{display:flex;gap:6px;flex-wrap:wrap}
+.nokta{width:14px;height:14px;border-radius:50%;border:2px solid #A78BFA}
+.nokta.basladi{border-color:#FDBA74}
+.nokta.bitti{background:#FDBA74;border-color:#FDBA74}
+.ozetMetni{font-size:14px;font-weight:600}
+
+.temaBaslik{font-size:12px;font-weight:800;letter-spacing:1.5px;color:var(--gri);margin:6px 0 -6px}
+
+/* Set kartı */
+.set{background:#fff;border-radius:22px;padding:18px 16px 16px;border:1px solid var(--cizgi);box-shadow:0 6px 20px rgba(59,7,100,.06);display:flex;flex-direction:column;gap:14px}
+.set.devam{border:2px solid #FDBA74}
+.setUst{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.setKod{font-size:12px;font-weight:700;color:var(--gri)}
+.setAd{margin:4px 0 0;font-size:17px;line-height:1.3;font-weight:800;color:var(--koyu);overflow-wrap:anywhere}
+.rozet{flex-shrink:0;font-size:12px;font-weight:800;border-radius:999px;padding:5px 10px;display:flex;align-items:center;gap:4px}
+.rozet.tamam{color:var(--morYazi);background:var(--morAcik)}
+.rozet.yeni{color:var(--turuncuK);background:var(--turuncuAcik)}
+.serit{position:relative}
+.seritCizgi{position:absolute;left:12.5%;right:12.5%;top:21px;height:3px;background:#E2E8F0;border-radius:2px}
+.seritCizgi i{display:block;height:3px;background:var(--mor);border-radius:2px}
+.adimlar{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+.adim{border:0;background:transparent;padding:0;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;color:inherit}
+.adim:focus-visible{outline:3px solid #FED7AA;border-radius:12px}
+.halka{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.adim.tamam .halka{background:var(--mor);color:#fff}
+.adim.acik .halka{background:var(--zemin);border:3px solid var(--turuncu);color:var(--turuncu)}
+.adim.kilitli .halka{background:var(--kilitZemin);border:2px dashed var(--kilitCizgi);color:var(--soluk)}
+.adimAd{font-size:12.5px;line-height:1.2;font-weight:700;color:var(--koyu);text-align:center}
+.adim.kilitli .adimAd{color:var(--soluk)}
+.adimRol{font-size:10.5px;font-weight:800;letter-spacing:.8px;color:var(--soluk)}
+.ipucu{font-size:13.5px;line-height:1.4;color:var(--gri);background:var(--kilitZemin);border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:center}
+.ipucu svg{flex-shrink:0}
+.setAlt{font-size:13.5px;line-height:1.45;color:var(--gri)}
+.bos{background:#fff;border-radius:22px;padding:22px 18px;border:1px solid var(--cizgi);text-align:center;font-size:14.5px;line-height:1.55;color:var(--gri)}
+
+/* Video */
+.vBaslik{display:flex;flex-direction:column;gap:4px}
+.ust1{font-size:12px;font-weight:800;letter-spacing:1.2px;color:var(--turuncuK)}
+.vBaslik h1{margin:0;font-size:22px;line-height:1.25;font-weight:800;color:var(--koyu);overflow-wrap:anywhere}
+.vBaslik .alt{font-size:13px;font-weight:600;color:var(--gri)}
+.oynatici{background:#1E1033;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.oynatici:fullscreen{border-radius:0;justify-content:center;background:#000}
+.ekranAlan{position:relative;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center}
+.ekranAlan video{width:100%;height:100%;display:block;background:#000}
+.oynatici:fullscreen .ekranAlan{flex:1;aspect-ratio:auto}
+.buyukOynat{position:absolute;width:64px;height:64px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:var(--koyu);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.yukleniyor{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#E9D5FF;font-size:14px;font-weight:600;gap:10px;background:#1E1033}
+.kontrol{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;background:#2A1748}
+.cubuk{position:relative;height:28px;cursor:pointer;touch-action:none;outline:none}
+.cubuk:focus-visible{outline:3px solid #FDBA74;border-radius:6px}
+.cubuk .iz{position:absolute;left:0;right:0;top:11px;height:6px;border-radius:3px;background:repeating-linear-gradient(135deg,#4C3A66 0 4px,#3A2A52 4px 8px)}
+.cubuk .izlenen{position:absolute;left:0;top:11px;height:6px;border-radius:3px;background:#7C5AA6}
+.cubuk .oynanan{position:absolute;left:0;top:11px;height:6px;border-radius:3px;background:#FB923C}
+.cubuk .tutamak{position:absolute;top:5px;width:18px;height:18px;margin-left:-9px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px rgba(251,146,60,.45)}
+.cubuk .sinir{position:absolute;top:2px;width:2px;height:24px;margin-left:-1px;background:#E9D5FF}
+.dugmeler{display:flex;align-items:center;gap:6px;color:#fff}
+.kDugme{min-width:44px;height:44px;padding:0 8px;white-space:nowrap;flex-shrink:0;border-radius:12px;border:0;background:#3B2560;color:#fff;display:flex;align-items:center;justify-content:center;gap:4px;font-size:13px;font-weight:700;cursor:pointer}
+.sure{font-size:13.5px;font-weight:600;font-variant-numeric:tabular-nums;margin-left:4px;white-space:nowrap}
+.sag{margin-left:auto}
+.lejant{background:#fff;border-radius:18px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--cizgi)}
+.lejant div{display:flex;gap:10px;align-items:center;font-size:13.5px;line-height:1.4}
+.lejant .r1{width:22px;height:6px;border-radius:3px;background:#FB923C;flex-shrink:0}
+.lejant .r2{width:22px;height:6px;border-radius:3px;background:repeating-linear-gradient(135deg,#94A3B8 0 3px,#CBD5E1 3px 6px);flex-shrink:0}
+.lejant svg{flex-shrink:0}
+.seritKart{background:#fff;border-radius:18px;padding:16px 14px;border:1px solid var(--cizgi)}
+.bittiKart{background:var(--koyu);border-radius:22px;padding:26px 20px 22px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.bittiKart h2{margin:0;font-size:22px;font-weight:800}
+.bittiKart p{margin:0;font-size:14.5px;line-height:1.5;color:#E9D5FF}
+.bittiKart b{color:#fff}
+.dugmeGrubu{display:flex;flex-direction:column;gap:10px}
+
+/* Başka cihaz */
+.ortala{min-height:calc(100vh - 80px);display:flex;flex-direction:column;justify-content:center}
+.ortala .kart{align-items:center;text-align:center}
+</style>
+</head>
+<body>
+<main class="kap">
+
+<!-- ================= GİRİŞ ================= -->
+<section id="girisEkrani" class="ekran gizli" aria-labelledby="girisBaslik">
+  <div class="logoBuyuk">
+    <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden="true" fill="none">
+      <ellipse cx="38" cy="38" rx="34" ry="13" stroke="#3B0764" stroke-width="2.2" transform="rotate(-24 38 38)"/>
+      <circle cx="38" cy="38" r="15" fill="#3B0764"/><circle cx="68" cy="25" r="5.5" fill="#EA580C"/>
+    </svg>
+    <div class="markaSatiri">FatihHoca | <span>UltraMat</span></div>
+    <div class="yorungeBaslik">Yörünge</div>
+    <div class="slogan">GÖR · ANLA · UYGULA</div>
+  </div>
+  <div class="kart">
+    <h2 id="girisBaslik">Çalışmana Başla</h2>
+    <p class="aciklama">Sonuç sayfasına girdiğin Ad Soyad ve 6 haneli Giriş Kodu ile gir.</p>
+    <div id="girisBilgi" class="bilgiKutusu gizli" role="status"></div>
+    <div class="alan">
+      <label for="adSoyad">Ad Soyad</label>
+      <input id="adSoyad" placeholder="Örn: Ali Kaya" autocomplete="name" enterkeyhint="next">
+    </div>
+    <div class="alan">
+      <label for="girisKodu">6 Haneli Giriş Kodu</label>
+      <div class="kodKutu">
+        <input id="girisKodu" type="password" maxlength="6" placeholder="••••••" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="go">
+        <button type="button" id="kodGoster" class="kodGoster" aria-label="Kodu göster" aria-pressed="false">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/><line class="capraz" x1="3" y1="3" x2="21" y2="21"/></svg>
+        </button>
+      </div>
+    </div>
+    <button type="button" id="girisDugme" class="anaDugme">ÇALIŞMAYA BAŞLA</button>
+    <div id="girisHata" role="alert" aria-live="assertive"></div>
+  </div>
+  <p class="altNot">Giriş kodunu bilmiyorsan Fatih Hoca'ya sor.</p>
+</section>
+
+<!-- ================= SETLER ================= -->
+<section id="setlerEkrani" class="ekran gizli" aria-label="Setlerim">
+  <div class="ustCubuk">
+    <div class="kucukLogo">
+      <svg width="34" height="34" viewBox="0 0 76 76" aria-hidden="true" fill="none">
+        <ellipse cx="38" cy="38" rx="34" ry="13" stroke="#3B0764" stroke-width="4" transform="rotate(-24 38 38)"/>
+        <circle cx="38" cy="38" r="15" fill="#3B0764"/><circle cx="68" cy="25" r="7" fill="#EA580C"/>
+      </svg>
+      <div><div class="k1">FatihHoca | <span>UltraMat</span></div><div class="k2">Yörünge</div></div>
+    </div>
+    <button type="button" id="cikisDugme" class="cikisDugme">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Çıkış
+    </button>
+  </div>
+  <div class="selam">
+    <div><div class="ust" id="selamUst"></div><div class="ad" id="selamAd"></div></div>
+    <div class="ozetSatiri"><div class="noktalar" id="ozetNoktalar" aria-hidden="true"></div><span class="ozetMetni" id="ozetMetni"></span></div>
+  </div>
+  <div id="setlerHata" role="alert"></div>
+  <div id="setListesi" class="ekran"></div>
+  <p class="altNot" id="setlerAltNot">Her sette adımlar sırayla açılır. Bitirdiğin adımlar tekrar için açık kalır.</p>
+</section>
+
+<!-- ================= VİDEO ================= -->
+<section id="videoEkrani" class="ekran gizli" aria-label="Video">
+  <button type="button" class="geriDugme" id="videoGeri">
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    Setlerime Dön
+  </button>
+  <div class="vBaslik">
+    <span class="ust1">1. ADIM · GÖR</span>
+    <h1 id="vAd"></h1>
+    <span class="alt" id="vKod"></span>
+  </div>
+
+  <div class="oynatici" id="oynatici">
+    <div class="ekranAlan">
+      <video id="video" playsinline webkit-playsinline preload="metadata" disablepictureinpicture controlslist="nodownload noplaybackrate noremoteplayback"></video>
+      <button type="button" class="buyukOynat" id="buyukOynat" aria-label="Oynat">
+        <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true" fill="currentColor"><polygon points="8 4 20 12 8 20 8 4"/></svg>
+      </button>
+      <div class="yukleniyor" id="vYukleniyor"><span class="donen" aria-hidden="true"></span>Video hazırlanıyor…</div>
+    </div>
+    <div class="kontrol">
+      <div class="cubuk" id="cubuk" role="slider" tabindex="0" aria-label="Videoda konum" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0">
+        <span class="iz"></span><span class="izlenen" id="cIzlenen"></span><span class="oynanan" id="cOynanan"></span>
+        <span class="sinir" id="cSinir"></span><span class="tutamak" id="cTutamak"></span>
+      </div>
+      <div class="dugmeler">
+        <button type="button" class="kDugme" id="oynatDugme" aria-label="Oynat">
+          <svg id="ikonOynat" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><polygon points="7 4 19 12 7 20 7 4"/></svg>
+          <svg id="ikonDurdur" class="gizli" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+        </button>
+        <button type="button" class="kDugme" id="geriSar" aria-label="10 saniye geri">
+          <svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.5 15a9 9 0 1 0 2.1-9.4L1 10"/></svg>
+          10 sn
+        </button>
+        <span class="sure" id="sureMetni">0:00 / 0:00</span>
+        <button type="button" class="kDugme sag" id="tamEkran" aria-label="Tam ekran">
+          <svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="vUyari" class="bilgiKutusu gizli" role="status">Henüz izlemediğin kısma geçemezsin. Video ilerledikçe o kısım da açılır.</div>
+  <div id="vHata" role="alert"></div>
+
+  <div class="lejant" id="vLejant">
+    <div><span class="r1"></span><span>İzlediğin yere kadar ileri ve geri sarabilirsin.</span></div>
+    <div><span class="r2"></span><span>Taralı kısım, video ilerledikçe açılır.</span></div>
+    <div><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="#6D28D9" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="8 12 11 15 16 9"/></svg><span>Video sonuna kadar izlenince bu adım tamamlanır ve <b style="color:#3B0764">Keşif</b> açılır.</span></div>
+  </div>
+
+  <div id="vBitti" class="ekran gizli">
+    <div class="bittiKart">
+      <svg width="120" height="84" viewBox="0 0 120 84" aria-hidden="true" fill="none">
+        <ellipse cx="60" cy="42" rx="56" ry="20" stroke="#A78BFA" stroke-width="2" transform="rotate(-14 60 42)"/>
+        <circle cx="60" cy="42" r="24" fill="#6D28D9"/><polyline points="49 42 57 50 72 34" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="111" cy="28" r="6" fill="#FB923C"/>
+      </svg>
+      <h2>Videoyu tamamladın</h2>
+      <p>Sıradaki adım açıldı: <b>Keşif</b>. Videoda gördüklerini şimdi kendin deneyeceksin.</p>
+    </div>
+    <div id="vBittiSerit"></div>
+    <div id="vBittiIpucu"></div>
+    <div class="dugmeGrubu">
+      <button type="button" class="dugme" id="kesfeGec">Keşfe Geç</button>
+      <button type="button" class="dugme ikincil" id="tekrarIzle">Videoyu Tekrar İzle</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BAŞKA CİHAZ ================= -->
+<section id="baskaCihazEkrani" class="ekran ortala gizli" aria-labelledby="bcBaslik">
+  <div class="kart">
+    <svg width="110" height="78" viewBox="0 0 110 78" aria-hidden="true" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="6" y="10" width="36" height="62" rx="7" stroke="#94A3B8" stroke-width="3" stroke-dasharray="5 5"/><line x1="19" y1="63" x2="29" y2="63" stroke="#94A3B8" stroke-width="3"/>
+      <rect x="68" y="6" width="36" height="66" rx="7" stroke="#3B0764" stroke-width="3"/><line x1="81" y1="64" x2="91" y2="64" stroke="#3B0764" stroke-width="3"/>
+      <path d="M48 40 H62" stroke="#C2410C" stroke-width="3"/><polyline points="57 34 63 40 57 46" stroke="#C2410C" stroke-width="3"/>
+    </svg>
+    <h2 id="bcBaslik">Hesabın başka bir cihazda açıldı</h2>
+    <p class="aciklama">Yörünge'de aynı anda yalnızca bir cihazda çalışabilirsin. Bu cihazda devam etmek istersen tekrar giriş yap; o zaman öbür cihazdaki oturum kapanır.</p>
+    <p class="aciklama" style="font-size:13.5px">İlerlemen kaydedildi, hiçbir şey kaybolmadı.</p>
+    <button type="button" class="anaDugme" id="tekrarGiris">TEKRAR GİRİŞ YAP</button>
+  </div>
+</section>
+
+<!-- ================= AÇILIŞ ================= -->
+<section id="acilisEkrani" class="ekran ortala" aria-live="polite">
+  <div class="logoBuyuk"><div class="yorungeBaslik">Yörünge</div><div class="slogan">YÜKLENİYOR</div></div>
+</section>
+
+</main>
+<script>
+"use strict";
+// Apps Script'te Dağıt → Yeni dağıtım → Web uygulaması yapınca verilen /exec adresini buraya yapıştırın.
+const API_URL = "https://script.google.com/macros/s/AKfycbwqT73ZBn9FrpZewn3UJpftq1tl5D82rB60aABnVLB6I_SoHNvo_KXWfyPd6k2aRQKl/exec";
+const OTURUM_ANAHTARI = "yorunge_oturum";
+const ILERLEME_ARALIK_MS = 15000;
+
+const $ = (id) => document.getElementById(id);
+const ADIM = {
+  video: { ad: "Video", rol: "GÖR" }, kesif: { ad: "Keşif", rol: "ANLA" },
+  test: { ad: "Test", rol: "UYGULA" }, kagit: { ad: "Çalışma Kağıdı", rol: "UYGULA" }
+};
+const KILIT_METNI = {
+  kesif: "Keşif, video sonuna kadar izlenince açılır.",
+  test: "Test, Keşif bitince açılır.",
+  kagit: "Çalışma kağıdı, Test bitince açılır."
+};
+const YAKINDA_METNI = "Bu adım çok yakında burada açılacak.";
+const SVG = {
+  tik: '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  tikKucuk: '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  kilit: '<svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+  video: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="currentColor"><polygon points="7 4 20 12 7 20 7 4"/></svg>',
+  kesif: '<svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5 15.5 8.5"/></svg>',
+  test: '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+  kagit: '<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>'
+};
+
+let durum = { oturum: null, ogrenci: null, setler: [], ipucu: {} };
+
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]); }
+function oturumOku(){ try{ return localStorage.getItem(OTURUM_ANAHTARI); }catch(e){ return null; } }
+function oturumYaz(v){ try{ if(v) localStorage.setItem(OTURUM_ANAHTARI, v); else localStorage.removeItem(OTURUM_ANAHTARI); }catch(e){} }
+
+/* ---------------- sunucu ---------------- */
+function ApiHatasi(mesaj){ const e = new Error(mesaj); e.kullaniciMesaji = mesaj; return e; }
+
+async function api(veri, zamanAsimiMs, secenek){
+  if(!/^https:\/\/script\.google\.com\//.test(API_URL)) throw ApiHatasi("Sayfa henüz sunucuya bağlanmadı (API_URL boş). Fatih Hoca'ya haber ver.");
+  const denetci = new AbortController();
+  const zaman = setTimeout(() => denetci.abort(), zamanAsimiMs || 20000);
+  let yanit, metin;
+  try{
+    yanit = await fetch(API_URL, Object.assign({ method: "POST", headers: { "Content-Type": "text/plain;charset=UTF-8" },
+      body: JSON.stringify(veri), signal: denetci.signal }, secenek || {}));
+    metin = await yanit.text();
+  }catch(err){
+    if(err && err.name === "AbortError") throw ApiHatasi("Sunucu 20 saniye içinde yanıt vermedi. Bağlantın yavaş olabilir ya da sunucu şu an yoğun; birazdan tekrar dene.");
+    if(navigator.onLine === false) throw ApiHatasi("İnternet bağlantın yok gibi görünüyor. Bağlantını kontrol edip tekrar dene.");
+    throw ApiHatasi("Sunucuya bağlanılamadı. Birkaç dakika sonra tekrar dene; düzelmezse Fatih Hoca'ya haber ver.");
+  }finally{ clearTimeout(zaman); }
+  if(!yanit.ok) throw ApiHatasi("Sunucu isteği kabul etmedi (kod: " + yanit.status + "). Birkaç dakika sonra tekrar dene.");
+  let veriY;
+  try{ veriY = JSON.parse(metin); }catch(e){
+    console.error("[Yörünge] JSON olmayan yanıt:", String(metin).slice(0, 300));
+    throw ApiHatasi("Sunucudan beklenmeyen bir yanıt geldi. Birkaç dakika sonra tekrar dene; düzelmezse Fatih Hoca'ya haber ver.");
+  }
+  if(veriY && veriY.oturumKapandi){ baskaCihazGoster(); const e = ApiHatasi(""); e.oturumBitti = true; throw e; }
+  if(veriY && veriY.oturumYok){ oturumYok(); const e = ApiHatasi(""); e.oturumBitti = true; throw e; }
+  if(veriY && (veriY.hata || veriY.engellendi)) throw ApiHatasi(veriY.mesajTr || "Sunucu bir hata bildirdi. Biraz sonra tekrar dene.");
+  return veriY;
+}
+
+/* ---------------- ekranlar ---------------- */
+const EKRANLAR = ["acilisEkrani", "girisEkrani", "setlerEkrani", "videoEkrani", "baskaCihazEkrani"];
+function ekranGoster(id){
+  EKRANLAR.forEach(e => $(e).classList.toggle("gizli", e !== id));
+  window.scrollTo(0, 0);
+}
+
+function girisGoster(bilgi){
+  videoyuBirak();
+  ekranGoster("girisEkrani");
+  $("girisHata").innerHTML = "";
+  $("girisBilgi").textContent = bilgi || "";
+  $("girisBilgi").classList.toggle("gizli", !bilgi);
+}
+
+function oturumYok(){
+  durum.oturum = null; oturumYaz(null);
+  girisGoster("Oturumun sona erdi. Devam etmek için tekrar giriş yap.");
+}
+
+function baskaCihazGoster(){
+  videoyuBirak();
+  durum.oturum = null; oturumYaz(null);
+  ekranGoster("baskaCihazEkrani");
+}
+
+/* ---------------- giriş ---------------- */
+let girisSuruyor = false;
+async function girisYap(){
+  if(girisSuruyor) return;
+  const isim = $("adSoyad").value.trim(), kod = $("girisKodu").value.trim();
+  $("girisHata").innerHTML = ""; $("girisBilgi").classList.add("gizli");
+  if(!isim || !kod){ girisHatasi("Lütfen Ad Soyad ve 6 haneli Giriş Kodunu eksiksiz gir."); return; }
+  if(!/^[0-9]{6}$/.test(kod)){ girisHatasi("Giriş Kodu 6 haneli bir sayıdır. Kodunu kontrol edip tekrar dene."); return; }
+  girisSuruyor = true;
+  const d = $("girisDugme"); d.disabled = true; d.innerHTML = '<span class="donen" aria-hidden="true"></span>YÜKLENİYOR';
+  try{
+    const y = await api({ islem: "giris", isim: isim, kod: kod });
+    if(!y || y.yok || !y.oturum){
+      girisHatasi("Bu Ad Soyad ve Giriş Kodu ile eşleşen bir öğrenci bulunamadı. Bilgilerini kontrol edip tekrar dene. Art arda çok sayıda hatalı deneme, girişi kısa süreliğine kapatır.");
+      return;
+    }
+    durum.oturum = y.oturum; oturumYaz(y.oturum);
+    $("girisKodu").value = "";
+    setleriGoster(y);
+  }catch(err){
+    if(!err.oturumBitti) girisHatasi(err.kullaniciMesaji || "Beklenmeyen bir sorun oluştu. Tekrar dene.");
+  }finally{
+    girisSuruyor = false; d.disabled = false; d.textContent = "ÇALIŞMAYA BAŞLA";
+  }
+}
+function girisHatasi(m){ $("girisHata").innerHTML = '<div class="hataKutusu">' + esc(m) + "</div>"; }
+
+/* ---------------- setler ---------------- */
+function iniEki(n){   // "1'ini", "2'sini", "3'ünü", "10'unu", "100'ünü"
+  if(n === 0) return "'ını";
+  const birler = { 1:"ini", 2:"sini", 3:"ünü", 4:"ünü", 5:"ini", 6:"sını", 7:"sini", 8:"ini", 9:"unu" };
+  const onlar = { 1:"unu", 2:"sini", 3:"unu", 4:"ını", 5:"sini", 6:"ını", 7:"ini", 8:"ini", 9:"ını" };
+  if(n % 10) return "'" + birler[n % 10];
+  if(Math.floor(n / 10) % 10) return "'" + onlar[Math.floor(n / 10) % 10];
+  if(n % 1000 === 0) return "'ini";
+  return "'ünü";
+}
+
+function setleriGoster(y){
+  if(y){ durum.ogrenci = y.ogrenci; durum.setler = y.setler || []; }
+  const o = durum.ogrenci || {}, setler = durum.setler;
+  $("selamUst").textContent = (o.etiket ? o.etiket + " · " : "") + "Matematik";
+  $("selamAd").textContent = "Merhaba " + (o.selam || "");
+  const biten = setler.filter(s => s.tamam).length;
+  $("ozetMetni").textContent = !setler.length ? "Henüz yayında bir set yok"
+    : biten === setler.length ? (setler.length === 1 ? "Setini tamamladın" : setler.length + " setin hepsini tamamladın")
+    : biten === 0 ? (setler.length === 1 ? "1 set seni bekliyor" : setler.length + " set seni bekliyor")
+    : setler.length + " setten " + biten + iniEki(biten) + " tamamladın";
+  $("ozetNoktalar").innerHTML = setler.length > 12 ? "" :
+    setler.map(s => '<span class="nokta' + (s.tamam ? " bitti" : s.yeni ? "" : " basladi") + '"></span>').join("");
+
+  const liste = $("setListesi");
+  if(!setler.length){
+    liste.innerHTML = '<div class="bos">Şu an yayında bir set yok. Fatih Hoca yeni bir set açtığında burada görünecek.</div>';
+    $("setlerAltNot").classList.add("gizli");
+  } else {
+    $("setlerAltNot").classList.remove("gizli");
+    let html = "", sonTema = null;
+    setler.forEach(s => {
+      if(s.tema && s.tema !== sonTema){ html += '<div class="temaBaslik">' + esc(s.tema.toLocaleUpperCase("tr-TR")) + "</div>"; sonTema = s.tema; }
+      html += setKarti(s);
+    });
+    liste.innerHTML = html;
+  }
+  ekranGoster("setlerEkrani");
+}
+
+function setKarti(s){
+  const siradaki = s.adimlar.find(a => a.durum === "acik");
+  let buton = "";
+  if(siradaki && !s.tamam){
+    const etiket = { video: s.izlenen > 0 ? "Videoya Devam Et" : "Videoyu İzle", kesif: "Keşfe Devam Et", test: "Teste Geç", kagit: "Çalışma Kağıdını Aç" }[siradaki.tur];
+    buton = '<button type="button" class="dugme" data-set="' + esc(s.id) + '" data-adim="' + siradaki.tur + '">' + esc(etiket) + "</button>";
+  }
+  const ipucu = durum.ipucu[s.id];
+  return '<article class="set' + (!s.tamam && !s.yeni ? " devam" : "") + '">' +
+    '<div class="setUst"><div style="min-width:0"><div class="setKod">' + esc(s.kazanim) + '</div><h2 class="setAd">' + esc(s.ad) + "</h2></div>" +
+      (s.tamam ? '<span class="rozet tamam">' + SVG.tikKucuk + "Tamamlandı</span>" : s.yeni ? '<span class="rozet yeni">Yeni</span>' : "") + "</div>" +
+    seritHtml(s) +
+    (ipucu ? '<div class="ipucu" role="status">' + SVG.kilit + esc(ipucu) + "</div>" : "") +
+    buton +
+    (s.tamam ? '<div class="setAlt">Tekrar etmek istediğin adıma dokun.</div>' : "") +
+    "</article>";
+}
+
+// Çizgi, biten adım sayısı kadar dolar: 1 bitti → Video'dan Keşif'e, 3 ya da 4 bitti → sonuna kadar.
+function seritDoluluk(s){ return Math.min(3, s.adimlar.filter(a => a.durum === "tamam").length) / 3 * 100; }
+function seritHtml(s, salt){
+  const doluluk = seritDoluluk(s);
+  return '<div class="serit"><div class="seritCizgi" aria-hidden="true"><i style="width:' + doluluk.toFixed(2) + '%"></i></div><div class="adimlar">' +
+    s.adimlar.map(a => {
+      const bilgi = ADIM[a.tur];
+      const ikon = a.durum === "tamam" ? SVG.tik : a.durum === "kilitli" ? SVG.kilit : SVG[a.tur];
+      const ne = a.durum === "tamam" ? "tamamlandı" : a.durum === "kilitli" ? "kilitli" : "açık";
+      const ic = '<span class="halka">' + ikon + '</span><span class="adimAd">' + esc(bilgi.ad) + '</span><span class="adimRol">' + bilgi.rol + "</span>";
+      if(salt) return '<div class="adim ' + a.durum + '" style="cursor:default" role="img" aria-label="' + esc(bilgi.ad + " · " + ne) + '">' + ic + "</div>";
+      return '<button type="button" class="adim ' + a.durum + '" data-set="' + esc(s.id) + '" data-adim="' + a.tur + '" aria-label="' + esc(bilgi.ad + " · " + ne) + '">' + ic + "</button>";
+    }).join("") + "</div></div>";
+}
+
+function adimaDokun(setId, tur){
+  const s = durum.setler.find(x => x.id === setId);
+  if(!s) return;
+  const a = s.adimlar.find(x => x.tur === tur);
+  if(!a) return;
+  if(a.durum === "kilitli"){ durum.ipucu[setId] = KILIT_METNI[tur]; setleriGoster(); kartaKaydir(setId); return; }
+  if(tur === "video"){ delete durum.ipucu[setId]; videoyuAc(s); return; }
+  durum.ipucu[setId] = YAKINDA_METNI; setleriGoster(); kartaKaydir(setId);   // Aşama 2
+}
+function kartaKaydir(setId){
+  const b = Array.from(document.querySelectorAll("#setListesi .adim")).find(x => x.getAttribute("data-set") === setId);
+  if(b && b.closest(".set").scrollIntoView) b.closest(".set").scrollIntoView({ block: "nearest" });
+}
+
+async function setleriYenile(){
+  if(!durum.oturum) return;
+  try{ setleriGoster(await api({ islem: "setler", oturum: durum.oturum })); $("setlerHata").innerHTML = ""; }
+  catch(err){ if(!err.oturumBitti) $("setlerHata").innerHTML = '<div class="hataKutusu">' + esc(err.kullaniciMesaji) + "</div>"; }
+}
+
+async function cikisYap(){
+  const o = durum.oturum;
+  durum.oturum = null; oturumYaz(null); durum.ipucu = {};
+  girisGoster();
+  if(o) try{ await api({ islem: "cikis", oturum: o }, 8000); }catch(e){}
+}
+
+/* ---------------- video ---------------- */
+const video = $("video");
+let V = null;   // { set, izlenen, tamam, sure, sonRapor, raporlanan, bitiriliyor }
+
+function zaman(sn){ sn = Math.max(0, Math.floor(sn || 0)); return Math.floor(sn / 60) + ":" + String(sn % 60).padStart(2, "0"); }
+
+async function videoyuAc(s){
+  V = { set: s, izlenen: s.izlenen || 0, tamam: s.adimlar[0].durum === "tamam", sure: 0, sonRapor: Date.now(), raporlanan: s.izlenen || 0, bitiriliyor: false };
+  $("vAd").textContent = s.ad; $("vKod").textContent = s.kazanim + " · Video";
+  $("vHata").innerHTML = ""; $("vUyari").classList.add("gizli");
+  $("vBitti").classList.add("gizli"); $("vLejant").classList.toggle("gizli", V.tamam); $("oynatici").classList.remove("gizli");
+  $("vYukleniyor").classList.remove("gizli"); $("buyukOynat").classList.add("gizli");
+  video.removeAttribute("src"); video.load();
+  cubukCiz(); ekranGoster("videoEkrani");
+  if(!history.state || history.state.ekran !== "video") history.pushState({ ekran: "video" }, "");
+  const acilan = V;
+  try{
+    const y = await api({ islem: "video", oturum: durum.oturum, setId: s.id });
+    if(V !== acilan) return;
+    V.izlenen = Math.max(V.izlenen, Number(y.izlenen) || 0); V.raporlanan = V.izlenen; V.tamam = !!y.tamam;
+    $("vLejant").classList.toggle("gizli", V.tamam);
+    video.src = y.adres; video.load();
+  }catch(err){
+    if(err.oturumBitti || V !== acilan) return;
+    $("vYukleniyor").classList.add("gizli");
+    videoHatasi(err.kullaniciMesaji);
+  }
+}
+
+function videoHatasi(m){
+  $("vHata").innerHTML = '<div class="hataKutusu">' + esc(m) + '</div><button type="button" class="dugme ikincil" style="margin-top:10px" id="vTekrarDene">Tekrar Dene</button>';
+  $("vTekrarDene").onclick = () => V && videoyuAc(V.set);
+}
+
+function cubukCiz(){
+  const T = V && V.sure ? V.sure : 0;
+  const k = T ? video.currentTime / T * 100 : 0;
+  const iz = !T ? 0 : V.tamam ? 100 : Math.min(100, V.izlenen / T * 100);
+  $("cOynanan").style.width = k + "%"; $("cTutamak").style.left = k + "%";
+  $("cIzlenen").style.width = iz + "%"; $("cSinir").style.left = iz + "%";
+  $("cSinir").classList.toggle("gizli", !T || V.tamam || iz >= 100);
+  $("sureMetni").textContent = zaman(video.currentTime) + " / " + zaman(T);
+  const c = $("cubuk"); c.setAttribute("aria-valuemax", String(Math.floor(T))); c.setAttribute("aria-valuenow", String(Math.floor(video.currentTime)));
+  c.setAttribute("aria-valuetext", zaman(video.currentTime) + " / " + zaman(T));
+  const oynuyor = !video.paused && !video.ended;
+  $("ikonOynat").classList.toggle("gizli", oynuyor); $("ikonDurdur").classList.toggle("gizli", !oynuyor);
+  $("oynatDugme").setAttribute("aria-label", oynuyor ? "Duraklat" : "Oynat");
+  $("buyukOynat").classList.toggle("gizli", oynuyor || !T);
+}
+
+function sinir(){ return V.tamam ? V.sure : V.izlenen; }   // en fazla buraya kadar sarılabilir
+
+function konumaGit(hedef){
+  if(!V || !V.sure) return;
+  hedef = Math.max(0, Math.min(V.sure, hedef));
+  if(hedef > sinir() + 0.5){ hedef = sinir(); uyariGoster(); } else $("vUyari").classList.add("gizli");
+  video.currentTime = hedef; cubukCiz();
+}
+let uyariZamani = null;
+function uyariGoster(){
+  $("vUyari").classList.remove("gizli");
+  clearTimeout(uyariZamani); uyariZamani = setTimeout(() => $("vUyari").classList.add("gizli"), 5000);
+}
+
+video.addEventListener("loadedmetadata", () => {
+  if(!V) return;
+  V.sure = video.duration || 0;
+  $("vYukleniyor").classList.add("gizli");
+  if(!V.tamam && V.izlenen > 2) video.currentTime = Math.min(V.izlenen, Math.max(0, V.sure - 3));   // kaldığı yerden
+  cubukCiz();
+});
+video.addEventListener("timeupdate", () => {
+  if(!V || !V.sure) return;
+  const t = video.currentTime;
+  if(!V.tamam){
+    if(t > V.izlenen + 2.5){ video.currentTime = V.izlenen; uyariGoster(); }   // izin verilmeyen sıçrama
+    else V.izlenen = Math.max(V.izlenen, t);
+    if(Date.now() - V.sonRapor > ILERLEME_ARALIK_MS) ilerlemeGonder();
+  }
+  cubukCiz();
+});
+video.addEventListener("seeking", () => {   // iOS tam ekranındaki yerleşik çubuk dahil her sarma
+  if(V && !V.tamam && video.currentTime > V.izlenen + 1){ video.currentTime = V.izlenen; uyariGoster(); }
+});
+video.addEventListener("play", cubukCiz);
+video.addEventListener("pause", () => { cubukCiz(); if(V && !V.tamam) ilerlemeGonder(); });
+video.addEventListener("ended", () => {
+  if(!V) return;
+  cubukCiz();
+  if(!V.tamam && V.izlenen >= V.sure - 3) videoyuBitir();
+});
+video.addEventListener("error", () => {
+  if(!V || !video.getAttribute("src")) return;
+  $("vYukleniyor").classList.add("gizli");
+  videoHatasi("Video yüklenemedi. İnternet bağlantını kontrol edip tekrar dene; düzelmezse Fatih Hoca'ya haber ver.");
+});
+video.addEventListener("contextmenu", e => e.preventDefault());
+
+async function ilerlemeGonder(sayfaKapaniyor){
+  if(!V || V.tamam || !durum.oturum) return;
+  V.sonRapor = Date.now();
+  const sn = Math.floor(V.izlenen);
+  if(sn <= V.raporlanan) return;
+  V.raporlanan = sn;
+  try{ await api({ islem: "videoIlerleme", oturum: durum.oturum, setId: V.set.id, izlenen: sn }, 15000, sayfaKapaniyor ? { keepalive: true } : null); }
+  catch(err){ /* sessiz: bir sonraki raporda yeniden denenir */ if(!err.oturumBitti && V) V.raporlanan = 0; }
+}
+
+async function videoyuBitir(){
+  if(!V || V.bitiriliyor) return;
+  V.bitiriliyor = true;
+  const s = V.set;
+  try{
+    const y = await api({ islem: "videoBitti", oturum: durum.oturum, setId: s.id, sure: Math.ceil(V.sure) });
+    durum.ogrenci = y.ogrenci; durum.setler = y.setler || [];
+    V.tamam = true;
+    const yeni = durum.setler.find(x => x.id === s.id) || s;
+    V.set = yeni;
+    bittiGoster(yeni);
+  }catch(err){
+    if(err.oturumBitti) return;
+    $("vHata").innerHTML = '<div class="hataKutusu">' + esc(err.kullaniciMesaji) + '</div><button type="button" class="dugme" style="margin-top:10px" id="vKaydet">Tekrar Dene</button>';
+    $("vKaydet").onclick = () => { $("vHata").innerHTML = ""; videoyuBitir(); };
+  }finally{ if(V) V.bitiriliyor = false; }
+}
+
+function bittiGoster(s){
+  if(document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  $("oynatici").classList.add("gizli"); $("vLejant").classList.add("gizli"); $("vUyari").classList.add("gizli");
+  $("vBittiSerit").innerHTML = '<div class="seritKart">' + seritHtml(s, true) + "</div>";
+  $("vBittiIpucu").innerHTML = "";
+  $("vBitti").classList.remove("gizli");
+  if($("vBitti").scrollIntoView) $("vBitti").scrollIntoView({ block: "start" });
+}
+
+function videoyuBirak(){
+  if(V && !V.tamam) ilerlemeGonder(true);
+  if(document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  try{ video.pause(); }catch(e){}
+  V = null;
+}
+
+function videodanCik(){
+  if(history.state && history.state.ekran === "video"){ history.back(); return; }   // popstate setlere döner
+  videoyuBirak(); setleriGoster(); setleriYenile();
+}
+
+function cubuktanKonum(e){
+  const r = $("cubuk").getBoundingClientRect();
+  return Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * (V ? V.sure : 0);
+}
+
+/* ---------------- olaylar ---------------- */
+$("girisDugme").addEventListener("click", girisYap);
+$("adSoyad").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); $("girisKodu").focus(); } });
+$("girisKodu").addEventListener("keydown", e => { if(e.key === "Enter"){ e.preventDefault(); girisYap(); } });
+$("girisKodu").addEventListener("input", e => { const t = e.target.value.replace(/\D/g, "").slice(0, 6); if(t !== e.target.value) e.target.value = t; });
+$("kodGoster").addEventListener("click", () => {
+  const acik = $("girisKodu").type === "password";
+  $("girisKodu").type = acik ? "text" : "password";
+  $("kodGoster").setAttribute("aria-pressed", String(acik)); $("kodGoster").setAttribute("aria-label", acik ? "Kodu gizle" : "Kodu göster");
+});
+$("cikisDugme").addEventListener("click", cikisYap);
+$("tekrarGiris").addEventListener("click", () => girisGoster());
+$("setListesi").addEventListener("click", e => {
+  const b = e.target.closest("[data-set]");
+  if(b) adimaDokun(b.getAttribute("data-set"), b.getAttribute("data-adim"));
+});
+$("videoGeri").addEventListener("click", videodanCik);
+$("oynatDugme").addEventListener("click", () => { if(!V || !V.sure) return; video.paused || video.ended ? video.play().catch(() => {}) : video.pause(); });
+$("buyukOynat").addEventListener("click", () => { if(V && V.sure) video.play().catch(() => {}); });
+$("geriSar").addEventListener("click", () => { if(V) konumaGit(video.currentTime - 10); });
+$("tamEkran").addEventListener("click", () => {
+  const k = $("oynatici");
+  if(document.fullscreenElement){ document.exitFullscreen().catch(() => {}); return; }
+  if(k.requestFullscreen) k.requestFullscreen().catch(() => { if(video.webkitEnterFullscreen) video.webkitEnterFullscreen(); });
+  else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();   // iPhone: yerleşik tam ekran (sarma kilidi seeking olayıyla sürer)
+});
+let surukleniyor = false;
+$("cubuk").addEventListener("pointerdown", e => { if(!V || !V.sure) return; surukleniyor = true; $("cubuk").setPointerCapture(e.pointerId); konumaGit(cubuktanKonum(e)); });
+$("cubuk").addEventListener("pointermove", e => { if(surukleniyor) konumaGit(cubuktanKonum(e)); });
+["pointerup", "pointercancel"].forEach(t => $("cubuk").addEventListener(t, () => { surukleniyor = false; }));
+$("cubuk").addEventListener("keydown", e => {
+  if(!V || !V.sure) return;
+  if(e.key === "ArrowRight"){ e.preventDefault(); konumaGit(video.currentTime + 5); }
+  else if(e.key === "ArrowLeft"){ e.preventDefault(); konumaGit(video.currentTime - 5); }
+});
+$("kesfeGec").addEventListener("click", () => { $("vBittiIpucu").innerHTML = '<div class="ipucu" role="status">' + SVG.kesif + esc(YAKINDA_METNI) + "</div>"; });
+$("tekrarIzle").addEventListener("click", () => { if(V) videoyuAc(V.set); });
+
+window.addEventListener("popstate", () => {
+  if(!$("videoEkrani").classList.contains("gizli")){ videoyuBirak(); setleriGoster(); setleriYenile(); }
+});
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "hidden"){ if(V && !V.tamam) ilerlemeGonder(true); }
+  else if(durum.oturum && !$("setlerEkrani").classList.contains("gizli")) setleriYenile();   // başka cihazda açıldıysa burada anlaşılır
+});
+window.addEventListener("pagehide", () => { if(V && !V.tamam) ilerlemeGonder(true); });
+
+/* ---------------- açılış ---------------- */
+(async function basla(){
+  durum.oturum = oturumOku();
+  history.replaceState({ ekran: "ana" }, "");
+  if(!durum.oturum){ girisGoster(); return; }
+  try{ setleriGoster(await api({ islem: "setler", oturum: durum.oturum })); }
+  catch(err){ if(!err.oturumBitti) girisGoster(err.kullaniciMesaji); }
+})();
+</script>
+</body>
+</html>
