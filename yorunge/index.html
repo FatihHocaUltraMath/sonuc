@@ -8,7 +8,11 @@
 <title>FatihHoca | UltraMat Yörünge</title>
 <!--
   UltraMat Yörünge — öğrenci sayfası (Aşama 1: giriş, setler, video adımı, tek oturum)
-  Sayfa sürümü 0.3.1 — tam ekranda video ekrana sığar (üst/alt kenarı kesilmez), kutu videonun en-boy oranını alır.
+  Sayfa sürümü 0.3.3 — 30 dakika hiçbir şeye dokunulmazsa (video da oynamıyorsa) sayfa oturumu kapatıp giriş ekranına
+  döner; öğrenci çalışırken 5 dakikada bir sunucuya "nabız" gider. Sunucu: 30 dk hareketsizlik, girişten 4 saat üst sınır.
+  0.3.2 — oturum yalnızca açık sekmede tutulur (sessionStorage): sekme/tarayıcı kapanınca yeniden giriş
+  gerekir; sunucu da her oturumu girişten 24 saat sonra kapatır.
+  0.3.1 — tam ekranda video ekrana sığar (üst/alt kenarı kesilmez), kutu videonun en-boy oranını alır.
   Sunucu: yorunge.gs 0.3 (UltraMat_Yorunge tablosuna bağlı Apps Script, web uygulaması).
   İstekler sonuç sistemindeki gibi POST + düz metin JSON gövdesiyle gider (CORS ön kontrolü yok).
   Keşif, Test ve Çalışma kağıdı adımları Aşama 2'de bu sayfaya eklenecek.
@@ -314,10 +318,12 @@ button,input{font-family:inherit}
 "use strict";
 // Apps Script'te Dağıt → Yeni dağıtım → Web uygulaması yapınca verilen /exec adresini buraya yapıştırın.
 const API_URL = "https://script.google.com/macros/s/AKfycbwqT73ZBn9FrpZewn3UJpftq1tl5D82rB60aABnVLB6I_SoHNvo_KXWfyPd6k2aRQKl/exec";
-const SAYFA_SURUMU = "0.3.1";
+const SAYFA_SURUMU = "0.3.3";
 console.info("[Yörünge] sayfa sürümü " + SAYFA_SURUMU);
 const OTURUM_ANAHTARI = "yorunge_oturum";
 const ILERLEME_ARALIK_MS = 15000;
+const HAREKETSIZLIK_MS = 30 * 60 * 1000;   // sunucudaki YRG.HAREKETSIZLIK_MS ile aynı
+const NABIZ_ARALIK_MS = 5 * 60 * 1000;
 
 const $ = (id) => document.getElementById(id);
 const ADIM = {
@@ -343,8 +349,10 @@ const SVG = {
 let durum = { oturum: null, ogrenci: null, setler: [], ipucu: {} };
 
 function esc(s){ return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]); }
-function oturumOku(){ try{ return localStorage.getItem(OTURUM_ANAHTARI); }catch(e){ return null; } }
-function oturumYaz(v){ try{ if(v) localStorage.setItem(OTURUM_ANAHTARI, v); else localStorage.removeItem(OTURUM_ANAHTARI); }catch(e){} }
+// Oturum yalnızca bu sekmede tutulur: sekme ya da tarayıcı kapanınca yeniden giriş gerekir (sayfa yenilemede kalır).
+function oturumOku(){ try{ return sessionStorage.getItem(OTURUM_ANAHTARI); }catch(e){ return null; } }
+function oturumYaz(v){ try{ if(v) sessionStorage.setItem(OTURUM_ANAHTARI, v); else sessionStorage.removeItem(OTURUM_ANAHTARI); }catch(e){} }
+try{ localStorage.removeItem(OTURUM_ANAHTARI); }catch(e){}   // 0.3.1 ve öncesinin kalıcı olarak sakladığı anahtarı temizle
 
 /* ---------------- sunucu ---------------- */
 function ApiHatasi(mesaj){ const e = new Error(mesaj); e.kullaniciMesaji = mesaj; return e; }
@@ -395,6 +403,31 @@ function oturumYok(){
   girisGoster("Oturumun sona erdi. Devam etmek için tekrar giriş yap.");
 }
 
+/* ---------------- hareketsizlik ve nabız ----------------
+   Etkinlik = öğrencinin dokunması, tıklaması, yazması, kaydırması ya da videonun oynaması. Yalnızca açık duran sekme
+   etkinlik sayılmaz. Aşama 2'de keşif/test çerçevelerinin içindeki dokunuşlar da buraya bildirilecek. */
+let sonEtkinlik = Date.now(), sonNabiz = Date.now();
+function etkinlik(){ sonEtkinlik = Date.now(); }
+["pointerdown", "keydown", "touchstart", "wheel", "input"].forEach(t => document.addEventListener(t, etkinlik, { capture: true, passive: true }));
+
+function hareketsizlikKontrol(){
+  if(!durum.oturum) return false;
+  const simdi = Date.now();
+  if(simdi - sonEtkinlik > HAREKETSIZLIK_MS){
+    const o = durum.oturum;
+    durum.oturum = null; oturumYaz(null); durum.ipucu = {};
+    girisGoster("30 dakika işlem yapılmadığı için oturumun kapandı. Devam etmek için tekrar giriş yap.");
+    api({ islem: "cikis", oturum: o }, 8000).catch(() => {});
+    return true;
+  }
+  if(simdi - sonEtkinlik < NABIZ_ARALIK_MS && simdi - sonNabiz >= NABIZ_ARALIK_MS){
+    sonNabiz = simdi;
+    api({ islem: "nabiz", oturum: durum.oturum }, 15000).catch(() => {});
+  }
+  return false;
+}
+setInterval(hareketsizlikKontrol, 30 * 1000);
+
 function baskaCihazGoster(){
   videoyuBirak();
   durum.oturum = null; oturumYaz(null);
@@ -417,7 +450,7 @@ async function girisYap(){
       girisHatasi("Bu Ad Soyad ve Giriş Kodu ile eşleşen bir öğrenci bulunamadı. Bilgilerini kontrol edip tekrar dene. Art arda çok sayıda hatalı deneme, girişi kısa süreliğine kapatır.");
       return;
     }
-    durum.oturum = y.oturum; oturumYaz(y.oturum);
+    durum.oturum = y.oturum; oturumYaz(y.oturum); sonEtkinlik = sonNabiz = Date.now();
     $("girisKodu").value = "";
     setleriGoster(y);
   }catch(err){
@@ -604,6 +637,7 @@ video.addEventListener("loadedmetadata", () => {
 video.addEventListener("timeupdate", () => {
   if(!V || !V.sure) return;
   const t = video.currentTime;
+  if(!video.paused) etkinlik();   // oynayan video etkinlik sayılır
   if(!V.tamam){
     if(t > V.izlenen + 2.5){ video.currentTime = V.izlenen; uyariGoster(); }   // izin verilmeyen sıçrama
     else V.izlenen = Math.max(V.izlenen, t);
@@ -725,6 +759,7 @@ window.addEventListener("popstate", () => {
 });
 document.addEventListener("visibilitychange", () => {
   if(document.visibilityState === "hidden"){ if(V && !V.tamam) ilerlemeGonder(true); }
+  else if(hareketsizlikKontrol()) return;   // uzun süre sonra dönüldüyse önce bu
   else if(durum.oturum && !$("setlerEkrani").classList.contains("gizli")) setleriYenile();   // başka cihazda açıldıysa burada anlaşılır
 });
 window.addEventListener("pagehide", () => { if(V && !V.tamam) ilerlemeGonder(true); });
