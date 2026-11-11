@@ -8,6 +8,7 @@
 <title>FatihHoca | UltraMat Yörünge</title>
 <!--
   UltraMat Yörünge — öğrenci sayfası (Aşama 1: giriş, setler, video adımı, tek oturum)
+  Sayfa sürümü 0.3.1 — tam ekranda video ekrana sığar (üst/alt kenarı kesilmez), kutu videonun en-boy oranını alır.
   Sunucu: yorunge.gs 0.3 (UltraMat_Yorunge tablosuna bağlı Apps Script, web uygulaması).
   İstekler sonuç sistemindeki gibi POST + düz metin JSON gövdesiyle gider (CORS ön kontrolü yok).
   Keşif, Test ve Çalışma kağıdı adımları Aşama 2'de bu sayfaya eklenecek.
@@ -120,10 +121,12 @@ button,input{font-family:inherit}
 .vBaslik h1{margin:0;font-size:22px;line-height:1.25;font-weight:800;color:var(--koyu);overflow-wrap:anywhere}
 .vBaslik .alt{font-size:13px;font-weight:600;color:var(--gri)}
 .oynatici{background:#1E1033;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
-.oynatici:fullscreen{border-radius:0;justify-content:center;background:#000}
-.ekranAlan{position:relative;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center}
-.ekranAlan video{width:100%;height:100%;display:block;background:#000}
-.oynatici:fullscreen .ekranAlan{flex:1;aspect-ratio:auto}
+.oynatici:fullscreen{border-radius:0;width:100%;height:100%;background:#000}
+/* Kutu videonun kendi en-boy oranını alır (loadedmetadata'da yazılır); video kutuya "contain" ile sığar, hiçbir yeri kesilmez. */
+.ekranAlan{position:relative;aspect-ratio:16/9;max-height:75vh;background:#000;display:flex;align-items:center;justify-content:center}
+.ekranAlan video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block;background:#000}
+.oynatici:fullscreen .ekranAlan{flex:1 1 auto;min-height:0;max-height:none;aspect-ratio:auto!important}
+.oynatici:fullscreen .kontrol{flex-shrink:0}
 .buyukOynat{position:absolute;width:64px;height:64px;border-radius:50%;border:0;background:rgba(255,255,255,.92);color:var(--koyu);display:flex;align-items:center;justify-content:center;cursor:pointer}
 .yukleniyor{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#E9D5FF;font-size:14px;font-weight:600;gap:10px;background:#1E1033}
 .kontrol{padding:12px 14px 14px;display:flex;flex-direction:column;gap:10px;background:#2A1748}
@@ -311,6 +314,8 @@ button,input{font-family:inherit}
 "use strict";
 // Apps Script'te Dağıt → Yeni dağıtım → Web uygulaması yapınca verilen /exec adresini buraya yapıştırın.
 const API_URL = "https://script.google.com/macros/s/AKfycbwqT73ZBn9FrpZewn3UJpftq1tl5D82rB60aABnVLB6I_SoHNvo_KXWfyPd6k2aRQKl/exec";
+const SAYFA_SURUMU = "0.3.1";
+console.info("[Yörünge] sayfa sürümü " + SAYFA_SURUMU);
 const OTURUM_ANAHTARI = "yorunge_oturum";
 const ILERLEME_ARALIK_MS = 15000;
 
@@ -535,6 +540,7 @@ async function videoyuAc(s){
   $("vHata").innerHTML = ""; $("vUyari").classList.add("gizli");
   $("vBitti").classList.add("gizli"); $("vLejant").classList.toggle("gizli", V.tamam); $("oynatici").classList.remove("gizli");
   $("vYukleniyor").classList.remove("gizli"); $("buyukOynat").classList.add("gizli");
+  document.querySelector(".ekranAlan").style.aspectRatio = "";
   video.removeAttribute("src"); video.load();
   cubukCiz(); ekranGoster("videoEkrani");
   if(!history.state || history.state.ekran !== "video") history.pushState({ ekran: "video" }, "");
@@ -590,6 +596,7 @@ function uyariGoster(){
 video.addEventListener("loadedmetadata", () => {
   if(!V) return;
   V.sure = video.duration || 0;
+  if(video.videoWidth && video.videoHeight) document.querySelector(".ekranAlan").style.aspectRatio = video.videoWidth + " / " + video.videoHeight;
   $("vYukleniyor").classList.add("gizli");
   if(!V.tamam && V.izlenen > 2) video.currentTime = Math.min(V.izlenen, Math.max(0, V.sure - 3));   // kaldığı yerden
   cubukCiz();
